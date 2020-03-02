@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data;
 using Nozomi.Data.ViewModels.Source;
+using Nozomi.Preprocessing.Attributes;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Services.Interfaces;
 
@@ -29,6 +30,7 @@ namespace Nozomi.Web2.Controllers.v1.Source
         }
 
         [HttpGet("{slug}")]
+        [Throttle(Name = "Source/CountByCurrency", Milliseconds = 1000)]
         public IActionResult CountByCurrency([FromRoute]string slug)
         {
             if (string.IsNullOrWhiteSpace(slug))
@@ -38,6 +40,7 @@ namespace Nozomi.Web2.Controllers.v1.Source
         }
 
         [HttpGet]
+        [Throttle(Name = "Source/All", Milliseconds = 200)]
         public IActionResult All()
         {
             return Ok(_sourceEvent.GetAll());
@@ -45,6 +48,7 @@ namespace Nozomi.Web2.Controllers.v1.Source
 
         [Authorize]
         [HttpPost]
+        [Throttle(Name = "Source/Create", Milliseconds = 1000)]
         public IActionResult Create(CreateSourceViewModel vm)
         {
             var sub = ((ClaimsIdentity) User.Identity)
@@ -68,6 +72,7 @@ namespace Nozomi.Web2.Controllers.v1.Source
 //        }
 
         [HttpGet("{slug}")]
+        [Throttle(Name = "Source/GetCurrencySources", Milliseconds = 1000)]
         public NozomiResult<ICollection<Data.Models.Currency.Source>> GetCurrencySources(string slug, int page = 0)
         {
             return new NozomiResult<ICollection<Data.Models.Currency.Source>>(
@@ -75,6 +80,7 @@ namespace Nozomi.Web2.Controllers.v1.Source
         }
 
         [HttpGet("{slug}")]
+        [Throttle(Name = "Source/ListByCurrency", Milliseconds = 1000)]
         public IActionResult ListByCurrency([FromRoute]string slug, [FromQuery]int page = 0, [FromQuery]int itemsPerPage = 50)
         {
             if (string.IsNullOrWhiteSpace(slug) || page < 0 || itemsPerPage < 1)

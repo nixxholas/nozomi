@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Base.BCL.Helpers.Enumerator;
 using Nozomi.Data.ViewModels.Component;
+using Nozomi.Preprocessing.Attributes;
 using Nozomi.Preprocessing.Statics;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Services.Interfaces;
@@ -28,6 +29,7 @@ namespace Nozomi.Web2.Controllers.v1.Component
 
         [Authorize]
         [HttpGet]
+        [Throttle(Name = "Component/AllByRequest", Milliseconds = 1000)]
         public IActionResult AllByRequest([FromQuery]string requestGuid, [FromQuery]int index = 0, 
             [FromQuery]int itemsPerPage = 50, [FromQuery]bool includeNested = false)
         {
@@ -60,6 +62,7 @@ namespace Nozomi.Web2.Controllers.v1.Component
         }
         
         [HttpGet]
+        [Throttle(Name = "Component/All", Milliseconds = 1000)]
         public IActionResult All([FromQuery]int index = 0, [FromQuery]int itemsPerPage = 50, 
             [FromQuery]bool includeNested = false)
         {
@@ -71,6 +74,7 @@ namespace Nozomi.Web2.Controllers.v1.Component
 
         [Authorize(Roles = NozomiPermissions.AllowAllStaffRoles)]
         [HttpPost]
+        [Throttle(Name = "Component/Create", Milliseconds = 2500)]
         public IActionResult Create([FromBody]CreateComponentViewModel vm)
         {
             var sub = ((ClaimsIdentity) User.Identity)

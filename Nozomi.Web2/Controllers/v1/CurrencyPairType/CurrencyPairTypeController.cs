@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Nozomi.Preprocessing.Attributes;
 using Nozomi.Service.Events.Interfaces;
 
 namespace Nozomi.Web2.Controllers.v1.CurrencyPairType
@@ -16,6 +17,7 @@ namespace Nozomi.Web2.Controllers.v1.CurrencyPairType
         }
 
         [HttpGet]
+        [Throttle(Name = "CurrencyPairType/All", Milliseconds = 1000)]
         public IActionResult All()
         {
             return Ok(_currencyPairTypeEvent.All());

@@ -11,7 +11,7 @@ namespace Nozomi.Data.ViewModels.RequestProperty
         {
         }
         
-        public bool IsValid()
+        public new bool IsValid()
         {
             var validator = new UpdateRequestPropertyValidator();
             return validator.Validate(this).IsValid;

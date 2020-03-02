@@ -58,7 +58,7 @@ namespace Nozomi.Web2
 
             services.AddDbContextInjections();
 
-            services.AddMemoryCache();
+            services.AddMemoryCache(); // Required for API Throttling
             
             // services.AddHealthChecks();
 

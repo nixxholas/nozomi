@@ -660,7 +660,7 @@ namespace Nozomi.Repo.Migrations
 
                     b.HasIndex("RequestId");
 
-                    b.ToTable("RequestComponents");
+                    b.ToTable("Components");
                 });
 
             modelBuilder.Entity("Nozomi.Data.Models.Web.ComponentHistoricItem", b =>
@@ -712,7 +712,7 @@ namespace Nozomi.Repo.Migrations
 
                     b.HasIndex("RequestComponentId");
 
-                    b.ToTable("RcdHistoricItems");
+                    b.ToTable("ComponentHistoricItems");
                 });
 
             modelBuilder.Entity("Nozomi.Data.Models.Web.ComponentType", b =>

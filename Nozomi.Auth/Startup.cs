@@ -8,22 +8,18 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.IdentityModel.Tokens.Jwt;
-using System.IO;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-using IdentityModel;
-using IdentityServer4;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
-using Nozomi.Base.Auth.Global;
 using Nozomi.Base.Auth.Models;
 using Nozomi.Base.BCL.Configurations;
+using Nozomi.Infra.Auth.Events.EmailSender;
 using Nozomi.Infra.Auth.Events.Stripe;
 using Nozomi.Infra.Auth.Services.Address;
 using Nozomi.Infra.Auth.Services.Stripe;
@@ -34,8 +30,6 @@ using Nozomi.Preprocessing.Events;
 using Nozomi.Preprocessing.Events.Interfaces;
 using Nozomi.Preprocessing.Options;
 using Nozomi.Repo.Auth.Data;
-using Nozomi.Repo.BCL.Context;
-using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
 using Stripe;
 using VaultSharp;
@@ -249,18 +243,19 @@ namespace Nozomi.Auth
                 });
 
             // Database
-            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-
-            services.AddTransient<IUnitOfWork<AuthDbContext>, UnitOfWork<AuthDbContext>>();
-            services.AddTransient<IDbContext, AuthDbContext>();
-            services.AddTransient<IUnitOfWork<NozomiDbContext>, UnitOfWork<NozomiDbContext>>();
-            services.AddTransient<IDbContext, NozomiDbContext>();
+            // services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+            //
+            // services.AddTransient<IUnitOfWork<AuthDbContext>, UnitOfWork<AuthDbContext>>();
+            // services.AddTransient<IDbContext, AuthDbContext>();
+            // services.AddTransient<NozomiDbContext, UnitOfWork<NozomiDbContext>>();
+            // services.AddTransient<IDbContext, NozomiDbContext>();
 
             services.AddTransient<IAddressEvent, AddressEvent>();
             services.AddTransient<IStripeEvent, StripeEvent>();
             services.AddTransient<IValidatingEvent, ValidatingEvent>();
 
             services.AddTransient<IEmailSender, EmailSender>();
+            services.AddTransient<IAuthEmailSender, AuthEmailSender>();
             services.AddScoped<IAddressService, AddressService>();
             services.AddScoped<IStripeService, StripeService>();
             services.AddScoped<IUserService, UserService>();

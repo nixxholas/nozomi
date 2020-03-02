@@ -7,7 +7,6 @@ using Nozomi.Data.Models.Web.Websocket;
 using Nozomi.Data.ViewModels.WebsocketCommand;
 using Nozomi.Data.ViewModels.WebsocketCommandProperty;
 using Nozomi.Preprocessing.Abstracts;
-using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
 using Nozomi.Service.Events.Interfaces;
 
@@ -15,7 +14,7 @@ namespace Nozomi.Service.Events
 {
     public class WebsocketCommandEvent : BaseEvent<WebsocketCommandEvent, NozomiDbContext>, IWebsocketCommandEvent
     {
-        public WebsocketCommandEvent(ILogger<WebsocketCommandEvent> logger, IUnitOfWork<NozomiDbContext> unitOfWork) 
+        public WebsocketCommandEvent(ILogger<WebsocketCommandEvent> logger, NozomiDbContext unitOfWork) 
             : base(logger, unitOfWork)
         {
         }
@@ -24,8 +23,7 @@ namespace Nozomi.Service.Events
         {
             if (websocketCommandId > 0)
             {
-                var query = _unitOfWork.GetRepository<WebsocketCommand>()
-                    .GetQueryable()
+                var query = _context.WebsocketCommands
                     .Where(c => c.Id.Equals(websocketCommandId));
 
                 if (!string.IsNullOrEmpty(userId))
@@ -41,8 +39,7 @@ namespace Nozomi.Service.Events
         {
             if (Guid.TryParse(websocketCommandGuid, out var guid))
             {
-                var query = _unitOfWork.GetRepository<WebsocketCommand>()
-                    .GetQueryable()
+                var query = _context.WebsocketCommands
                     .Where(c => c.Guid.Equals(guid));
 
                 if (!string.IsNullOrEmpty(userId))
@@ -58,9 +55,7 @@ namespace Nozomi.Service.Events
         {
             if (requestId > 0 && !string.IsNullOrEmpty(name))
             {
-                return _unitOfWork.GetRepository<WebsocketCommand>()
-                    .GetQueryable()
-                    .AsNoTracking()
+                return _context.WebsocketCommands.AsNoTracking()
                     .Any(c => c.RequestId.Equals(requestId) && c.CommandType.Equals(type) 
                                                             && c.Name.Equals(name));
             }
@@ -72,9 +67,7 @@ namespace Nozomi.Service.Events
         {
             if (Guid.TryParse(requestGuid, out var guid) && !string.IsNullOrEmpty(name))
             {
-                return _unitOfWork.GetRepository<WebsocketCommand>()
-                    .GetQueryable()
-                    .AsNoTracking()
+                return _context.WebsocketCommands.AsNoTracking()
                     .Include(c => c.Request)
                     .Any(c => c.Request.Guid.Equals(guid) && c.CommandType.Equals(type) 
                                                             && c.Name.Equals(name));
@@ -86,9 +79,7 @@ namespace Nozomi.Service.Events
         public WebsocketCommand Get(long id, bool ensureNotDisabledOrDeleted = true, string userId = null, 
             bool track = false)
         {
-            var command = _unitOfWork.GetRepository<WebsocketCommand>()
-                .GetQueryable()
-                .Where(c => c.Id.Equals(id));
+            var command = _context.WebsocketCommands.Where(c => c.Id.Equals(id));
 
             if (!string.IsNullOrEmpty(userId))
                 command = command.Where(c => c.CreatedById.Equals(userId));
@@ -108,9 +99,7 @@ namespace Nozomi.Service.Events
             if (!Guid.TryParse(guid, out var parsedGuid))
                 return null;
             
-            var command = _unitOfWork.GetRepository<WebsocketCommand>()
-                .GetQueryable()
-                .Include(c => c.Request)
+            var command = _context.WebsocketCommands.Include(c => c.Request)
                 .Where(c => c.Guid.Equals(parsedGuid));
 
             if (!string.IsNullOrEmpty(userId))
@@ -128,8 +117,7 @@ namespace Nozomi.Service.Events
         public WebsocketCommand Get(Guid guid, bool ensureNotDisabledOrDeleted = true, string userId = null, 
             bool track = false)
         {
-            var query = _unitOfWork.GetRepository<WebsocketCommand>()
-                .GetQueryable();
+            var query = _context.WebsocketCommands.AsNoTracking();
 
             if (track)
                 query = query.AsTracking();
@@ -150,9 +138,7 @@ namespace Nozomi.Service.Events
                 throw new ArgumentOutOfRangeException($"{_eventName} GetAllByRequest (LONG): Invalid " +
                                                       "requestId!");
             
-            var commands = _unitOfWork.GetRepository<WebsocketCommand>()
-                .GetQueryable()
-                .Where(c => c.RequestId.Equals(requestId));
+            var commands = _context.WebsocketCommands.Where(c => c.RequestId.Equals(requestId));
 
             if (!string.IsNullOrEmpty(userId))
                 commands = commands.Where(c => c.CreatedById.Equals(userId));
@@ -173,9 +159,7 @@ namespace Nozomi.Service.Events
                 throw new ArgumentOutOfRangeException($"{_eventName} GetAllByRequest (GUID): Invalid " +
                                                       "requestId!");
             
-            var commands = _unitOfWork.GetRepository<WebsocketCommand>()
-                .GetQueryable()
-                .Include(c => c.Request)
+            var commands = _context.WebsocketCommands.Include(c => c.Request)
                 .Where(c => c.Request.Guid.Equals(parsedGuid));
 
             if (!string.IsNullOrEmpty(userId))
@@ -200,9 +184,7 @@ namespace Nozomi.Service.Events
             if (id <= 0)
                 throw new ArgumentOutOfRangeException(null, "Invalid command ID!");
             
-            var command = _unitOfWork.GetRepository<WebsocketCommand>()
-                .GetQueryable()
-                .Include(c => c.WebsocketCommandProperties)
+            var command = _context.WebsocketCommands.Include(c => c.WebsocketCommandProperties)
                 .Where(c => c.Id.Equals(id));
 
             if (!string.IsNullOrEmpty(userId))
@@ -229,9 +211,7 @@ namespace Nozomi.Service.Events
             if (!Guid.TryParse(guid, out var parsedGuid))
                 throw new ArgumentException("Invalid guid!");
             
-            var command = _unitOfWork.GetRepository<WebsocketCommand>()
-                .GetQueryable()
-                .Include(c => c.WebsocketCommandProperties)
+            var command = _context.WebsocketCommands.Include(c => c.WebsocketCommandProperties)
                 .Where(c => c.Guid.Equals(parsedGuid));
 
             if (!string.IsNullOrEmpty(userId))
@@ -258,9 +238,7 @@ namespace Nozomi.Service.Events
             if (requestId <= 0)
                 throw new ArgumentException("Invalid request ID!");
             
-            var command = _unitOfWork.GetRepository<WebsocketCommand>()
-                .GetQueryable()
-                .Include(c => c.WebsocketCommandProperties)
+            var command = _context.WebsocketCommands.Include(c => c.WebsocketCommandProperties)
                 .Where(c => c.RequestId.Equals(requestId));
 
             if (!string.IsNullOrEmpty(userId))
@@ -286,9 +264,7 @@ namespace Nozomi.Service.Events
             if (!Guid.TryParse(requestGuid, out var parsedGuid))
                 throw new ArgumentException("Invalid request GUID!");
             
-            var command = _unitOfWork.GetRepository<WebsocketCommand>()
-                .GetQueryable()
-                .Include(c => c.Request)
+            var command = _context.WebsocketCommands.Include(c => c.Request)
                 .Include(c => c.WebsocketCommandProperties)
                 .Where(c => c.Request.Guid.Equals(parsedGuid));
 

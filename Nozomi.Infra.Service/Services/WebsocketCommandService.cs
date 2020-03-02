@@ -7,7 +7,6 @@ using Microsoft.Extensions.Logging;
 using Nozomi.Data.Models.Web.Websocket;
 using Nozomi.Data.ViewModels.WebsocketCommand;
 using Nozomi.Preprocessing.Abstracts;
-using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Services.Interfaces;
@@ -20,18 +19,18 @@ namespace Nozomi.Service.Services
         private readonly IRequestEvent _requestEvent;
         private readonly IWebsocketCommandEvent _websocketCommandEvent;
         
-        public WebsocketCommandService(ILogger<WebsocketCommandService> logger, IUnitOfWork<NozomiDbContext> unitOfWork,
+        public WebsocketCommandService(ILogger<WebsocketCommandService> logger, NozomiDbContext context,
             IRequestEvent requestEvent, IWebsocketCommandEvent websocketCommandEvent) 
-            : base(logger, unitOfWork)
+            : base(logger, context)
         {
             _requestEvent = requestEvent;
             _websocketCommandEvent = websocketCommandEvent;
         }
 
         public WebsocketCommandService(IHttpContextAccessor contextAccessor, ILogger<WebsocketCommandService> logger, 
-            IUnitOfWork<NozomiDbContext> unitOfWork, IRequestEvent requestEvent, 
+            NozomiDbContext context, IRequestEvent requestEvent, 
             IWebsocketCommandEvent websocketCommandEvent) 
-            : base(contextAccessor, logger, unitOfWork)
+            : base(contextAccessor, logger, context)
         {
             _requestEvent = requestEvent;
             _websocketCommandEvent = websocketCommandEvent;
@@ -70,8 +69,8 @@ namespace Nozomi.Service.Services
                             }));
                 }
                 
-                _unitOfWork.GetRepository<WebsocketCommand>().Add(command); // Add
-                _unitOfWork.Commit(userId); // Save
+                _context.WebsocketCommands.Add(command); // Add
+                _context.SaveChanges(userId); // Save
                 return; // Exit
             }
             
@@ -83,9 +82,7 @@ namespace Nozomi.Service.Services
             if (vm.IsValid() && _websocketCommandEvent.Exists(vm.Guid, userId) 
                              && Guid.TryParse(vm.Guid, out var parsedGuid))
             {
-                var query = _unitOfWork.GetRepository<WebsocketCommand>()
-                    .GetQueryable()
-                    .Include(c => c.WebsocketCommandProperties)
+                var query = _context.WebsocketCommands.Include(c => c.WebsocketCommandProperties)
                     .AsTracking()
                     .SingleOrDefault(c => c.Guid.Equals(parsedGuid));
                 
@@ -111,7 +108,8 @@ namespace Nozomi.Service.Services
                         // Look for the property we're gonna update
                         var currentProperty = query.WebsocketCommandProperties
                             .SingleOrDefault(p => 
-                                p.Guid.Equals(updatedProperty.Guid) || (p.Id > 0 && p.Id.Equals(updatedProperty.Id)));
+                                p.Guid.ToString().Equals(updatedProperty.Guid) 
+                                || (p.Id > 0 && p.Id.Equals(updatedProperty.Id)));
 
                         // If there's something, means it exists
                         if (currentProperty != null)
@@ -138,8 +136,8 @@ namespace Nozomi.Service.Services
                 }
                 
                 // Then we update
-                _unitOfWork.GetRepository<WebsocketCommand>().Update(query); // Save
-                _unitOfWork.Commit(userId); // Commit
+                _context.WebsocketCommands.Update(query); // Save
+                _context.SaveChanges(userId); // Commit
             }
             
             throw new ArgumentException("Invalid payload!");
@@ -149,15 +147,13 @@ namespace Nozomi.Service.Services
         {
             if (Guid.TryParse(commandGuid, out var parsedGuid))
             {
-                var command = _unitOfWork.GetRepository<WebsocketCommand>()
-                    .GetQueryable()
-                    .AsTracking()
+                var command = _context.WebsocketCommands.AsTracking()
                     .SingleOrDefault(c => c.Guid.Equals(parsedGuid));
 
                 if (command != null)
                 {
-                    _unitOfWork.GetRepository<WebsocketCommand>().Delete(command); // Delete
-                    _unitOfWork.Commit(userId); // Save
+                    _context.WebsocketCommands.Remove(command); // Delete
+                    _context.SaveChanges(userId); // Save
 
                     return;
                 }
@@ -170,15 +166,13 @@ namespace Nozomi.Service.Services
         {
             if (commandId > 0)
             {
-                var command = _unitOfWork.GetRepository<WebsocketCommand>()
-                    .GetQueryable()
-                    .AsTracking()
+                var command = _context.WebsocketCommands.AsTracking()
                     .SingleOrDefault(c => c.Id.Equals(commandId));
 
                 if (command != null)
                 {
-                    _unitOfWork.GetRepository<WebsocketCommand>().Delete(command); // Delete
-                    _unitOfWork.Commit(userId); // Save
+                    _context.WebsocketCommands.Remove(command); // Delete
+                    _context.SaveChanges(userId); // Save
 
                     return;
                 }

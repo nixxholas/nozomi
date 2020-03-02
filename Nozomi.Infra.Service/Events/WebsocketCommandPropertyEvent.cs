@@ -6,7 +6,6 @@ using Microsoft.Extensions.Logging;
 using Nozomi.Data.Models.Web.Websocket;
 using Nozomi.Data.ViewModels.WebsocketCommandProperty;
 using Nozomi.Preprocessing.Abstracts;
-using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
 using Nozomi.Service.Events.Interfaces;
 
@@ -16,7 +15,7 @@ namespace Nozomi.Service.Events
         IWebsocketCommandPropertyEvent
     {
         public WebsocketCommandPropertyEvent(ILogger<WebsocketCommandPropertyEvent> logger, 
-            IUnitOfWork<NozomiDbContext> unitOfWork) 
+            NozomiDbContext unitOfWork) 
             : base(logger, unitOfWork)
         {
         }
@@ -25,9 +24,7 @@ namespace Nozomi.Service.Events
         {
             if (websocketCommandPropertyId > 0)
             {
-                var query = _unitOfWork.GetRepository<WebsocketCommandProperty>()
-                    .GetQueryable()
-                    .AsNoTracking();
+                var query = _context.WebsocketCommandProperties.AsNoTracking();
 
                 if (!string.IsNullOrEmpty(userId))
                     query = query.Where(p => p.CreatedById.Equals(userId));
@@ -42,9 +39,7 @@ namespace Nozomi.Service.Events
         {
             if (Guid.TryParse(websocketCommandPropertyGuid, out var parsedGuid))
             {
-                var query = _unitOfWork.GetRepository<WebsocketCommandProperty>()
-                    .GetQueryable()
-                    .AsNoTracking();
+                var query = _context.WebsocketCommandProperties.AsNoTracking();
 
                 if (!string.IsNullOrEmpty(userId))
                     query = query.Where(p => p.CreatedById.Equals(userId));
@@ -57,9 +52,7 @@ namespace Nozomi.Service.Events
 
         public bool Exists(Guid propertyGuid, string userId = null)
         {
-            var query = _unitOfWork.GetRepository<WebsocketCommandProperty>()
-                .GetQueryable()
-                .AsNoTracking()
+            var query = _context.WebsocketCommandProperties.AsNoTracking()
                 .Where(p => p.Guid.Equals(propertyGuid));
 
             if (!string.IsNullOrEmpty(userId))
@@ -72,9 +65,7 @@ namespace Nozomi.Service.Events
         {
             if (commandId > 0)
             {
-                var query = _unitOfWork.GetRepository<WebsocketCommandProperty>()
-                    .GetQueryable()
-                    .AsNoTracking();
+                var query = _context.WebsocketCommandProperties.AsNoTracking();
 
                 if (!string.IsNullOrEmpty(userId))
                     query = query.Where(p => p.CreatedById.Equals(userId));
@@ -90,9 +81,7 @@ namespace Nozomi.Service.Events
         {
             if (Guid.TryParse(commandGuid, out var parsedGuid))
             {
-                var query = _unitOfWork.GetRepository<WebsocketCommandProperty>()
-                    .GetQueryable()
-                    .AsNoTracking();
+                var query = _context.WebsocketCommandProperties.AsNoTracking();
 
                 if (!string.IsNullOrEmpty(userId))
                     query = query.Where(p => p.CreatedById.Equals(userId));
@@ -109,9 +98,7 @@ namespace Nozomi.Service.Events
         public WebsocketCommandProperty Get(long id, bool ensureNotDisabledOrDeleted = true, string userId = null, 
             bool track = false)
         {
-            var property = _unitOfWork.GetRepository<WebsocketCommandProperty>()
-                .GetQueryable()
-                .Where(c => c.Id.Equals(id));
+            var property = _context.WebsocketCommandProperties.Where(c => c.Id.Equals(id));
 
             if (!string.IsNullOrEmpty(userId))
                 property = property.Where(c => c.CreatedById.Equals(userId));
@@ -131,9 +118,7 @@ namespace Nozomi.Service.Events
             if (!Guid.TryParse(guid, out var parsedGuid))
                 return null;
             
-            var property = _unitOfWork.GetRepository<WebsocketCommandProperty>()
-                .GetQueryable()
-                .Where(c => c.Guid.Equals(parsedGuid));
+            var property = _context.WebsocketCommandProperties.Where(c => c.Guid.Equals(parsedGuid));
 
             if (!string.IsNullOrEmpty(userId))
                 property = property.Where(c => c.CreatedById.Equals(userId));
@@ -150,8 +135,7 @@ namespace Nozomi.Service.Events
         public WebsocketCommandProperty Get(Guid guid, bool ensureNotDisabledOrDeleted = true, string userId = null,
             bool track = false)
         {
-            var query = _unitOfWork.GetRepository<WebsocketCommandProperty>()
-                .GetQueryable();
+            var query = _context.WebsocketCommandProperties.AsNoTracking();
 
             if (track)
                 query = query.AsTracking();
@@ -172,9 +156,7 @@ namespace Nozomi.Service.Events
                 throw new ArgumentOutOfRangeException($"{_eventName} GetAllByCommand (LONG): Invalid " +
                                                       "commandId!");
             
-            var properties = _unitOfWork.GetRepository<WebsocketCommandProperty>()
-                .GetQueryable()
-                .Where(c => c.WebsocketCommandId.Equals(commandId));
+            var properties = _context.WebsocketCommandProperties.Where(c => c.WebsocketCommandId.Equals(commandId));
 
             if (!string.IsNullOrEmpty(userId))
                 properties = properties.Where(c => c.CreatedById.Equals(userId));
@@ -195,9 +177,7 @@ namespace Nozomi.Service.Events
                 throw new ArgumentOutOfRangeException($"{_eventName} GetAllByRequest (GUID): Invalid " +
                                                       "requestId!");
             
-            var properties = _unitOfWork.GetRepository<WebsocketCommandProperty>()
-                .GetQueryable()
-                .Include(p => p.WebsocketCommand)
+            var properties = _context.WebsocketCommandProperties.Include(p => p.WebsocketCommand)
                 .Where(c => c.WebsocketCommand.Guid.Equals(parsedGuid));
 
             if (!string.IsNullOrEmpty(userId))
@@ -218,9 +198,7 @@ namespace Nozomi.Service.Events
             if (id <= 0)
                 throw new ArgumentOutOfRangeException(null, "Invalid command ID!");
             
-            var property = _unitOfWork.GetRepository<WebsocketCommandProperty>()
-                .GetQueryable()
-                .Include(p => p.WebsocketCommand)
+            var property = _context.WebsocketCommandProperties.Include(p => p.WebsocketCommand)
                 .Where(c => c.Id.Equals(id));
 
             if (!string.IsNullOrEmpty(userId))
@@ -243,9 +221,7 @@ namespace Nozomi.Service.Events
             if (!Guid.TryParse(guid, out var parsedGuid))
                 throw new ArgumentException("Invalid guid!");
             
-            var command = _unitOfWork.GetRepository<WebsocketCommandProperty>()
-                .GetQueryable()
-                .Include(p => p.WebsocketCommand)
+            var command = _context.WebsocketCommandProperties.Include(p => p.WebsocketCommand)
                 .Where(c => c.Guid.Equals(parsedGuid));
 
             if (!string.IsNullOrEmpty(userId))
@@ -268,9 +244,7 @@ namespace Nozomi.Service.Events
             if (commandId <= 0)
                 throw new ArgumentException("Invalid request ID!");
             
-            var properties = _unitOfWork.GetRepository<WebsocketCommandProperty>()
-                .GetQueryable()
-                .Include(p => p.WebsocketCommand)
+            var properties = _context.WebsocketCommandProperties.Include(p => p.WebsocketCommand)
                 .Where(c => c.WebsocketCommandId.Equals(commandId));
 
             if (ensureNotDisabledOrDeleted)
@@ -289,9 +263,7 @@ namespace Nozomi.Service.Events
             if (!Guid.TryParse(commandGuid, out var parsedGuid))
                 throw new ArgumentException("Invalid request GUID!");
             
-            var properties = _unitOfWork.GetRepository<WebsocketCommandProperty>()
-                .GetQueryable()
-                .Include(c => c.WebsocketCommand)
+            var properties = _context.WebsocketCommandProperties.Include(c => c.WebsocketCommand)
                 .Where(c => c.WebsocketCommand.Guid.Equals(parsedGuid));
 
             if (ensureNotDisabledOrDeleted)

@@ -16,7 +16,6 @@ using Nozomi.Base.BCL.Configurations;
 using Nozomi.Infra.Auth.Events.Stripe;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.Auth.Data;
-using Nozomi.Repo.BCL.Repository;
 using Stripe;
 
 namespace Nozomi.Infra.Auth.Services.Stripe
@@ -31,10 +30,10 @@ namespace Nozomi.Infra.Auth.Services.Stripe
         private readonly CustomerService _customerService;
         private readonly PaymentMethodService _paymentMethodService;
 
-        public StripeService(ILogger<StripeService> logger, IUnitOfWork<AuthDbContext> unitOfWork, 
+        public StripeService(ILogger<StripeService> logger, AuthDbContext context, 
             IStripeEvent stripeEvent, UserManager<Base.Auth.Models.User> userManager, 
             IOptions<StripeOptions> stripeConfiguration)
-            : base(logger, unitOfWork)
+            : base(logger, context)
         {
             _stripeConfiguration = stripeConfiguration;
             _stripeEvent = stripeEvent;
@@ -46,9 +45,9 @@ namespace Nozomi.Infra.Auth.Services.Stripe
         }
 
         public StripeService(IHttpContextAccessor contextAccessor, ILogger<StripeService> logger,
-            UserManager<Base.Auth.Models.User> userManager, IUnitOfWork<AuthDbContext> unitOfWork, 
+            UserManager<Base.Auth.Models.User> userManager, AuthDbContext context, 
             IStripeEvent stripeEvent, IOptions<StripeOptions> stripeConfiguration)
-            : base(contextAccessor, logger, unitOfWork)
+            : base(contextAccessor, logger, context)
         {
             _stripeConfiguration = stripeConfiguration;
             _stripeEvent = stripeEvent;

@@ -2,29 +2,14 @@
     <div class="container">        
         <section class="hero" v-if="this.data">
             <div class="hero-body">
-                    <b-navbar class="pb-4" 
-                              spaced
-                              :mobile-burger="false">
-                        <template slot="brand">
-                            <b-navbar-item tag="div" class="level-item">
-                                <img
-                                        class="image is-64x64 mr-3"
-                                        :src="data.logoPath"
-                                        alt="Currency"
-                                        v-if="data && data.logoPath"
-                                >
-                                <p class="title is-4">{{ data.name }}</p>
-                            </b-navbar-item>
-                        </template>
-                        <template slot="start">
-                        </template>
-
-                        <template slot="end">
-                            <b-navbar-item tag="div">
-
-                            </b-navbar-item>
-                        </template>
-                    </b-navbar>
+                <div class="container is-flex brand">
+                    <img class="image is-64x64 is-inline-block"
+                         :src="data.logoPath"
+                         alt="Currency"
+                         v-if="data && data.logoPath"
+                    />
+                    <span class="title is-4">{{ data.name }}</span>
+                </div>
                 
                 <div class="tile is-ancestor box container">
                     <div class="tile is-parent">
@@ -505,5 +490,12 @@
 </script>
 
 <style scoped>
-
+    .brand {
+        align-items: center;
+        margin-bottom: 3em;
+    }
+    
+    .brand img {
+        margin-right: 1em;
+    }
 </style>

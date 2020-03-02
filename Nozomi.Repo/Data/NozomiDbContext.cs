@@ -9,7 +9,6 @@ using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web;
 using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Data.Models.Web.Websocket;
-using Nozomi.Repo.BCL.Context;
 using Nozomi.Repo.Data.Mappings.CurrencyModels;
 using Nozomi.Repo.Data.Mappings.WebModels;
 using Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels;
@@ -17,7 +16,7 @@ using Nozomi.Repo.Data.Mappings.WebModels.WebsocketModels;
 
 namespace Nozomi.Repo.Data
 {
-    public class NozomiDbContext : DbContext, IDbContext
+    public class NozomiDbContext : DbContext
     {
         public DbSet<AnalysedComponent> AnalysedComponents { get; set; }
         public DbSet<AnalysedHistoricItem> AnalysedHistoricItems { get; set; }
@@ -27,8 +26,8 @@ namespace Nozomi.Repo.Data
         public DbSet<CurrencyType> CurrencyTypes { get; set; }
         public DbSet<CurrencySource> CurrencySources { get; set; }
         public DbSet<Request> Requests { get; set; }
-        public DbSet<Component> RequestComponents { get; set; }
-        public DbSet<ComponentHistoricItem> RcdHistoricItems { get; set; }
+        public DbSet<Component> Components { get; set; }
+        public DbSet<ComponentHistoricItem> ComponentHistoricItems { get; set; }
         public DbSet<RequestProperty> RequestProperties { get; set; }
         public DbSet<Source> Sources { get; set; }
         public DbSet<SourceType> SourceTypes { get; set; }
@@ -38,12 +37,6 @@ namespace Nozomi.Repo.Data
         public NozomiDbContext(DbContextOptions<NozomiDbContext> options) : base(options)
         {
         }
-        
-//        public NozomiDbContext(DbContextOptions<NozomiDbContext> options,
-//            ILogger<NozomiDbContext> logger) : base(options)
-//        {
-//            _logger = logger;
-//        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

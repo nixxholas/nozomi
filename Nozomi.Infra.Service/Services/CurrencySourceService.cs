@@ -7,7 +7,6 @@ using Nozomi.Data.AreaModels.v1.CurrencySource;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.ViewModels.CurrencySource;
 using Nozomi.Preprocessing.Abstracts;
-using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Services.Interfaces;
@@ -22,7 +21,7 @@ namespace Nozomi.Service.Services
         
         public CurrencySourceService(ILogger<CurrencySourceService> logger, ICurrencyEvent currencyEvent, 
             ICurrencySourceEvent currencySourceEvent, ISourceEvent sourceEvent, 
-            IUnitOfWork<NozomiDbContext> unitOfWork) : base(logger, unitOfWork)
+            NozomiDbContext context) : base(logger, context)
         {
             _currencyEvent = currencyEvent;
             _currencySourceEvent = currencySourceEvent;
@@ -33,20 +32,18 @@ namespace Nozomi.Service.Services
         {
             try
             {
-                if (_unitOfWork.GetRepository<CurrencySource>()
-                    .GetQueryable()
-                    .AsNoTracking()
+                if (_context.CurrencySources.AsNoTracking()
                     .Any(cs => cs.CurrencyId.Equals(currencySource.CurrencyId)
                                && cs.SourceId.Equals(currencySource.SourceId)))
                     return new NozomiResult<string>(NozomiResultType.Failed, "Source to currency binding already exists.");
                 
-                _unitOfWork.GetRepository<CurrencySource>().Add(new CurrencySource
+                _context.CurrencySources.Add(new CurrencySource
                 {
                     CurrencyId = currencySource.CurrencyId,
                     SourceId = currencySource.SourceId
                 });
 
-                _unitOfWork.Commit(userId);
+                _context.SaveChanges(userId);
 
                 return new NozomiResult<string>(NozomiResultType.Success, "Source successfully added!");
             }
@@ -66,10 +63,9 @@ namespace Nozomi.Service.Services
                 if (source != null && currency != null 
                                    && !_currencySourceEvent.Exists(source.Id, currency.Id))
                 {
-                    _unitOfWork.GetRepository<CurrencySource>()
-                        .Add(new CurrencySource(source.Id, currency.Id));
+                    _context.CurrencySources.Add(new CurrencySource(source.Id, currency.Id));
 
-                    _unitOfWork.Commit(userId);
+                    _context.SaveChanges(userId);
 
                     return true;
                 }
@@ -82,9 +78,7 @@ namespace Nozomi.Service.Services
         public bool EnsurePairIsCreated(string mainTicker, string counterTicker, long sourceId,
             string userId = null)
         {
-            if (!_unitOfWork.GetRepository<CurrencySource>()
-                .GetQueryable()
-                .AsNoTracking()
+            if (!_context.CurrencySources.AsNoTracking()
                 .Include(cs => cs.Currency)
                 .Any(cs => cs.DeletedAt == null && cs.IsEnabled 
                                                   && cs.Currency != null 
@@ -95,13 +89,11 @@ namespace Nozomi.Service.Services
                 var mainCurrency = _currencyEvent.GetBySlug(mainTicker);
                 mainCurrencySource.CurrencyId = mainCurrency.Id;
                 
-                _unitOfWork.GetRepository<CurrencySource>().Add(mainCurrencySource);
-                _unitOfWork.Commit(userId);
+                _context.CurrencySources.Add(mainCurrencySource);
+                _context.SaveChanges(userId);
             }
             
-            if (!_unitOfWork.GetRepository<CurrencySource>()
-                .GetQueryable()
-                .AsNoTracking()
+            if (!_context.CurrencySources.AsNoTracking()
                 .Include(cs => cs.Currency)
                 .Any(cs => cs.DeletedAt == null && cs.IsEnabled 
                                                 && cs.Currency != null 
@@ -112,8 +104,8 @@ namespace Nozomi.Service.Services
                 var counterCurrency = _currencyEvent.GetBySlug(counterTicker);
                 counterCurrencySource.CurrencyId = counterCurrency.Id;
                 
-                _unitOfWork.GetRepository<CurrencySource>().Add(counterCurrencySource);
-                _unitOfWork.Commit(userId);
+                _context.CurrencySources.Add(counterCurrencySource);
+                _context.SaveChanges(userId);
             }
 
             return true;
@@ -123,9 +115,8 @@ namespace Nozomi.Service.Services
         {
             try
             {
-                var csToDelete = _unitOfWork.GetRepository<CurrencySource>()
-                    .Get(cs => cs.Id.Equals(id) && cs.DeletedAt == null)
-                    .SingleOrDefault();
+                var csToDelete = _context.CurrencySources
+                    .SingleOrDefault(cs => cs.Id.Equals(id) && cs.DeletedAt == null);
 
                 if (csToDelete == null)
                     return new NozomiResult<string>(NozomiResultType.Failed, "Unable to delete currency source");
@@ -134,8 +125,8 @@ namespace Nozomi.Service.Services
                 if (!string.IsNullOrWhiteSpace(userId))
                     csToDelete.DeletedById = userId;
 
-                _unitOfWork.GetRepository<CurrencySource>().Update(csToDelete);
-                _unitOfWork.Commit(userId);
+                _context.CurrencySources.Update(csToDelete);
+                _context.SaveChanges(userId);
 
                 return new NozomiResult<string>(NozomiResultType.Success, "Currency source successfully deleted!");
             }

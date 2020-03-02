@@ -12,41 +12,62 @@
     <div class="hero-body">
         @if (string.IsNullOrEmpty(name))
         {
-            <h1 class="title">Register</h1>
+            <div class="container has-text-centered">
+                <div class="column is-5 is-offset-4">
+                    <div class="card">
+                        <div class="card-content">
+                            <img src="~/logo.png" width="128" class="is-bottom-spaced is-1"/>
+                            <p class="title">Get Started free</p>
+                            <p class="subtitle">Create a free Nozomi account to continue</p>
 
-            <form asp-action="Register">
-                <input type="hidden" asp-for="ReturnUrl"/>
+                            <partial name="_ValidationSummary"/>
 
-                <div class="field">
-                    <label class="label" asp-for="Email">Email</label>
-                    <div class="control">
-                        <input class="input" type="text" asp-for="Email" placeholder="hello@nozomi.one"/>
+                            <form asp-action="Register" class="field">
+                                <input type="hidden" asp-for="ReturnUrl"/>
+
+                                <div class="field">
+                                    <div class="control has-icons-left">
+                                        <input type="email" class="input" asp-for="Email" placeholder="Email"/>
+                                        <span class="icon is-small is-left">
+                                            <i class="fas fa-envelope"></i>
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div class="field">
+                                    <div class="control has-icons-left">
+                                        <input type="text" class="input" asp-for="Username" placeholder="Username"/>
+                                        <span class="icon is-small is-left">
+                                            <i class="fas fa-user"></i>
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div class="field">
+                                    <div class="control has-icons-left">
+                                        <input type="password" class="input" asp-for="Password" placeholder="Password"/>
+                                        <span class="icon is-small is-left">
+                                            <i class="fas fa-lock"></i>
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="button is-info is-medium is-fullwidth is-bottom-spaced is-1">
+                                    Continue
+                                </button>
+                            </form>
+                        </div>
+                        <footer class="card-footer">
+                            <p class="card-footer-item">
+                                <span class="has-text-grey">
+                                    Already have an account?
+                                    <a asp-action="Login" asp-route-returnUrl="@Model.ReturnUrl">Sign In</a>
+                                </span>
+                            </p>
+                        </footer>
                     </div>
                 </div>
-
-                <div class="field">
-                    <label class="label" asp-for="Username">Username</label>
-                    <div class="control">
-                        <input class="input" type="text" asp-for="Username" placeholder="helloboi"/>
-                    </div>
-                </div>
-
-                <div class="field">
-                    <label class="label" asp-for="Password">Password</label>
-                    <div class="control">
-                        <input class="input" type="password" asp-for="Password"/>
-                    </div>
-                </div>
-
-                <div class="field is-grouped">
-                    <div class="control">
-                        <button class="button is-success" name="button" value="register">Submit</button>
-                    </div>
-                    <div class="control">
-                        <button class="button is-light" name="button" value="cancel">Cancel</button>
-                    </div>
-                </div>
-            </form>
+            </div>
         }
         else
         {

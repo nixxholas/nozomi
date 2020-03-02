@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.ViewModels.CurrencySource;
+using Nozomi.Preprocessing.Attributes;
 using Nozomi.Preprocessing.Statics;
 using Nozomi.Service.Services.Interfaces;
 
@@ -23,6 +24,7 @@ namespace Nozomi.Web2.Controllers.v1.CurrencySource
 
         [Authorize(Roles = NozomiPermissions.AllowAllStaffRoles)]
         [HttpPost]
+        [Throttle(Name = "CurrencySource/Create", Milliseconds = 2500)]
         public IActionResult Create([FromBody]CreateCurrencySourceViewModel vm)
         {
             var sub = ((ClaimsIdentity) User.Identity)

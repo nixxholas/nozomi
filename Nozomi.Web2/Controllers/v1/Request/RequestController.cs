@@ -8,6 +8,7 @@ using Nozomi.Base.Auth.Models;
 using Nozomi.Base.BCL.Helpers.Enumerator;
 using Nozomi.Data;
 using Nozomi.Data.ViewModels.Request;
+using Nozomi.Preprocessing.Attributes;
 using Nozomi.Preprocessing.Statics;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Services.Requests.Interfaces;
@@ -29,6 +30,7 @@ namespace Nozomi.Web2.Controllers.v1.Request
 
         [Authorize]
         [HttpGet]
+        [Throttle(Name = "Request/All", Milliseconds = 1000)]
         public NozomiResult<JsonResult> All(bool includeNested)
         {
             var res = _requestEvent.GetAllActive();
@@ -43,6 +45,7 @@ namespace Nozomi.Web2.Controllers.v1.Request
 
         [Authorize]
         [HttpPost]
+        [Throttle(Name = "Request/Create", Milliseconds = 2500)]
         public IActionResult Create([FromBody]CreateRequestViewModel vm)
         {
             var sub = ((ClaimsIdentity) User.Identity)
@@ -60,6 +63,7 @@ namespace Nozomi.Web2.Controllers.v1.Request
 
         [Authorize]
         [HttpGet]
+        [Throttle(Name = "Request/GetAll", Milliseconds = 1000)]
         public IActionResult GetAll()
         {
             var identity = (ClaimsIdentity) User.Identity;
@@ -85,6 +89,7 @@ namespace Nozomi.Web2.Controllers.v1.Request
 
         [Authorize]
         [HttpPut]
+        [Throttle(Name = "Request/Update", Milliseconds = 2500)]
         public IActionResult Update([FromBody]UpdateRequestViewModel vm)
         {
             var sub = ((ClaimsIdentity) User.Identity)
@@ -101,6 +106,7 @@ namespace Nozomi.Web2.Controllers.v1.Request
 
         [Authorize]
         [HttpDelete("{guid}")]
+        [Throttle(Name = "Request/Delete", Milliseconds = 2000)]
         public IActionResult Delete(string guid)
         {
             var sub = ((ClaimsIdentity) User.Identity)

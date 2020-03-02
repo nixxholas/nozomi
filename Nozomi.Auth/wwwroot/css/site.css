@@ -1,4 +1,4 @@
-﻿body {
+body {
   margin-top: 65px;
 }
 .navbar-header {
@@ -10,9 +10,14 @@
   top: -2px;
   display: inline;
 }
-.icon {
-  position: relative;
-  top: -10px;
+.is-bottom-spaced {
+  margin-bottom: 15px;
+}
+.is-bottom-spaced.is-1 {
+  margin-bottom: 10%;
+}
+.is-bottom-spaced.is-2 {
+  margin-bottom: 20%;
 }
 .logged-out iframe {
   display: none;
@@ -80,3 +85,4 @@
 .grants .grant li:last-child:after {
   content: '';
 }
+/*# sourceMappingURL=site.css.map */

@@ -3,6 +3,7 @@ using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Nozomi.Preprocessing.Attributes
 {
@@ -26,9 +27,9 @@ namespace Nozomi.Preprocessing.Attributes
         public string Name { get; set; }
 
         /// <summary>
-        /// The number of seconds clients must wait before executing this decorated route again.
+        /// The number of milliseconds clients must wait before executing this decorated route again.
         /// </summary>
-        public int Seconds { get; set; }
+        public int Milliseconds { get; set; }
 
         /// <summary>
         /// A text message that will be sent to the client upon throttling.  You can include the token {n} to
@@ -38,33 +39,42 @@ namespace Nozomi.Preprocessing.Attributes
 
         public override void OnActionExecuting(ActionExecutingContext c)
         {
-            var key = string.Concat(Name, "-", 
+            var memoryCache = c.HttpContext.RequestServices.GetRequiredService<IMemoryCache>();
+            
+            var key = string.Concat(Name, "-",
                 // https://stackoverflow.com/questions/28664686/how-do-i-get-client-ip-address-in-asp-net-core
                 c.HttpContext.Connection.RemoteIpAddress);
             var allowExecute = false;
 
-            // TODO: Support caching first
-            // if (HttpRuntime.Cache[key] == null)
-            // {
-            //     HttpRuntime.Cache.Add(key,
-            //         true, // is this the smallest data we can have?
-            //         null, // no dependencies
-            //         DateTime.Now.AddSeconds(Seconds), // absolute expiration
-            //         Cache.NoSlidingExpiration,
-            //         CacheItemPriority.Low,
-            //         null); // no callback
-            //
-            //     allowExecute = true;
-            // }
+            var cacheItem = memoryCache.Get(key);
+            // Ensure that the accessor didn't access recently
+            if (cacheItem == null)
+            {
+                // Setup the expiration timing
+                var cacheEntryOptions = new MemoryCacheEntryOptions()
+                {
+                    Priority = CacheItemPriority.Normal,
+                    AbsoluteExpiration = DateTime.Now.AddMilliseconds(Milliseconds),
+                };
+                // Ensure expiry in 3 seconds
+                // .SetSlidingExpiration(TimeSpan.FromSeconds(Seconds));
+
+                // Record down this request
+                memoryCache.Set(key, DateTime.UtcNow.AddMilliseconds(Milliseconds), cacheEntryOptions);
+
+                allowExecute = true;
+            }
 
             if (!allowExecute)
             {
                 if (String.IsNullOrEmpty(Message))
-                    Message = "You may only perform this action every {n} seconds.";
+                    Message = Milliseconds >= 1000 ? "You may only perform this action every {n} seconds." 
+                        : "You may only perform this action every {n} milliseconds.";
 
-                c.Result = new ContentResult {Content = Message.Replace("{n}", Seconds.ToString())};
+                c.Result = new ContentResult {Content = Message.Replace("{n}", 
+                    Milliseconds >= 1000 ? (Milliseconds/1000).ToString() : Milliseconds.ToString())};
                 // see 409 - http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html
-                c.HttpContext.Response.StatusCode = (int) HttpStatusCode.Conflict;
+                c.HttpContext.Response.StatusCode = (int) HttpStatusCode.TooManyRequests;
             }
         }
     }
