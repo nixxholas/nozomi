@@ -27,7 +27,7 @@ namespace Nozomi.Web2.Controllers.v1.WebsocketCommand
 
         [Authorize]
         [HttpGet("{guid}")]
-        [Throttle(Milliseconds = 1000)]
+        [Throttle(Name = "WebsocketCommand/Get", Milliseconds = 1000)]
         public IActionResult Get(string guid)
         {
             var sub = ((ClaimsIdentity) User.Identity)
@@ -51,7 +51,7 @@ namespace Nozomi.Web2.Controllers.v1.WebsocketCommand
 
         [Authorize]
         [HttpGet("{requestGuid}")]
-        [Throttle(Milliseconds = 1000)]
+        [Throttle(Name = "WebsocketCommand/ViewByRequest", Milliseconds = 1000)]
         public IActionResult ViewByRequest(string requestGuid)
         {
             var sub = ((ClaimsIdentity) User.Identity)
@@ -75,7 +75,7 @@ namespace Nozomi.Web2.Controllers.v1.WebsocketCommand
 
         [Authorize]
         [HttpPost]
-        [Throttle(Milliseconds = 2500)]
+        [Throttle(Name = "WebsocketCommand/Create", Milliseconds = 2500)]
         public IActionResult Create([FromBody]CreateWebsocketCommandInputModel vm)
         {
             var sub = ((ClaimsIdentity) User.Identity)
@@ -101,7 +101,7 @@ namespace Nozomi.Web2.Controllers.v1.WebsocketCommand
 
         [Authorize]
         [HttpPut]
-        [Throttle(Milliseconds = 2500)]
+        [Throttle(Name = "WebsocketCommand/Update", Milliseconds = 2500)]
         public IActionResult Update([FromBody]UpdateWebsocketCommandInputModel vm)
         {
             var sub = ((ClaimsIdentity) User.Identity)
@@ -127,7 +127,7 @@ namespace Nozomi.Web2.Controllers.v1.WebsocketCommand
 
         [Authorize]
         [HttpDelete("{websocketCommandGuid}")]
-        [Throttle(Milliseconds = 2000)]
+        [Throttle(Name = "WebsocketCommand/Delete", Milliseconds = 2000)]
         public IActionResult Delete(string websocketCommandGuid)
         {
             var sub = ((ClaimsIdentity) User.Identity)

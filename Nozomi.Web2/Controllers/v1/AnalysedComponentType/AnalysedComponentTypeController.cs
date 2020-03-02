@@ -15,7 +15,7 @@ namespace Nozomi.Web2.Controllers.v1.AnalysedComponentType
 
         [AllowAnonymous]
         [HttpGet]
-        [Throttle(Milliseconds = 1000)]
+        [Throttle(Name = "AnalysedComponentType/All", Milliseconds = 100)]
         public IActionResult All()
         {
             return Ok(NozomiServiceConstants.AnalysedComponentTypeMap);

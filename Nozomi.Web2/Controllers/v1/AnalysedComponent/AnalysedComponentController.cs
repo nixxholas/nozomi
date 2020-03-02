@@ -31,7 +31,7 @@ namespace Nozomi.Web2.Controllers.v1.AnalysedComponent
 
         [Authorize]
         [HttpGet]
-        [Throttle(Milliseconds = 1000)]
+        [Throttle(Name = "AnalysedComponent/All", Milliseconds = 1000)]
         public IActionResult All()
         {
             var payload = _analysedComponentTypeEvent.GetAllKeyValuePairs();
@@ -44,7 +44,7 @@ namespace Nozomi.Web2.Controllers.v1.AnalysedComponent
 
         [Authorize]
         [HttpGet]
-        [Throttle(Milliseconds = 3000)]
+        [Throttle(Name = "AnalysedComponent/AllByIdentifier", Milliseconds = 3000)]
         public IActionResult AllByIdentifier([FromQuery]string currencySlug, [FromQuery]string currencyPairGuid, 
             [FromQuery]string currencyTypeShortForm, [FromQuery]int index = 0, [FromQuery]int itemsPerPage = 200)
         {
@@ -72,7 +72,7 @@ namespace Nozomi.Web2.Controllers.v1.AnalysedComponent
 
         [Authorize(Roles = NozomiPermissions.AllowAllStaffRoles)]
         [HttpPost]
-        [Throttle(Milliseconds = 2500)]
+        [Throttle(Name = "AnalysedComponent/Create", Milliseconds = 2500)]
         public IActionResult Create([FromBody]CreateAnalysedComponentViewModel vm)
         {
             var sub = ((ClaimsIdentity) User.Identity)
@@ -90,7 +90,7 @@ namespace Nozomi.Web2.Controllers.v1.AnalysedComponent
 
         [Authorize]
         [HttpGet("{guid}")]
-        [Throttle(Milliseconds = 500)]
+        [Throttle(Name = "AnalysedComponent/Get", Milliseconds = 500)]
         public IActionResult Get(string guid)
         {
             var sub = ((ClaimsIdentity) User.Identity)
@@ -115,7 +115,7 @@ namespace Nozomi.Web2.Controllers.v1.AnalysedComponent
 
         [Authorize]
         [HttpPut]
-        [Throttle(Milliseconds = 2500)]
+        [Throttle(Name = "AnalysedComponent/Update", Milliseconds = 2500)]
         public IActionResult Update([FromBody]UpdateAnalysedComponentViewModel vm)
         {
             var sub = ((ClaimsIdentity) User.Identity)

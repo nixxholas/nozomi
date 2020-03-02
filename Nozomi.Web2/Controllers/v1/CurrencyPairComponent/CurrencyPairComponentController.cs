@@ -26,7 +26,7 @@ namespace Nozomi.Web2.Controllers.v1.CurrencyPairComponent
         [SwaggerOperation(
             Summary = "Obtains all Request Components related to the specific Request ID."
         )]
-        [Throttle(Milliseconds = 1000)]
+        [Throttle(Name = "CurrencyPairComponent/AllByRequestId", Milliseconds = 1000)]
         public NozomiResult<ICollection<Data.Models.Web.Component>> AllByRequestId(long requestId, bool includeNested = false)
         {
             return new NozomiResult<ICollection<Data.Models.Web.Component>>
@@ -34,7 +34,7 @@ namespace Nozomi.Web2.Controllers.v1.CurrencyPairComponent
         }
 
         [HttpGet]
-        [Throttle(Milliseconds = 1000)]
+        [Throttle(Name = "CurrencyPairComponent/All", Milliseconds = 1000)]
         public NozomiResult<ICollection<Data.Models.Web.Component>> All(int index = 0, bool includeNested = false)
         {
             return new NozomiResult<ICollection<Data.Models.Web.Component>>

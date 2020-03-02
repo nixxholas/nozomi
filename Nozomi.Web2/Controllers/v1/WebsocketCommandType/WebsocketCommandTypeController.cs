@@ -15,7 +15,7 @@ namespace Nozomi.Web2.Controllers.v1.WebsocketCommandType
 
         [Authorize]
         [HttpGet]
-        [Throttle(Milliseconds = 1000)]
+        [Throttle(Name = "WebsocketCommmandType/All", Milliseconds = 1000)]
         public IActionResult All()
         {
             return Ok(NozomiServiceConstants.websocketCommandType);

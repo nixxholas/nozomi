@@ -26,7 +26,7 @@ namespace Nozomi.Web2.Controllers.v1.SourceType
         }
 
         [HttpGet]
-        [Throttle(Milliseconds = 1000)]
+        [Throttle(Name = "SourceType/All", Milliseconds = 100)]
         public IActionResult All()
         {
             return Ok(_sourceTypeEvent.GetAll());
@@ -34,7 +34,7 @@ namespace Nozomi.Web2.Controllers.v1.SourceType
 
         [Authorize(Roles = NozomiPermissions.AllowHigherStaffRoles)]
         [HttpPost]
-        [Throttle(Milliseconds = 1000)]
+        [Throttle(Name = "SourceType/Create", Milliseconds = 1000)]
         public IActionResult Create(CreateSourceTypeViewModel vm)
         {
             var sub = ((ClaimsIdentity) User.Identity)
@@ -52,7 +52,7 @@ namespace Nozomi.Web2.Controllers.v1.SourceType
 
         [Authorize(Roles = NozomiPermissions.AllowHigherStaffRoles)]
         [HttpPut]
-        [Throttle(Milliseconds = 1000)]
+        [Throttle(Name = "SourceType/Update", Milliseconds = 1000)]
         public IActionResult Update(UpdateSourceTypeViewModel vm)
         {
             var sub = ((ClaimsIdentity) User.Identity)

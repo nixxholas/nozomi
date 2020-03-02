@@ -17,7 +17,7 @@ namespace Nozomi.Web2.Controllers.v1.CurrencyPairType
         }
 
         [HttpGet]
-        [Throttle(Milliseconds = 1000)]
+        [Throttle(Name = "CurrencyPairType/All", Milliseconds = 1000)]
         public IActionResult All()
         {
             return Ok(_currencyPairTypeEvent.All());
