@@ -88,10 +88,10 @@ namespace Nozomi.WSS
             services.AddControllers()
                 .AddNewtonsoftJson();
 
-            services.AddScoped<ICurrencyEvent, CurrencyEvent>();
-            services.AddScoped<ICurrencyPairEvent, CurrencyPairEvent>();
-            services.AddScoped<ICurrencyTypeEvent, CurrencyTypeEvent>();
-            services.AddScoped<IRequestEvent, RequestEvent>();
+            services.AddTransient<ICurrencyEvent, CurrencyEvent>();
+            services.AddTransient<ICurrencyPairEvent, CurrencyPairEvent>();
+            services.AddTransient<ICurrencyTypeEvent, CurrencyTypeEvent>();
+            services.AddTransient<IRequestEvent, RequestEvent>();
             services.AddTransient<IComponentHistoricItemService, ComponentHistoricItemService>();
             services.AddTransient<IComponentService, ComponentService>();
             services.AddTransient<IRequestService, RequestService>();

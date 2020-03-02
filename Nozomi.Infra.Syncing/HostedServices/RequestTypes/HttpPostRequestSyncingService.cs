@@ -29,11 +29,12 @@ namespace Nozomi.Infra.Syncing.HostedServices.RequestTypes
         private readonly IRequestEvent _requestEvent;
         private readonly IRequestService _requestService;
         
-        public HttpPostRequestSyncingService(IServiceProvider serviceProvider) : base(serviceProvider)
+        public HttpPostRequestSyncingService(IServiceScopeFactory serviceScopeFactory) : base(serviceScopeFactory)
         {
-            _componentService = _scope.ServiceProvider.GetRequiredService<IComponentService>();
-            _requestEvent = _scope.ServiceProvider.GetRequiredService<IRequestEvent>();
-            _requestService = _scope.ServiceProvider.GetRequiredService<IRequestService>();
+            // TODO: Scope fix
+            _componentService = serviceScopeFactory.CreateScope().ServiceProvider.GetRequiredService<IComponentService>();
+            _requestEvent = serviceScopeFactory.CreateScope().ServiceProvider.GetRequiredService<IRequestEvent>();
+            _requestService = serviceScopeFactory.CreateScope().ServiceProvider.GetRequiredService<IRequestService>();
         }
 
         public async Task<bool> Process(Request req)

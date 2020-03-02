@@ -10,7 +10,7 @@ namespace Nozomi.Infra.Compute.HostedServices
 {
     public class ComputeHostedService : BaseComputeService<ComputeHostedService>
     {
-        public ComputeHostedService(IServiceProvider serviceProvider) : base(serviceProvider)
+        public ComputeHostedService(IServiceScopeFactory serviceScopeFactory) : base(serviceScopeFactory)
         {
         }
 
@@ -21,18 +21,21 @@ namespace Nozomi.Infra.Compute.HostedServices
             stoppingToken.Register(() => _logger.LogInformation($"{_computeServiceName} is stopping."));
 
             // Initialize an event like that
-            var computeEvent = _scope.ServiceProvider.GetRequiredService<IComputeEvent>();
-
-            while (!stoppingToken.IsCancellationRequested)
+            using (var scope = _scopeFactory.CreateScope())
             {
-                var oldCompute = computeEvent.GetMostOutdated(true);
-                if (oldCompute != null)
-                    ExecuteComputation(oldCompute); // Execute!
-                else
-                    _logger.LogInformation($"{_computeServiceName} ExecuteAsync: Nothing to compute.");
+                var computeEvent = scope.ServiceProvider.GetRequiredService<IComputeEvent>();
 
-                // Delay deliberately
-                await Task.Delay(500, stoppingToken);
+                while (!stoppingToken.IsCancellationRequested)
+                {
+                    var oldCompute = computeEvent.GetMostOutdated(true);
+                    if (oldCompute != null)
+                        ExecuteComputation(oldCompute); // Execute!
+                    else
+                        _logger.LogInformation($"{_computeServiceName} ExecuteAsync: Nothing to compute.");
+
+                    // Delay deliberately
+                    await Task.Delay(500, stoppingToken);
+                }
             }
 
             _logger.LogWarning($"{_computeServiceName} background task is stopping.");

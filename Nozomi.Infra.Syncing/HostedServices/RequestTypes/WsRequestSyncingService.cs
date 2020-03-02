@@ -30,16 +30,10 @@ namespace Nozomi.Infra.Syncing.HostedServices.RequestTypes
         /// </summary>
         /// <key>The Id of the WebsocketRequest</key≥
         private readonly Dictionary<string, WebSocketCore> _webSockets;
-        private readonly IRequestEvent _websocketRequestEvent;
-        private readonly IComponentService _componentService;
-        private readonly IRequestService _requestService;
 
-        public WsRequestSyncingService(IServiceProvider serviceProvider) : base(serviceProvider)
+        public WsRequestSyncingService(IServiceScopeFactory scopeFactory) : base(scopeFactory)
         {
             _webSockets = new Dictionary<string, WebSocketCore>();
-            _websocketRequestEvent = _scope.ServiceProvider.GetRequiredService<IRequestEvent>();
-            _componentService = _scope.ServiceProvider.GetRequiredService<IComponentService>();
-            _requestService = _scope.ServiceProvider.GetRequiredService<IRequestService>();
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -51,152 +45,157 @@ namespace Nozomi.Infra.Syncing.HostedServices.RequestTypes
 
             while (!stoppingToken.IsCancellationRequested)
             {
-                //============================= Update Sockets to keep =============================// 
-
-                // We will need to resync the Request collection to make sure we're polling only the ones we want to poll
-                var dataEndpoints = _websocketRequestEvent
-                    .GetAllByRequestTypeUniqueToURL(RequestType.WebSocket);
-
-                if (dataEndpoints.Count > 0)
+                using (var scope = _scopeFactory.CreateScope())
                 {
-                    // Iterate the requests
-                    foreach (var dataEndpoint in dataEndpoints)
+                    var websocketRequestEvent = scope.ServiceProvider.GetRequiredService<IRequestEvent>();
+                    //============================= Update Sockets to keep =============================// 
+
+                    // We will need to resync the Request collection to make sure we're polling only the ones we want to poll
+                    var dataEndpoints = websocketRequestEvent
+                        .GetAllByRequestTypeUniqueToURL(RequestType.WebSocket);
+
+                    if (dataEndpoints.Count > 0)
                     {
-                        var dataEndpointItem = dataEndpoint.Value.FirstOrDefault();
-
-                        if (dataEndpointItem != null && dataEndpointItem.DeletedAt == null
-                                                     && dataEndpointItem.IsEnabled)
+                        // Iterate the requests
+                        foreach (var dataEndpoint in dataEndpoints)
                         {
-                            // Add new crap
-                            if (!_webSockets.ContainsKey(dataEndpointItem.DataPath)
-                                && !string.IsNullOrEmpty(dataEndpointItem.DataPath))
-                            {
-                                // Start the websockets here
-                                var newSocket = new WebSocketCore(dataEndpointItem.DataPath)
-                                {
-                                    Compression = CompressionMethod.Deflate,
-                                    EmitOnPing = true,
-                                    EnableRedirection = false,
-                                };
-                                
-                                // Pre-request processing
-                                newSocket.OnOpen += (sender, args) =>
-                                {
-                                    var wsCommands = dataEndpoint.Value
-                                        .SelectMany(de => de.WebsocketCommands).ToList();
+                            var dataEndpointItem = dataEndpoint.Value.FirstOrDefault();
 
-                                    foreach (var wsCommand in wsCommands)
+                            if (dataEndpointItem != null && dataEndpointItem.DeletedAt == null
+                                                         && dataEndpointItem.IsEnabled)
+                            {
+                                // Add new crap
+                                if (!_webSockets.ContainsKey(dataEndpointItem.DataPath)
+                                    && !string.IsNullOrEmpty(dataEndpointItem.DataPath))
+                                {
+                                    // Start the websockets here
+                                    var newSocket = new WebSocketCore(dataEndpointItem.DataPath)
                                     {
-                                        if (wsCommand.Delay.Equals(0))
+                                        Compression = CompressionMethod.Deflate,
+                                        EmitOnPing = true,
+                                        EnableRedirection = false,
+                                    };
+
+                                    // Pre-request processing
+                                    newSocket.OnOpen += (sender, args) =>
+                                    {
+                                        var wsCommands = dataEndpoint.Value
+                                            .SelectMany(de => de.WebsocketCommands).ToList();
+
+                                        foreach (var wsCommand in wsCommands)
                                         {
-                                            // One-time command
+                                            if (wsCommand.Delay.Equals(0))
+                                            {
+                                                // One-time command
+                                            }
+                                            else
+                                            {
+                                                // Run a repeated task
+                                            }
+                                        }
+                                    };
+
+                                    // Incoming processing
+                                    newSocket.OnMessage += async (sender, args) =>
+                                    {
+                                        if (args.IsPing)
+                                        {
+                                            newSocket.Ping();
+                                        }
+                                        else if (!string.IsNullOrEmpty(args.Data)) // Process the incoming data
+                                        {
+                                            try
+                                            {
+                                                if (await Process(dataEndpoint.Value, args.Data))
+                                                {
+                                                    _logger.LogInformation(
+                                                        $"{_hostedServiceName} " +
+                                                        $"RequestId: {dataEndpointItem.DataPath} successfully updated");
+                                                }
+                                            }
+                                            catch (Exception ex)
+                                            {
+                                                _logger.LogCritical(
+                                                    $"{_hostedServiceName} OnMessage: " +
+                                                    ex);
+                                                newSocket.Close();
+                                            }
                                         }
                                         else
                                         {
-                                            // Run a repeated task
-                                        }
-                                    }
-                                };
-
-                                // Incoming processing
-                                newSocket.OnMessage += async (sender, args) =>
-                                {
-                                    if (args.IsPing)
-                                    {
-                                        newSocket.Ping();
-                                    } 
-                                    else if (!string.IsNullOrEmpty(args.Data)) // Process the incoming data
-                                    {
-                                        try
-                                        {
-                                            if (await Process(dataEndpoint.Value, args.Data))
-                                            {
-                                                _logger.LogInformation(
-                                                    $"{_hostedServiceName} " +
-                                                    $"RequestId: {dataEndpointItem.DataPath} successfully updated");
-                                            }
-                                        }
-                                        catch (Exception ex)
-                                        {
-                                            _logger.LogCritical(
-                                                $"{_hostedServiceName} OnMessage: " +
-                                                ex);
+                                            _logger.LogError($"{_hostedServiceName} OnMessage: " +
+                                                             $"RequestId:{dataEndpointItem.DataPath} has an empty payload incoming.");
                                             newSocket.Close();
                                         }
-                                    }
-                                    else
+
+                                        await Task.Delay(50,
+                                            CancellationToken.None); // Always delay by 1ms in case of spam
+                                    };
+
+                                    // Error processing
+                                    newSocket.OnError += async (sender, args) =>
                                     {
-                                        _logger.LogError($"{_hostedServiceName} OnMessage: " +
-                                                         $"RequestId:{dataEndpointItem.DataPath} has an empty payload incoming.");
-                                        newSocket.Close();
-                                    }
+                                        _logger.LogError($"{_hostedServiceName} OnError:" +
+                                                         $" {args.Message}");
+                                        if (_webSockets.ContainsKey(dataEndpointItem.DataPath))
+                                            _webSockets.Remove(dataEndpointItem.DataPath);
+                                        GC.SuppressFinalize(this);
+                                    };
 
-                                    await Task.Delay(50, CancellationToken.None); // Always delay by 1ms in case of spam
-                                };
+                                    newSocket.OnClose += (sender, args) =>
+                                    {
+                                        _logger.LogInformation($"{_hostedServiceName} onClose: " +
+                                                               $"Closing socket connection for {dataEndpointItem.DataPath}");
+                                        if (_webSockets.ContainsKey(dataEndpointItem.DataPath))
+                                            _webSockets.Remove(dataEndpointItem.DataPath);
+                                        GC.SuppressFinalize(this);
+                                    };
 
-                                // Error processing
-                                newSocket.OnError += async (sender, args) =>
-                                {
-                                    _logger.LogError($"{_hostedServiceName} OnError:" +
-                                                     $" {args.Message}");
-                                    if (_webSockets.ContainsKey(dataEndpointItem.DataPath))
-                                        _webSockets.Remove(dataEndpointItem.DataPath);
-                                    GC.SuppressFinalize(this);
-                                };
-
-                                newSocket.OnClose += (sender, args) =>
-                                {
-                                    _logger.LogInformation($"{_hostedServiceName} onClose: " +
-                                                           $"Closing socket connection for {dataEndpointItem.DataPath}");
-                                    if (_webSockets.ContainsKey(dataEndpointItem.DataPath))
-                                        _webSockets.Remove(dataEndpointItem.DataPath);
-                                    GC.SuppressFinalize(this);
-                                };
-
-                                newSocket.Connect();
-                                _webSockets.Add(dataEndpointItem.DataPath, newSocket);
-                            }
-                        }
-                        else
-                            // Remove old crap
-                        if (dataEndpointItem != null && (!dataEndpointItem.IsEnabled ||
-                                                         dataEndpointItem.DeletedAt != null)
-                                                     && _webSockets.ContainsKey(dataEndpointItem.DataPath))
-                        {
-                            _logger.LogInformation($"{_hostedServiceName} Removing " +
-                                                   "Request: " + dataEndpointItem.Id);
-
-                            // Stop the websocket from polling
-                            _webSockets[dataEndpointItem.DataPath].Close();
-
-                            // Remove the websocket from the dictionary
-                            if (!_webSockets.Remove(dataEndpointItem.DataPath))
-                            {
-                                _logger.LogInformation(
-                                    $"{_hostedServiceName} Error Removing Request: "
-                                    + dataEndpointItem.DataPath);
+                                    newSocket.Connect();
+                                    _webSockets.Add(dataEndpointItem.DataPath, newSocket);
+                                }
                             }
                             else
+                                // Remove old crap
+                            if (dataEndpointItem != null && (!dataEndpointItem.IsEnabled ||
+                                                             dataEndpointItem.DeletedAt != null)
+                                                         && _webSockets.ContainsKey(dataEndpointItem.DataPath))
                             {
-                                // WebSocketCloseStatus.Empty, 
-                                // $"Websocket for {dataEndpointItem.DataPath} is out of date! " +
-                                //     "Removing for update.", CancellationToken.None
-                                _logger.LogInformation(
-                                    $"{_hostedServiceName} Removed Request: "
-                                    + dataEndpointItem.DataPath);
+                                _logger.LogInformation($"{_hostedServiceName} Removing " +
+                                                       "Request: " + dataEndpointItem.Id);
+
+                                // Stop the websocket from polling
+                                _webSockets[dataEndpointItem.DataPath].Close();
+
+                                // Remove the websocket from the dictionary
+                                if (!_webSockets.Remove(dataEndpointItem.DataPath))
+                                {
+                                    _logger.LogInformation(
+                                        $"{_hostedServiceName} Error Removing Request: "
+                                        + dataEndpointItem.DataPath);
+                                }
+                                else
+                                {
+                                    // WebSocketCloseStatus.Empty, 
+                                    // $"Websocket for {dataEndpointItem.DataPath} is out of date! " +
+                                    //     "Removing for update.", CancellationToken.None
+                                    _logger.LogInformation(
+                                        $"{_hostedServiceName} Removed Request: "
+                                        + dataEndpointItem.DataPath);
+                                }
                             }
                         }
                     }
+
+                    //============================= End of Update Sockets to keep =============================//
+
+                    //============================= Check and update new data =============================// 
+
+
+                    //============================= End of check and update new data =============================// 
+
+                    await Task.Delay(100, stoppingToken);
                 }
-
-                //============================= End of Update Sockets to keep =============================//
-
-                //============================= Check and update new data =============================// 
-
-
-                //============================= End of check and update new data =============================// 
-                
-                await Task.Delay(100, stoppingToken);
             }
 
             _logger.LogWarning($"{_hostedServiceName}: Background task is stopping.");
@@ -217,7 +216,7 @@ namespace Nozomi.Infra.Syncing.HostedServices.RequestTypes
                         var xmlDoc = new XmlDocument();
                         xmlDoc.LoadXml(payload);
                         payload = JsonConvert.SerializeObject(xmlDoc);
-                        
+
                         // var xmlDoc = new XmlDocument();
                         // xmlDoc.LoadXml(payload);
                         // payload = JsonSerializer.Serialize(xmlDoc);
@@ -259,19 +258,24 @@ namespace Nozomi.Infra.Syncing.HostedServices.RequestTypes
                     .SelectMany(e => e.RequestComponents)
                     .Where(rc => rc.DeletedAt == null && rc.IsEnabled)
                     .ToList();
-                
+
                 // Are we processing anything?
                 if (wsrComponents.Any())
                 {
-                    if (Update(payloadToken, wsr.FirstOrDefault().ResponseType, wsrComponents)
-                        && _requestService.HasUpdated(wsr))
+                    using (var scope = _scopeFactory.CreateScope())
                     {
-                        _logger.LogInformation($"[{_hostedServiceName}] Process: Request object updated!");
-                        return true;
-                    }
-                    else
-                    {
-                        _logger.LogCritical($"[{_hostedServiceName}] Process: Couldn't update the Request object.");
+                        var requestService = scope.ServiceProvider.GetRequiredService<IRequestService>();
+                        
+                        if (Update(payloadToken, wsr.FirstOrDefault().ResponseType, wsrComponents)
+                            && requestService.HasUpdated(wsr))
+                        {
+                            _logger.LogInformation($"[{_hostedServiceName}] Process: Request object updated!");
+                            return true;
+                        }
+                        else
+                        {
+                            _logger.LogCritical($"[{_hostedServiceName}] Process: Couldn't update the Request object.");
+                        }
                     }
                 }
                 else
@@ -296,6 +300,10 @@ namespace Nozomi.Infra.Syncing.HostedServices.RequestTypes
             // For each component we're checking
             foreach (var component in requestComponents)
             {
+                using (var scope = _scopeFactory.CreateScope())
+                {
+                    var componentService = scope.ServiceProvider.GetRequiredService<IComponentService>();
+                    
                 // Always reset
                 processingToken = token;
 
@@ -311,7 +319,7 @@ namespace Nozomi.Infra.Syncing.HostedServices.RequestTypes
                     else
                     {
                         // Failed
-                        _componentService.Checked(component.Id);
+                        componentService.Checked(component.Id);
                         processingToken = null; // Set it to fail for the next statement
                     }
                 }
@@ -384,7 +392,7 @@ namespace Nozomi.Infra.Syncing.HostedServices.RequestTypes
                                                     if (val > 0)
                                                     {
                                                         // Update it
-                                                        _componentService.UpdatePairValue(component.Id, val);
+                                                        componentService.UpdatePairValue(component.Id, val);
                                                     }
                                                 }
                                             }
@@ -412,7 +420,7 @@ namespace Nozomi.Infra.Syncing.HostedServices.RequestTypes
                                                     if (val > 0)
                                                     {
                                                         // Update it
-                                                        _componentService.UpdatePairValue(component.Id, val);
+                                                        componentService.UpdatePairValue(component.Id, val);
                                                     }
                                                 }
                                             }
@@ -472,7 +480,7 @@ namespace Nozomi.Infra.Syncing.HostedServices.RequestTypes
                                                 if (val > 0)
                                                 {
                                                     // Update it
-                                                    _componentService.UpdatePairValue(component.Id, val);
+                                                    componentService.UpdatePairValue(component.Id, val);
                                                 }
                                             }
                                         }
@@ -500,7 +508,7 @@ namespace Nozomi.Infra.Syncing.HostedServices.RequestTypes
                                                 if (val > 0)
                                                 {
                                                     // Update it
-                                                    _componentService.UpdatePairValue(component.Id, val);
+                                                    componentService.UpdatePairValue(component.Id, val);
                                                 }
                                             }
                                         }
@@ -547,7 +555,7 @@ namespace Nozomi.Infra.Syncing.HostedServices.RequestTypes
                                             if (val > 0)
                                             {
                                                 // Update it
-                                                _componentService.UpdatePairValue(component.Id, val);
+                                                componentService.UpdatePairValue(component.Id, val);
                                             }
                                         }
                                     }
@@ -564,13 +572,14 @@ namespace Nozomi.Infra.Syncing.HostedServices.RequestTypes
                 else if (string.IsNullOrEmpty(component.Identifier))
                 {
                     _logger.LogInformation($"Marking Request Component as checked: {component.Id}");
-                    return _componentService.Checked(component.Id);
+                    return componentService.Checked(component.Id);
+                }
                 }
             }
 
             return true;
         }
-        
+
         // private async Task<bool> Update(JsonDocument jsonDoc, ResponseType resType, IEnumerable<Component> requestComponents)
         // {
         //     var componentService = _scope.ServiceProvider.GetRequiredService<IComponentService>();
