@@ -23,9 +23,9 @@ namespace Nozomi.Service.Services.Requests
         private readonly ICurrencyPairEvent _currencyPairEvent;
         private readonly ICurrencyTypeEvent _currencyTypeEvent;
         
-        public RequestService(ILogger<RequestService> logger, IUnitOfWork<NozomiDbContext> unitOfWork,
+        public RequestService(ILogger<RequestService> logger, IUnitOfWork<NozomiDbContext> context,
             ICurrencyEvent currencyEvent, ICurrencyPairEvent currencyPairEvent, ICurrencyTypeEvent currencyTypeEvent)
-            : base(logger, unitOfWork)
+            : base(logger, context)
         {
             _currencyEvent = currencyEvent;
             _currencyPairEvent = currencyPairEvent;
@@ -36,8 +36,8 @@ namespace Nozomi.Service.Services.Requests
         {
             try
             {
-                _unitOfWork.GetRepository<Request>().Add(request);
-                _unitOfWork.Commit(userId);
+                _context.GetRepository<Request>().Add(request);
+                _context.Commit(userId);
 
                 return request.Id;
             }
@@ -91,8 +91,8 @@ namespace Nozomi.Service.Services.Requests
                                                                + "Invalid parent type.");
                 }
                 
-                _unitOfWork.GetRepository<Request>().Add(request);
-                _unitOfWork.Commit(userId);
+                _context.GetRepository<Request>().Add(request);
+                _context.Commit(userId);
             }
             else
             {
@@ -141,8 +141,8 @@ namespace Nozomi.Service.Services.Requests
                         : new List<RequestProperty>()
                 };
 
-                _unitOfWork.GetRepository<Request>().Add(request);
-                _unitOfWork.Commit(userId);
+                _context.GetRepository<Request>().Add(request);
+                _context.Commit(userId);
 
                 return new NozomiResult<string>(NozomiResultType.Success, "Request successfully created!", request);
             }
@@ -155,7 +155,7 @@ namespace Nozomi.Service.Services.Requests
 
         public bool Delay(Request request, TimeSpan duration)
         {
-            var req = _unitOfWork.GetRepository<Request>()
+            var req = _context.GetRepository<Request>()
                 .GetQueryable()
                 .AsTracking()
                 .SingleOrDefault(r => r.Id.Equals(request.Id)
@@ -166,8 +166,8 @@ namespace Nozomi.Service.Services.Requests
             {
                 req.ModifiedAt = req.ModifiedAt.Add(duration);
                 
-                _unitOfWork.GetRepository<Request>().Update(req);
-                _unitOfWork.Commit();
+                _context.GetRepository<Request>().Update(req);
+                _context.Commit();
 
                 return true;
             }
@@ -179,7 +179,7 @@ namespace Nozomi.Service.Services.Requests
         {
             if (requestId > 0)
             {
-                var req = _unitOfWork.GetRepository<Request>()
+                var req = _context.GetRepository<Request>()
                     .GetQueryable()
                     .AsTracking()
                     .SingleOrDefault(r => r.DeletedAt == null && r.IsEnabled
@@ -189,7 +189,7 @@ namespace Nozomi.Service.Services.Requests
                 {
                     req.ModifiedAt = DateTime.UtcNow;
 
-                    _unitOfWork.Commit();
+                    _context.Commit();
 
                     return true;
                 }
@@ -222,7 +222,7 @@ namespace Nozomi.Service.Services.Requests
                 if (updateRequest == null || !updateRequest.IsValid())
                     return new NozomiResult<string>(NozomiResultType.Failed, "Failed to update request");
 
-                var reqToUpd = _unitOfWork.GetRepository<Request>()
+                var reqToUpd = _context.GetRepository<Request>()
                     .GetQueryable()
                     .Include(r => r.RequestComponents)
                     .Include(r => r.RequestProperties)
@@ -255,7 +255,7 @@ namespace Nozomi.Service.Services.Requests
                             if (!string.IsNullOrWhiteSpace(userId))
                                 cpc.DeletedById = userId;
 
-                            _unitOfWork.GetRepository<Component>().Update(cpc);
+                            _context.GetRepository<Component>().Update(cpc);
                         }
                         // Updating?
                         else
@@ -263,7 +263,7 @@ namespace Nozomi.Service.Services.Requests
                             if (ucpc.ComponentType >= 0) cpc.ComponentTypeId = ucpc.ComponentType;
                             if (!string.IsNullOrEmpty(ucpc.QueryComponent)) cpc.QueryComponent = ucpc.QueryComponent;
 
-                            _unitOfWork.GetRepository<Component>().Update(cpc);
+                            _context.GetRepository<Component>().Update(cpc);
                         }
                     }
                 }
@@ -285,7 +285,7 @@ namespace Nozomi.Service.Services.Requests
                             if (!string.IsNullOrWhiteSpace(userId))
                                 requestProperty.DeletedById = userId;
 
-                            _unitOfWork.GetRepository<RequestProperty>().Update(requestProperty);
+                            _context.GetRepository<RequestProperty>().Update(requestProperty);
                         }
                         // Updating?
                         else
@@ -295,13 +295,13 @@ namespace Nozomi.Service.Services.Requests
                             if (urp.Key != null) requestProperty.Key = urp.Key;
                             if (urp.Value != null) requestProperty.Value = urp.Value;
 
-                            _unitOfWork.GetRepository<RequestProperty>().Update(requestProperty);
+                            _context.GetRepository<RequestProperty>().Update(requestProperty);
                         }
                     }
                 }
 
-                _unitOfWork.GetRepository<Request>().Update(reqToUpd);
-                _unitOfWork.Commit(userId);
+                _context.GetRepository<Request>().Update(reqToUpd);
+                _context.Commit(userId);
 
                 return new NozomiResult<string>(NozomiResultType.Success, "Successfully updated the request!");
             }
@@ -316,7 +316,7 @@ namespace Nozomi.Service.Services.Requests
             // Safetynet
             if (vm != null && vm.IsValid())
             {
-                var request = _unitOfWork.GetRepository<Request>()
+                var request = _context.GetRepository<Request>()
                     .GetQueryable()
                     .AsTracking()
                     .SingleOrDefault(r => r.DeletedAt == null && r.Guid.Equals(vm.Guid));
@@ -365,8 +365,8 @@ namespace Nozomi.Service.Services.Requests
                             break;
                     }
                     
-                    _unitOfWork.GetRepository<Request>().Update(request);
-                    _unitOfWork.Commit(userId);
+                    _context.GetRepository<Request>().Update(request);
+                    _context.Commit(userId);
 
                     return true;
                 }
@@ -379,7 +379,7 @@ namespace Nozomi.Service.Services.Requests
         {
             if (Guid.TryParse(requestGuid, out var parsedGuid))
             {
-                var query = _unitOfWork.GetRepository<Request>()
+                var query = _context.GetRepository<Request>()
                     .GetQueryable()
                     .AsTracking()
                     .Where(r => r.Guid.Equals(parsedGuid));
@@ -392,15 +392,15 @@ namespace Nozomi.Service.Services.Requests
 
                 var request = query.SingleOrDefault();
                 if (hardDelete)
-                    _unitOfWork.GetRepository<Request>().Delete(request);
+                    _context.GetRepository<Request>().Delete(request);
                 else
                 {
                     request.DeletedAt = DateTime.UtcNow;
                     request.DeletedById = userId;
-                    _unitOfWork.GetRepository<Request>().Update(request);
+                    _context.GetRepository<Request>().Update(request);
                 }
 
-                _unitOfWork.Commit(userId);
+                _context.Commit(userId);
                 return;
             }
 
@@ -413,7 +413,7 @@ namespace Nozomi.Service.Services.Requests
             {
                 if (reqId > 0 && !string.IsNullOrWhiteSpace(userId))
                 {
-                    var reqToDel = _unitOfWork.GetRepository<Request>()
+                    var reqToDel = _context.GetRepository<Request>()
                         .Get(r => r.Id.Equals(reqId) && r.DeletedAt == null)
                         .SingleOrDefault();
 
@@ -423,14 +423,14 @@ namespace Nozomi.Service.Services.Requests
                         {
                             reqToDel.DeletedAt = DateTime.UtcNow;
                             reqToDel.DeletedById = userId;
-                            _unitOfWork.GetRepository<Request>().Update(reqToDel);
+                            _context.GetRepository<Request>().Update(reqToDel);
                         }
                         else
                         {
-                            _unitOfWork.GetRepository<Request>().Delete(reqToDel);
+                            _context.GetRepository<Request>().Delete(reqToDel);
                         }
 
-                        _unitOfWork.Commit(userId);
+                        _context.Commit(userId);
 
                         return new NozomiResult<string>(NozomiResultType.Success, "Request successfully deleted!");
                     }

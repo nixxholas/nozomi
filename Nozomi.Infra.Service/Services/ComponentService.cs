@@ -26,7 +26,7 @@ namespace Nozomi.Service.Services
 
         public ComponentService(ILogger<ComponentService> logger, IRequestEvent requestEvent,
             IComponentHistoricItemService componentHistoricItemService,
-            IUnitOfWork<NozomiDbContext> unitOfWork) : base(logger, unitOfWork)
+            IUnitOfWork<NozomiDbContext> context) : base(logger, context)
         {
             _requestEvent = requestEvent;
             _componentHistoricItemService = componentHistoricItemService;
@@ -43,8 +43,8 @@ namespace Nozomi.Service.Services
                 var requestComponent = new Component(vm.Type, vm.Identifier,
                     vm.QueryComponent, vm.AnomalyIgnorance, vm.IsDenominated, vm.StoreHistoricals, requestId);
 
-                _unitOfWork.GetRepository<Component>().Add(requestComponent);
-                _unitOfWork.Commit(userId);
+                _context.GetRepository<Component>().Add(requestComponent);
+                _context.Commit(userId);
 
                 return; // Done
             }
@@ -70,8 +70,8 @@ namespace Nozomi.Service.Services
                     AnomalyIgnorance = createRequestComponent.AnomalyIgnorance
                 };
 
-                _unitOfWork.GetRepository<Component>().Add(newRequestComponent);
-                _unitOfWork.Commit(userId);
+                _context.GetRepository<Component>().Add(newRequestComponent);
+                _context.Commit(userId);
 
                 return new NozomiResult<string>
                     (NozomiResultType.Success, "Currency Pair Component successfully created!", newRequestComponent);
@@ -86,7 +86,7 @@ namespace Nozomi.Service.Services
         {
             if (id > 0)
             {
-                var entity = _unitOfWork.GetRepository<Component>()
+                var entity = _context.GetRepository<Component>()
                     .GetQueryable()
                     .Include(rc => rc.Request)
                     .AsTracking()
@@ -99,7 +99,7 @@ namespace Nozomi.Service.Services
                 {
                     entity.ModifiedAt = DateTime.UtcNow;
 
-                    _unitOfWork.Commit(userId);
+                    _context.Commit(userId);
                     return true;
                 }
             }
@@ -116,7 +116,7 @@ namespace Nozomi.Service.Services
                                                                          $"Invalid component datum id:{id}. Null payload");
             }
 
-            var lastValue = _unitOfWork.GetRepository<ComponentHistoricItem>()
+            var lastValue = _context.GetRepository<ComponentHistoricItem>()
                 .GetQueryable()
                 .Include(c => c.Component)
                 .ThenInclude(c => c.Request)
@@ -136,8 +136,8 @@ namespace Nozomi.Service.Services
             // If there ain't a latest value
             if (lastValue == null)
             {
-                _unitOfWork.GetRepository<ComponentHistoricItem>().Add(newValueItem); // Add
-                _unitOfWork.Commit(); // Save
+                _context.GetRepository<ComponentHistoricItem>().Add(newValueItem); // Add
+                _context.Commit(); // Save
 
                 return new NozomiResult<string>
                     (NozomiResultType.Success, "Component successfully updated!");
@@ -153,8 +153,8 @@ namespace Nozomi.Service.Services
                 if (lastValue.Component.StoreHistoricals) // Do we want to stash historicals?
                 {
                     // Yes we do let's proceed to add it and move along
-                    _unitOfWork.GetRepository<ComponentHistoricItem>().Add(newValueItem); // Add
-                    _unitOfWork.Commit(); // Save
+                    _context.GetRepository<ComponentHistoricItem>().Add(newValueItem); // Add
+                    _context.Commit(); // Save
 
                     return new NozomiResult<string>
                         (NozomiResultType.Success, "Component successfully updated!");
@@ -162,9 +162,9 @@ namespace Nozomi.Service.Services
                 else // No? We need to hard delete the existing one if we can proceed with the update
                 {
                     // Add first then delete.
-                    _unitOfWork.GetRepository<ComponentHistoricItem>().Add(newValueItem); // Add
+                    _context.GetRepository<ComponentHistoricItem>().Add(newValueItem); // Add
                     _componentHistoricItemService.Remove(lastValue.Guid, null, true);
-                    _unitOfWork.Commit(); // Save
+                    _context.Commit(); // Save
 
                     return new NozomiResult<string>
                         (NozomiResultType.Success, "Component successfully updated!");
@@ -186,7 +186,7 @@ namespace Nozomi.Service.Services
         {
             try
             {
-                var lastCompVal = _unitOfWork
+                var lastCompVal = _context
                     .GetRepository<Component>()
                     .GetQueryable()
                     .AsTracking()
@@ -220,8 +220,8 @@ namespace Nozomi.Service.Services
 
                     // lastCompVal.Value = val.ToString(CultureInfo.InvariantCulture);
 
-                    _unitOfWork.GetRepository<Component>().Update(lastCompVal);
-                    _unitOfWork.Commit();
+                    _context.GetRepository<Component>().Update(lastCompVal);
+                    _context.Commit();
 
                     return new NozomiResult<string>
                         (NozomiResultType.Success, "Currency Pair Component successfully updated!");
@@ -251,7 +251,7 @@ namespace Nozomi.Service.Services
                     return new NozomiResult<string>
                         (NozomiResultType.Failed, "Invalid payload or userId.");
 
-                var rcToUpd = _unitOfWork.GetRepository<Component>()
+                var rcToUpd = _context.GetRepository<Component>()
                     .Get(rc => rc.Id.Equals(updateRequestComponent.Id) && rc.DeletedAt == null && rc.IsEnabled)
                     .SingleOrDefault();
 
@@ -263,8 +263,8 @@ namespace Nozomi.Service.Services
                     rcToUpd.IsDenominated = updateRequestComponent.IsDenominated;
                     rcToUpd.AnomalyIgnorance = updateRequestComponent.AnomalyIgnorance;
 
-                    _unitOfWork.GetRepository<Component>().Update(rcToUpd);
-                    _unitOfWork.Commit(userId);
+                    _context.GetRepository<Component>().Update(rcToUpd);
+                    _context.Commit(userId);
 
                     return new NozomiResult<string>
                         (NozomiResultType.Success, "Request Component successfully updated!", rcToUpd);
@@ -286,7 +286,7 @@ namespace Nozomi.Service.Services
                 return new NozomiResult<string>
                     (NozomiResultType.Failed, "Invalid payload or userId.");
 
-            var cpcToDel = _unitOfWork.GetRepository<Component>()
+            var cpcToDel = _context.GetRepository<Component>()
                 .Get(rc => rc.Id.Equals(id) && rc.DeletedAt == null && rc.IsEnabled)
                 .SingleOrDefault();
 
@@ -294,17 +294,17 @@ namespace Nozomi.Service.Services
             {
                 if (hardDelete)
                 {
-                    _unitOfWork.GetRepository<Component>().Delete(cpcToDel);
+                    _context.GetRepository<Component>().Delete(cpcToDel);
                 }
                 else
                 {
                     cpcToDel.DeletedAt = DateTime.UtcNow;
                     cpcToDel.DeletedById = userId;
 
-                    _unitOfWork.GetRepository<Component>().Update(cpcToDel);
+                    _context.GetRepository<Component>().Update(cpcToDel);
                 }
 
-                _unitOfWork.Commit(userId);
+                _context.Commit(userId);
 
                 return new NozomiResult<string>(NozomiResultType.Success,
                     "Currency Pair Component Successfully deleted!");

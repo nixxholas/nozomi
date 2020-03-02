@@ -17,8 +17,8 @@ namespace Nozomi.Service.Services
         private readonly ISourceTypeEvent _sourceTypeEvent;
         
         public SourceTypeService(ILogger<SourceTypeService> logger, 
-            IUnitOfWork<NozomiDbContext> unitOfWork, ISourceTypeEvent sourceTypeEvent) 
-            : base(logger, unitOfWork)
+            IUnitOfWork<NozomiDbContext> context, ISourceTypeEvent sourceTypeEvent) 
+            : base(logger, context)
         {
             _sourceTypeEvent = sourceTypeEvent;
         }
@@ -29,8 +29,8 @@ namespace Nozomi.Service.Services
             {
                 var sourceType = new SourceType(vm.Abbreviation, vm.Name);
                 
-                _unitOfWork.GetRepository<SourceType>().Add(sourceType);
-                _unitOfWork.Commit(userId);
+                _context.GetRepository<SourceType>().Add(sourceType);
+                _context.Commit(userId);
 
                 return;
             }
@@ -52,8 +52,8 @@ namespace Nozomi.Service.Services
                         sourceType.DeletedAt = DateTime.UtcNow;
                         sourceType.DeletedById = userId;
                         
-                        _unitOfWork.GetRepository<SourceType>().Update(sourceType);
-                        _unitOfWork.Commit(userId);
+                        _context.GetRepository<SourceType>().Update(sourceType);
+                        _context.Commit(userId);
 
                         return true;
                     }
@@ -68,8 +68,8 @@ namespace Nozomi.Service.Services
                         && !_sourceTypeEvent.Exists(vm.Abbreviation))
                         sourceType.Abbreviation = vm.Abbreviation;
                     
-                    _unitOfWork.GetRepository<SourceType>().Update(sourceType);
-                    _unitOfWork.Commit(userId);
+                    _context.GetRepository<SourceType>().Update(sourceType);
+                    _context.Commit(userId);
 
                     return true;
                 }

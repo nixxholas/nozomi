@@ -20,9 +20,9 @@ namespace Nozomi.Service.Services
         private readonly ICurrencyEvent _currencyEvent;
         private readonly ICurrencyTypeEvent _currencyTypeEvent;
         
-        public CurrencyService(ILogger<CurrencyService> logger, IUnitOfWork<NozomiDbContext> unitOfWork,
+        public CurrencyService(ILogger<CurrencyService> logger, IUnitOfWork<NozomiDbContext> context,
             IHttpContextAccessor contextAccessor, ICurrencyEvent currencyEvent, ICurrencyTypeEvent currencyTypeEvent) 
-            : base(contextAccessor, logger, unitOfWork)
+            : base(contextAccessor, logger, context)
         {
             _currencyEvent = currencyEvent;
             _currencyTypeEvent = currencyTypeEvent;
@@ -45,8 +45,8 @@ namespace Nozomi.Service.Services
                 var currency = new Currency(currencyType.Id, vm.LogoPath, vm.Abbreviation, vm.Slug, vm.Name, 
                     vm.Description, vm.Denominations, vm.DenominationName);
                 
-                _unitOfWork.GetRepository<Currency>().Add(currency);
-                _unitOfWork.Commit(userId);
+                _context.GetRepository<Currency>().Add(currency);
+                _context.Commit(userId);
                 return;
             }
             
@@ -107,8 +107,8 @@ namespace Nozomi.Service.Services
                 updatedCurrency.Denominations = vm.Denominations;
                 updatedCurrency.DenominationName = vm.DenominationName;
                 
-                _unitOfWork.GetRepository<Currency>().Update(updatedCurrency);
-                _unitOfWork.Commit(userId);
+                _context.GetRepository<Currency>().Update(updatedCurrency);
+                _context.Commit(userId);
                 return;
             }
             

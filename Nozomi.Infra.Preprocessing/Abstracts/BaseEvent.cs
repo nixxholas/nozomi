@@ -4,8 +4,6 @@ using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nozomi.Preprocessing.Abstracts.Interfaces;
-using Nozomi.Repo.BCL.Context;
-using Nozomi.Repo.BCL.Repository;
 
 namespace Nozomi.Preprocessing.Abstracts
 {

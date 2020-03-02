@@ -45,7 +45,6 @@ namespace Nozomi.WSS
                 var str = Configuration.GetConnectionString("Local:" + @Environment.MachineName);
 
                 services
-                    .AddEntityFrameworkNpgsql()
                     .AddDbContext<NozomiDbContext>(options =>
                         {
                             options.UseNpgsql(str);
@@ -91,9 +90,6 @@ namespace Nozomi.WSS
             services.AddControllers()
                 .AddNewtonsoftJson();
             
-            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-
-            services.AddTransient<IUnitOfWork<NozomiDbContext>, UnitOfWork<NozomiDbContext>>();
             services.AddTransient<IDbContext, NozomiDbContext>();
             
             services.AddScoped<ICurrencyEvent, CurrencyEvent>();

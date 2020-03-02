@@ -18,8 +18,8 @@ namespace Nozomi.Service.Events.Analysis
     public class AnalysedComponentEvent : BaseEvent<AnalysedComponentEvent, NozomiDbContext, AnalysedComponent>, 
         IAnalysedComponentEvent
     {
-        public AnalysedComponentEvent(ILogger<AnalysedComponentEvent> logger, IUnitOfWork<NozomiDbContext> unitOfWork) 
-            : base(logger, unitOfWork)
+        public AnalysedComponentEvent(ILogger<AnalysedComponentEvent> logger, IUnitOfWork<NozomiDbContext> context) 
+            : base(logger, context)
         {
         }
 
@@ -32,7 +32,7 @@ namespace Nozomi.Service.Events.Analysis
             if (itemsPerPage > NozomiServiceConstants.AnalysedComponentTakeoutLimit || itemsPerPage < 0)
                 itemsPerPage = NozomiServiceConstants.AnalysedComponentTakeoutLimit;
                 
-            var query = _unitOfWork.GetRepository<AnalysedComponent>()
+            var query = _context.GetRepository<AnalysedComponent>()
                 .GetQueryable()
                 .AsNoTracking();
 
@@ -112,7 +112,7 @@ namespace Nozomi.Service.Events.Analysis
             string currencyPairGuid = null, string currencyTypeShortForm = null)
         {
             if (currencyId > 0)
-                return _unitOfWork.GetRepository<AnalysedComponent>()
+                return _context.GetRepository<AnalysedComponent>()
                     .GetQueryable()
                     .AsNoTracking()
                     .Any(ac => ac.DeletedAt == null && ac.IsEnabled 
@@ -120,7 +120,7 @@ namespace Nozomi.Service.Events.Analysis
                                                     && ac.ComponentType.Equals(type));
             
             if (!string.IsNullOrEmpty(currencySlug))
-                return _unitOfWork.GetRepository<AnalysedComponent>()
+                return _context.GetRepository<AnalysedComponent>()
                     .GetQueryable()
                     .AsNoTracking()
                     .Where(ac => ac.DeletedAt == null && ac.IsEnabled)
@@ -130,7 +130,7 @@ namespace Nozomi.Service.Events.Analysis
                                                     && ac.ComponentType.Equals(type));
             
             if (Guid.TryParse(currencyPairGuid, out var cpGuid))
-                return _unitOfWork.GetRepository<AnalysedComponent>()
+                return _context.GetRepository<AnalysedComponent>()
                     .GetQueryable()
                     .AsNoTracking()
                     .Where(ac => ac.DeletedAt == null && ac.IsEnabled 
@@ -141,7 +141,7 @@ namespace Nozomi.Service.Events.Analysis
                                                     && ac.ComponentType.Equals(type));
             
             if (!string.IsNullOrEmpty(currencyTypeShortForm))
-                return _unitOfWork.GetRepository<AnalysedComponent>()
+                return _context.GetRepository<AnalysedComponent>()
                     .GetQueryable()
                     .AsNoTracking()
                     .Where(ac => ac.DeletedAt == null && ac.IsEnabled
@@ -156,7 +156,7 @@ namespace Nozomi.Service.Events.Analysis
 
         public AnalysedComponent Get(long id, bool track = false, int index = 0)
         {
-            var query = _unitOfWork.GetRepository<AnalysedComponent>()
+            var query = _context.GetRepository<AnalysedComponent>()
                 .GetQueryable()
                 .AsNoTracking()
                 .Where(ac => ac.Id.Equals(id));
@@ -182,7 +182,7 @@ namespace Nozomi.Service.Events.Analysis
         {
             if (Guid.TryParse(guid, out var parsedGuid))
             {
-                return _unitOfWork.GetRepository<AnalysedComponent>()
+                return _context.GetRepository<AnalysedComponent>()
                     .GetQueryable()
                     .AsNoTracking()
                     .SingleOrDefault(ac => ac.Guid.Equals(parsedGuid));
@@ -193,7 +193,7 @@ namespace Nozomi.Service.Events.Analysis
 
         public UpdateAnalysedComponentViewModel Get(Guid guid, string userId = null)
         {
-            var query = _unitOfWork.GetRepository<AnalysedComponent>()
+            var query = _context.GetRepository<AnalysedComponent>()
                 .GetQueryable()
                 .AsNoTracking()
                 .Where(ac => ac.Guid.Equals(guid));
@@ -224,7 +224,7 @@ namespace Nozomi.Service.Events.Analysis
 
         public IEnumerable<AnalysedComponent> GetAll(bool filter = false, bool track = false, int index = 0)
         {
-            var query = _unitOfWork.GetRepository<AnalysedComponent>()
+            var query = _context.GetRepository<AnalysedComponent>()
                 .GetQueryable()
                 .AsNoTracking();
 
@@ -253,7 +253,7 @@ namespace Nozomi.Service.Events.Analysis
 
         public IEnumerable<AnalysedComponent> GetAll(int index = 0, bool filter = false, bool track = false)
         {
-            var query = _unitOfWork.GetRepository<AnalysedComponent>()
+            var query = _context.GetRepository<AnalysedComponent>()
                 .GetQueryable()
                 .AsNoTracking()
                 .OrderBy(ac => ac.Id);
@@ -282,7 +282,7 @@ namespace Nozomi.Service.Events.Analysis
 
         public ICollection<AnalysedComponent> GetAllCurrencyTypeAnalysedComponents(int index = 0, bool filter = false, bool track = false)
         {
-            var query = _unitOfWork.GetRepository<CurrencyType>()
+            var query = _context.GetRepository<CurrencyType>()
                 .GetQueryable()
                 .AsNoTracking();
 
@@ -322,7 +322,7 @@ namespace Nozomi.Service.Events.Analysis
             int index = 0)
         {
             // First, obtain the currency in question
-            var qCurrency = _unitOfWork.GetRepository<Currency>()
+            var qCurrency = _context.GetRepository<Currency>()
                 .GetQueryable()
                 .AsNoTracking()
                 .Where(c => c.Id.Equals(currencyId));
@@ -351,7 +351,7 @@ namespace Nozomi.Service.Events.Analysis
 
         public long GetTickerPairComponentsByCurrencyCount(long currencyId, Func<CurrencyPair, bool> predicate)
         {
-            var cPairs = _unitOfWork.GetRepository<CurrencyPair>()
+            var cPairs = _context.GetRepository<CurrencyPair>()
                 .GetQueryable()
                 .AsNoTracking()
                 .Include(cp => cp.Source)
@@ -375,7 +375,7 @@ namespace Nozomi.Service.Events.Analysis
         {
             if (currencyTypeId > 0)
             {
-                var components = _unitOfWork.GetRepository<AnalysedComponent>()
+                var components = _context.GetRepository<AnalysedComponent>()
                     .GetQueryable()
                     .Where(ac => ac.CurrencyTypeId.Equals(currencyTypeId));
 
@@ -410,7 +410,7 @@ namespace Nozomi.Service.Events.Analysis
         {
             if (currencyTypeId > 0)
             {
-                var components = _unitOfWork.GetRepository<Currency>()
+                var components = _context.GetRepository<Currency>()
                     .GetQueryable()
                     .Where(c => c.CurrencyTypeId.Equals(currencyTypeId))
                     .Include(c => c.AnalysedComponents);
@@ -434,14 +434,14 @@ namespace Nozomi.Service.Events.Analysis
             Expression<Func<AnalysedComponent, bool>> predicate = null, 
             Func<AnalysedComponent, bool> clientPredicate = null, int index = 0, bool track = false)
         {
-            var aComp = _unitOfWork.GetRepository<AnalysedComponent>()
+            var aComp = _context.GetRepository<AnalysedComponent>()
                 .GetQueryable()
                 .AsNoTracking()
                 .SingleOrDefault(ac => ac.Id.Equals(analysedComponentId));
 
             if (aComp == null) return new List<AnalysedComponent>();
 
-            var query = _unitOfWork.GetRepository<AnalysedComponent>()
+            var query = _context.GetRepository<AnalysedComponent>()
                 .GetQueryable()
                 .AsNoTracking()
                 .Where(ac => (aComp.CurrencyPairId != null && ac.CurrencyPairId.Equals(aComp.CurrencyPairId)) 
@@ -472,7 +472,7 @@ namespace Nozomi.Service.Events.Analysis
 
         public ICollection<AnalysedComponent> GetAllByCurrencyPair(long currencyPairId, bool track = false, int index = 0)
         {
-            var query = _unitOfWork.GetRepository<CurrencyPair>()
+            var query = _context.GetRepository<CurrencyPair>()
                 .GetQueryable()
                 .AsNoTracking()
                 .Where(r => r.Id.Equals(currencyPairId))
@@ -489,7 +489,7 @@ namespace Nozomi.Service.Events.Analysis
 
         public string GetCurrencyAbbreviation(AnalysedComponent analysedComponent)
         {
-            return _unitOfWork.GetRepository<Currency>()
+            return _context.GetRepository<Currency>()
                 .GetQueryable()
                 .AsNoTracking()
                 .Where(c => c.DeletedAt == null && c.IsEnabled)
@@ -501,7 +501,7 @@ namespace Nozomi.Service.Events.Analysis
 
         public AnalysedComponent Pop(Guid guid)
         {
-            return _unitOfWork.GetRepository<AnalysedComponent>()
+            return _context.GetRepository<AnalysedComponent>()
                 .GetQueryable()
                 .AsTracking()
                 .SingleOrDefault(ac => ac.DeletedAt == null && ac.Guid.Equals(guid));

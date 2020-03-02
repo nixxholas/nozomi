@@ -15,7 +15,7 @@ namespace Nozomi.Service.Events
         private readonly ICollection<KeyValuePair<string, int>> _requestPropertyTypeMap;
 
         public RequestPropertyTypeEvent(ILogger<RequestPropertyTypeEvent> logger,
-            IUnitOfWork<NozomiDbContext> unitOfWork) : base(logger, unitOfWork)
+            IUnitOfWork<NozomiDbContext> context) : base(logger, context)
         {
             _requestPropertyTypeMap = new List<KeyValuePair<string, int>>();
 

@@ -20,18 +20,18 @@ namespace Nozomi.Service.Services
         private readonly IWebsocketCommandPropertyEvent _websocketCommandPropertyEvent;
 
         public WebsocketCommandPropertyService(ILogger<WebsocketCommandPropertyService> logger, 
-            IUnitOfWork<NozomiDbContext> unitOfWork, IWebsocketCommandEvent websocketCommandEvent, 
+            IUnitOfWork<NozomiDbContext> context, IWebsocketCommandEvent websocketCommandEvent, 
             IWebsocketCommandPropertyEvent websocketCommandPropertyEvent) 
-            : base(logger, unitOfWork)
+            : base(logger, context)
         {
             _websocketCommandEvent = websocketCommandEvent;
             _websocketCommandPropertyEvent = websocketCommandPropertyEvent;
         }
 
         public WebsocketCommandPropertyService(IHttpContextAccessor contextAccessor, 
-            ILogger<WebsocketCommandPropertyService> logger, IUnitOfWork<NozomiDbContext> unitOfWork, 
+            ILogger<WebsocketCommandPropertyService> logger, IUnitOfWork<NozomiDbContext> context, 
             IWebsocketCommandEvent websocketCommandEvent, IWebsocketCommandPropertyEvent websocketCommandPropertyEvent) 
-            : base(contextAccessor, logger, unitOfWork)
+            : base(contextAccessor, logger, context)
         {
             _websocketCommandEvent = websocketCommandEvent;
             _websocketCommandPropertyEvent = websocketCommandPropertyEvent;
@@ -57,8 +57,8 @@ namespace Nozomi.Service.Services
                 if (Guid.TryParse(vm.CommandGuid, out var parsedGuid))
                     property.WebsocketCommandId = _websocketCommandEvent.Get(parsedGuid).Id;
                 
-                _unitOfWork.GetRepository<WebsocketCommandProperty>().Add(property); // Add
-                _unitOfWork.Commit(userId); // Commit
+                _context.GetRepository<WebsocketCommandProperty>().Add(property); // Add
+                _context.Commit(userId); // Commit
                 return; // Exit
             }
             
@@ -86,8 +86,8 @@ namespace Nozomi.Service.Services
                         if (!vm.Type.Equals(property.CommandPropertyType))
                             property.CommandPropertyType = vm.Type;
                         
-                        _unitOfWork.GetRepository<WebsocketCommandProperty>().Update(property); // Update
-                        _unitOfWork.Commit(userId); // Save
+                        _context.GetRepository<WebsocketCommandProperty>().Update(property); // Update
+                        _context.Commit(userId); // Save
                         return;
                     }
                 }
@@ -105,8 +105,8 @@ namespace Nozomi.Service.Services
                         if (!vm.Type.Equals(property.CommandPropertyType))
                             property.CommandPropertyType = vm.Type;
                         
-                        _unitOfWork.GetRepository<WebsocketCommandProperty>().Update(property); // Update
-                        _unitOfWork.Commit(userId); // Save
+                        _context.GetRepository<WebsocketCommandProperty>().Update(property); // Update
+                        _context.Commit(userId); // Save
                         return;
                     }
                 }
@@ -120,7 +120,7 @@ namespace Nozomi.Service.Services
         {
             if (Guid.TryParse(propertyGuid, out var parsedGuid))
             {
-                var query = _unitOfWork.GetRepository<WebsocketCommandProperty>()
+                var query = _context.GetRepository<WebsocketCommandProperty>()
                     .GetQueryable()
                     .AsNoTracking()
                     .Where(p => p.Guid.Equals(parsedGuid));
@@ -135,14 +135,14 @@ namespace Nozomi.Service.Services
                                                      "does not exist.");
                 
                 if (hardDelete)
-                    _unitOfWork.GetRepository<WebsocketCommandProperty>().Delete(property);
+                    _context.GetRepository<WebsocketCommandProperty>().Delete(property);
                 else {
                     property.DeletedAt = DateTime.UtcNow;
                     property.DeletedById = userId;
-                    _unitOfWork.GetRepository<WebsocketCommandProperty>().Update(property);
+                    _context.GetRepository<WebsocketCommandProperty>().Update(property);
                 }
 
-                _unitOfWork.Commit(userId); // Save
+                _context.Commit(userId); // Save
                 return; // End
             }
             
@@ -153,7 +153,7 @@ namespace Nozomi.Service.Services
         {
             if (propertyId > 0)
             {
-                var query = _unitOfWork.GetRepository<WebsocketCommandProperty>()
+                var query = _context.GetRepository<WebsocketCommandProperty>()
                     .GetQueryable()
                     .AsNoTracking()
                     .Where(p => p.Id.Equals(propertyId));
@@ -168,14 +168,14 @@ namespace Nozomi.Service.Services
                                                      "does not exist.");
                 
                 if (hardDelete)
-                    _unitOfWork.GetRepository<WebsocketCommandProperty>().Delete(property);
+                    _context.GetRepository<WebsocketCommandProperty>().Delete(property);
                 else {
                     property.DeletedAt = DateTime.UtcNow;
                     property.DeletedById = userId;
-                    _unitOfWork.GetRepository<WebsocketCommandProperty>().Update(property);
+                    _context.GetRepository<WebsocketCommandProperty>().Update(property);
                 }
 
-                _unitOfWork.Commit(userId); // Save
+                _context.Commit(userId); // Save
                 return; // End
             }
             

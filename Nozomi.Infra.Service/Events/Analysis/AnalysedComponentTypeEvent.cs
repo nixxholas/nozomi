@@ -12,7 +12,7 @@ namespace Nozomi.Service.Events.Analysis
         IAnalysedComponentTypeEvent
     {
         public AnalysedComponentTypeEvent(ILogger<AnalysedComponentTypeEvent> logger, 
-            IUnitOfWork<NozomiDbContext> unitOfWork) : base(logger, unitOfWork)
+            IUnitOfWork<NozomiDbContext> context) : base(logger, context)
         {
         }
 

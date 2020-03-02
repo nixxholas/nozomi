@@ -18,18 +18,18 @@ namespace Nozomi.Service.Services
         private readonly IRequestEvent _requestEvent;
         private readonly IRequestPropertyEvent _requestPropertyEvent;
         
-        public RequestPropertyService(ILogger<RequestPropertyService> logger, IUnitOfWork<NozomiDbContext> unitOfWork,
+        public RequestPropertyService(ILogger<RequestPropertyService> logger, IUnitOfWork<NozomiDbContext> context,
             IRequestEvent requestEvent, IRequestPropertyEvent requestPropertyEvent) 
-            : base(logger, unitOfWork)
+            : base(logger, context)
         {
             _requestEvent = requestEvent;
             _requestPropertyEvent = requestPropertyEvent;
         }
 
         public RequestPropertyService(IHttpContextAccessor contextAccessor, ILogger<RequestPropertyService> logger, 
-            IUnitOfWork<NozomiDbContext> unitOfWork, IRequestEvent requestEvent, 
+            IUnitOfWork<NozomiDbContext> context, IRequestEvent requestEvent, 
             IRequestPropertyEvent requestPropertyEvent) 
-            : base(contextAccessor, logger, unitOfWork)
+            : base(contextAccessor, logger, context)
         {
             _requestEvent = requestEvent;
             _requestPropertyEvent = requestPropertyEvent;
@@ -58,9 +58,9 @@ namespace Nozomi.Service.Services
                         RequestId = request.Id
                     };
                     // Push
-                    _unitOfWork.GetRepository<RequestProperty>().Add(requestProperty);
+                    _context.GetRepository<RequestProperty>().Add(requestProperty);
                     // Commit
-                    _unitOfWork.Commit(userId);
+                    _context.Commit(userId);
                     // Complete
                     _logger.LogInformation($"{_serviceName} Create: user {userId} has successfully " +
                                            $"created a request property for request {inputModel.RequestGuid} of " +
@@ -87,9 +87,9 @@ namespace Nozomi.Service.Services
                     requestProperty.Key = inputModel.Key;
                     requestProperty.Value = inputModel.Value;
                     // Push
-                    _unitOfWork.GetRepository<RequestProperty>().Update(requestProperty);
+                    _context.GetRepository<RequestProperty>().Update(requestProperty);
                     // Commit
-                    _unitOfWork.Commit(userId);
+                    _context.Commit(userId);
                     // Complete
                     _logger.LogInformation($"{_serviceName} Update: user {userId} has successfully " +
                                            $"updated the request property {inputModel.Guid}.");
@@ -117,7 +117,7 @@ namespace Nozomi.Service.Services
                     if (hardDelete)
                     {
                         // Delete the entity directly
-                        _unitOfWork.Context.Remove(requestProperty);
+                        _context.Context.Remove(requestProperty);
                     }
                     else
                     {
@@ -125,11 +125,11 @@ namespace Nozomi.Service.Services
                         requestProperty.DeletedAt = DateTime.UtcNow;
                         requestProperty.DeletedById = userId;
                         // Push
-                        _unitOfWork.GetRepository<RequestProperty>().Update(requestProperty);
+                        _context.GetRepository<RequestProperty>().Update(requestProperty);
                     }
                     
                     //Commit
-                    _unitOfWork.Commit(userId);
+                    _context.Commit(userId);
                     // Complete
                     _logger.LogInformation($"{_serviceName} Delete: user {userId} has successfully " +
                                            $"deleted the request property {guid}.");

@@ -14,7 +14,7 @@ namespace Nozomi.Service.Services.Enumerators
         private readonly ICollection<KeyValuePair<string, int>> _currencyPairTypeMap;
 
         public CurrencyPairTypeEvent(ILogger<CurrencyPairTypeEvent> logger,
-            IUnitOfWork<NozomiDbContext> unitOfWork) : base(logger, unitOfWork)
+            IUnitOfWork<NozomiDbContext> context) : base(logger, context)
         {
             _currencyPairTypeMap = new List<KeyValuePair<string, int>>();
 

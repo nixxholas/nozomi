@@ -14,8 +14,8 @@ namespace Nozomi.Service.Services
         IComponentHistoricItemService
     {
         public ComponentHistoricItemService(ILogger<ComponentHistoricItemService> logger, 
-        IUnitOfWork<NozomiDbContext> unitOfWork) 
-            : base(logger, unitOfWork)
+        IUnitOfWork<NozomiDbContext> context) 
+            : base(logger, context)
         {
         }
 
@@ -73,7 +73,7 @@ namespace Nozomi.Service.Services
         {
             if (Guid.TryParse(guid, out var parsedGuid))
             {
-                var itemToDel = _unitOfWork.GetRepository<ComponentHistoricItem>()
+                var itemToDel = _context.GetRepository<ComponentHistoricItem>()
                     .GetQueryable()
                     .AsNoTracking()
                     .SingleOrDefault(e => e.Guid.Equals(parsedGuid));
@@ -82,16 +82,16 @@ namespace Nozomi.Service.Services
                 {
                     if (hardDelete)
                     {
-                        _unitOfWork.GetRepository<ComponentHistoricItem>().Delete(itemToDel); // Delete
-                        _unitOfWork.Commit(userId); // Save
+                        _context.GetRepository<ComponentHistoricItem>().Delete(itemToDel); // Delete
+                        _context.Commit(userId); // Save
                         return;
                     }
                     else
                     {
                         itemToDel.DeletedAt = DateTime.UtcNow;
                         itemToDel.DeletedById = userId;
-                        _unitOfWork.GetRepository<ComponentHistoricItem>().Update(itemToDel); // Save
-                        _unitOfWork.Commit(userId); // Commit
+                        _context.GetRepository<ComponentHistoricItem>().Update(itemToDel); // Save
+                        _context.Commit(userId); // Commit
                         return;
                     }
                 }
@@ -102,7 +102,7 @@ namespace Nozomi.Service.Services
 
         public void Remove(Guid guid, string userId = null, bool hardDelete = false)
         {
-            var itemToDel = _unitOfWork.GetRepository<ComponentHistoricItem>()
+            var itemToDel = _context.GetRepository<ComponentHistoricItem>()
                 .GetQueryable()
                 .AsTracking()
                 .SingleOrDefault(e => e.Guid.Equals(guid));
@@ -112,16 +112,16 @@ namespace Nozomi.Service.Services
             {
                 if (hardDelete)
                 {
-                    _unitOfWork.GetRepository<ComponentHistoricItem>().Delete(itemToDel); // Delete
-                    _unitOfWork.Commit(userId); // Save
+                    _context.GetRepository<ComponentHistoricItem>().Delete(itemToDel); // Delete
+                    _context.Commit(userId); // Save
                     return;
                 }
                 else
                 {
                     itemToDel.DeletedAt = DateTime.UtcNow;
                     itemToDel.DeletedById = userId;
-                    _unitOfWork.GetRepository<ComponentHistoricItem>().Update(itemToDel); // Save
-                    _unitOfWork.Commit(userId); // Commit
+                    _context.GetRepository<ComponentHistoricItem>().Update(itemToDel); // Save
+                    _context.Commit(userId); // Commit
                     return;
                 }
             }
@@ -135,16 +135,16 @@ namespace Nozomi.Service.Services
             {
                 if (hardDelete)
                 {
-                    _unitOfWork.GetRepository<ComponentHistoricItem>().Delete(componentHistoricItem); // Delete
-                    _unitOfWork.Commit(userId); // Save
+                    _context.GetRepository<ComponentHistoricItem>().Delete(componentHistoricItem); // Delete
+                    _context.Commit(userId); // Save
                     return;
                 }
                 else
                 {
                     componentHistoricItem.DeletedAt = DateTime.UtcNow;
                     componentHistoricItem.DeletedById = userId;
-                    _unitOfWork.GetRepository<ComponentHistoricItem>().Update(componentHistoricItem); // Save
-                    _unitOfWork.Commit(userId); // Commit
+                    _context.GetRepository<ComponentHistoricItem>().Update(componentHistoricItem); // Save
+                    _context.Commit(userId); // Commit
                     return;
                 }
             }

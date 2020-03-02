@@ -11,8 +11,8 @@ namespace Nozomi.Infra.Auth.Services.Address
 {
     public class AddressService : BaseService<AddressService, AuthDbContext>, IAddressService
     {
-        public AddressService(ILogger<AddressService> logger, IUnitOfWork<AuthDbContext> unitOfWork) 
-            : base(logger, unitOfWork)
+        public AddressService(ILogger<AddressService> logger, IUnitOfWork<AuthDbContext> context) 
+            : base(logger, context)
         {
         }
 
@@ -21,7 +21,7 @@ namespace Nozomi.Infra.Auth.Services.Address
             if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(address))
                 return string.Empty;
 
-            var user = _unitOfWork.GetRepository<Base.Auth.Models.User>()
+            var user = _context.GetRepository<Base.Auth.Models.User>()
                 .GetQueryable()
                 .AsNoTracking()
                 .SingleOrDefault(u => u.Id.Equals(userId));
@@ -36,8 +36,8 @@ namespace Nozomi.Infra.Auth.Services.Address
                 Type = type
             };
             
-            _unitOfWork.GetRepository<Base.Auth.Models.Wallet.Address>().Add(addr);
-            _unitOfWork.Commit();
+            _context.GetRepository<Base.Auth.Models.Wallet.Address>().Add(addr);
+            _context.Commit();
 
             return addr.Id;
         }

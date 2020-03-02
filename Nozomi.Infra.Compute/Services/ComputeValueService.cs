@@ -13,14 +13,14 @@ namespace Nozomi.Infra.Compute.Services
 {
     public class ComputeValueService : BaseService<ComputeValueService, NozomiComputeDbContext>, IComputeValueService
     {
-        public ComputeValueService(ILogger<ComputeValueService> logger, IUnitOfWork<NozomiComputeDbContext> unitOfWork) 
-            : base(logger, unitOfWork)
+        public ComputeValueService(ILogger<ComputeValueService> logger, IUnitOfWork<NozomiComputeDbContext> context) 
+            : base(logger, context)
         {
         }
 
         public ComputeValueService(IHttpContextAccessor contextAccessor, ILogger<ComputeValueService> logger, 
-            IUnitOfWork<NozomiComputeDbContext> unitOfWork) 
-            : base(contextAccessor, logger, unitOfWork)
+            IUnitOfWork<NozomiComputeDbContext> context) 
+            : base(contextAccessor, logger, context)
         {
         }
 
@@ -28,8 +28,8 @@ namespace Nozomi.Infra.Compute.Services
         {
             if (computeValue != null)
             {
-                _unitOfWork.GetRepository<ComputeValue>().Add(computeValue);
-                _unitOfWork.Commit(computeValue.CreatedById);
+                _context.GetRepository<ComputeValue>().Add(computeValue);
+                _context.Commit(computeValue.CreatedById);
                 return;
             }
             
@@ -41,7 +41,7 @@ namespace Nozomi.Infra.Compute.Services
             if (computeValue != null)
             {
                 // Obtain the last value
-                var lastComputeValue = _unitOfWork.GetRepository<ComputeValue>()
+                var lastComputeValue = _context.GetRepository<ComputeValue>()
                     .GetQueryable()
                     .AsNoTracking()
                     .OrderByDescending(v => v.CreatedAt)
@@ -55,8 +55,8 @@ namespace Nozomi.Infra.Compute.Services
                     return;
                 }
                 
-                _unitOfWork.GetRepository<ComputeValue>().Add(computeValue);
-                _unitOfWork.Commit(computeValue.CreatedById);
+                _context.GetRepository<ComputeValue>().Add(computeValue);
+                _context.Commit(computeValue.CreatedById);
                 return;
             }
             

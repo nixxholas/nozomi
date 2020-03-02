@@ -12,20 +12,20 @@ namespace Nozomi.Infra.Compute.Services
 {
     public class ComputeService : BaseService<ComputeService, NozomiComputeDbContext>, IComputeService
     {
-        public ComputeService(ILogger<ComputeService> logger, IUnitOfWork<NozomiComputeDbContext> unitOfWork) 
-            : base(logger, unitOfWork)
+        public ComputeService(ILogger<ComputeService> logger, IUnitOfWork<NozomiComputeDbContext> context) 
+            : base(logger, context)
         {
         }
 
         public ComputeService(IHttpContextAccessor contextAccessor, ILogger<ComputeService> logger, 
-            IUnitOfWork<NozomiComputeDbContext> unitOfWork) 
-            : base(contextAccessor, logger, unitOfWork)
+            IUnitOfWork<NozomiComputeDbContext> context) 
+            : base(contextAccessor, logger, context)
         {
         }
 
         public void Modified(Guid guid, bool failed = false, string userId = null)
         {
-            var compute = _unitOfWork.GetRepository<Data.Models.Web.Compute>()
+            var compute = _context.GetRepository<Data.Models.Web.Compute>()
                 .GetQueryable()
                 .AsTracking()
                 .SingleOrDefault(c => c.Guid.Equals(guid));
@@ -38,8 +38,8 @@ namespace Nozomi.Infra.Compute.Services
             if (failed)
                 compute.FailCount += 1;
             
-            _unitOfWork.GetRepository<Data.Models.Web.Compute>().Update(compute);
-            _unitOfWork.Commit(userId);
+            _context.GetRepository<Data.Models.Web.Compute>().Update(compute);
+            _context.Commit(userId);
         }
 
         public void Modified(string guid, bool failed = false, string userId = null)
@@ -47,7 +47,7 @@ namespace Nozomi.Infra.Compute.Services
             if (!Guid.TryParse(guid, out var parsedGuid))
                 throw new ArgumentException($"{_serviceName} Modified (string): Invalid guid string.");
             
-            var compute = _unitOfWork.GetRepository<Data.Models.Web.Compute>()
+            var compute = _context.GetRepository<Data.Models.Web.Compute>()
                 .GetQueryable()
                 .AsTracking()
                 .SingleOrDefault(c => c.Guid.Equals(parsedGuid));
@@ -60,8 +60,8 @@ namespace Nozomi.Infra.Compute.Services
             if (failed)
                 compute.FailCount += 1;
             
-            _unitOfWork.GetRepository<Data.Models.Web.Compute>().Update(compute);
-            _unitOfWork.Commit(userId);
+            _context.GetRepository<Data.Models.Web.Compute>().Update(compute);
+            _context.Commit(userId);
         }
     }
 }

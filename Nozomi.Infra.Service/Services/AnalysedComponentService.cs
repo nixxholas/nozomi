@@ -22,9 +22,9 @@ namespace Nozomi.Service.Services
         private readonly ICurrencyTypeEvent _currencyTypeEvent;
         
         public AnalysedComponentService(ILogger<AnalysedComponentService> logger, 
-            IUnitOfWork<NozomiDbContext> unitOfWork, IAnalysedComponentEvent analysedComponentEvent,
+            IUnitOfWork<NozomiDbContext> context, IAnalysedComponentEvent analysedComponentEvent,
             ICurrencyEvent currencyEvent, ICurrencyPairEvent currencyPairEvent, ICurrencyTypeEvent currencyTypeEvent) 
-            : base(logger, unitOfWork)
+            : base(logger, context)
         {
             _analysedComponentEvent = analysedComponentEvent;
             _currencyEvent = currencyEvent;
@@ -74,8 +74,8 @@ namespace Nozomi.Service.Services
                 var analysedComponent = new AnalysedComponent(vm.Type, vm.Delay, vm.UiFormatting, vm.IsDenominated,
                     vm.StoreHistoricals, cId, cpId, ctId);
                 
-                _unitOfWork.GetRepository<AnalysedComponent>().Add(analysedComponent);
-                _unitOfWork.Commit(userId);
+                _context.GetRepository<AnalysedComponent>().Add(analysedComponent);
+                _context.Commit(userId);
                 return;
             }
         
@@ -133,8 +133,8 @@ namespace Nozomi.Service.Services
                             analysedComponent.CurrencyTypeId = currencyType.Id;
                     }
                     
-                    _unitOfWork.GetRepository<AnalysedComponent>().Update(analysedComponent);
-                    _unitOfWork.Commit(userId);
+                    _context.GetRepository<AnalysedComponent>().Update(analysedComponent);
+                    _context.Commit(userId);
 
                     _logger.LogInformation($"{_serviceName}: Successfully updated AnalysedComponent -> " +
                                            $"{analysedComponent.Guid}");

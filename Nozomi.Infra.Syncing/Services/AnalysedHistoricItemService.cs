@@ -13,7 +13,7 @@ namespace Nozomi.Infra.Syncing.Services
         IAnalysedHistoricItemService
     {
         public AnalysedHistoricItemService(ILogger<AnalysedHistoricItemService> logger, 
-            IUnitOfWork<NozomiDbContext> unitOfWork) : base(logger, unitOfWork)
+            IUnitOfWork<NozomiDbContext> context) : base(logger, context)
         {
         }
 
@@ -21,8 +21,8 @@ namespace Nozomi.Infra.Syncing.Services
         {
             if (item != null)
             {
-                _unitOfWork.GetRepository<AnalysedHistoricItem>().Add(item);
-                _unitOfWork.Commit(userId);
+                _context.GetRepository<AnalysedHistoricItem>().Add(item);
+                _context.Commit(userId);
             }
 
             return -1; // Failed..
@@ -33,7 +33,7 @@ namespace Nozomi.Infra.Syncing.Services
         {
             if (analysedComponentId > 0 && !string.IsNullOrEmpty(incomingValue))
             {
-                var lastHistoric = _unitOfWork.GetRepository<AnalysedHistoricItem>()
+                var lastHistoric = _context.GetRepository<AnalysedHistoricItem>()
                     .Get(ahi => ahi.AnalysedComponentId.Equals(analysedComponentId))
                     .OrderByDescending(ahi => ahi.CreatedAt)
                     .FirstOrDefault();
@@ -46,13 +46,13 @@ namespace Nozomi.Infra.Syncing.Services
                     if (ignoreSimilarityCheck || (lastHistoric.Value != incomingValue))
                     {
                         // Push it
-                        _unitOfWork.GetRepository<AnalysedHistoricItem>().Add(new AnalysedHistoricItem
+                        _context.GetRepository<AnalysedHistoricItem>().Add(new AnalysedHistoricItem
                         {
                             AnalysedComponentId = analysedComponentId,
                             Value = incomingValue,
                             HistoricDateTime = historicalTime
                         });
-                        _unitOfWork.Commit(userId); // done
+                        _context.Commit(userId); // done
                     }
 
                     return true;
@@ -60,13 +60,13 @@ namespace Nozomi.Infra.Syncing.Services
                 else
                 {
                     // Push it
-                    _unitOfWork.GetRepository<AnalysedHistoricItem>().Add(new AnalysedHistoricItem
+                    _context.GetRepository<AnalysedHistoricItem>().Add(new AnalysedHistoricItem
                     {
                         AnalysedComponentId = analysedComponentId,
                         Value = incomingValue,
                         HistoricDateTime = historicalTime
                     });
-                    _unitOfWork.Commit(userId); // done
+                    _context.Commit(userId); // done
 
                     return true;
                 }

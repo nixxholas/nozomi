@@ -22,8 +22,8 @@ namespace Nozomi.Service.Events
     public class ComponentEvent : BaseEvent<ComponentEvent, NozomiDbContext, Component>, 
         IComponentEvent
     {
-        public ComponentEvent(ILogger<ComponentEvent> logger, IUnitOfWork<NozomiDbContext> unitOfWork)
-            : base(logger, unitOfWork)
+        public ComponentEvent(ILogger<ComponentEvent> logger, IUnitOfWork<NozomiDbContext> context)
+            : base(logger, context)
         {
         }
 
@@ -32,12 +32,12 @@ namespace Nozomi.Service.Events
             if (requestId <= 0) return null;
 
             return includeNested
-                ? _unitOfWork.GetRepository<Component>()
+                ? _context.GetRepository<Component>()
                     .GetQueryable(rc => rc.RequestId.Equals(requestId) && rc.DeletedAt == null && rc.IsEnabled)
                     .AsNoTracking()
                     .Include(rc => rc.Request)
                     .ToList()
-                : _unitOfWork.GetRepository<Component>()
+                : _context.GetRepository<Component>()
                     .GetQueryable(rc => rc.RequestId.Equals(requestId) && rc.DeletedAt == null && rc.IsEnabled)
                     .AsNoTracking()
                     .ToList();
@@ -50,7 +50,7 @@ namespace Nozomi.Service.Events
                                                 || index < 0 || itemsPerPage <= 0)
                 throw new ArgumentOutOfRangeException("Invalid parameters.");
 
-            var query = _unitOfWork.GetRepository<Component>()
+            var query = _context.GetRepository<Component>()
                 .GetQueryable()
                 .AsNoTracking()
                 .Include(c => c.Request)
@@ -91,7 +91,7 @@ namespace Nozomi.Service.Events
                 || !Guid.TryParse(requestGuid, out var guid))
                 throw new ArgumentNullException("Invalid requestGuid.");
 
-            var query = _unitOfWork.GetRepository<Request>()
+            var query = _context.GetRepository<Request>()
                 .GetQueryable()
                 .AsNoTracking()
                 .Include(r => r.RequestComponents)
@@ -138,7 +138,7 @@ namespace Nozomi.Service.Events
             if (requestId < 1)
                 throw new ArgumentNullException("Invalid requestGuid.");
 
-            var query = _unitOfWork.GetRepository<Request>()
+            var query = _context.GetRepository<Request>()
                 .GetQueryable()
                 .AsNoTracking()
                 .Include(r => r.RequestComponents)
@@ -185,7 +185,7 @@ namespace Nozomi.Service.Events
                 throw new ArgumentOutOfRangeException("Invalid index or itemsPerIndex.");
             
             if (includeNested)
-                return _unitOfWork.GetRepository<Component>()
+                return _context.GetRepository<Component>()
                     .GetQueryable()
                     .AsNoTracking()
                     .Where(c => c.DeletedAt == null && c.IsEnabled)
@@ -204,7 +204,7 @@ namespace Nozomi.Service.Events
                             })
                     });
 
-            return _unitOfWork.GetRepository<Component>()
+            return _context.GetRepository<Component>()
                 .GetQueryable()
                 .AsNoTracking()
                 .Where(c => c.DeletedAt == null && c.IsEnabled)
@@ -219,14 +219,14 @@ namespace Nozomi.Service.Events
         public ICollection<Component> All(int index = 0, bool includeNested = false)
         {
             return includeNested
-                ? _unitOfWork.GetRepository<Component>()
+                ? _context.GetRepository<Component>()
                     .GetQueryable(rc => rc.DeletedAt == null && rc.IsEnabled)
                     .AsNoTracking()
                     .Include(rc => rc.Request)
                     .Skip(index * NozomiServiceConstants.RequestComponentTakeoutLimit)
                     .Take(NozomiServiceConstants.RequestComponentTakeoutLimit)
                     .ToList()
-                : _unitOfWork.GetRepository<Component>()
+                : _context.GetRepository<Component>()
                     .GetQueryable(rc => rc.DeletedAt == null && rc.IsEnabled)
                     .AsNoTracking()
                     .Skip(index * NozomiServiceConstants.RequestComponentTakeoutLimit)
@@ -244,14 +244,14 @@ namespace Nozomi.Service.Events
 
         public long GetCorrelationPredicateCount(long analysedComponentId, Expression<Func<Component, bool>> predicate)
         {
-            var analysedComponent = _unitOfWork.GetRepository<AnalysedComponent>()
+            var analysedComponent = _context.GetRepository<AnalysedComponent>()
                 .GetQueryable()
                 .AsNoTracking()
                 .SingleOrDefault(ac => ac.Id.Equals(analysedComponentId));
             
             if (analysedComponent != null)
             {
-                var query = _unitOfWork.GetRepository<Request>()
+                var query = _context.GetRepository<Request>()
                     .GetQueryable()
                     .AsNoTracking();
                 
@@ -289,7 +289,7 @@ namespace Nozomi.Service.Events
         public ICollection<Component> GetByMainCurrency(string mainCurrencyAbbrv,
             ICollection<ComponentType> componentTypes)
         {
-            return _unitOfWork.GetRepository<CurrencyPair>()
+            return _context.GetRepository<CurrencyPair>()
                 .GetQueryable(cp => cp.DeletedAt == null && cp.IsEnabled)
                 .AsNoTracking()
                 .Where(cp => cp.MainTicker.Equals(mainCurrencyAbbrv, StringComparison.InvariantCultureIgnoreCase))
@@ -315,14 +315,14 @@ namespace Nozomi.Service.Events
         public ICollection<Component> GetAllByCorrelation(long analysedComponentId, bool track = false
             , int index = 0, bool ensureValid = true, ICollection<ComponentType> componentTypes = null)
         {
-            var analysedComponent = _unitOfWork.GetRepository<AnalysedComponent>()
+            var analysedComponent = _context.GetRepository<AnalysedComponent>()
                 .GetQueryable()
                 .AsNoTracking()
                 .SingleOrDefault(ac => ac.Id.Equals(analysedComponentId));
 
             if (analysedComponent != null)
             {
-                var query = _unitOfWork.GetRepository<Request>()
+                var query = _context.GetRepository<Request>()
                     .GetQueryable();
 
                 if (track)
@@ -388,7 +388,7 @@ namespace Nozomi.Service.Events
         public ICollection<Component> GetAllByCurrency(long currencyId, bool track = false, int index = 0)
         {
             // First, obtain the currency in question
-            var qCurrency = _unitOfWork.GetRepository<Currency>()
+            var qCurrency = _context.GetRepository<Currency>()
                 .GetQueryable()
                 .AsNoTracking()
                 .Where(c => c.Id.Equals(currencyId))
@@ -416,7 +416,7 @@ namespace Nozomi.Service.Events
             int index = 0)
         {
             // First, obtain the currency in question
-            var qCurrency = _unitOfWork.GetRepository<Currency>()
+            var qCurrency = _context.GetRepository<Currency>()
                 .GetQueryable()
                 .AsNoTracking()
                 .Where(c => c.Id.Equals(currencyId));
@@ -463,11 +463,11 @@ namespace Nozomi.Service.Events
         public NozomiResult<Component> Get(long id, bool includeNested = false)
         {
             if (includeNested)
-                return new NozomiResult<Component>(_unitOfWork.GetRepository<Component>().GetQueryable()
+                return new NozomiResult<Component>(_context.GetRepository<Component>().GetQueryable()
                     .Include(rc => rc.Request)
                     .SingleOrDefault(rc => rc.Id.Equals(id) && rc.IsEnabled && rc.DeletedAt == null));
 
-            return new NozomiResult<Component>(_unitOfWork.GetRepository<Component>()
+            return new NozomiResult<Component>(_context.GetRepository<Component>()
                 .Get(rc => rc.Id.Equals(id) && rc.DeletedAt == null && rc.IsEnabled)
                 .SingleOrDefault());
         }

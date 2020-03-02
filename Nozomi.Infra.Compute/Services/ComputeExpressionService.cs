@@ -16,14 +16,14 @@ namespace Nozomi.Infra.Compute.Services
         IComputeExpressionService
     {
         public ComputeExpressionService(ILogger<ComputeExpressionService> logger, 
-            IUnitOfWork<NozomiComputeDbContext> unitOfWork) 
-            : base(logger, unitOfWork)
+            IUnitOfWork<NozomiComputeDbContext> context) 
+            : base(logger, context)
         {
         }
 
         public ComputeExpressionService(IHttpContextAccessor contextAccessor, ILogger<ComputeExpressionService> logger, 
-            IUnitOfWork<NozomiComputeDbContext> unitOfWork) 
-            : base(contextAccessor, logger, unitOfWork)
+            IUnitOfWork<NozomiComputeDbContext> context) 
+            : base(contextAccessor, logger, context)
         {
         }
 
@@ -31,7 +31,7 @@ namespace Nozomi.Infra.Compute.Services
         {
             if (Guid.TryParse(expressionGuid, out var parsedGuid) && !string.IsNullOrEmpty(value))
             {
-                var query = _unitOfWork.GetRepository<ComputeExpression>()
+                var query = _context.GetRepository<ComputeExpression>()
                     .GetQueryable()
                     .AsTracking()
                     .SingleOrDefault(e => e.Guid.Equals(parsedGuid));
@@ -47,8 +47,8 @@ namespace Nozomi.Infra.Compute.Services
                 }
                     
                 query.ModifiedAt = DateTime.UtcNow;
-                _unitOfWork.GetRepository<ComputeExpression>().Update(query);
-                _unitOfWork.Commit();
+                _context.GetRepository<ComputeExpression>().Update(query);
+                _context.Commit();
                 _logger.LogInformation($"{_serviceName} UpdateValue (string): Updated expression " +
                                        $"{query.Guid}.");
                 return;
@@ -59,7 +59,7 @@ namespace Nozomi.Infra.Compute.Services
 
         public void UpdateValue(Guid expressionGuid, string value)
         {
-            var query = _unitOfWork.GetRepository<ComputeExpression>()
+            var query = _context.GetRepository<ComputeExpression>()
                 .GetQueryable()
                 .AsTracking()
                 .SingleOrDefault(e => e.Guid.Equals(expressionGuid));
@@ -78,8 +78,8 @@ namespace Nozomi.Infra.Compute.Services
             }
             
             query.ModifiedAt = DateTime.UtcNow;
-            _unitOfWork.GetRepository<ComputeExpression>().Update(query);
-            _unitOfWork.Commit();
+            _context.GetRepository<ComputeExpression>().Update(query);
+            _context.Commit();
             _logger.LogInformation($"{_serviceName} UpdateValue (Guid): Updated expression " +
                                    $"{query.Guid}.");
         }

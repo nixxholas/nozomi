@@ -16,7 +16,7 @@ namespace Nozomi.Service.Services
         private readonly ICurrencyTypeEvent _currencyTypeEvent;
         
         public CurrencyTypeService(ILogger<CurrencyTypeService> logger, 
-            ICurrencyTypeEvent currencyTypeEvent, IUnitOfWork<NozomiDbContext> unitOfWork) : base(logger, unitOfWork)
+            ICurrencyTypeEvent currencyTypeEvent, IUnitOfWork<NozomiDbContext> context) : base(logger, context)
         {
             _currencyTypeEvent = currencyTypeEvent;
         }
@@ -27,8 +27,8 @@ namespace Nozomi.Service.Services
             {
                 var currencyType = new CurrencyType(vm.TypeShortForm, vm.Name);
                 
-                _unitOfWork.GetRepository<CurrencyType>().Add(currencyType);
-                _unitOfWork.Commit(userId);
+                _context.GetRepository<CurrencyType>().Add(currencyType);
+                _context.Commit(userId);
 
                 return;
             }
@@ -50,8 +50,8 @@ namespace Nozomi.Service.Services
                     currencyType.DeletedAt = DateTime.UtcNow;
                     currencyType.DeletedById = userId;
                     
-                    _unitOfWork.GetRepository<CurrencyType>().Update(currencyType);
-                    _unitOfWork.Commit(userId);
+                    _context.GetRepository<CurrencyType>().Update(currencyType);
+                    _context.Commit(userId);
 
                     return; // Do not execute further since we're done
                 }                    
@@ -63,8 +63,8 @@ namespace Nozomi.Service.Services
                 if (!string.IsNullOrEmpty(vm.Name))
                     currencyType.Name = vm.Name;
                 
-                _unitOfWork.GetRepository<CurrencyType>().Update(currencyType);
-                _unitOfWork.Commit(userId);
+                _context.GetRepository<CurrencyType>().Update(currencyType);
+                _context.Commit(userId);
 
                 return; // Do not execute further since we're done
             }

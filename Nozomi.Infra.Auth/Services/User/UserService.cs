@@ -22,16 +22,16 @@ namespace Nozomi.Infra.Auth.Services.User
     {
         private readonly UserManager<Base.Auth.Models.User> _userManager;
         
-        public UserService(ILogger<UserService> logger, IUnitOfWork<AuthDbContext> unitOfWork,
+        public UserService(ILogger<UserService> logger, IUnitOfWork<AuthDbContext> context,
             UserManager<Base.Auth.Models.User> userManager) 
-            : base(logger, unitOfWork)
+            : base(logger, context)
         {
             _userManager = userManager;
         }
 
         public UserService(IHttpContextAccessor contextAccessor, ILogger<UserService> logger, 
-            IUnitOfWork<AuthDbContext> unitOfWork, UserManager<Base.Auth.Models.User> userManager) 
-            : base(contextAccessor, logger, unitOfWork)
+            IUnitOfWork<AuthDbContext> context, UserManager<Base.Auth.Models.User> userManager) 
+            : base(contextAccessor, logger, context)
         {
             _userManager = userManager;
         }
@@ -40,7 +40,7 @@ namespace Nozomi.Infra.Auth.Services.User
         {
             if (!string.IsNullOrEmpty(userId))
             {
-                return _unitOfWork.GetRepository<Base.Auth.Models.User>()
+                return _context.GetRepository<Base.Auth.Models.User>()
                     .GetQueryable()
                     .AsNoTracking()
                     .Where(u => u.Id.Equals(userId))
@@ -57,7 +57,7 @@ namespace Nozomi.Infra.Auth.Services.User
         {
             if (!string.IsNullOrEmpty(stripeCustId) && !string.IsNullOrEmpty(userId))
             {
-                var user = _unitOfWork.GetRepository<Base.Auth.Models.User>()
+                var user = _context.GetRepository<Base.Auth.Models.User>()
                     .GetQueryable()
                     .AsNoTracking()
                     .Where(u => u.Id.Equals(userId))
@@ -69,14 +69,14 @@ namespace Nozomi.Infra.Auth.Services.User
                 // Check!
                 if (user != null)
                 {
-                    _unitOfWork.GetRepository<UserClaim>().Add(new UserClaim
+                    _context.GetRepository<UserClaim>().Add(new UserClaim
                     {
                         UserId = userId,
                         ClaimType = NozomiJwtClaimTypes.StripeCustomerId,
                         ClaimValue = stripeCustId
                     });
 
-                    _unitOfWork.Commit(userId);
+                    _context.Commit(userId);
                     
                     return Task.CompletedTask;
                 }
@@ -89,7 +89,7 @@ namespace Nozomi.Infra.Auth.Services.User
         {
             if (vm.IsValid())
             {
-                var user = _unitOfWork.GetRepository<Base.Auth.Models.User>()
+                var user = _context.GetRepository<Base.Auth.Models.User>()
                     .GetQueryable()
                     .AsTracking()
                     .Where(u => u.Id.Equals(userId))
@@ -134,7 +134,7 @@ namespace Nozomi.Infra.Auth.Services.User
                             if (!string.IsNullOrEmpty(uClaim.Value.GetString())
                                 && !user.UserName.Equals(uClaim.Value.GetString())
                                 // Dupe checks
-                                && !_unitOfWork.GetRepository<Base.Auth.Models.User>().GetQueryable()
+                                && !_context.GetRepository<Base.Auth.Models.User>().GetQueryable()
                                     .Any(u => u.NormalizedUserName.Equals(uClaim.Value.GetString())))
                             {
                                 // Update the username
@@ -215,8 +215,8 @@ namespace Nozomi.Infra.Auth.Services.User
                 }
                 
                 // Push to DB
-                _unitOfWork.GetRepository<Base.Auth.Models.User>().Update(user);
-                _unitOfWork.Commit(userId);
+                _context.GetRepository<Base.Auth.Models.User>().Update(user);
+                _context.Commit(userId);
 
                 return; // Done
             }

@@ -17,7 +17,7 @@ namespace Nozomi.Service.Events
         // private readonly ICollection<KeyValuePair<string, int>> _componentTypeMap;
 
         public ComponentTypeEvent(ILogger<ComponentTypeEvent> logger,
-            IUnitOfWork<NozomiDbContext> unitOfWork) : base(logger, unitOfWork)
+            IUnitOfWork<NozomiDbContext> context) : base(logger, context)
         {
             // _componentTypeMap = new List<KeyValuePair<string, int>>();
             //
@@ -30,7 +30,7 @@ namespace Nozomi.Service.Events
 
         public IEnumerable<KeyValuePair<string, long>> All()
         {
-            return _unitOfWork.GetRepository<ComponentType>()
+            return _context.GetRepository<ComponentType>()
                 .GetQueryable()
                 .AsNoTracking()
                 .Where(ct => ct.DeletedAt == null && ct.IsEnabled)
