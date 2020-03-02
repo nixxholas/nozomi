@@ -10,7 +10,6 @@ using Nozomi.Base.BCL.Helpers.Enumerator;
 using Nozomi.Data.Enums.Trello;
 using Nozomi.Data.ViewModels.Trello;
 using Nozomi.Preprocessing.Abstracts;
-using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
 using Nozomi.Service.Events.Interfaces;
 
@@ -22,8 +21,8 @@ namespace Nozomi.Service.Events
         private readonly string _publicApiKey;
         private readonly string _authToken;
 
-        public TrelloEvent(ILogger<TrelloEvent> logger, IUnitOfWork<NozomiDbContext> unitOfWork, IConfiguration configuration)
-            : base(logger, unitOfWork)
+        public TrelloEvent(ILogger<TrelloEvent> logger, NozomiDbContext nozomiDbContext, IConfiguration configuration)
+            : base(logger, nozomiDbContext)
         {
             // Requires keys to access Trello API
             _publicApiKey = configuration["TrelloToken:ApiKey"];
