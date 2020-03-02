@@ -35,46 +35,27 @@
         </b-button>
         <b-button type="is-warning" v-else @click="authenticateOidc(currentRoute)" :loading="loginLoading">Login</b-button>
       </b-navbar-item>
-      <b-navbar-item tag="div" v-else>
-        <b-dropdown
-                v-model="navigation"
-                position="is-bottom-left"
-                aria-role="menu">
-          <a
-                  class="navbar-item"
-                  slot="trigger"
-                  role="button">
-            <span class="mr-2">Menu</span>
-            <b-icon size="is-small" icon="chevron-down" style="vertical-align: middle;" />
-          </a>
+      <b-navbar-dropdown label="Menu" :right="true" v-else>
+        <b-navbar-item>
+          Logged as <strong class="pl-1">{{ oidcUser.preferred_username }}</strong>
+        </b-navbar-item>
 
-          <b-dropdown-item custom aria-role="menuitem">
-            Logged as <b>{{ this.oidcUser.preferred_username }}</b>
-          </b-dropdown-item>
-          <hr class="dropdown-divider">
+        <hr class="dropdown-divider">
+        
+        <b-navbar-item tag="router-link" to="/dashboard">
+          Dashboard
+        </b-navbar-item>
 
-          <b-dropdown-item value="dashboard" aria-role="menuitem">
-            <router-link tag="div" to="/dashboard">
-<!--              <b-icon icon="columns" />-->
-              Dashboard
-            </router-link>
-          </b-dropdown-item>
-          
-          <hr class="dropdown-divider">
-          
-          <b-dropdown-item value="settings" aria-role="menuitem">
-              <router-link tag="div" to="/settings">
-                  <!--            <b-icon icon="cog" />-->
-                  Settings
-              </router-link>
-          </b-dropdown-item>
-          <b-dropdown-item value="logout" aria-role="menuitem"
-                           @click="signOutOidc()">
-<!--            <b-icon icon="sign-out-alt" />-->
-            Logout
-          </b-dropdown-item>
-        </b-dropdown>
-      </b-navbar-item>
+        <hr class="dropdown-divider">
+
+        <b-navbar-item tag="router-link" to="/settings">
+          Settings
+        </b-navbar-item>
+
+        <b-navbar-item @click="signOutOidc()">
+          Logout
+        </b-navbar-item>
+      </b-navbar-dropdown>
     </template>
   </b-navbar>
 </template>
