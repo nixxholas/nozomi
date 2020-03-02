@@ -5,12 +5,11 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Nozomi.Base.BCL;
 using Nozomi.Data.Models.Web;
-using Nozomi.Repo.BCL.Context;
 using Nozomi.Repo.Compute.Data.Mappings;
 
 namespace Nozomi.Repo.Compute.Data
 {
-    public class NozomiComputeDbContext : DbContext, IDbContext
+    public class NozomiComputeDbContext : DbContext
     {
         public DbSet<Nozomi.Data.Models.Web.Compute> Computes { get; set; }
         public DbSet<ComputeExpression> ComputeExpressions { get; set; }

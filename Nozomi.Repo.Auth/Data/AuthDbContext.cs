@@ -5,12 +5,11 @@ using Microsoft.EntityFrameworkCore;
 using Nozomi.Base.Auth.Models;
 using Nozomi.Base.Auth.Models.Wallet;
 using Nozomi.Repo.Auth.Data.Mappings;
-using Nozomi.Repo.BCL.Context;
 
 namespace Nozomi.Repo.Auth.Data
 {
-    public class AuthDbContext : IdentityDbContext<User, Role, string, UserClaim, UserRole, UserLogin, RoleClaim, UserToken>,
-        IDbContext
+    public class AuthDbContext : IdentityDbContext<User, Role, string, UserClaim, UserRole, UserLogin, RoleClaim, 
+        UserToken>
     {
         public DbSet<Address> Addresses { get; set; }
         
