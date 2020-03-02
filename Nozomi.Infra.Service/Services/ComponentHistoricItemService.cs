@@ -72,14 +72,14 @@ namespace Nozomi.Service.Services
         {
             if (Guid.TryParse(guid, out var parsedGuid))
             {
-                var itemToDel = _context.RcdHistoricItems.AsNoTracking()
+                var itemToDel = _context.ComponentHistoricItems.AsNoTracking()
                     .SingleOrDefault(e => e.Guid.Equals(parsedGuid));
 
                 if (itemToDel != null) // Since it exists, let's delete it
                 {
                     if (hardDelete)
                     {
-                        _context.RcdHistoricItems.Remove(itemToDel); // Delete
+                        _context.ComponentHistoricItems.Remove(itemToDel); // Delete
                         _context.SaveChanges(userId); // Save
                         return;
                     }
@@ -87,7 +87,7 @@ namespace Nozomi.Service.Services
                     {
                         itemToDel.DeletedAt = DateTime.UtcNow;
                         itemToDel.DeletedById = userId;
-                        _context.RcdHistoricItems.Update(itemToDel); // Save
+                        _context.ComponentHistoricItems.Update(itemToDel); // Save
                         _context.SaveChanges(userId); // Commit
                         return;
                     }
@@ -99,7 +99,7 @@ namespace Nozomi.Service.Services
 
         public void Remove(Guid guid, string userId = null, bool hardDelete = false)
         {
-            var itemToDel = _context.RcdHistoricItems.AsTracking()
+            var itemToDel = _context.ComponentHistoricItems.AsTracking()
                 .SingleOrDefault(e => e.Guid.Equals(guid));
             
 
@@ -107,7 +107,7 @@ namespace Nozomi.Service.Services
             {
                 if (hardDelete)
                 {
-                    _context.RcdHistoricItems.Remove(itemToDel); // Delete
+                    _context.ComponentHistoricItems.Remove(itemToDel); // Delete
                     _context.SaveChanges(userId); // Save
                     return;
                 }
@@ -115,7 +115,7 @@ namespace Nozomi.Service.Services
                 {
                     itemToDel.DeletedAt = DateTime.UtcNow;
                     itemToDel.DeletedById = userId;
-                    _context.RcdHistoricItems.Update(itemToDel); // Save
+                    _context.ComponentHistoricItems.Update(itemToDel); // Save
                     _context.SaveChanges(userId); // Commit
                     return;
                 }
@@ -130,7 +130,7 @@ namespace Nozomi.Service.Services
             {
                 if (hardDelete)
                 {
-                    _context.RcdHistoricItems.Remove(componentHistoricItem); // Delete
+                    _context.ComponentHistoricItems.Remove(componentHistoricItem); // Delete
                     _context.SaveChanges(userId); // Save
                     return;
                 }
@@ -138,7 +138,7 @@ namespace Nozomi.Service.Services
                 {
                     componentHistoricItem.DeletedAt = DateTime.UtcNow;
                     componentHistoricItem.DeletedById = userId;
-                    _context.RcdHistoricItems.Update(componentHistoricItem); // Save
+                    _context.ComponentHistoricItems.Update(componentHistoricItem); // Save
                     _context.SaveChanges(userId); // Commit
                     return;
                 }

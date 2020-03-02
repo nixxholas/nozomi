@@ -26,8 +26,8 @@ namespace Nozomi.Repo.Data
         public DbSet<CurrencyType> CurrencyTypes { get; set; }
         public DbSet<CurrencySource> CurrencySources { get; set; }
         public DbSet<Request> Requests { get; set; }
-        public DbSet<Component> RequestComponents { get; set; }
-        public DbSet<ComponentHistoricItem> RcdHistoricItems { get; set; }
+        public DbSet<Component> Components { get; set; }
+        public DbSet<ComponentHistoricItem> ComponentHistoricItems { get; set; }
         public DbSet<RequestProperty> RequestProperties { get; set; }
         public DbSet<Source> Sources { get; set; }
         public DbSet<SourceType> SourceTypes { get; set; }

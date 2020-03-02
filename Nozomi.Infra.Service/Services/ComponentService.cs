@@ -110,7 +110,7 @@ namespace Nozomi.Service.Services
                                                                          $"Invalid component datum id:{id}. Null payload");
             }
 
-            var lastValue = _context.RcdHistoricItems.Include(c => c.Component)
+            var lastValue = _context.ComponentHistoricItems.Include(c => c.Component)
                 .ThenInclude(c => c.Request)
                 .OrderByDescending(e => e.HistoricDateTime)
                 .FirstOrDefault(e => e.DeletedAt == null && e.IsEnabled
@@ -128,7 +128,7 @@ namespace Nozomi.Service.Services
             // If there ain't a latest value
             if (lastValue == null)
             {
-                _context.RcdHistoricItems.Add(newValueItem); // Add
+                _context.ComponentHistoricItems.Add(newValueItem); // Add
                 _context.SaveChanges(); // Save
 
                 return new NozomiResult<string>
@@ -145,7 +145,7 @@ namespace Nozomi.Service.Services
                 if (lastValue.Component.StoreHistoricals) // Do we want to stash historicals?
                 {
                     // Yes we do let's proceed to add it and move along
-                    _context.RcdHistoricItems.Add(newValueItem); // Add
+                    _context.ComponentHistoricItems.Add(newValueItem); // Add
                     _context.SaveChanges(); // Save
 
                     return new NozomiResult<string>
@@ -154,7 +154,7 @@ namespace Nozomi.Service.Services
                 else // No? We need to hard delete the existing one if we can proceed with the update
                 {
                     // Add first then delete.
-                    _context.RcdHistoricItems.Add(newValueItem); // Add
+                    _context.ComponentHistoricItems.Add(newValueItem); // Add
                     _componentHistoricItemService.Remove(lastValue.Guid, null, true);
                     _context.SaveChanges(); // Save
 

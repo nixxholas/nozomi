@@ -20,7 +20,7 @@ namespace Nozomi.Service.Events
 
         public ComponentHistoricItem GetLastItem(long id, bool includeNested = false)
         {
-            var query = _context.RcdHistoricItems.AsNoTracking()
+            var query = _context.ComponentHistoricItems.AsNoTracking()
                 .Where(e => e.RequestComponentId.Equals(id));
 
             if (includeNested)
@@ -33,7 +33,7 @@ namespace Nozomi.Service.Events
         {
             if (Guid.TryParse(guid, out var parsedGuid))
             {
-                return _context.RcdHistoricItems.AsNoTracking()
+                return _context.ComponentHistoricItems.AsNoTracking()
                     .OrderByDescending(i => i.CreatedAt)
                     .Include(i => i.Component)
                     .FirstOrDefault(e => e.Component.Guid.Equals(parsedGuid));
@@ -44,7 +44,7 @@ namespace Nozomi.Service.Events
 
         public ComponentHistoricItem GetLastItem(Guid guid)
         {
-            return _context.RcdHistoricItems.AsNoTracking()
+            return _context.ComponentHistoricItems.AsNoTracking()
                 .OrderByDescending(e => e.CreatedAt)
                 .Include(e => e.Component)
                 .FirstOrDefault(e => e.Component.Guid.Equals(guid));
