@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -17,6 +18,9 @@ using Nozomi.Preprocessing.Filters;
 using Nozomi.Service;
 using Nozomi.Web2.Extensions;
 using Swashbuckle.AspNetCore.SwaggerUI;
+using VaultSharp;
+using VaultSharp.Core;
+using VaultSharp.V1.AuthMethods.Token;
 using VueCliMiddleware;
 
 namespace Nozomi.Web2
@@ -46,7 +50,7 @@ namespace Nozomi.Web2
             {
                 options.KnownNetworks.Clear();
                 options.KnownProxies.Clear();
-                
+
                 // https://github.com/IdentityServer/IdentityServer4/issues/1331
                 options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
                 options.RequireHeaderSymmetry = false;
@@ -57,22 +61,41 @@ namespace Nozomi.Web2
 
             services.AddResponseCompression();
 
-            services.AddDbContextInjections();
+            Dictionary<string, object> nozomiVault = null;
+
+            // HASHICORP VAULT
+            if (Environment.IsProduction() || Environment.IsStaging())
+            {
+                var vaultUrl = Startup.Configuration["vaultUrl"];
+                var vaultToken = Startup.Configuration["vaultToken"];
+
+                if (string.IsNullOrEmpty(vaultToken))
+                    throw new SystemException("Invalid vault token.");
+
+                var authMethod = new TokenAuthMethodInfo(vaultToken);
+                var vaultClientSettings = new VaultClientSettings(
+                    !string.IsNullOrWhiteSpace(vaultUrl) ? vaultUrl : "https://blackbox.nozomi.one:8200",
+                    authMethod);
+                var vaultClient = new VaultClient(vaultClientSettings);
+
+                nozomiVault = vaultClient.V1.Secrets.Cubbyhole.ReadSecretAsync("nozomi")
+                    .GetAwaiter()
+                    .GetResult().Data;
+                
+                if (nozomiVault.Equals(null))
+                    throw new VaultApiException("Unable to obtain nozomi's configurations in the cubbyhole.");
+            }
+
+            services.AddDbContextInjections(nozomiVault);
 
             services.AddMemoryCache(); // Required for API Throttling
-            
+
             // services.AddHealthChecks();
 
             // In production, the Vue files will be served from this directory
-            services.AddSpaStaticFiles(configuration =>
-            {
-                configuration.RootPath = "ClientApp/dist";
-            });
+            services.AddSpaStaticFiles(configuration => { configuration.RootPath = "ClientApp/dist"; });
 
-            services.AddControllers(options =>
-                {
-                    options.Filters.Add(typeof(HttpGlobalExceptionFilter));
-                })
+            services.AddControllers(options => { options.Filters.Add(typeof(HttpGlobalExceptionFilter)); })
                 .AddNewtonsoftJson(options =>
                 {
                     options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
@@ -84,7 +107,7 @@ namespace Nozomi.Web2
 
             services.AddHttpContextAccessor();
 
-            if (Environment.IsProduction())
+            if (Environment.IsProduction() || Environment.IsStaging())
             {
                 services.AddHsts(opt =>
                 {
@@ -93,11 +116,10 @@ namespace Nozomi.Web2
                     opt.MaxAge = TimeSpan.FromDays(60);
                 });
 
-                // TODO: Trello vault key
                 services.Configure<TrelloOptions>(option =>
                 {
-                    option.ApiKey = Configuration["TrelloToken:ApiKey"];
-                    option.AuthToken = Configuration["TrelloToken:AuthToken"];
+                    option.ApiKey = (string) nozomiVault["Trello:ApiKey"];
+                    option.AuthToken = (string) nozomiVault["Trello:AuthToken"];
                 });
             }
             else
@@ -141,10 +163,10 @@ namespace Nozomi.Web2
                 app.UseExceptionHandler("/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
-                
+
                 app.UseResponseCompression();
             }
-            
+
             // Always enforce HTTPS for development and production
             app.UseHttpsRedirection();
 
@@ -158,7 +180,7 @@ namespace Nozomi.Web2
 
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger();
-            
+
             // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
             // specifying the Swagger JSON endpoint.
             app.UseSwaggerUI(c =>
@@ -166,11 +188,12 @@ namespace Nozomi.Web2
                 c.DocumentTitle = "Nozomi API";
                 // https://stackoverflow.com/questions/39116047/how-to-change-base-url-of-swagger-in-asp-net-core
                 c.RoutePrefix = "docs";
-                c.SwaggerEndpoint("/swagger/" + 
+                c.SwaggerEndpoint("/swagger/" +
                                   GlobalApiVariables.CURRENT_API_VERSION + "/swagger.json", "Nozomi API");
                 c.IndexStream = () => GetType().Assembly
-                    .GetManifestResourceStream("Nozomi.Web2.Resources.Index.html"); // requires file to be added as an embedded resource
-                
+                    .GetManifestResourceStream(
+                        "Nozomi.Web2.Resources.Index.html"); // requires file to be added as an embedded resource
+
                 c.DocExpansion(DocExpansion.None);
                 c.EnableDeepLinking();
                 c.EnableFilter();
@@ -197,11 +220,11 @@ namespace Nozomi.Web2
                 // Health check up!!!
                 // https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/health-checks?view=aspnetcore-3.0#basic-health-probe
                 // endpoints.MapHealthChecks("/health");
-                
+
                 if (env.IsDevelopment())
                     endpoints.MapToVueCliProxy(
                         "{*path}",
-                        new SpaOptions { SourcePath = "ClientApp" },
+                        new SpaOptions {SourcePath = "ClientApp"},
                         System.Diagnostics.Debugger.IsAttached ? "serve" : null,
                         regex: "Compiled successfully",
                         forceKill: true
@@ -213,10 +236,7 @@ namespace Nozomi.Web2
                 endpoints.MapRazorPages();
             });
 
-            app.UseSpa(spa =>
-            {
-                spa.Options.SourcePath = "ClientApp";
-            });
+            app.UseSpa(spa => { spa.Options.SourcePath = "ClientApp"; });
 
             app.UseAutoDbMigration(Environment);
         }
