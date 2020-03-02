@@ -228,7 +228,7 @@
                         <div class="timeline-item is-info">
                             <div class="timeline-marker is-info"></div>
                             <div class="timeline-content">
-                                <p class="heading">02 March 2020 - <b>beta 13</b></p>
+                                <p class="heading">04 March 2020 - <b>beta 13</b></p>
                                 <ul>
                                     <li><b>Web</b> - You can now delete requests</li>
                                     <li><b>Web</b> - You can now create websocket commands</li>
@@ -237,6 +237,7 @@
                                     <li><b>Web</b> - You can now add websocket command properties</li>
                                     <li><b>Web</b> - You can now delete websocket command properties</li>
                                     <li><b>Web</b> - You can now update websocket command properties</li>
+                                    <li><b>Web</b> - Bugs and issues tracker is now online!</li>
                                     <li><b>Auth</b> - General User interface improvements</li>
                                     <li><b>Auth</b> - Well, we made our emails presentable ;)</li>
                                     <li><b>Compute</b> - We've just wrapped up our computation engine at the back. UI 
