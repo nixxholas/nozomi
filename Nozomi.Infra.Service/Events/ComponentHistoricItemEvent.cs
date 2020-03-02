@@ -2,10 +2,8 @@ using System;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Nozomi.Base.BCL.Extensions;
 using Nozomi.Data.Models.Web;
 using Nozomi.Preprocessing.Abstracts;
-using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
 using Nozomi.Service.Events.Interfaces;
 
@@ -15,16 +13,14 @@ namespace Nozomi.Service.Events
         IComponentHistoricItemEvent
     {
         public ComponentHistoricItemEvent(ILogger<ComponentHistoricItemEvent> logger, 
-            IUnitOfWork<NozomiDbContext> unitOfWork) 
+            NozomiDbContext unitOfWork) 
             : base(logger, unitOfWork)
         {
         }
 
         public ComponentHistoricItem GetLastItem(long id, bool includeNested = false)
         {
-            var query = _unitOfWork.GetRepository<ComponentHistoricItem>()
-                .GetQueryable()
-                .AsNoTracking()
+            var query = _context.ComponentHistoricItems.AsNoTracking()
                 .Where(e => e.RequestComponentId.Equals(id));
 
             if (includeNested)
@@ -37,9 +33,7 @@ namespace Nozomi.Service.Events
         {
             if (Guid.TryParse(guid, out var parsedGuid))
             {
-                return _unitOfWork.GetRepository<ComponentHistoricItem>()
-                    .GetQueryable()
-                    .AsNoTracking()
+                return _context.ComponentHistoricItems.AsNoTracking()
                     .OrderByDescending(i => i.CreatedAt)
                     .Include(i => i.Component)
                     .FirstOrDefault(e => e.Component.Guid.Equals(parsedGuid));
@@ -50,9 +44,7 @@ namespace Nozomi.Service.Events
 
         public ComponentHistoricItem GetLastItem(Guid guid)
         {
-            return _unitOfWork.GetRepository<ComponentHistoricItem>()
-                .GetQueryable()
-                .AsNoTracking()
+            return _context.ComponentHistoricItems.AsNoTracking()
                 .OrderByDescending(e => e.CreatedAt)
                 .Include(e => e.Component)
                 .FirstOrDefault(e => e.Component.Guid.Equals(guid));

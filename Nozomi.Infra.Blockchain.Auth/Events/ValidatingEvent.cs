@@ -4,15 +4,14 @@ using Nethereum.Util;
 using Nozomi.Base.Blockchain.Auth.Query.Validating;
 using Nozomi.Infra.Blockchain.Auth.Events.Interfaces;
 using Nozomi.Preprocessing.Abstracts;
-using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
 
 namespace Nozomi.Infra.Blockchain.Auth.Events
 {
     public class ValidatingEvent : BaseEvent<ValidatingEvent, NozomiDbContext>, IValidatingEvent
     {
-        public ValidatingEvent(ILogger<ValidatingEvent> logger, IUnitOfWork<NozomiDbContext> unitOfWork) 
-            : base(logger, unitOfWork)
+        public ValidatingEvent(ILogger<ValidatingEvent> logger, NozomiDbContext context) 
+            : base(logger, context)
         {
         }
 

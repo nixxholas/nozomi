@@ -6,8 +6,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Nozomi.Infra.Syncing.HostedServices.RequestTypes;
-using Nozomi.Repo.BCL.Context;
-using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
 using Nozomi.Service.Events;
 using Nozomi.Service.Events.Interfaces;
@@ -45,7 +43,6 @@ namespace Nozomi.HttpSyncing
                 var str = Configuration.GetConnectionString("Local:" + @Environment.MachineName);
 
                 services
-                    .AddEntityFrameworkNpgsql()
                     .AddDbContext<NozomiDbContext>(options =>
                         {
                             options.UseNpgsql(str);
@@ -89,10 +86,10 @@ namespace Nozomi.HttpSyncing
                 }, ServiceLifetime.Transient);
             }
             
-            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-
-            services.AddTransient<IUnitOfWork<NozomiDbContext>, UnitOfWork<NozomiDbContext>>();
-            services.AddTransient<IDbContext, NozomiDbContext>();
+            // services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+            //
+            // services.AddTransient<NozomiDbContext, UnitOfWork<NozomiDbContext>>();
+            // services.AddTransient<IDbContext, NozomiDbContext>();
 
             services.AddScoped<ICurrencyEvent, CurrencyEvent>();
             services.AddScoped<ICurrencyPairEvent, CurrencyPairEvent>();

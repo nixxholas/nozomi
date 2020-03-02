@@ -8,7 +8,6 @@ using Nozomi.Data.Models.Currency;
 using Nozomi.Data.ViewModels.Currency;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Preprocessing.Statics;
-using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Services.Interfaces;
@@ -20,9 +19,9 @@ namespace Nozomi.Service.Services
         private readonly ICurrencyEvent _currencyEvent;
         private readonly ICurrencyTypeEvent _currencyTypeEvent;
         
-        public CurrencyService(ILogger<CurrencyService> logger, IUnitOfWork<NozomiDbContext> unitOfWork,
+        public CurrencyService(ILogger<CurrencyService> logger, NozomiDbContext context,
             IHttpContextAccessor contextAccessor, ICurrencyEvent currencyEvent, ICurrencyTypeEvent currencyTypeEvent) 
-            : base(contextAccessor, logger, unitOfWork)
+            : base(contextAccessor, logger, context)
         {
             _currencyEvent = currencyEvent;
             _currencyTypeEvent = currencyTypeEvent;
@@ -45,8 +44,8 @@ namespace Nozomi.Service.Services
                 var currency = new Currency(currencyType.Id, vm.LogoPath, vm.Abbreviation, vm.Slug, vm.Name, 
                     vm.Description, vm.Denominations, vm.DenominationName);
                 
-                _unitOfWork.GetRepository<Currency>().Add(currency);
-                _unitOfWork.Commit(userId);
+                _context.Currencies.Add(currency);
+                _context.SaveChanges(userId);
                 return;
             }
             
@@ -57,7 +56,7 @@ namespace Nozomi.Service.Services
         {
             if (vm.IsValid() && !string.IsNullOrWhiteSpace(userId))
             {
-                var currency = new Currency();
+                Currency currency;
                 
                 // Also check if the user owns this currency first
                 if (vm.Id != null && vm.Id > 0) // ID-based currency obtaining
@@ -107,8 +106,8 @@ namespace Nozomi.Service.Services
                 updatedCurrency.Denominations = vm.Denominations;
                 updatedCurrency.DenominationName = vm.DenominationName;
                 
-                _unitOfWork.GetRepository<Currency>().Update(updatedCurrency);
-                _unitOfWork.Commit(userId);
+                _context.Currencies.Update(updatedCurrency);
+                _context.SaveChanges(userId);
                 return;
             }
             

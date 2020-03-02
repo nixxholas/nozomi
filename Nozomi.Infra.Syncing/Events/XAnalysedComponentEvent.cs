@@ -7,7 +7,6 @@ using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Infra.Syncing.Events.Interfaces;
 using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Abstracts;
-using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
 
 namespace Nozomi.Infra.Syncing.Events
@@ -15,7 +14,7 @@ namespace Nozomi.Infra.Syncing.Events
     public class XAnalysedComponentEvent : BaseEvent<XAnalysedComponentEvent, NozomiDbContext>, 
         IXAnalysedComponentEvent
     {
-        public XAnalysedComponentEvent(ILogger<XAnalysedComponentEvent> logger, IUnitOfWork<NozomiDbContext> unitOfWork) 
+        public XAnalysedComponentEvent(ILogger<XAnalysedComponentEvent> logger, NozomiDbContext unitOfWork) 
             : base(logger, unitOfWork)
         {
         }
@@ -23,8 +22,7 @@ namespace Nozomi.Infra.Syncing.Events
         public AnalysedComponent Top(ICollection<long> acsToFilter = null)
         {
             if (acsToFilter != null)
-                return _unitOfWork.GetRepository<AnalysedComponent>()
-                    .GetQueryable()
+                return _context.AnalysedComponents
                     .AsNoTracking()
                     // Enabled?
                     .Where(ac => ac.DeletedAt == null && ac.IsEnabled 
@@ -43,8 +41,7 @@ namespace Nozomi.Infra.Syncing.Events
                     //.ThenBy(ac => string.IsNullOrEmpty(ac.Value))
                     .FirstOrDefault();
             
-            return _unitOfWork.GetRepository<AnalysedComponent>()
-                .GetQueryable()
+            return _context.AnalysedComponents
                 .AsNoTracking()
                 // Enabled?
                 .Where(ac => ac.DeletedAt == null && ac.IsEnabled 
@@ -69,8 +66,7 @@ namespace Nozomi.Infra.Syncing.Events
             var currentUtc = DateTime.UtcNow;
             
             if (!includeNonHistoricals)
-                return _unitOfWork.GetRepository<AnalysedComponent>()
-                    .GetQueryable()
+                return _context.AnalysedComponents
                     .AsNoTracking()
                     .Where(ac => ac.DeletedAt == null
                                  && ac.IsEnabled
@@ -87,8 +83,7 @@ namespace Nozomi.Infra.Syncing.Events
                     .ToList();
             
             // Got in, let's grab em.
-            return _unitOfWork.GetRepository<AnalysedComponent>()
-                .GetQueryable()
+            return _context.AnalysedComponents
                 .AsNoTracking()
                 .Where(ac => ac.DeletedAt == null && ac.IsEnabled)
                 // Make sure LastChecked is null

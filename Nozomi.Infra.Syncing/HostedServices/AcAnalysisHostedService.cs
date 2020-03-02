@@ -33,15 +33,16 @@ namespace Nozomi.Infra.Syncing.HostedServices
         private readonly IXAnalysedComponentEvent _xAnalysedComponentEvent;
         private readonly IProcessAnalysedComponentService _processAnalysedComponentService;
 
-        public AcAnalysisHostedService(IServiceProvider serviceProvider) : base(serviceProvider)
+        public AcAnalysisHostedService(IServiceScopeFactory serviceProviderFactory) : base(serviceProviderFactory)
         {
-            _analysedComponentEvent = _scope.ServiceProvider.GetRequiredService<IAnalysedComponentEvent>();
-            _analysedHistoricItemEvent = _scope.ServiceProvider.GetRequiredService<IAnalysedHistoricItemEvent>();
-            _currencyEvent = _scope.ServiceProvider.GetRequiredService<ICurrencyEvent>();
-            _currencyPairEvent = _scope.ServiceProvider.GetRequiredService<ICurrencyPairEvent>();
-            _componentEvent = _scope.ServiceProvider.GetRequiredService<IComponentEvent>();
-            _xAnalysedComponentEvent = _scope.ServiceProvider.GetRequiredService<IXAnalysedComponentEvent>();
-            _processAnalysedComponentService = _scope.ServiceProvider.GetRequiredService<IProcessAnalysedComponentService>();
+            // TODO: Scope fix
+            _analysedComponentEvent = serviceProviderFactory.CreateScope().ServiceProvider.GetRequiredService<IAnalysedComponentEvent>();
+            _analysedHistoricItemEvent = serviceProviderFactory.CreateScope().ServiceProvider.GetRequiredService<IAnalysedHistoricItemEvent>();
+            _currencyEvent = serviceProviderFactory.CreateScope().ServiceProvider.GetRequiredService<ICurrencyEvent>();
+            _currencyPairEvent = serviceProviderFactory.CreateScope().ServiceProvider.GetRequiredService<ICurrencyPairEvent>();
+            _componentEvent = serviceProviderFactory.CreateScope().ServiceProvider.GetRequiredService<IComponentEvent>();
+            _xAnalysedComponentEvent = serviceProviderFactory.CreateScope().ServiceProvider.GetRequiredService<IXAnalysedComponentEvent>();
+            _processAnalysedComponentService = serviceProviderFactory.CreateScope().ServiceProvider.GetRequiredService<IProcessAnalysedComponentService>();
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)

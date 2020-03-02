@@ -15,87 +15,100 @@ namespace Nozomi.Infra.Compute.HostedServices
 {
     public class ComputeExpressionHostedService : BaseComputeService<ComputeExpressionHostedService>
     {
-        public ComputeExpressionHostedService(IServiceProvider serviceProvider) : base(serviceProvider)
+        public ComputeExpressionHostedService(IServiceScopeFactory serviceScopeFactory) : base(serviceScopeFactory)
         {
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            while (!stoppingToken.IsCancellationRequested)
+            try
             {
-                var computeExpressionEvent = _scope.ServiceProvider.GetRequiredService<IComputeExpressionEvent>();
-
-                var mostOutdatedExps = computeExpressionEvent.GetByAge()
-                    .Where(e => !e.Type.Equals(ComputeExpressionType.Generic))
-                    .ToList();
-
-                if (mostOutdatedExps.Any())
+                while (!stoppingToken.IsCancellationRequested)
                 {
-                    foreach (var exp in mostOutdatedExps)
+                    using (var scope = _scopeFactory.CreateScope())
                     {
-                        var computeExpressionService = _scope.ServiceProvider
-                            .GetRequiredService<IComputeExpressionService>();
+                        var computeExpressionEvent =
+                            scope.ServiceProvider.GetRequiredService<IComputeExpressionEvent>();
 
-                        switch (exp.Type)
+                        var mostOutdatedExps = computeExpressionEvent.GetByAge()
+                            .Where(e => !e.Type.Equals(ComputeExpressionType.Generic))
+                            .ToList();
+
+                        if (mostOutdatedExps.Any())
                         {
-                            case ComputeExpressionType.Raw:
-                                var componentHistoricItemEvent = _scope.ServiceProvider
-                                    .GetRequiredService<IComponentHistoricItemEvent>();
+                            foreach (var exp in mostOutdatedExps)
+                            {
+                                var computeExpressionService = scope.ServiceProvider
+                                    .GetRequiredService<IComputeExpressionService>();
 
-                                var lastRawValue = componentHistoricItemEvent
-                                    .GetLastItem(exp.Expression);
-                                if (lastRawValue != null)
+                                switch (exp.Type)
                                 {
-                                    // update the expression's value
-                                    computeExpressionService.UpdateValue(exp.Guid, lastRawValue.Value);
-                                }
-                                else
-                                {
-                                    computeExpressionService.UpdateValue(exp.Guid, null);
-                                }
-                                
-                                break;
-                            case ComputeExpressionType.Computed:
-                                var computeValueEvent = _scope.ServiceProvider.GetRequiredService<IComputeValueEvent>();
+                                    case ComputeExpressionType.Raw:
+                                        var componentHistoricItemEvent = scope.ServiceProvider
+                                            .GetRequiredService<IComponentHistoricItemEvent>();
 
-                                var lastValue = computeValueEvent.GetLastItem(exp.Expression);
-                                if (lastValue != null)
-                                {
-                                    // update the expression's value
-                                    computeExpressionService.UpdateValue(exp.Guid, lastValue.Value);
-                                }
-                                else
-                                {
-                                    computeExpressionService.UpdateValue(exp.Guid, null);
-                                }
-                                
-                                break;
-                            case ComputeExpressionType.Analysed:
-                                var analysedComponentEvent = _scope.ServiceProvider
-                                    .GetRequiredService<IAnalysedComponentEvent>();
+                                        var lastRawValue = componentHistoricItemEvent
+                                            .GetLastItem(exp.Expression);
+                                        if (lastRawValue != null)
+                                        {
+                                            // update the expression's value
+                                            computeExpressionService.UpdateValue(exp.Guid, lastRawValue.Value);
+                                        }
+                                        else
+                                        {
+                                            computeExpressionService.UpdateValue(exp.Guid, null);
+                                        }
 
-                                var lastAnalysedValue = analysedComponentEvent.Get(exp.Expression);
-                                if (lastAnalysedValue != null)
-                                {
-                                    computeExpressionService.UpdateValue(exp.Guid, lastAnalysedValue.Value);
+                                        break;
+                                    case ComputeExpressionType.Computed:
+                                        var computeValueEvent =
+                                            scope.ServiceProvider.GetRequiredService<IComputeValueEvent>();
+
+                                        var lastValue = computeValueEvent.GetLastItem(exp.Expression);
+                                        if (lastValue != null)
+                                        {
+                                            // update the expression's value
+                                            computeExpressionService.UpdateValue(exp.Guid, lastValue.Value);
+                                        }
+                                        else
+                                        {
+                                            computeExpressionService.UpdateValue(exp.Guid, null);
+                                        }
+
+                                        break;
+                                    case ComputeExpressionType.Analysed:
+                                        var analysedComponentEvent = scope.ServiceProvider
+                                            .GetRequiredService<IAnalysedComponentEvent>();
+
+                                        var lastAnalysedValue = analysedComponentEvent.Get(exp.Expression);
+                                        if (lastAnalysedValue != null)
+                                        {
+                                            computeExpressionService.UpdateValue(exp.Guid, lastAnalysedValue.Value);
+                                        }
+                                        else
+                                        {
+                                            computeExpressionService.UpdateValue(exp.Guid, null);
+                                        }
+
+                                        break;
+                                    default:
+                                        _logger.LogInformation($"{_computeServiceName} ExecuteAsync: Ignoring " +
+                                                               $"expression {exp.Guid} for updating due to its type.");
+                                        break;
                                 }
-                                else
-                                {
-                                    computeExpressionService.UpdateValue(exp.Guid, null);
-                                }
-                                
-                                break;
-                            default:
-                                _logger.LogInformation($"{_computeServiceName} ExecuteAsync: Ignoring " +
-                                                       $"expression {exp.Guid} for updating due to its type.");
-                                break;
+                            }
                         }
                     }
+
+                    await Task.Delay(10, stoppingToken);
                 }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"{_computeServiceName} ExecuteAsync: {ex.Message}");
             }
 
             _logger.LogCritical($"{_computeServiceName} ExecuteAsync: Shutting down!");
-            await Task.Delay(10, stoppingToken);
         }
     }
 }

@@ -19,7 +19,7 @@ namespace Nozomi.Web2.Controllers.v1.ComponentType
 
         [Authorize]
         [HttpGet]
-        [Throttle(Milliseconds = 1000)]
+        [Throttle(Name = "ComponentType/All", Milliseconds = 1000)]
         public IActionResult All()
         {
             return Ok(_componentTypeEvent.All());

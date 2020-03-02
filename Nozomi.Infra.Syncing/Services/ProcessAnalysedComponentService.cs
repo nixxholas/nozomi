@@ -5,7 +5,6 @@ using Microsoft.Extensions.Logging;
 using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Infra.Syncing.Services.Interfaces;
 using Nozomi.Preprocessing.Abstracts;
-using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
 
 namespace Nozomi.Infra.Syncing.Services
@@ -16,8 +15,8 @@ namespace Nozomi.Infra.Syncing.Services
         private readonly IAnalysedHistoricItemService _analysedHistoricItemService;
         
         public ProcessAnalysedComponentService(ILogger<ProcessAnalysedComponentService> logger, 
-            IAnalysedHistoricItemService analysedHistoricItemService, IUnitOfWork<NozomiDbContext> unitOfWork) 
-            : base(logger, unitOfWork)
+            IAnalysedHistoricItemService analysedHistoricItemService, NozomiDbContext context) 
+            : base(logger, context)
         {
             _analysedHistoricItemService = analysedHistoricItemService;
         }
@@ -26,8 +25,8 @@ namespace Nozomi.Infra.Syncing.Services
         {
             if (analysedComponent != null)
             {
-                _unitOfWork.GetRepository<AnalysedComponent>().Add(analysedComponent);
-                _unitOfWork.Commit(userId);
+                _context.AnalysedComponents.Add(analysedComponent);
+                _context.SaveChanges(userId);
 
                 return analysedComponent.Id;
             }
@@ -39,8 +38,7 @@ namespace Nozomi.Infra.Syncing.Services
         {
             if (string.IsNullOrEmpty(value)) return false;
             
-            var comp = _unitOfWork.GetRepository<AnalysedComponent>()
-                .GetQueryable()
+            var comp = _context.AnalysedComponents
                 .AsTracking()
                 .Include(ac => ac.AnalysedHistoricItems)
                 .SingleOrDefault(ac => ac.Id.Equals(analysedComponentId) &&
@@ -58,7 +56,7 @@ namespace Nozomi.Infra.Syncing.Services
                 comp.ModifiedAt = DateTime.UtcNow;
                 comp.Value = value;
                 
-                _unitOfWork.Commit(userId);
+                _context.SaveChanges(userId);
 
                 return true;
             }
@@ -68,8 +66,7 @@ namespace Nozomi.Infra.Syncing.Services
 
         public bool Checked(long analysedComponentId, bool isFailing = false, string userId = null)
         {
-            var comp = _unitOfWork.GetRepository<AnalysedComponent>()
-                .GetQueryable()
+            var comp = _context.AnalysedComponents
                 .AsTracking()
                 .SingleOrDefault(ac => ac.Id.Equals(analysedComponentId) && ac.DeletedAt == null);
 
@@ -77,7 +74,7 @@ namespace Nozomi.Infra.Syncing.Services
             {
                 comp.IsFailing = isFailing;
                 
-                _unitOfWork.Commit(userId);
+                _context.SaveChanges(userId);
 
                 return true;
             }
@@ -87,8 +84,7 @@ namespace Nozomi.Infra.Syncing.Services
 
         public bool Disable(long analysedComponentId, string userId = null)
         {
-            var comp = _unitOfWork.GetRepository<AnalysedComponent>()
-                .GetQueryable()
+            var comp = _context.AnalysedComponents
                 .AsTracking()
                 .SingleOrDefault(ac => ac.DeletedAt == null
                                        && ac.IsEnabled
@@ -99,7 +95,7 @@ namespace Nozomi.Infra.Syncing.Services
                 comp.IsEnabled = false;
                 comp.ModifiedAt = DateTime.UtcNow;
 
-                _unitOfWork.Commit();
+                _context.SaveChanges();
             }
 
             return false;

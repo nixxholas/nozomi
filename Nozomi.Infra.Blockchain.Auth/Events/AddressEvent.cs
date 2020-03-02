@@ -6,7 +6,6 @@ using Nozomi.Base.Blockchain.Auth.Query.Validating;
 using Nozomi.Infra.Blockchain.Auth.Events.Interfaces;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.Auth.Data;
-using Nozomi.Repo.BCL.Repository;
 
 namespace Nozomi.Infra.Blockchain.Auth.Events
 {
@@ -14,9 +13,9 @@ namespace Nozomi.Infra.Blockchain.Auth.Events
     {
         private readonly IValidatingEvent _validatingEvent;
         
-        public AddressEvent(ILogger<AddressEvent> logger, IUnitOfWork<AuthDbContext> unitOfWork,
+        public AddressEvent(ILogger<AddressEvent> logger, AuthDbContext context,
             IValidatingEvent validatingEvent) 
-            : base(logger, unitOfWork)
+            : base(logger, context)
         {
             _validatingEvent = validatingEvent;
         }
@@ -24,10 +23,7 @@ namespace Nozomi.Infra.Blockchain.Auth.Events
         public bool IsBinded(string address)
         {
             return !string.IsNullOrWhiteSpace(address) &&
-                   _unitOfWork.GetRepository<Address>()
-                       .GetQueryable()
-                       .AsNoTracking()
-                       .Any(addr => addr.Hash.Equals(address));
+                   _context.Addresses.AsNoTracking().Any(addr => addr.Hash.Equals(address));
         }
 
         public Address Authenticate(string address, string signature, string message)
@@ -43,9 +39,7 @@ namespace Nozomi.Infra.Blockchain.Auth.Events
                 }))
             {
                 // Db Layer check
-                var addr = _unitOfWork.GetRepository<Address>()
-                    .GetQueryable()
-                    .AsNoTracking()
+                var addr = _context.Addresses.AsNoTracking()
                     .SingleOrDefault(a => a.Hash.Equals(address));
 
                 return addr;

@@ -24,7 +24,7 @@ namespace Nozomi.Web2.Controllers.v1.CurrencySource
 
         [Authorize(Roles = NozomiPermissions.AllowAllStaffRoles)]
         [HttpPost]
-        [Throttle(Milliseconds = 2500)]
+        [Throttle(Name = "CurrencySource/Create", Milliseconds = 2500)]
         public IActionResult Create([FromBody]CreateCurrencySourceViewModel vm)
         {
             var sub = ((ClaimsIdentity) User.Identity)

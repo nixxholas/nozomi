@@ -6,7 +6,6 @@ using Microsoft.Extensions.Logging;
 using Nozomi.Data.Models.Web.Websocket;
 using Nozomi.Data.ViewModels.WebsocketCommandProperty;
 using Nozomi.Preprocessing.Abstracts;
-using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Services.Interfaces;
@@ -20,18 +19,18 @@ namespace Nozomi.Service.Services
         private readonly IWebsocketCommandPropertyEvent _websocketCommandPropertyEvent;
 
         public WebsocketCommandPropertyService(ILogger<WebsocketCommandPropertyService> logger, 
-            IUnitOfWork<NozomiDbContext> unitOfWork, IWebsocketCommandEvent websocketCommandEvent, 
+            NozomiDbContext context, IWebsocketCommandEvent websocketCommandEvent, 
             IWebsocketCommandPropertyEvent websocketCommandPropertyEvent) 
-            : base(logger, unitOfWork)
+            : base(logger, context)
         {
             _websocketCommandEvent = websocketCommandEvent;
             _websocketCommandPropertyEvent = websocketCommandPropertyEvent;
         }
 
         public WebsocketCommandPropertyService(IHttpContextAccessor contextAccessor, 
-            ILogger<WebsocketCommandPropertyService> logger, IUnitOfWork<NozomiDbContext> unitOfWork, 
+            ILogger<WebsocketCommandPropertyService> logger, NozomiDbContext context, 
             IWebsocketCommandEvent websocketCommandEvent, IWebsocketCommandPropertyEvent websocketCommandPropertyEvent) 
-            : base(contextAccessor, logger, unitOfWork)
+            : base(contextAccessor, logger, context)
         {
             _websocketCommandEvent = websocketCommandEvent;
             _websocketCommandPropertyEvent = websocketCommandPropertyEvent;
@@ -57,8 +56,8 @@ namespace Nozomi.Service.Services
                 if (Guid.TryParse(vm.CommandGuid, out var parsedGuid))
                     property.WebsocketCommandId = _websocketCommandEvent.Get(parsedGuid).Id;
                 
-                _unitOfWork.GetRepository<WebsocketCommandProperty>().Add(property); // Add
-                _unitOfWork.Commit(userId); // Commit
+                _context.WebsocketCommandProperties.Add(property); // Add
+                _context.SaveChanges(userId); // Commit
                 return; // Exit
             }
             
@@ -86,8 +85,8 @@ namespace Nozomi.Service.Services
                         if (!vm.Type.Equals(property.CommandPropertyType))
                             property.CommandPropertyType = vm.Type;
                         
-                        _unitOfWork.GetRepository<WebsocketCommandProperty>().Update(property); // Update
-                        _unitOfWork.Commit(userId); // Save
+                        _context.WebsocketCommandProperties.Update(property); // Update
+                        _context.SaveChanges(userId); // Save
                         return;
                     }
                 }
@@ -105,8 +104,8 @@ namespace Nozomi.Service.Services
                         if (!vm.Type.Equals(property.CommandPropertyType))
                             property.CommandPropertyType = vm.Type;
                         
-                        _unitOfWork.GetRepository<WebsocketCommandProperty>().Update(property); // Update
-                        _unitOfWork.Commit(userId); // Save
+                        _context.WebsocketCommandProperties.Update(property); // Update
+                        _context.SaveChanges(userId); // Save
                         return;
                     }
                 }
@@ -120,9 +119,7 @@ namespace Nozomi.Service.Services
         {
             if (Guid.TryParse(propertyGuid, out var parsedGuid))
             {
-                var query = _unitOfWork.GetRepository<WebsocketCommandProperty>()
-                    .GetQueryable()
-                    .AsNoTracking()
+                var query = _context.WebsocketCommandProperties.AsNoTracking()
                     .Where(p => p.Guid.Equals(parsedGuid));
 
                 if (!string.IsNullOrEmpty(userId))
@@ -135,14 +132,14 @@ namespace Nozomi.Service.Services
                                                      "does not exist.");
                 
                 if (hardDelete)
-                    _unitOfWork.GetRepository<WebsocketCommandProperty>().Delete(property);
+                    _context.WebsocketCommandProperties.Remove(property);
                 else {
                     property.DeletedAt = DateTime.UtcNow;
                     property.DeletedById = userId;
-                    _unitOfWork.GetRepository<WebsocketCommandProperty>().Update(property);
+                    _context.WebsocketCommandProperties.Update(property);
                 }
 
-                _unitOfWork.Commit(userId); // Save
+                _context.SaveChanges(userId); // Save
                 return; // End
             }
             
@@ -153,9 +150,7 @@ namespace Nozomi.Service.Services
         {
             if (propertyId > 0)
             {
-                var query = _unitOfWork.GetRepository<WebsocketCommandProperty>()
-                    .GetQueryable()
-                    .AsNoTracking()
+                var query = _context.WebsocketCommandProperties.AsNoTracking()
                     .Where(p => p.Id.Equals(propertyId));
 
                 if (!string.IsNullOrEmpty(userId))
@@ -168,14 +163,14 @@ namespace Nozomi.Service.Services
                                                      "does not exist.");
                 
                 if (hardDelete)
-                    _unitOfWork.GetRepository<WebsocketCommandProperty>().Delete(property);
+                    _context.WebsocketCommandProperties.Remove(property);
                 else {
                     property.DeletedAt = DateTime.UtcNow;
                     property.DeletedById = userId;
-                    _unitOfWork.GetRepository<WebsocketCommandProperty>().Update(property);
+                    _context.WebsocketCommandProperties.Update(property);
                 }
 
-                _unitOfWork.Commit(userId); // Save
+                _context.SaveChanges(userId); // Save
                 return; // End
             }
             

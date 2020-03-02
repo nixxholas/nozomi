@@ -29,7 +29,7 @@ namespace Nozomi.Web2.Controllers.v1.Component
 
         [Authorize]
         [HttpGet]
-        [Throttle(Milliseconds = 1000)]
+        [Throttle(Name = "Component/AllByRequest", Milliseconds = 1000)]
         public IActionResult AllByRequest([FromQuery]string requestGuid, [FromQuery]int index = 0, 
             [FromQuery]int itemsPerPage = 50, [FromQuery]bool includeNested = false)
         {
@@ -62,7 +62,7 @@ namespace Nozomi.Web2.Controllers.v1.Component
         }
         
         [HttpGet]
-        [Throttle(Milliseconds = 1000)]
+        [Throttle(Name = "Component/All", Milliseconds = 1000)]
         public IActionResult All([FromQuery]int index = 0, [FromQuery]int itemsPerPage = 50, 
             [FromQuery]bool includeNested = false)
         {
@@ -74,7 +74,7 @@ namespace Nozomi.Web2.Controllers.v1.Component
 
         [Authorize(Roles = NozomiPermissions.AllowAllStaffRoles)]
         [HttpPost]
-        [Throttle(Milliseconds = 2500)]
+        [Throttle(Name = "Component/Create", Milliseconds = 2500)]
         public IActionResult Create([FromBody]CreateComponentViewModel vm)
         {
             var sub = ((ClaimsIdentity) User.Identity)

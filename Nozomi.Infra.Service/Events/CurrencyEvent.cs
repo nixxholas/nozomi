@@ -17,34 +17,28 @@ using Nozomi.Data.ViewModels.ComponentHistoricItem;
 using Nozomi.Data.ViewModels.Currency;
 using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Abstracts;
-using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
 using Nozomi.Service.Events.Interfaces;
-using Component = Nozomi.Data.Models.Web.Component;
 using SourceViewModel = Nozomi.Data.ViewModels.Source.SourceViewModel;
 
 namespace Nozomi.Service.Events
 {
     public class CurrencyEvent : BaseEvent<CurrencyEvent, NozomiDbContext>, ICurrencyEvent
     {
-        public CurrencyEvent(ILogger<CurrencyEvent> logger, IUnitOfWork<NozomiDbContext> unitOfWork)
+        public CurrencyEvent(ILogger<CurrencyEvent> logger, NozomiDbContext unitOfWork)
             : base(logger, unitOfWork)
         {
         }
 
         public bool Exists(string slug)
         {
-            return !string.IsNullOrWhiteSpace(slug) && _unitOfWork.GetRepository<Currency>()
-                       .GetQueryable()
-                       .AsNoTracking()
+            return !string.IsNullOrWhiteSpace(slug) && _context.Currencies.AsNoTracking()
                        .Any(c => c.Slug.Equals(slug));
         }
 
         public CurrencyViewModel Get(string slug)
         {
-            return _unitOfWork.GetRepository<Currency>()
-                .GetQueryable()
-                .AsNoTracking()
+            return _context.Currencies.AsNoTracking()
                 .Where(c => c.Slug.Equals(slug) && c.DeletedAt == null)
                 .Include(c => c.AnalysedComponents)
                 .Include(c => c.CurrencyType)
@@ -75,9 +69,7 @@ namespace Nozomi.Service.Events
         public IEnumerable<BaseCurrencyViewModel> All(string slug = null)
         {
             if (string.IsNullOrWhiteSpace(slug))
-                return _unitOfWork.GetRepository<Currency>()
-                    .GetQueryable()
-                    .AsNoTracking()
+                return _context.Currencies.AsNoTracking()
                     .Where(c => c.DeletedAt == null && c.IsEnabled)
                     .Select(c => new BaseCurrencyViewModel
                     {
@@ -86,9 +78,7 @@ namespace Nozomi.Service.Events
                         Slug = c.Slug
                     });
 
-            return _unitOfWork.GetRepository<Currency>()
-                .GetQueryable()
-                .AsNoTracking()
+            return _context.Currencies.AsNoTracking()
                 .Where(c => c.DeletedAt == null && c.IsEnabled
                                                 && c.Slug.Contains(slug))
                 .Select(c => new BaseCurrencyViewModel
@@ -111,9 +101,7 @@ namespace Nozomi.Service.Events
             if (string.IsNullOrWhiteSpace(currencyType))
                 throw new ArgumentNullException("Parameter 'currencyType' is supposed to contain a valid string.");
 
-            var query = _unitOfWork.GetRepository<Currency>()
-                .GetQueryable()
-                .AsNoTracking()
+            var query = _context.Currencies.AsNoTracking()
                 .Include(c => c.CurrencyType)
                 .Where(c => c.DeletedAt == null && c.IsEnabled
                                                 && c.CurrencyType.TypeShortForm.Equals(currencyType,
@@ -211,9 +199,7 @@ namespace Nozomi.Service.Events
             if (string.IsNullOrWhiteSpace(currencyType))
                 throw new ArgumentNullException("Parameter 'currencyType' is supposed to contain a valid string.");
 
-            var query = _unitOfWork.GetRepository<Currency>()
-                .GetQueryable()
-                .AsNoTracking()
+            var query = _context.Currencies.AsNoTracking()
                 .Include(c => c.CurrencyType)
                 .Include(c => c.AnalysedComponents)
                 .ThenInclude(ac => ac.AnalysedHistoricItems)
@@ -437,18 +423,15 @@ namespace Nozomi.Service.Events
 
         public Currency Get(long id, bool track = false)
         {
-            var query = _unitOfWork.GetRepository<Currency>()
-                .GetQueryable();
+            var query = _context.Currencies.AsNoTracking();
 
             if (track)
-            {
                 query = query.AsTracking()
                     .Include(c => c.AnalysedComponents)
                     .Include(c => c.CurrencySources)
                     .ThenInclude(cs => cs.Source)
                     .Include(c => c.Requests)
                     .ThenInclude(cr => cr.RequestComponents);
-            }
 
             return query
                 .SingleOrDefault(c => c.Id.Equals(id));
@@ -461,9 +444,7 @@ namespace Nozomi.Service.Events
         /// <returns></returns>
         public Currency GetCurrencyByAbbreviation(string abbreviation, bool track = false)
         {
-            var query = _unitOfWork.GetRepository<Currency>()
-                .GetQueryable()
-                .AsNoTracking();
+            var query = _context.Currencies.AsNoTracking();
 
             if (track)
             {
@@ -483,9 +464,7 @@ namespace Nozomi.Service.Events
             if (string.IsNullOrEmpty(slug))
                 throw new ArgumentNullException("Invalid slug.");
 
-            return _unitOfWork.GetRepository<Currency>()
-                .GetQueryable()
-                .AsNoTracking()
+            return _context.Currencies.AsNoTracking()
                 .SingleOrDefault(c => c.DeletedAt == null && c.IsEnabled
                                                           && c.Slug.Equals(slug));
         }
@@ -497,9 +476,7 @@ namespace Nozomi.Service.Events
             if (analysedComponent.CurrencyId != null && analysedComponent.CurrencyId > 0)
             {
                 // Obtain the currency that is required
-                var curr = _unitOfWork.GetRepository<Currency>()
-                    .GetQueryable()
-                    .AsNoTracking()
+                var curr = _context.Currencies.AsNoTracking()
                     .SingleOrDefault(c => c.Id.Equals(analysedComponent.CurrencyId)
                                           && c.IsEnabled && c.DeletedAt == null);
 
@@ -519,9 +496,7 @@ namespace Nozomi.Service.Events
 
                 // TODO: Validate with multiple sources.
 
-                var reqComp = _unitOfWork.GetRepository<Request>()
-                    .GetQueryable()
-                    .AsNoTracking()
+                var reqComp = _context.Requests.AsNoTracking()
                     .Where(cr => cr.DeletedAt == null && cr.IsEnabled
                                                       && cr.CurrencyId.Equals(curr.Id))
                     .Include(cp => cp.Currency)
@@ -530,7 +505,7 @@ namespace Nozomi.Service.Events
                     // Obtain only the circulating supply
                     .SelectMany(cpr => cpr.RequestComponents
                         .Where(rc => rc.DeletedAt == null && rc.IsEnabled
-                                                          && rc.ComponentType.Equals(circulatingSupplyEnum)
+                                                          && rc.ComponentTypeId.Equals((long)circulatingSupplyEnum)
                                                           && rc.RcdHistoricItems.Count > 0))
                     .FirstOrDefault();
 
@@ -546,9 +521,7 @@ namespace Nozomi.Service.Events
                 // It means that this is a currency pair 
             {
                 // Obtain the main ticker first
-                var mainTicker = _unitOfWork.GetRepository<Currency>()
-                    .GetQueryable()
-                    .AsNoTracking()
+                var mainTicker = _context.Currencies.AsNoTracking()
                     .Where(c => c.DeletedAt == null && c.IsEnabled)
                     .Include(c => c.CurrencySources)
                     .ThenInclude(cs => cs.Source)
@@ -587,9 +560,7 @@ namespace Nozomi.Service.Events
 
         public long Count(bool ignoreDeleted = false, bool ignoreDisabled = false)
         {
-            var query = _unitOfWork.GetRepository<Currency>()
-                .GetQueryable()
-                .AsNoTracking();
+            var query = _context.Currencies.AsNoTracking();
 
             if (!ignoreDeleted)
                 query = query.Where(c => c.DeletedAt == null);
@@ -603,15 +574,11 @@ namespace Nozomi.Service.Events
         public long GetCountByType(string typeShortForm)
         {
             if (string.IsNullOrEmpty(typeShortForm) || string.IsNullOrWhiteSpace(typeShortForm))
-                return _unitOfWork.GetRepository<Currency>()
-                    .GetQueryable()
-                    .AsNoTracking()
+                return _context.Currencies.AsNoTracking()
                     .Where(c => c.DeletedAt == null && c.IsEnabled)
                     .LongCount();
 
-            var query = _unitOfWork.GetRepository<CurrencyType>()
-                .GetQueryable()
-                .AsNoTracking()
+            var query = _context.CurrencyTypes.AsNoTracking()
                 .Where(ct => ct.TypeShortForm.ToLower().Equals(typeShortForm.ToLower()));
 
             if (!query.Any())
@@ -632,9 +599,7 @@ namespace Nozomi.Service.Events
 
         public ICollection<Currency> GetAll(bool includeNested = false)
         {
-            var query = _unitOfWork.GetRepository<Currency>()
-                .GetQueryable()
-                .AsNoTracking();
+            var query = _context.Currencies.AsNoTracking();
 
             if (includeNested)
             {
@@ -651,9 +616,7 @@ namespace Nozomi.Service.Events
 
         public ICollection<Currency> GetAllNonDeleted(bool includeNested = false)
         {
-            var query = _unitOfWork.GetRepository<Currency>()
-                .GetQueryable()
-                .AsNoTracking()
+            var query = _context.Currencies.AsNoTracking()
                 .Where(c => c.DeletedAt == null);
 
             if (includeNested)
@@ -672,9 +635,7 @@ namespace Nozomi.Service.Events
 
         public ICollection<CurrencyDTO> GetAllDTO()
         {
-            return _unitOfWork.GetRepository<Currency>()
-                .GetQueryable()
-                .AsNoTracking()
+            return _context.Currencies.AsNoTracking()
                 .Where(c => c.DeletedAt == null)
                 .Include(c => c.CurrencySources)
                 .Select(c => new CurrencyDTO
@@ -696,8 +657,8 @@ namespace Nozomi.Service.Events
         {
             if (createCurrency != null && createCurrency.IsValid())
             {
-                return _unitOfWork.GetRepository<Currency>()
-                    .Get(c => c.Abbreviation.Equals(createCurrency.Abbreviation)).Any();
+                return _context.Currencies
+                    .Where(c => c.Abbreviation.Equals(createCurrency.Abbreviation)).Any();
             }
 
             return false;
@@ -707,8 +668,7 @@ namespace Nozomi.Service.Events
         {
             if (includeNested)
             {
-                return _unitOfWork.GetRepository<Currency>().GetQueryable()
-                    .AsNoTracking()
+                return _context.Currencies.AsNoTracking()
                     .Where(c => c.DeletedAt == null && c.IsEnabled)
                     .Include(c => c.AnalysedComponents)
                     .Include(c => c.Requests)
@@ -718,7 +678,7 @@ namespace Nozomi.Service.Events
             }
             else
             {
-                return _unitOfWork.GetRepository<Currency>().GetQueryable()
+                return _context.Currencies
                     .AsNoTracking()
                     .Where(c => c.DeletedAt == null && c.IsEnabled);
             }
@@ -734,8 +694,7 @@ namespace Nozomi.Service.Events
         {
             if (includeNested)
             {
-                return _unitOfWork.GetRepository<Currency>().GetQueryable()
-                    .AsNoTracking()
+                return _context.Currencies.AsNoTracking()
                     .Where(c => c.DeletedAt == null)
                     .Where(c => c.IsEnabled)
                     .Include(c => c.CurrencyType)
@@ -754,7 +713,7 @@ namespace Nozomi.Service.Events
             }
             else
             {
-                return _unitOfWork.GetRepository<Currency>().GetQueryable()
+                return _context.Currencies
                     .AsNoTracking()
                     .Where(c => c.DeletedAt == null)
                     .Where(c => c.IsEnabled)
@@ -780,7 +739,7 @@ namespace Nozomi.Service.Events
         {
             if (includeNested)
             {
-                return _unitOfWork.GetRepository<Currency>().GetQueryable()
+                return _context.Currencies
                     .AsNoTracking()
                     .Where(c => c.DeletedAt == null)
                     .Where(c => c.IsEnabled)
@@ -801,9 +760,7 @@ namespace Nozomi.Service.Events
             }
             else
             {
-                return _unitOfWork.GetRepository<Currency>()
-                    .GetQueryable()
-                    .AsNoTracking()
+                return _context.Currencies.AsNoTracking()
                     .Where(c => c.DeletedAt == null)
                     .Where(c => c.IsEnabled)
                     .DistinctBy(c => c.Abbreviation)
@@ -822,13 +779,10 @@ namespace Nozomi.Service.Events
             Func<AnalysedComponent, bool> clientPredicate = null, int historicItemIndex = 0)
         {
             // obtain the currency
-            var mainCurrency = _unitOfWork.GetRepository<Currency>()
-                .GetQueryable()
-                .AsNoTracking()
+            var mainCurrency = _context.Currencies.AsNoTracking()
                 .SingleOrDefault(c => c.DeletedAt == null && c.IsEnabled && c.Id.Equals(currencyId));
 
-            var components = _unitOfWork.GetRepository<AnalysedComponent>()
-                .GetQueryable()
+            var components = _context.AnalysedComponents
                 .AsNoTracking()
                 .Where(ac => ac.CurrencyPairId != null && ac.CurrencyPairId > 0);
 
@@ -877,9 +831,7 @@ namespace Nozomi.Service.Events
 
         public ICollection<string> ListAllSlugs()
         {
-            return _unitOfWork.GetRepository<Currency>()
-                .GetQueryable()
-                .AsNoTracking()
+            return _context.Currencies.AsNoTracking()
                 .Where(c => c.DeletedAt == null && c.IsEnabled)
                 .Select(c => c.Slug)
                 .ToList();
@@ -889,9 +841,7 @@ namespace Nozomi.Service.Events
             string currencyTypeName = null, bool orderAscending = true, 
             CurrencySortingEnum orderingParam = CurrencySortingEnum.None)
         {
-            var query = _unitOfWork.GetRepository<Currency>()
-                .GetQueryable()
-                .AsNoTracking()
+            var query = _context.Currencies.AsNoTracking()
                 .Where(c => c.IsEnabled && c.DeletedAt == null && c.CurrencyTypeId > 0);
 
             if (!string.IsNullOrEmpty(currencyTypeName))
@@ -944,9 +894,7 @@ namespace Nozomi.Service.Events
 
         public IReadOnlyDictionary<string, long> ListAllMapped()
         {
-            return _unitOfWork.GetRepository<Currency>()
-                .GetQueryable()
-                .AsNoTracking()
+            return _context.Currencies.AsNoTracking()
                 .Where(c => c.DeletedAt == null && c.IsEnabled)
                 .ToDictionary(c => c.Slug, c => c.Id);
         }
@@ -956,9 +904,7 @@ namespace Nozomi.Service.Events
             if (string.IsNullOrWhiteSpace(slug))
                 return long.MinValue;
 
-            return _unitOfWork.GetRepository<Currency>()
-                .GetQueryable()
-                .AsNoTracking()
+            return _context.Currencies.AsNoTracking()
                 .Where(c => c.DeletedAt == null && c.IsEnabled && c.Slug.Equals(slug))
                 .Include(c => c.CurrencySources)
                 .ThenInclude(cs => cs.Source)
@@ -973,9 +919,7 @@ namespace Nozomi.Service.Events
             if (string.IsNullOrWhiteSpace(slug) || page < 0 || itemsPerPage < 1)
                 throw new ArgumentOutOfRangeException("Invalid request parameters.");
 
-            return _unitOfWork.GetRepository<Currency>()
-                .GetQueryable()
-                .AsNoTracking()
+            return _context.Currencies.AsNoTracking()
                 .Where(c => c.DeletedAt == null && c.IsEnabled && c.Slug.Equals(slug))
                 .Include(c => c.CurrencySources)
                 .ThenInclude(cs => cs.Source)

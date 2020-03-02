@@ -3,11 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Nozomi.Base.BCL.Extensions;
 using Nozomi.Data.Models.Web;
 using Nozomi.Infra.Compute.Events.Interfaces;
 using Nozomi.Preprocessing.Abstracts;
-using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Compute.Data;
 
 namespace Nozomi.Infra.Compute.Events
@@ -15,17 +13,14 @@ namespace Nozomi.Infra.Compute.Events
     public class ComputeExpressionEvent : BaseEvent<ComputeExpressionEvent, NozomiComputeDbContext>,
         IComputeExpressionEvent
     {
-        public ComputeExpressionEvent(ILogger<ComputeExpressionEvent> logger, 
-            IUnitOfWork<NozomiComputeDbContext> unitOfWork) 
-            : base(logger, unitOfWork)
+        public ComputeExpressionEvent(ILogger<ComputeExpressionEvent> logger, NozomiComputeDbContext context) 
+            : base(logger, context)
         {
         }
 
         public ComputeExpression Get(Guid guid, bool includeParent = false, bool ensureNotDeletedOrDisabled = true)
         {
-            var query =  _unitOfWork.GetRepository<ComputeExpression>()
-                .GetQueryable()
-                .AsNoTracking()
+            var query = _context.ComputeExpressions.AsNoTracking()
                 .Where(e => e.Guid.Equals(guid));
 
             if (includeParent)
@@ -42,9 +37,7 @@ namespace Nozomi.Infra.Compute.Events
             if (!Guid.TryParse(guid, out var parsedGuid))
                 throw new NullReferenceException($"{_eventName} Get (string): Invalid guid.");
             
-            var query =  _unitOfWork.GetRepository<ComputeExpression>()
-                .GetQueryable()
-                .AsNoTracking()
+            var query = _context.ComputeExpressions.AsNoTracking()
                 .Where(e => e.Guid.Equals(parsedGuid));
 
             if (includeParent)
@@ -58,9 +51,7 @@ namespace Nozomi.Infra.Compute.Events
 
         public IEnumerable<ComputeExpression> GetByParent(Guid parentGuid, bool ensureNotDeletedOrDisabled = true)
         {
-            var query = _unitOfWork.GetRepository<ComputeExpression>()
-                .GetQueryable()
-                .AsNoTracking()
+            var query = _context.ComputeExpressions.AsNoTracking()
                 .Include(e => e.Compute)
                 .Where(e => e.ComputeGuid.Equals(parentGuid));
 
@@ -75,9 +66,7 @@ namespace Nozomi.Infra.Compute.Events
             if (!Guid.TryParse(parentGuid, out var parsedGuid))
                 throw new NullReferenceException($"{_eventName} GetByParent (string): Invalid guid.");
             
-            var query = _unitOfWork.GetRepository<ComputeExpression>()
-                .GetQueryable()
-                .AsNoTracking()
+            var query = _context.ComputeExpressions.AsNoTracking()
                 .Include(e => e.Compute)
                 .Where(e => e.ComputeGuid.Equals(parsedGuid));
 
@@ -89,9 +78,7 @@ namespace Nozomi.Infra.Compute.Events
 
         public ComputeExpression GetMostOutdated(bool includeParent = false, bool ensureNotDeletedOrDisabled = true)
         {
-            var query = _unitOfWork.GetRepository<ComputeExpression>()
-                .GetQueryable()
-                .AsNoTracking()
+            var query = _context.ComputeExpressions.AsNoTracking()
                 .OrderBy(e => e.ModifiedAt)
                 .ThenByDescending(e => e.Value)
                 .Where(e => !string.IsNullOrEmpty(e.Expression));
@@ -107,9 +94,7 @@ namespace Nozomi.Infra.Compute.Events
 
         public IEnumerable<ComputeExpression> GetByAge(int chunkOut = 100, bool ensureNotDeletedOrDisabled = true)
         {
-            var query = _unitOfWork.GetRepository<ComputeExpression>()
-                .GetQueryable()
-                .AsNoTracking()
+            var query = _context.ComputeExpressions.AsNoTracking()
                 .OrderBy(e => e.ModifiedAt)
                 .Include(e => e.Compute)
                 .Take(chunkOut);

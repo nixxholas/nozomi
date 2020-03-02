@@ -6,8 +6,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Nozomi.Infra.Syncing.HostedServices.RequestTypes;
-using Nozomi.Repo.BCL.Context;
-using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
 using Nozomi.Service.Events;
 using Nozomi.Service.Events.Interfaces;
@@ -45,7 +43,6 @@ namespace Nozomi.WSS
                 var str = Configuration.GetConnectionString("Local:" + @Environment.MachineName);
 
                 services
-                    .AddEntityFrameworkNpgsql()
                     .AddDbContext<NozomiDbContext>(options =>
                         {
                             options.UseNpgsql(str);
@@ -90,16 +87,11 @@ namespace Nozomi.WSS
 
             services.AddControllers()
                 .AddNewtonsoftJson();
-            
-            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
-            services.AddTransient<IUnitOfWork<NozomiDbContext>, UnitOfWork<NozomiDbContext>>();
-            services.AddTransient<IDbContext, NozomiDbContext>();
-            
-            services.AddScoped<ICurrencyEvent, CurrencyEvent>();
-            services.AddScoped<ICurrencyPairEvent, CurrencyPairEvent>();
-            services.AddScoped<ICurrencyTypeEvent, CurrencyTypeEvent>();
-            services.AddScoped<IRequestEvent, RequestEvent>();
+            services.AddTransient<ICurrencyEvent, CurrencyEvent>();
+            services.AddTransient<ICurrencyPairEvent, CurrencyPairEvent>();
+            services.AddTransient<ICurrencyTypeEvent, CurrencyTypeEvent>();
+            services.AddTransient<IRequestEvent, RequestEvent>();
             services.AddTransient<IComponentHistoricItemService, ComponentHistoricItemService>();
             services.AddTransient<IComponentService, ComponentService>();
             services.AddTransient<IRequestService, RequestService>();

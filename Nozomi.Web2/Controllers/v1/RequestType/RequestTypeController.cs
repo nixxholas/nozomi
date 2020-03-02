@@ -19,7 +19,7 @@ namespace Nozomi.Web2.Controllers.v1.RequestType
 
         [Authorize]
         [HttpGet]
-        [Throttle(Milliseconds = 1000)]
+        [Throttle(Name = "RequestType/All", Milliseconds = 1000)]
         public NozomiResult<JsonResult> All()
         {
             return new NozomiResult<JsonResult>(new JsonResult(_requestTypeEvent.All()));
