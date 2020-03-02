@@ -102,6 +102,7 @@ namespace Nozomi.Service.Services
             var itemToDel = _context.ComponentHistoricItems.AsTracking()
                 .SingleOrDefault(e => e.Guid.Equals(guid));
             
+            _logger.LogInformation($"{_serviceName} Remove (Guid): Deleting {guid}");
 
             if (itemToDel != null) // Since it exists, let's delete it
             {
@@ -109,6 +110,7 @@ namespace Nozomi.Service.Services
                 {
                     _context.ComponentHistoricItems.Remove(itemToDel); // Delete
                     _context.SaveChanges(userId); // Save
+                    _logger.LogInformation($"{_serviceName} Remove (Guid): Hard deleted {guid}");
                     return;
                 }
                 else
@@ -117,9 +119,12 @@ namespace Nozomi.Service.Services
                     itemToDel.DeletedById = userId;
                     _context.ComponentHistoricItems.Update(itemToDel); // Save
                     _context.SaveChanges(userId); // Commit
+                    _logger.LogInformation($"{_serviceName} Remove (Guid): Soft deleted {guid}");
                     return;
                 }
             }
+            
+            _logger.LogError($"{_serviceName} Remove (Guid): There was a problem deleting {guid}.");
 
             throw new NullReferenceException($"{_serviceName } Remove (Guid): Invalid Guid for removal.");
         }
