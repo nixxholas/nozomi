@@ -6,8 +6,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Nozomi.Infra.Syncing.HostedServices.RequestTypes;
-using Nozomi.Repo.BCL.Context;
-using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
 using Nozomi.Service.Events;
 using Nozomi.Service.Events.Interfaces;
@@ -89,9 +87,7 @@ namespace Nozomi.WSS
 
             services.AddControllers()
                 .AddNewtonsoftJson();
-            
-            services.AddTransient<IDbContext, NozomiDbContext>();
-            
+
             services.AddScoped<ICurrencyEvent, CurrencyEvent>();
             services.AddScoped<ICurrencyPairEvent, CurrencyPairEvent>();
             services.AddScoped<ICurrencyTypeEvent, CurrencyTypeEvent>();
