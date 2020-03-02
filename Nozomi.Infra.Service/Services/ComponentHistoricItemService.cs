@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.Models.Web;
 using Nozomi.Preprocessing.Abstracts;
-using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
 using Nozomi.Service.Services.Interfaces;
 
@@ -14,7 +13,7 @@ namespace Nozomi.Service.Services
         IComponentHistoricItemService
     {
         public ComponentHistoricItemService(ILogger<ComponentHistoricItemService> logger, 
-        IUnitOfWork<NozomiDbContext> context) 
+        NozomiDbContext context) 
             : base(logger, context)
         {
         }
@@ -38,13 +37,13 @@ namespace Nozomi.Service.Services
             //         if (lastHistoricVal != existingVal)
             //         {
             //             // Push it
-            //             _unitOfWork.GetRepository<ComponentHistoricItem>().Add(new ComponentHistoricItem
+            //             _unitOfWork.RcdHistoricItems.Add(new ComponentHistoricItem
             //             {
             //                 RequestComponentId = rc.Id,
             //                 Value = rc.Value,
             //                 HistoricDateTime = rc.ModifiedAt
             //             });
-            //             _unitOfWork.Commit(); // done
+            //             _unitOfWork.SaveChanges(); // done
             //         }
             //
             //         return true;
@@ -52,13 +51,13 @@ namespace Nozomi.Service.Services
             //     else
             //     {
             //         // Push it
-            //         _unitOfWork.GetRepository<ComponentHistoricItem>().Add(new ComponentHistoricItem
+            //         _unitOfWork.RcdHistoricItems.Add(new ComponentHistoricItem
             //         {
             //             RequestComponentId = rc.Id,
             //             Value = rc.Value,
             //             HistoricDateTime = rc.ModifiedAt
             //         });
-            //         _unitOfWork.Commit(); // done
+            //         _unitOfWork.SaveChanges(); // done
             //     }
             //     
             //     // Return true anyway since the value is a dupe
@@ -73,25 +72,23 @@ namespace Nozomi.Service.Services
         {
             if (Guid.TryParse(guid, out var parsedGuid))
             {
-                var itemToDel = _context.GetRepository<ComponentHistoricItem>()
-                    .GetQueryable()
-                    .AsNoTracking()
+                var itemToDel = _context.RcdHistoricItems.AsNoTracking()
                     .SingleOrDefault(e => e.Guid.Equals(parsedGuid));
 
                 if (itemToDel != null) // Since it exists, let's delete it
                 {
                     if (hardDelete)
                     {
-                        _context.GetRepository<ComponentHistoricItem>().Delete(itemToDel); // Delete
-                        _context.Commit(userId); // Save
+                        _context.RcdHistoricItems.Remove(itemToDel); // Delete
+                        _context.SaveChanges(userId); // Save
                         return;
                     }
                     else
                     {
                         itemToDel.DeletedAt = DateTime.UtcNow;
                         itemToDel.DeletedById = userId;
-                        _context.GetRepository<ComponentHistoricItem>().Update(itemToDel); // Save
-                        _context.Commit(userId); // Commit
+                        _context.RcdHistoricItems.Update(itemToDel); // Save
+                        _context.SaveChanges(userId); // Commit
                         return;
                     }
                 }
@@ -102,9 +99,7 @@ namespace Nozomi.Service.Services
 
         public void Remove(Guid guid, string userId = null, bool hardDelete = false)
         {
-            var itemToDel = _context.GetRepository<ComponentHistoricItem>()
-                .GetQueryable()
-                .AsTracking()
+            var itemToDel = _context.RcdHistoricItems.AsTracking()
                 .SingleOrDefault(e => e.Guid.Equals(guid));
             
 
@@ -112,16 +107,16 @@ namespace Nozomi.Service.Services
             {
                 if (hardDelete)
                 {
-                    _context.GetRepository<ComponentHistoricItem>().Delete(itemToDel); // Delete
-                    _context.Commit(userId); // Save
+                    _context.RcdHistoricItems.Remove(itemToDel); // Delete
+                    _context.SaveChanges(userId); // Save
                     return;
                 }
                 else
                 {
                     itemToDel.DeletedAt = DateTime.UtcNow;
                     itemToDel.DeletedById = userId;
-                    _context.GetRepository<ComponentHistoricItem>().Update(itemToDel); // Save
-                    _context.Commit(userId); // Commit
+                    _context.RcdHistoricItems.Update(itemToDel); // Save
+                    _context.SaveChanges(userId); // Commit
                     return;
                 }
             }
@@ -135,16 +130,16 @@ namespace Nozomi.Service.Services
             {
                 if (hardDelete)
                 {
-                    _context.GetRepository<ComponentHistoricItem>().Delete(componentHistoricItem); // Delete
-                    _context.Commit(userId); // Save
+                    _context.RcdHistoricItems.Remove(componentHistoricItem); // Delete
+                    _context.SaveChanges(userId); // Save
                     return;
                 }
                 else
                 {
                     componentHistoricItem.DeletedAt = DateTime.UtcNow;
                     componentHistoricItem.DeletedById = userId;
-                    _context.GetRepository<ComponentHistoricItem>().Update(componentHistoricItem); // Save
-                    _context.Commit(userId); // Commit
+                    _context.RcdHistoricItems.Update(componentHistoricItem); // Save
+                    _context.SaveChanges(userId); // Commit
                     return;
                 }
             }

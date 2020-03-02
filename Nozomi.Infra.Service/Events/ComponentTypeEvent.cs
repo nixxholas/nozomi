@@ -6,7 +6,6 @@ using Microsoft.Extensions.Logging;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web;
 using Nozomi.Preprocessing.Abstracts;
-using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
 using Nozomi.Service.Events.Interfaces;
 
@@ -17,7 +16,7 @@ namespace Nozomi.Service.Events
         // private readonly ICollection<KeyValuePair<string, int>> _componentTypeMap;
 
         public ComponentTypeEvent(ILogger<ComponentTypeEvent> logger,
-            IUnitOfWork<NozomiDbContext> context) : base(logger, context)
+            NozomiDbContext context) : base(logger, context)
         {
             // _componentTypeMap = new List<KeyValuePair<string, int>>();
             //
@@ -30,9 +29,7 @@ namespace Nozomi.Service.Events
 
         public IEnumerable<KeyValuePair<string, long>> All()
         {
-            return _context.GetRepository<ComponentType>()
-                .GetQueryable()
-                .AsNoTracking()
+            return _context.ComponentTypes.AsNoTracking()
                 .Where(ct => ct.DeletedAt == null && ct.IsEnabled)
                 .Select(ct => new KeyValuePair<string, long>(ct.Name, ct.Id));
         }

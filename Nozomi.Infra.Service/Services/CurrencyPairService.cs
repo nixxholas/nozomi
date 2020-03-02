@@ -8,7 +8,6 @@ using Nozomi.Data.AreaModels.v1.CurrencyPair;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.ViewModels.CurrencyPair;
 using Nozomi.Preprocessing.Abstracts;
-using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Services.Interfaces;
@@ -21,7 +20,7 @@ namespace Nozomi.Service.Services
         private readonly ICurrencySourceService _currencySourceService;
         
         public CurrencyPairService(ILogger<CurrencyPairService> logger, ISourceEvent sourceEvent, 
-            ICurrencySourceService currencySourceService, IUnitOfWork<NozomiDbContext> context) : base(logger,
+            ICurrencySourceService currencySourceService, NozomiDbContext context) : base(logger,
             context)
         {
             _sourceEvent = sourceEvent;
@@ -38,10 +37,10 @@ namespace Nozomi.Service.Services
                 if (source != null && 
                     _currencySourceService.EnsurePairIsCreated(vm.MainTicker, vm.CounterTicker, source.Id, userId))
                 {
-                    _context.GetRepository<CurrencyPair>().Add(new CurrencyPair(vm.Type,
+                    _context.CurrencyPairs.Add(new CurrencyPair(vm.Type,
                         vm.MainTicker, vm.CounterTicker, vm.ApiUrl, vm.DefaultComponent, source.Id, vm.IsEnabled));
                 
-                    return _context.Commit(userId) == 1;   
+                    return _context.SaveChanges(userId) == 1;   
                 }
             }
 
@@ -58,9 +57,7 @@ namespace Nozomi.Service.Services
                 if (source != null && 
                     _currencySourceService.EnsurePairIsCreated(vm.MainTicker, vm.CounterTicker, source.Id, userId))
                 {
-                    var currencyPair = _context.GetRepository<CurrencyPair>()
-                        .GetQueryable()
-                        .AsTracking()
+                    var currencyPair = _context.CurrencyPairs.AsTracking()
                         .SingleOrDefault(cp => cp.Guid.Equals(vm.Guid));
 
                     if (currencyPair != null)
@@ -73,8 +70,8 @@ namespace Nozomi.Service.Services
                         currencyPair.SourceId = source.Id;
                         currencyPair.IsEnabled = source.IsEnabled;
 
-                        _context.GetRepository<CurrencyPair>().Update(currencyPair);
-                        return _context.Commit(userId) == 1;
+                        _context.CurrencyPairs.Update(currencyPair);
+                        return _context.SaveChanges(userId) == 1;
                     }
                 }
             }
@@ -86,9 +83,7 @@ namespace Nozomi.Service.Services
         {
             if (createCurrencyPair == null || !createCurrencyPair.IsValid() ||
                 // Make sure the pair we're creating doesn't exist.
-                _context.GetRepository<CurrencyPair>()
-                    .GetQueryable()
-                    .AsNoTracking()
+                _context.CurrencyPairs.AsNoTracking()
                     .Any(cp => cp.MainTicker.Equals(createCurrencyPair.MainCurrencyAbbrv,
                         StringComparison.InvariantCultureIgnoreCase)
                                && cp.CounterTicker.Equals(createCurrencyPair.CounterCurrencyAbbrv,
@@ -98,9 +93,7 @@ namespace Nozomi.Service.Services
                     NozomiResultType.Failed, "Please ensure that the payload is valid");
             
             // Check the main ticker
-            if (!_context.GetRepository<CurrencySource>()
-                .GetQueryable()
-                .AsNoTracking()
+            if (!_context.CurrencySources.AsNoTracking()
                 .Include(cs => cs.Currency)
                 .Any(cs => cs.Currency.Abbreviation
                                .Equals(createCurrencyPair.MainCurrencyAbbrv,
@@ -113,9 +106,7 @@ namespace Nozomi.Service.Services
             }
 
             // Check the counter ticker
-            if (!_context.GetRepository<CurrencySource>()
-                .GetQueryable()
-                .AsNoTracking()
+            if (!_context.CurrencySources.AsNoTracking()
                 .Include(cs => cs.Currency)
                 .Any(cs => cs.Currency.Abbreviation.Equals(createCurrencyPair.CounterCurrencyAbbrv,
                                StringComparison.InvariantCultureIgnoreCase)
@@ -137,8 +128,8 @@ namespace Nozomi.Service.Services
                 IsEnabled = createCurrencyPair.IsEnabled
             };
             
-            _context.GetRepository<CurrencyPair>().Add(currencyPair);
-            _context.Commit(userId);
+            _context.CurrencyPairs.Add(currencyPair);
+            _context.SaveChanges(userId);
 
             return new NozomiResult<string>(NozomiResultType.Success, "CurrencyPair successfully created");
         }
@@ -146,28 +137,21 @@ namespace Nozomi.Service.Services
         public NozomiResult<string> Update(UpdateCurrencyPair updateCurrencyPair, string userId = null)
         {
             if (updateCurrencyPair == null || !updateCurrencyPair.IsValid()
-                || !_context.GetRepository<CurrencySource>()
-                    .GetQueryable()
-                    .AsNoTracking()
+                || !_context.CurrencySources.AsNoTracking()
                     .Include(cs => cs.Currency)
                     .Any(cs => cs.Currency.Abbreviation.Equals(updateCurrencyPair.MainCurrencyAbbrv)
                         && cs.SourceId.Equals(updateCurrencyPair.SourceId))
-                || !_context.GetRepository<CurrencySource>()
-                .GetQueryable()
-                .AsNoTracking()
+                || !_context.CurrencySources.AsNoTracking()
                 .Include(cs => cs.Currency)
                 .Any(cs => cs.Currency.Abbreviation.Equals(updateCurrencyPair.CounterCurrencyAbbrv)
                            && cs.SourceId.Equals(updateCurrencyPair.SourceId)))
                 return new NozomiResult<string>(
                     NozomiResultType.Failed, "Please ensure that the payload is valid");
 
-            var cpToUpd = _context.GetRepository<CurrencyPair>()
-                .Get(cp => cp.Id.Equals(updateCurrencyPair.Id) && cp.DeletedAt == null)
-                .SingleOrDefault();
+            var cpToUpd = _context.CurrencyPairs
+                .SingleOrDefault(cp => cp.Id.Equals(updateCurrencyPair.Id) && cp.DeletedAt == null);
 
-            if (cpToUpd == null || _context.GetRepository<CurrencyPair>()
-                    .GetQueryable()
-                    .AsNoTracking()
+            if (cpToUpd == null || _context.CurrencyPairs.AsNoTracking()
                     .Any(cp => !cp.Id.Equals(updateCurrencyPair.Id) 
                                && cp.SourceId.Equals(updateCurrencyPair.SourceId)
                                && cp.MainTicker.Equals(cp.MainTicker, StringComparison.InvariantCultureIgnoreCase)
@@ -184,8 +168,8 @@ namespace Nozomi.Service.Services
             cpToUpd.DefaultComponent = updateCurrencyPair.DefaultComponent;
             cpToUpd.IsEnabled = updateCurrencyPair.IsEnabled;
             
-            _context.GetRepository<CurrencyPair>().Update(cpToUpd);
-            _context.Commit(userId);
+            _context.CurrencyPairs.Update(cpToUpd);
+            _context.SaveChanges(userId);
             
             return new NozomiResult<string>(NozomiResultType.Success, "CurrencyPair successfully updated!");
         }
@@ -194,13 +178,11 @@ namespace Nozomi.Service.Services
         {
             if (currencyPairId > 0)
             {
-                var cpToDel = _context.GetRepository<CurrencyPair>()
-                    .GetQueryable()
-                    .SingleOrDefault(cp => cp.Id.Equals(currencyPairId));
+                var cpToDel = _context.CurrencyPairs.SingleOrDefault(cp => cp.Id.Equals(currencyPairId));
 
                 if (hardDelete && cpToDel != null)
                 {
-                    _context.GetRepository<CurrencyPair>().Delete(cpToDel);
+                    _context.CurrencyPairs.Remove(cpToDel);
                 }
                 else if (cpToDel != null && cpToDel.DeletedAt == null)
                 {
@@ -208,7 +190,7 @@ namespace Nozomi.Service.Services
                     if (string.IsNullOrWhiteSpace(userId))
                         cpToDel.DeletedById = userId;
                     
-                    _context.GetRepository<CurrencyPair>().Update(cpToDel);
+                    _context.CurrencyPairs.Update(cpToDel);
                 }
                 else
                 {
@@ -216,7 +198,7 @@ namespace Nozomi.Service.Services
                     return new NozomiResult<string>(NozomiResultType.Failed, "Delete failed, the currency pair does not exist");
                 }
 
-                _context.Commit(userId);
+                _context.SaveChanges(userId);
 
                 return new NozomiResult<string>(NozomiResultType.Success, "CurrencyPair has been successfully deleted!");
             }
@@ -226,34 +208,26 @@ namespace Nozomi.Service.Services
 
         public IEnumerable<CurrencyPair> GetAllActive(int index = 0, bool includeNested = false)
         {
-            return !includeNested ? _context.GetRepository<CurrencyPair>()
-                .GetQueryable()
-                .Include(cp => cp.Requests)
+            return !includeNested ? _context.CurrencyPairs.Include(cp => cp.Requests)
                     .ThenInclude(cpr => cpr.RequestComponents)
                 .Where(cp => cp.DeletedAt == null && cp.IsEnabled)
                 .Skip(index * 20)
                 .Take(20) :
-                _context.GetRepository<CurrencyPair>()
-                    .GetQueryable()
-                    .Where(cp => cp.DeletedAt == null && cp.IsEnabled)
+                _context.CurrencyPairs.Where(cp => cp.DeletedAt == null && cp.IsEnabled)
                     .Skip(index * 20)
                     .Take(20);
         }
 
         public IEnumerable<string> GetAllCurrencyPairUrls()
         {
-            return _context.GetRepository<CurrencyPair>()
-                .GetQueryable()
-                .Where(cp => cp.DeletedAt == null && cp.IsEnabled)
+            return _context.CurrencyPairs.Where(cp => cp.DeletedAt == null && cp.IsEnabled)
                 .Select(cp => cp.APIUrl)
                 .ToList();
         }
 
         public long[][] GetCurrencySourceMappings()
         {
-            return _context.GetRepository<CurrencyPair>()
-                .GetQueryable()
-                .Where(cp => cp.DeletedAt == null)
+            return _context.CurrencyPairs.Where(cp => cp.DeletedAt == null)
                 .Where(cp => cp.IsEnabled)
                 .Include(cp => cp.Source)
                 .Select(cp => new long[] {cp.Id, cp.Source.Id})

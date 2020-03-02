@@ -5,7 +5,6 @@ using Microsoft.Extensions.Logging;
 using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Data.ViewModels.AnalysedComponent;
 using Nozomi.Preprocessing.Abstracts;
-using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
 using Nozomi.Service.Events.Analysis.Interfaces;
 using Nozomi.Service.Events.Interfaces;
@@ -22,7 +21,7 @@ namespace Nozomi.Service.Services
         private readonly ICurrencyTypeEvent _currencyTypeEvent;
         
         public AnalysedComponentService(ILogger<AnalysedComponentService> logger, 
-            IUnitOfWork<NozomiDbContext> context, IAnalysedComponentEvent analysedComponentEvent,
+            NozomiDbContext context, IAnalysedComponentEvent analysedComponentEvent,
             ICurrencyEvent currencyEvent, ICurrencyPairEvent currencyPairEvent, ICurrencyTypeEvent currencyTypeEvent) 
             : base(logger, context)
         {
@@ -74,8 +73,8 @@ namespace Nozomi.Service.Services
                 var analysedComponent = new AnalysedComponent(vm.Type, vm.Delay, vm.UiFormatting, vm.IsDenominated,
                     vm.StoreHistoricals, cId, cpId, ctId);
                 
-                _context.GetRepository<AnalysedComponent>().Add(analysedComponent);
-                _context.Commit(userId);
+                _context.AnalysedComponents.Add(analysedComponent);
+                _context.SaveChanges(userId);
                 return;
             }
         
@@ -133,8 +132,8 @@ namespace Nozomi.Service.Services
                             analysedComponent.CurrencyTypeId = currencyType.Id;
                     }
                     
-                    _context.GetRepository<AnalysedComponent>().Update(analysedComponent);
-                    _context.Commit(userId);
+                    _context.AnalysedComponents.Update(analysedComponent);
+                    _context.SaveChanges(userId);
 
                     _logger.LogInformation($"{_serviceName}: Successfully updated AnalysedComponent -> " +
                                            $"{analysedComponent.Guid}");

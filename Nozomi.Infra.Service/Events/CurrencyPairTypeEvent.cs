@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Preprocessing.Abstracts;
-using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
 using Nozomi.Service.Events.Interfaces;
 
@@ -14,7 +13,7 @@ namespace Nozomi.Service.Services.Enumerators
         private readonly ICollection<KeyValuePair<string, int>> _currencyPairTypeMap;
 
         public CurrencyPairTypeEvent(ILogger<CurrencyPairTypeEvent> logger,
-            IUnitOfWork<NozomiDbContext> context) : base(logger, context)
+            NozomiDbContext context) : base(logger, context)
         {
             _currencyPairTypeMap = new List<KeyValuePair<string, int>>();
 

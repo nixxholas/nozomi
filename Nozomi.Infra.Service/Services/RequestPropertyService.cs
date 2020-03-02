@@ -6,7 +6,6 @@ using Microsoft.Extensions.Logging;
 using Nozomi.Data.Models.Web;
 using Nozomi.Data.ViewModels.RequestProperty;
 using Nozomi.Preprocessing.Abstracts;
-using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Services.Interfaces;
@@ -18,7 +17,7 @@ namespace Nozomi.Service.Services
         private readonly IRequestEvent _requestEvent;
         private readonly IRequestPropertyEvent _requestPropertyEvent;
         
-        public RequestPropertyService(ILogger<RequestPropertyService> logger, IUnitOfWork<NozomiDbContext> context,
+        public RequestPropertyService(ILogger<RequestPropertyService> logger, NozomiDbContext context,
             IRequestEvent requestEvent, IRequestPropertyEvent requestPropertyEvent) 
             : base(logger, context)
         {
@@ -27,7 +26,7 @@ namespace Nozomi.Service.Services
         }
 
         public RequestPropertyService(IHttpContextAccessor contextAccessor, ILogger<RequestPropertyService> logger, 
-            IUnitOfWork<NozomiDbContext> context, IRequestEvent requestEvent, 
+            NozomiDbContext context, IRequestEvent requestEvent, 
             IRequestPropertyEvent requestPropertyEvent) 
             : base(contextAccessor, logger, context)
         {
@@ -58,9 +57,9 @@ namespace Nozomi.Service.Services
                         RequestId = request.Id
                     };
                     // Push
-                    _context.GetRepository<RequestProperty>().Add(requestProperty);
+                    _context.RequestProperties.Add(requestProperty);
                     // Commit
-                    _context.Commit(userId);
+                    _context.SaveChanges(userId);
                     // Complete
                     _logger.LogInformation($"{_serviceName} Create: user {userId} has successfully " +
                                            $"created a request property for request {inputModel.RequestGuid} of " +
@@ -87,9 +86,9 @@ namespace Nozomi.Service.Services
                     requestProperty.Key = inputModel.Key;
                     requestProperty.Value = inputModel.Value;
                     // Push
-                    _context.GetRepository<RequestProperty>().Update(requestProperty);
+                    _context.RequestProperties.Update(requestProperty);
                     // Commit
-                    _context.Commit(userId);
+                    _context.SaveChanges(userId);
                     // Complete
                     _logger.LogInformation($"{_serviceName} Update: user {userId} has successfully " +
                                            $"updated the request property {inputModel.Guid}.");
@@ -117,7 +116,7 @@ namespace Nozomi.Service.Services
                     if (hardDelete)
                     {
                         // Delete the entity directly
-                        _context.Context.Remove(requestProperty);
+                        _context.RequestProperties.Remove(requestProperty);
                     }
                     else
                     {
@@ -125,11 +124,11 @@ namespace Nozomi.Service.Services
                         requestProperty.DeletedAt = DateTime.UtcNow;
                         requestProperty.DeletedById = userId;
                         // Push
-                        _context.GetRepository<RequestProperty>().Update(requestProperty);
+                        _context.RequestProperties.Update(requestProperty);
                     }
                     
                     //Commit
-                    _context.Commit(userId);
+                    _context.SaveChanges(userId);
                     // Complete
                     _logger.LogInformation($"{_serviceName} Delete: user {userId} has successfully " +
                                            $"deleted the request property {guid}.");

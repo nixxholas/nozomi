@@ -6,7 +6,6 @@ using Microsoft.Extensions.Logging;
 using Nozomi.Data.Models.Web;
 using Nozomi.Data.ViewModels.RequestProperty;
 using Nozomi.Preprocessing.Abstracts;
-using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
 using Nozomi.Service.Events.Interfaces;
 
@@ -14,7 +13,7 @@ namespace Nozomi.Service.Events
 {
     public class RequestPropertyEvent : BaseEvent<RequestPropertyEvent, NozomiDbContext>, IRequestPropertyEvent
     {
-        public RequestPropertyEvent(ILogger<RequestPropertyEvent> logger, IUnitOfWork<NozomiDbContext> unitOfWork) 
+        public RequestPropertyEvent(ILogger<RequestPropertyEvent> logger, NozomiDbContext unitOfWork) 
             : base(logger, unitOfWork)
         {
         }
@@ -24,15 +23,10 @@ namespace Nozomi.Service.Events
         {
             if (!string.IsNullOrEmpty(guid) && Guid.TryParse(guid, out var requestPropertyGuid))
             {
-                var query = _unitOfWork.GetRepository<RequestProperty>()
-                    .GetQueryable();
-                    
-                if (track)
-                    query = query.AsTracking()
-                            .Where(rp => rp.Guid.Equals(requestPropertyGuid));
-                else
-                    query = query.AsNoTracking()
+                var query = _context.RequestProperties
                     .Where(rp => rp.Guid.Equals(requestPropertyGuid));
+
+                query = track ? query.AsTracking() : query.AsNoTracking();
 
                 if (query.Any())
                 {
@@ -65,9 +59,7 @@ namespace Nozomi.Service.Events
         {
             if (!string.IsNullOrEmpty(requestGuid))
             {
-                var query = _unitOfWork.GetRepository<RequestProperty>()
-                    .GetQueryable()
-                    .AsNoTracking()
+                var query = _context.RequestProperties.AsNoTracking()
                     .Include(rp => rp.Request)
                     .Where(rp => rp.Request.Guid.ToString().Equals(requestGuid));
 

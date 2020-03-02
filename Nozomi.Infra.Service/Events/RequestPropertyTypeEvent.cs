@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.Models.Web;
 using Nozomi.Preprocessing.Abstracts;
-using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
 using Nozomi.Service.Events.Interfaces;
 
@@ -15,7 +14,7 @@ namespace Nozomi.Service.Events
         private readonly ICollection<KeyValuePair<string, int>> _requestPropertyTypeMap;
 
         public RequestPropertyTypeEvent(ILogger<RequestPropertyTypeEvent> logger,
-            IUnitOfWork<NozomiDbContext> context) : base(logger, context)
+            NozomiDbContext context) : base(logger, context)
         {
             _requestPropertyTypeMap = new List<KeyValuePair<string, int>>();
 
