@@ -2,19 +2,17 @@ using System;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Nozomi.Base.BCL.Extensions;
 using Nozomi.Data.Models.Web;
 using Nozomi.Infra.Compute.Events.Interfaces;
 using Nozomi.Preprocessing.Abstracts;
-using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Compute.Data;
 
 namespace Nozomi.Infra.Compute.Events
 {
     public class ComputeValueEvent : BaseEvent<ComputeValueEvent, NozomiComputeDbContext>, IComputeValueEvent
     {
-        public ComputeValueEvent(ILogger<ComputeValueEvent> logger, IUnitOfWork<NozomiComputeDbContext> unitOfWork) 
-            : base(logger, unitOfWork)
+        public ComputeValueEvent(ILogger<ComputeValueEvent> logger, NozomiComputeDbContext context) 
+            : base(logger, context)
         {
         }
 
@@ -22,9 +20,7 @@ namespace Nozomi.Infra.Compute.Events
         {
             if (Guid.TryParse(computeGuid, out var parsedGuid))
             {
-                return _unitOfWork.GetRepository<ComputeValue>()
-                    .GetQueryable()
-                    .AsNoTracking()
+                return _context.ComputeValues.AsNoTracking()
                     // Ensure it tallies and is active
                     .Where(cv => cv.DeletedAt == null && cv.IsEnabled && cv.Guid.Equals(parsedGuid))
                     .Include(cv => cv.Compute)
@@ -43,9 +39,7 @@ namespace Nozomi.Infra.Compute.Events
 
         public bool IsOutdated(Guid computeGuid, bool ignoreFailing = true)
         {
-            return _unitOfWork.GetRepository<ComputeValue>()
-                .GetQueryable()
-                .AsNoTracking()
+            return _context.ComputeValues.AsNoTracking()
                 // Ensure it tallies and is active
                 .Where(cv => cv.DeletedAt == null && cv.IsEnabled && cv.Guid.Equals(computeGuid))
                 .Include(cv => cv.Compute)
@@ -63,9 +57,7 @@ namespace Nozomi.Infra.Compute.Events
         {
             if (Guid.TryParse(computeGuid, out var parsedGuid))
             {
-                return _unitOfWork.GetRepository<ComputeValue>()
-                    .GetQueryable()
-                    .AsNoTracking()
+                return _context.ComputeValues.AsNoTracking()
                     .OrderByDescending(v => v.CreatedAt)
                     .FirstOrDefault(v => v.ComputeGuid.Equals(parsedGuid));
             }
@@ -75,9 +67,7 @@ namespace Nozomi.Infra.Compute.Events
 
         public ComputeValue GetLastItem(Guid computeGuid)
         {
-            return _unitOfWork.GetRepository<ComputeValue>()
-                .GetQueryable()
-                .AsNoTracking()
+            return _context.ComputeValues.AsNoTracking()
                 .OrderByDescending(v => v.CreatedAt)
                 .FirstOrDefault(v => v.ComputeGuid.Equals(computeGuid));
         }

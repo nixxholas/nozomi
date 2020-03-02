@@ -3,11 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Nozomi.Base.BCL.Extensions;
 using Nozomi.Data.Models.Web;
 using Nozomi.Infra.Compute.Events.Interfaces;
 using Nozomi.Preprocessing.Abstracts;
-using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Compute.Data;
 
 namespace Nozomi.Infra.Compute.Events
@@ -16,17 +14,17 @@ namespace Nozomi.Infra.Compute.Events
     {
         private readonly IComputeValueEvent _computeValueEvent;
         
-        public ComputeEvent(ILogger<ComputeEvent> logger, IUnitOfWork<NozomiComputeDbContext> unitOfWork) 
-            : base(logger, unitOfWork)
+        public ComputeEvent(ILogger<ComputeEvent> logger, NozomiComputeDbContext context,
+            IComputeValueEvent computeValueEvent) 
+            : base(logger, context)
         {
+            _computeValueEvent = computeValueEvent;
         }
 
         public Data.Models.Web.Compute Get(Guid guid, bool includeChildren = false, 
             bool ensureNotDeletedOrDisabled = true)
         {
-            var query = _unitOfWork.GetRepository<Data.Models.Web.Compute>()
-                .GetQueryable()
-                .Where(c => c.Guid.Equals(guid));
+            var query = _context.Computes.Where(c => c.Guid.Equals(guid));
 
             if (ensureNotDeletedOrDisabled)
                 query = query.Where(c => c.DeletedAt == null && c.IsEnabled);
@@ -50,9 +48,7 @@ namespace Nozomi.Infra.Compute.Events
                 return null;
             }
             
-            var query = _unitOfWork.GetRepository<Data.Models.Web.Compute>()
-                .GetQueryable()
-                .Where(c => c.Guid.Equals(parsedGuid));
+            var query = _context.Computes.Where(c => c.Guid.Equals(parsedGuid));
 
             if (ensureNotDeletedOrDisabled)
                 query = query.Where(c => c.DeletedAt == null && c.IsEnabled);
@@ -70,9 +66,7 @@ namespace Nozomi.Infra.Compute.Events
         public IEnumerable<Data.Models.Web.Compute> GetByParent(Guid parentGuid, bool includeChildren = false, 
             bool ensureNotDeletedOrDisabled = true)
         {
-            var query = _unitOfWork.GetRepository<SubCompute>()
-                .GetQueryable()
-                .Include(sc => sc.ParentCompute)
+            var query = _context.SubComputes.Include(sc => sc.ParentCompute)
                 .Where(c => c.ParentComputeGuid.Equals(parentGuid));
 
             if (ensureNotDeletedOrDisabled)
@@ -98,8 +92,7 @@ namespace Nozomi.Infra.Compute.Events
                 return null;
             }
             
-            var query = _unitOfWork.GetRepository<SubCompute>()
-                .GetQueryable()
+            var query = _context.SubComputes
                 .Include(sc => sc.ParentCompute)
                 .Where(c => c.ParentComputeGuid.Equals(parsedGuid));
 
@@ -119,9 +112,7 @@ namespace Nozomi.Infra.Compute.Events
 
         public Data.Models.Web.Compute GetMostOutdated(bool includeChildren = false, bool ensureNotDeletedOrDisabled = true)
         {
-            var query = _unitOfWork.GetRepository<Data.Models.Web.Compute>()
-                .GetQueryable()
-                .AsNoTracking()
+            var query = _context.Computes.AsNoTracking()
                 .Include(c => c.ChildComputes)
                 .ThenInclude(cc => cc.ChildCompute)
                 .ThenInclude(cc => cc.Values)
