@@ -49,7 +49,6 @@ namespace Nozomi.Compute
                 var str = Configuration.GetConnectionString("Local:" + @Environment.MachineName);
 
                 services
-                    .AddEntityFrameworkNpgsql()
                     .AddDbContext<NozomiDbContext>(options =>
                         {
                             options.UseNpgsql(str);
