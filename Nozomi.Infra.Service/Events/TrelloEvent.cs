@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using Nozomi.Base.BCL.Configurations;
 using Nozomi.Base.BCL.Helpers.Enumerator;
 using Nozomi.Data.Enums.Trello;
 using Nozomi.Data.ViewModels.Trello;
@@ -21,13 +22,13 @@ namespace Nozomi.Service.Events
         private readonly string _publicApiKey;
         private readonly string _authToken;
 
-        public TrelloEvent(ILogger<TrelloEvent> logger, NozomiDbContext nozomiDbContext, IConfiguration configuration)
+        public TrelloEvent(ILogger<TrelloEvent> logger, NozomiDbContext nozomiDbContext, IOptions<TrelloOptions> trelloOptions)
             : base(logger, nozomiDbContext)
         {
             // Requires keys to access Trello API
-            _publicApiKey = configuration["TrelloToken:ApiKey"];
-            _authToken = configuration["TrelloToken:AuthToken"];
-
+            _publicApiKey = trelloOptions.Value.ApiKey;
+            _authToken = trelloOptions.Value.AuthToken;
+            
             // Prepare HttpClient to reuse in this class
             HttpClient client = new HttpClient();
             client.BaseAddress = new Uri("https://api.trello.com");
