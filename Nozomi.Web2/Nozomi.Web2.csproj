@@ -36,10 +36,6 @@
   </ItemGroup>
   
   <ItemGroup>
-    <Folder Include="wwwroot\" />
-  </ItemGroup>
-  
-  <ItemGroup>
     <ProjectReference Include="..\Nozomi.Infra.Blockchain.Auth\Nozomi.Infra.Blockchain.Auth.csproj" />
     <ProjectReference Include="..\Nozomi.Infra.Service\Nozomi.Infra.Service.csproj" />
   </ItemGroup>

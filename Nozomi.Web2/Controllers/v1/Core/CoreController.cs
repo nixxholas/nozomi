@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Base.BCL;
+using Nozomi.Preprocessing.Attributes;
 
 namespace Nozomi.Web2.Controllers.v1.Core
 {
@@ -13,6 +14,7 @@ namespace Nozomi.Web2.Controllers.v1.Core
         }
 
         [HttpGet]
+        [Throttle(Milliseconds = 1000)]
         public DateTime GetCurrentBuildTime()
         {
             return CoreConstants.BuildDateTime;
@@ -20,6 +22,7 @@ namespace Nozomi.Web2.Controllers.v1.Core
 
         [Authorize]
         [HttpGet]
+        [Throttle(Milliseconds = 1000)]
         public IActionResult GetUserDetails()
         {
             // var role = ((ClaimsIdentity) User.Identity).Claims.SingleOrDefault(c => c.Type == JwtClaimTypes.Role)?.Value;

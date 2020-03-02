@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Base.Auth.Models;
 using Nozomi.Data.ViewModels.SourceType;
+using Nozomi.Preprocessing.Attributes;
 using Nozomi.Preprocessing.Statics;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Services.Interfaces;
@@ -25,6 +26,7 @@ namespace Nozomi.Web2.Controllers.v1.SourceType
         }
 
         [HttpGet]
+        [Throttle(Milliseconds = 1000)]
         public IActionResult All()
         {
             return Ok(_sourceTypeEvent.GetAll());
@@ -32,6 +34,7 @@ namespace Nozomi.Web2.Controllers.v1.SourceType
 
         [Authorize(Roles = NozomiPermissions.AllowHigherStaffRoles)]
         [HttpPost]
+        [Throttle(Milliseconds = 1000)]
         public IActionResult Create(CreateSourceTypeViewModel vm)
         {
             var sub = ((ClaimsIdentity) User.Identity)
@@ -49,6 +52,7 @@ namespace Nozomi.Web2.Controllers.v1.SourceType
 
         [Authorize(Roles = NozomiPermissions.AllowHigherStaffRoles)]
         [HttpPut]
+        [Throttle(Milliseconds = 1000)]
         public IActionResult Update(UpdateSourceTypeViewModel vm)
         {
             var sub = ((ClaimsIdentity) User.Identity)

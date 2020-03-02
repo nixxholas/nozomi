@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using Nozomi.Data;
 using Nozomi.Data.ViewModels.CurrencyPair;
 using Nozomi.Preprocessing;
+using Nozomi.Preprocessing.Attributes;
 using Nozomi.Preprocessing.Statics;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Services.Interfaces;
@@ -31,6 +32,7 @@ namespace Nozomi.Web2.Controllers.v1.CurrencyPair
         }
 
         [HttpGet]
+        [Throttle(Milliseconds = 1000)]
         public IActionResult All([FromQuery]int page = 0, [FromQuery]int itemsPerPage = 50, 
             [FromQuery]string sourceGuid = null, [FromQuery]string mainTicker = null, 
             [FromQuery]bool orderAscending = true, [FromQuery]string orderingParam = "TickerPair")
@@ -45,6 +47,7 @@ namespace Nozomi.Web2.Controllers.v1.CurrencyPair
         }
 
         [HttpGet]
+        [Throttle(Milliseconds = 1000)]
         public IActionResult Count([FromQuery]string mainTicker = null)
         {
             return Ok(_currencyPairEvent.GetCount(mainTicker));
@@ -52,6 +55,7 @@ namespace Nozomi.Web2.Controllers.v1.CurrencyPair
 
         [Authorize(Roles = NozomiPermissions.AllowAllStaffRoles)]
         [HttpPost]
+        [Throttle(Milliseconds = 2000)]
         public IActionResult Create([FromBody]CreateCurrencyPairViewModel vm)
         {
             var sub = ((ClaimsIdentity) User.Identity)
@@ -74,6 +78,7 @@ namespace Nozomi.Web2.Controllers.v1.CurrencyPair
 
         [Authorize(Roles = NozomiPermissions.AllowAllStaffRoles)]
         [HttpPut]
+        [Throttle(Milliseconds = 2000)]
         public IActionResult Edit([FromBody]UpdateCurrencyPairViewModel vm)
         {
             var sub = ((ClaimsIdentity) User.Identity)
@@ -93,6 +98,7 @@ namespace Nozomi.Web2.Controllers.v1.CurrencyPair
         }
 
         [HttpGet]
+        [Throttle(Milliseconds = 500)]
         public IActionResult Search(string query = null, int page = 0, int itemsPerPage = 50)
         {
             return Ok(_currencyPairEvent.Search(query, page, itemsPerPage));
@@ -100,6 +106,7 @@ namespace Nozomi.Web2.Controllers.v1.CurrencyPair
 
         [Authorize(Roles = "Owner")]
         [HttpGet("{abbrv}")]
+        [Throttle(Milliseconds = 2000)]
         [Obsolete]
         public NozomiResult<ICollection<Data.Models.Currency.CurrencyPair>> Ticker(string abbrv)
         {

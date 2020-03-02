@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Base.BCL.Helpers.Enumerator;
 using Nozomi.Data.ViewModels.WebsocketCommandProperty;
+using Nozomi.Preprocessing.Attributes;
 using Nozomi.Preprocessing.Statics;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Services.Interfaces;
@@ -29,6 +30,7 @@ namespace Nozomi.Web2.Controllers.v1.WebsocketCommandProperty
         
         [Authorize]
         [HttpGet("{guid}")]
+        [Throttle(Milliseconds = 1000)]
         public IActionResult Get(string guid)
         {
             var sub = ((ClaimsIdentity) User.Identity)
@@ -52,6 +54,7 @@ namespace Nozomi.Web2.Controllers.v1.WebsocketCommandProperty
 
         [Authorize]
         [HttpGet("{commandGuid}")]
+        [Throttle(Milliseconds = 1000)]
         public IActionResult GetByCommand(string commandGuid)
         {
             var sub = ((ClaimsIdentity) User.Identity)
@@ -75,6 +78,7 @@ namespace Nozomi.Web2.Controllers.v1.WebsocketCommandProperty
 
         [Authorize]
         [HttpPost]
+        [Throttle(Milliseconds = 2500)]
         public IActionResult Create(CreateWebsocketCommandPropertyInputModel vm)
         {
             var sub = ((ClaimsIdentity) User.Identity)
@@ -100,6 +104,7 @@ namespace Nozomi.Web2.Controllers.v1.WebsocketCommandProperty
 
         [Authorize]
         [HttpPut]
+        [Throttle(Milliseconds = 2500)]
         public IActionResult Update(UpdateWebsocketCommandPropertyInputModel vm)
         {
             var sub = ((ClaimsIdentity) User.Identity)
@@ -125,6 +130,7 @@ namespace Nozomi.Web2.Controllers.v1.WebsocketCommandProperty
 
         [Authorize]
         [HttpDelete("{websocketCommandPropertyGuid}")]
+        [Throttle(Milliseconds = 2000)]
         public IActionResult Delete(string websocketCommandPropertyGuid)
         {
             var sub = ((ClaimsIdentity) User.Identity)

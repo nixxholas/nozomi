@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data;
 using Nozomi.Preprocessing;
+using Nozomi.Preprocessing.Attributes;
 
 namespace Nozomi.Web2.Controllers.v1.ResponseType
 {
@@ -14,6 +15,7 @@ namespace Nozomi.Web2.Controllers.v1.ResponseType
 
         [Authorize]
         [HttpGet]
+        [Throttle(Milliseconds = 1000)]
         public NozomiResult<JsonResult> All()
         {
             return new NozomiResult<JsonResult>(new JsonResult(NozomiServiceConstants.responseTypes));

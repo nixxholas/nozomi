@@ -10,6 +10,7 @@ using Nozomi.Base.BCL;
 using Nozomi.Base.BCL.Responses;
 using Nozomi.Data;
 using Nozomi.Data.ViewModels.Currency;
+using Nozomi.Preprocessing.Attributes;
 using Nozomi.Preprocessing.Statics;
 using Nozomi.Service.Events.Analysis.Interfaces;
 using Nozomi.Service.Events.Interfaces;
@@ -38,6 +39,7 @@ namespace Nozomi.Web2.Controllers.v1.Currency
 
         [Authorize(Roles = NozomiPermissions.AllowAllStaffRoles)]
         [HttpPost]
+        [Throttle(Milliseconds = 2000)]
         public IActionResult Create(CreateCurrencyViewModel vm)
         {
             var sub = ((ClaimsIdentity) User.Identity)
@@ -55,6 +57,7 @@ namespace Nozomi.Web2.Controllers.v1.Currency
 
         [Authorize(Roles = NozomiPermissions.AllowAllStaffRoles)]
         [HttpPut]
+        [Throttle(Milliseconds = 2000)]
         public IActionResult Edit(ModifyCurrencyViewModel vm)
         {
             var sub = ((ClaimsIdentity) User.Identity)
@@ -71,6 +74,7 @@ namespace Nozomi.Web2.Controllers.v1.Currency
         }
 
         [HttpGet]
+        [Throttle(Milliseconds = 1000)]
         public IActionResult All([FromQuery]string currencyType = "CRYPTO", [FromQuery]int itemsPerIndex = 20,
             [FromQuery]int index = 0, [FromQuery]CurrencySortingEnum currencySortType = CurrencySortingEnum.None, 
             [FromQuery]Data.Models.Web.Analytical.AnalysedComponentType sortType = 
@@ -83,6 +87,7 @@ namespace Nozomi.Web2.Controllers.v1.Currency
         }
 
         [HttpGet]
+        [Throttle(Milliseconds = 1000)]
         public IActionResult GetCountByType(string currencyType)
         {
             var count = _currencyEvent.GetCountByType(currencyType);
@@ -91,6 +96,7 @@ namespace Nozomi.Web2.Controllers.v1.Currency
         }
 
         [HttpGet("{slug}")]
+        [Throttle(Milliseconds = 1000)]
         public IActionResult GetPairCount([FromRoute]string slug)
         {
             if (string.IsNullOrWhiteSpace(slug))
@@ -100,24 +106,28 @@ namespace Nozomi.Web2.Controllers.v1.Currency
         }
 
         [HttpGet("{slug}")]
+        [Throttle(Milliseconds = 1000)]
         public CurrencyViewModel Get(string slug)
         {
             return _currencyEvent.Get(slug);
         }
 
         [HttpGet]
+        [Throttle(Milliseconds = 1000)]
         public NozomiResult<ICollection<string>> ListAllSlugs()
         {
             return new NozomiResult<ICollection<string>>(_currencyEvent.ListAllSlugs());
         }
 
         [HttpGet]
+        [Throttle(Milliseconds = 1000)]
         public IActionResult List([FromQuery]string slug = null)
         {
             return Ok(_currencyEvent.All(slug));
         }
 
         [HttpGet]
+        [Throttle(Milliseconds = 1000)]
         public ICollection<CurrencyViewModel> ListAll([FromQuery]int page = 0, [FromQuery]int itemsPerPage = 50, 
             [FromQuery]string currencyTypeName = null, [FromQuery]bool orderAscending = true, 
             [FromQuery]CurrencySortingEnum orderingParam = CurrencySortingEnum.None)
@@ -126,6 +136,7 @@ namespace Nozomi.Web2.Controllers.v1.Currency
         }
 
         [HttpGet]
+        [Throttle(Milliseconds = 2000)]
         [Obsolete]
         public NozomiResult<IReadOnlyDictionary<string, long>> GetSlugToIdMap()
         {

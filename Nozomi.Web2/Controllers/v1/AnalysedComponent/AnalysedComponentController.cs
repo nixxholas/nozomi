@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Base.BCL.Helpers.Enumerator;
 using Nozomi.Data.ViewModels.AnalysedComponent;
+using Nozomi.Preprocessing.Attributes;
 using Nozomi.Preprocessing.Statics;
 using Nozomi.Service.Events.Analysis.Interfaces;
 using Nozomi.Service.Services.Interfaces;
@@ -30,6 +31,7 @@ namespace Nozomi.Web2.Controllers.v1.AnalysedComponent
 
         [Authorize]
         [HttpGet]
+        [Throttle(Milliseconds = 1000)]
         public IActionResult All()
         {
             var payload = _analysedComponentTypeEvent.GetAllKeyValuePairs();
@@ -42,6 +44,7 @@ namespace Nozomi.Web2.Controllers.v1.AnalysedComponent
 
         [Authorize]
         [HttpGet]
+        [Throttle(Milliseconds = 3000)]
         public IActionResult AllByIdentifier([FromQuery]string currencySlug, [FromQuery]string currencyPairGuid, 
             [FromQuery]string currencyTypeShortForm, [FromQuery]int index = 0, [FromQuery]int itemsPerPage = 200)
         {
@@ -69,6 +72,7 @@ namespace Nozomi.Web2.Controllers.v1.AnalysedComponent
 
         [Authorize(Roles = NozomiPermissions.AllowAllStaffRoles)]
         [HttpPost]
+        [Throttle(Milliseconds = 2500)]
         public IActionResult Create([FromBody]CreateAnalysedComponentViewModel vm)
         {
             var sub = ((ClaimsIdentity) User.Identity)
@@ -86,6 +90,7 @@ namespace Nozomi.Web2.Controllers.v1.AnalysedComponent
 
         [Authorize]
         [HttpGet("{guid}")]
+        [Throttle(Milliseconds = 500)]
         public IActionResult Get(string guid)
         {
             var sub = ((ClaimsIdentity) User.Identity)
@@ -110,6 +115,7 @@ namespace Nozomi.Web2.Controllers.v1.AnalysedComponent
 
         [Authorize]
         [HttpPut]
+        [Throttle(Milliseconds = 2500)]
         public IActionResult Update([FromBody]UpdateAnalysedComponentViewModel vm)
         {
             var sub = ((ClaimsIdentity) User.Identity)

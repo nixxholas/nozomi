@@ -22,13 +22,15 @@ namespace Nozomi.Web2.Extensions
                 var str = Startup.Configuration.GetConnectionString("Local:" + @Environment.MachineName);
 
                 services
-                    .AddEntityFrameworkNpgsql()
+                    // This causes memory size errors
+                    // https://stackoverflow.com/questions/58406143/unexpected-cache-entry-must-specify-a-value-for-size-when-sizelimit-is-set-mes
+                    //.AddEntityFrameworkNpgsql()
                     .AddDbContextPool<NozomiDbContext>(options =>
-                {
-                    options.UseNpgsql(str);
-                    options.EnableSensitiveDataLogging();
-                    options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
-                });
+                    {
+                        options.UseNpgsql(str);
+                        options.EnableSensitiveDataLogging();
+                        options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+                    });
             }
             else
             {
@@ -40,7 +42,7 @@ namespace Nozomi.Web2.Extensions
 
                 var authMethod = new TokenAuthMethodInfo(vaultToken);
                 var vaultClientSettings = new VaultClientSettings(
-                    !string.IsNullOrWhiteSpace(vaultUrl) ? vaultUrl : "https://blackbox.nozomi.one:8200", 
+                    !string.IsNullOrWhiteSpace(vaultUrl) ? vaultUrl : "https://blackbox.nozomi.one:8200",
                     authMethod);
                 var vaultClient = new VaultClient(vaultClientSettings);
 
@@ -53,7 +55,9 @@ namespace Nozomi.Web2.Extensions
                     throw new SystemException("Invalid main database configuration");
                 // Database
                 services
-                    .AddEntityFrameworkNpgsql()
+                    // This causes memory size errors
+                    // https://stackoverflow.com/questions/58406143/unexpected-cache-entry-must-specify-a-value-for-size-when-sizelimit-is-set-mes
+                    // .AddEntityFrameworkNpgsql()
                     .AddDbContextPool<NozomiDbContext>(options =>
                     {
                         options.UseNpgsql(mainDb
