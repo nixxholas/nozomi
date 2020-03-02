@@ -10,8 +10,6 @@ using Nozomi.Infra.Syncing.Events.Interfaces;
 using Nozomi.Infra.Syncing.HostedServices;
 using Nozomi.Infra.Syncing.Services;
 using Nozomi.Infra.Syncing.Services.Interfaces;
-using Nozomi.Repo.BCL.Context;
-using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
 using Nozomi.Service.Events;
 using Nozomi.Service.Events.Analysis;
@@ -96,10 +94,10 @@ namespace Nozomi.Compute
                 }, ServiceLifetime.Transient);
             }
             
-            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-
-            services.AddTransient<IUnitOfWork<NozomiDbContext>, UnitOfWork<NozomiDbContext>>();
-            services.AddTransient<IDbContext, NozomiDbContext>();
+            // services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+            //
+            // services.AddTransient<NozomiDbContext, UnitOfWork<NozomiDbContext>>();
+            // services.AddTransient<IDbContext, NozomiDbContext>();
 
             services.AddScoped<IAnalysedComponentEvent, AnalysedComponentEvent>();
             services.AddScoped<IAnalysedHistoricItemEvent, AnalysedHistoricItemEvent>();
