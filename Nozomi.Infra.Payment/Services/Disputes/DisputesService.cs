@@ -7,15 +7,18 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using Nozomi.Infra.Payment.Services.Bootstripe;
 
 namespace Nozomi.Infra.Payment.Services
 {
     class DisputesService : BaseService<DisputesService>, IDisputesService
     {
         private readonly IStripeEvent _stripeEvent;
+        private readonly IBootstripeService _bootstripeService;
 
-        public DisputesService(ILogger<DisputesService> logger, IStripeEvent stripeEvent) : base(logger) {
+        public DisputesService(ILogger<DisputesService> logger, IStripeEvent stripeEvent, IBootstripeService bootstripeService) : base(logger) {
             _stripeEvent = stripeEvent;
+            _bootstripeService = bootstripeService;
         }
 
         public async Task FundsWithdrawn(Dispute dispute)
@@ -28,6 +31,8 @@ namespace Nozomi.Infra.Payment.Services
             if(user == null)
                 throw new NullReferenceException($"{_serviceName} {methodName}: Unable to find user tied to customer id.");
 
+            //TODO: Retrieve free plan ID from appsettings
+            await _bootstripeService.ChangePlan("plan_GeGfCW7hwiQYQk", user);
             return;
         }
 
