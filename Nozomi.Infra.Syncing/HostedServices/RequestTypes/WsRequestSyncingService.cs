@@ -122,6 +122,7 @@ namespace Nozomi.Infra.Syncing.HostedServices.RequestTypes
                                                 $"{_hostedServiceName} OnMessage: " +
                                                 ex);
                                             newSocket.Close();
+                                            GC.SuppressFinalize(this);
                                         }
                                     }
                                     else
@@ -129,6 +130,7 @@ namespace Nozomi.Infra.Syncing.HostedServices.RequestTypes
                                         _logger.LogError($"{_hostedServiceName} OnMessage: " +
                                                          $"RequestId:{dataEndpointItem.DataPath} has an empty payload incoming.");
                                         newSocket.Close();
+                                        GC.SuppressFinalize(this);
                                     }
 
                                     await Task.Delay(50, CancellationToken.None); // Always delay by 1ms in case of spam
