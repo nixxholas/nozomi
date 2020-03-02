@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
+using Nozomi.Base.BCL.Configurations;
 using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Filters;
 using Nozomi.Service;
@@ -90,6 +91,21 @@ namespace Nozomi.Web2
                     opt.Preload = true;
                     opt.IncludeSubDomains = true;
                     opt.MaxAge = TimeSpan.FromDays(60);
+                });
+
+                // TODO: Trello vault key
+                services.Configure<TrelloOptions>(option =>
+                {
+                    option.ApiKey = Configuration["TrelloToken:ApiKey"];
+                    option.AuthToken = Configuration["TrelloToken:AuthToken"];
+                });
+            }
+            else
+            {
+                services.Configure<TrelloOptions>(option =>
+                {
+                    option.ApiKey = Configuration["TrelloToken:ApiKey"];
+                    option.AuthToken = Configuration["TrelloToken:AuthToken"];
                 });
             }
 
