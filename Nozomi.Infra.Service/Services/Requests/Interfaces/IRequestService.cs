@@ -17,7 +17,7 @@ namespace Nozomi.Service.Services.Requests.Interfaces
         
         bool Delay(Request request, TimeSpan duration);
 
-        bool DelayFailure(Guid guid);
+        void DelayFailure(Guid guid);
 
         bool HasUpdated(long requestId);
 

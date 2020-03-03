@@ -172,9 +172,25 @@ namespace Nozomi.Service.Services.Requests
             return false;
         }
 
-        public bool DelayFailure(Guid guid)
+        public void DelayFailure(Guid guid)
         {
-            throw new NotImplementedException();
+            var request = _context.Requests.AsTracking().SingleOrDefault(r => r.Guid.Equals(guid));
+
+            if (request != null)
+            {
+                request.FailureCount += 1; // Bump failure
+                request.ModifiedAt = DateTime.UtcNow
+                    .AddMilliseconds(request.FailureDelay * request.FailureCount); // Bump the delay
+                _context.Requests.Update(request);
+                _context.SaveChanges();
+
+                _logger.LogInformation($"{_serviceName} DelayFailure (Guid): Delay due to failure " +
+                                       $"successfully pushed for request {guid}");
+                return;
+            }
+            
+            _logger.LogCritical($"{_serviceName} DelayFailure (Guid): Unable to delay failure for request " +
+                                $"{guid}");
         }
 
         public bool HasUpdated(long requestId)
