@@ -41,6 +41,9 @@ namespace Nozomi.Service.Services
 
                 _context.Components.Add(requestComponent);
                 _context.SaveChanges(userId);
+                
+                _logger.LogInformation($"{_serviceName} Create (CreateComponentViewModel): request " +
+                                       $"component {requestComponent.Guid} is created by {userId}");
 
                 return; // Done
             }
@@ -92,12 +95,21 @@ namespace Nozomi.Service.Services
                 if (entity != null)
                 {
                     entity.ModifiedAt = DateTime.UtcNow;
+                    
+                    _logger.LogInformation($"{_serviceName} Checked (long): Component {id} successfully " +
+                                           "marked as checked.");
 
                     _context.SaveChanges(userId);
                     return true;
                 }
+                
+                _logger.LogWarning($"{_serviceName} Checked (long): Invalid component {id}, can't be found.");
             }
-
+            else
+            {
+                _logger.LogWarning($"{_serviceName} Checked (long): Invalid component id.");
+            }
+            
             return false;
         }
 
@@ -110,7 +122,8 @@ namespace Nozomi.Service.Services
                                                                          $"Invalid component datum id:{id}. Null payload");
             }
 
-            var lastValue = _context.ComponentHistoricItems.Include(c => c.Component)
+            var lastValue = _context.ComponentHistoricItems
+                .Include(c => c.Component)
                 .ThenInclude(c => c.Request)
                 .OrderByDescending(e => e.HistoricDateTime)
                 .FirstOrDefault(e => e.DeletedAt == null && e.IsEnabled
@@ -123,6 +136,9 @@ namespace Nozomi.Service.Services
                 Value = val.ToString(CultureInfo.InvariantCulture),
                 RequestComponentId = id
             };
+            
+            _logger.LogInformation($"{_serviceName} UpdatePairValue (decimal): Attempting to update " +
+                                   $"component {id} with a value of {val}");
 
             // SCENARIO 1: WHEN THIS COMPONENT IS FRESH
             // If there ain't a latest value
@@ -147,6 +163,9 @@ namespace Nozomi.Service.Services
                     // Yes we do let's proceed to add it and move along
                     _context.ComponentHistoricItems.Add(newValueItem); // Add
                     _context.SaveChanges(); // Save
+            
+                    _logger.LogInformation($"{_serviceName} UpdatePairValue (decimal): Component {id} is " +
+                                           $"successfully updated HISTORICALLY with a value of {val}");
 
                     return new NozomiResult<string>
                         (NozomiResultType.Success, "Component successfully updated!");
@@ -157,6 +176,9 @@ namespace Nozomi.Service.Services
                     _context.ComponentHistoricItems.Add(newValueItem); // Add
                     _componentHistoricItemService.Remove(lastValue.Guid, null, true);
                     _context.SaveChanges(); // Save
+            
+                    _logger.LogInformation($"{_serviceName} UpdatePairValue (decimal): Component {id} is " +
+                                           $"successfully updated with a value of {val}");
 
                     return new NozomiResult<string>
                         (NozomiResultType.Success, "Component successfully updated!");
@@ -165,8 +187,8 @@ namespace Nozomi.Service.Services
             // SCENARIO 3: WHEN THIS COMPONENT WAS ALREADY UPDATED BY ANOTHER INSTANCE? 
             else
             {
-                _logger.LogWarning($"{_serviceName} UpdatePairValue (decimal): datum id:{id}. " +
-                                   "Value is the same.");
+                _logger.LogWarning($"{_serviceName} UpdatePairValue (decimal): Component {id} value is " +
+                                   "the same.");
 
                 return new NozomiResult<string>
                     (NozomiResultType.Success, "Value is the same!");
