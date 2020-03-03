@@ -1,6 +1,12 @@
 <template>
     <div>
+        <b-loading v-if="dataLoading"
+                   :active.sync="dataLoading"
+                   :is-full-page="false"
+        />
+        
         <b-table
+                v-else
                 :data="data"
                 :current-page.sync="currentPage"
                 :per-page="perPage"
@@ -62,7 +68,6 @@
                 </b-table-column>
             </template>
         </b-table>
-        <b-loading :active.sync="dataLoading"/>
     </div>
 </template>
 
