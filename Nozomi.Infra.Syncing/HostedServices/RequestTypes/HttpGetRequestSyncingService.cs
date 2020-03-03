@@ -464,7 +464,7 @@ namespace Nozomi.Infra.Syncing.HostedServices.RequestTypes
                                 break;
                             case HttpStatusCode.TooManyRequests:
                                 _logger.LogWarning("[HttpGetCurrencyPairRequestSyncingService] " +
-                                                   $"{currentRequests.FirstOrDefault().DataPath} Too many request");
+                                                   $"{currentRequests.FirstOrDefault().DataPath} Too many requests");
 
                                 // Rate limited. Push back update timings
                                 // requestService.Delay(firstRequest,

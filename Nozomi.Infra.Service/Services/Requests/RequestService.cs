@@ -185,7 +185,8 @@ namespace Nozomi.Service.Services.Requests
                 _context.SaveChanges();
 
                 _logger.LogInformation($"{_serviceName} DelayFailure (Guid): Delay due to failure " +
-                                       $"successfully pushed for request {guid}");
+                                       $"successfully pushed for request {guid} by " +
+                                       $"{request.FailureDelay * request.FailureCount / 1000}s.");
                 return;
             }
             
