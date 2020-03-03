@@ -16,7 +16,7 @@ namespace Nozomi.Service
 {
     public static class SeedData
     {
-        public static void UseAutoDbMigration(this IApplicationBuilder app, IWebHostEnvironment env)
+        public static void UseAutoDbMigration(this IApplicationBuilder app, IHostEnvironment env)
         {
             using var serviceScope = app.ApplicationServices
                 .GetRequiredService<IServiceScopeFactory>()

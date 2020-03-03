@@ -27,7 +27,7 @@ namespace Nozomi.Web2
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration, IWebHostEnvironment environment)
+        public Startup(IConfiguration configuration, IHostEnvironment environment)
         {
             Configuration = configuration;
             Environment = environment;
@@ -35,7 +35,7 @@ namespace Nozomi.Web2
 
         public static IConfiguration Configuration { get; set; }
 
-        public static IWebHostEnvironment Environment { get; set; }
+        public static IHostEnvironment Environment { get; set; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -64,10 +64,10 @@ namespace Nozomi.Web2
             Dictionary<string, object> nozomiVault = null;
 
             // HASHICORP VAULT
-            if (Environment.IsProduction() && Environment.IsStaging())
+            if (Environment.IsProduction() || Environment.IsStaging())
             {
-                var vaultUrl = Startup.Configuration["vaultUrl"];
-                var vaultToken = Startup.Configuration["vaultToken"];
+                var vaultUrl = Configuration["vaultUrl"];
+                var vaultToken = Configuration["vaultToken"];
 
                 if (string.IsNullOrEmpty(vaultToken))
                     throw new SystemException("Invalid vault token.");
