@@ -172,6 +172,11 @@ namespace Nozomi.Service.Services.Requests
             return false;
         }
 
+        public bool DelayFailure(Guid guid)
+        {
+            throw new NotImplementedException();
+        }
+
         public bool HasUpdated(long requestId)
         {
             if (requestId > 0)

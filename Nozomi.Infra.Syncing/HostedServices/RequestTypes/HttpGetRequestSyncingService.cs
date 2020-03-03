@@ -63,7 +63,8 @@ namespace Nozomi.Infra.Syncing.HostedServices.RequestTypes
                         
                         // We will need to re-synchronize the Request collection to make sure we're polling only
                         // the ones we want to poll
-                        var requests = requestEvent.GetAllByRequestTypeUniqueToURL(RequestType.HttpGet);
+                        var requests = requestEvent
+                            .GetAllByRequestTypeUniqueToURL(RequestType.HttpGet);
 
 #if DEBUG
                         // Check all this crap bro
@@ -111,7 +112,7 @@ namespace Nozomi.Infra.Syncing.HostedServices.RequestTypes
         /// <returns></returns>
         public async Task<bool> ProcessRequest<T>(IEnumerable<T> requests) where T : Request
         {
-            if (requests != null && requests.Any())
+            if (requests != null)
             {
                 using (var scope = _scopeFactory.CreateScope())
                 {
@@ -122,7 +123,8 @@ namespace Nozomi.Infra.Syncing.HostedServices.RequestTypes
                     var requestCollection = new List<List<T>>();
 
                     // Let's group the requests again, by the property
-                    foreach (var request in requests)
+                    var requestList = requests.ToList();
+                    foreach (var request in requestList)
                     {
                         // For every request collection item we got
                         for (var i = 0; i < requestCollection.Count; i++)
@@ -470,7 +472,7 @@ namespace Nozomi.Infra.Syncing.HostedServices.RequestTypes
                                 return false;
                         }
 
-                        if (requestService.HasUpdated(requests.ToList<Request>()))
+                        if (requestService.HasUpdated(requestList.ToList<Request>()))
                         {
                             _logger.LogInformation($"[{_hostedServiceName}] ProcessRequest: Request objects updated!");
                         }
