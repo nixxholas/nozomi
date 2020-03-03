@@ -64,7 +64,7 @@ namespace Nozomi.Web2
             Dictionary<string, object> nozomiVault = null;
 
             // HASHICORP VAULT
-            if (Environment.IsProduction() || Environment.IsStaging())
+            if (Environment.IsProduction() && Environment.IsStaging())
             {
                 var vaultUrl = Startup.Configuration["vaultUrl"];
                 var vaultToken = Startup.Configuration["vaultToken"];

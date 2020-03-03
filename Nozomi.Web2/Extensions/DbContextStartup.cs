@@ -16,7 +16,7 @@ namespace Nozomi.Web2.Extensions
         public static void AddDbContextInjections(this IServiceCollection services,
             Dictionary<string, object> nozomiVault = null)
         {
-            if (!Startup.Environment.IsProduction() || !Startup.Environment.IsStaging())
+            if (!Startup.Environment.IsProduction() && !Startup.Environment.IsStaging())
             {
                 // Greet the beloved dev
                 Console.WriteLine(@"Welcome to the dev environment, your machine is named: " + Environment.MachineName);
