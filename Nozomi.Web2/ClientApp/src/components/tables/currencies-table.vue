@@ -79,7 +79,11 @@
                 default: 50,
                 type: Number
             },
-            displayComponents: []
+            displayComponents: [],
+            isActive: {
+                type: Boolean,
+                default: null
+            }
         },
         components: {
             CurrencyModal
@@ -106,13 +110,18 @@
         data: function () {
             return {
                 currentPage: 1,
-                dataLoading: true,
+                dataLoading: false,
                 data: [],
                 dataCount: 0,
                 sortField: 'name',
                 defaultSortOrder: 'asc',
                 sortOrder: 'asc',
                 typeData: []
+            }
+        },
+        watch: {
+            isActive: function(){ 
+                this.getTableData();
             }
         },
         methods: {
@@ -164,31 +173,44 @@
                         self.dataLoading = false;
                     });
             },
+            shouldLoadData() {
+                // Loads table data when mounted when there is no active props given
+                if (this.isActive === null)
+                    return true;
+
+                return this.isActive && !this.dataLoading &&
+                    (this.data.length === 0 || this.typeData.length === 0);
+            },
+            async getTableData() {
+                if (!this.shouldLoadData())
+                    return;
+                
+                this.dataLoading = true;
+                const sortAscending = this.sortOrder === "asc";
+                
+                try {
+                    const [
+                        currencyCount, 
+                        currencyList, 
+                        currencyTypes
+                    ] = await Promise.all([
+                        CurrencyService.getCurrencyCount(this.type),
+                        CurrencyService.listAll(this.currentPage - 1, this.perPage, this.type, sortAscending, this.sortFieldEnum),
+                        CurrencyTypeService.all()
+                    ]);
+                    
+                    this.dataCount = currencyCount;
+                    this.data = currencyList;
+                    this.typeData = currencyTypes;
+                } catch(e) {
+                    console.error(e.message);
+                }
+                
+                this.dataLoading = false;
+            },
         },
         mounted: function () {
-            let self = this;
-            let sortAscending = self.sortOrder === "asc";
-
-            CurrencyService.getCurrencyCount(self.type)
-                .then(function (res) {
-                    self.dataCount = res;
-
-                    CurrencyService.listAll(self.currentPage - 1, self.perPage,
-                        self.type, sortAscending, self.sortFieldEnum)
-                        .then(function (res) {
-                            self.data = res;
-                        });
-                })
-                .catch(function (err) {
-                    console.dir(err);
-                });
-
-            CurrencyTypeService.all()
-                .then(function (res) {
-                    self.typeData = res.data;
-
-                    self.dataLoading = false;
-                })
+            this.getTableData();
         }
     }
 </script>
