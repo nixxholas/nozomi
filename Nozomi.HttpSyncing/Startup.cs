@@ -43,13 +43,12 @@ namespace Nozomi.HttpSyncing
                 var str = Configuration.GetConnectionString("Local:" + @Environment.MachineName);
 
                 services
-                    .AddDbContext<NozomiDbContext>(options =>
+                    .AddDbContextPool<NozomiDbContext>(options =>
                         {
                             options.UseNpgsql(str);
                             options.EnableSensitiveDataLogging();
                             options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
-                        },
-                        ServiceLifetime.Transient);
+                        });
             }
             else
             {
@@ -73,7 +72,7 @@ namespace Nozomi.HttpSyncing
                 if (string.IsNullOrEmpty(mainDb))
                     throw new SystemException("Invalid main database configuration");
                 // Database
-                services.AddDbContext<NozomiDbContext>(options =>
+                services.AddDbContextPool<NozomiDbContext>(options =>
                 {
                     options.UseNpgsql(mainDb
                         , builder =>
@@ -83,13 +82,8 @@ namespace Nozomi.HttpSyncing
                     );
                     options.EnableSensitiveDataLogging(false);
                     options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
-                }, ServiceLifetime.Transient);
+                });
             }
-            
-            // services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-            //
-            // services.AddTransient<NozomiDbContext, UnitOfWork<NozomiDbContext>>();
-            // services.AddTransient<IDbContext, NozomiDbContext>();
 
             services.AddScoped<ICurrencyEvent, CurrencyEvent>();
             services.AddScoped<ICurrencyPairEvent, CurrencyPairEvent>();
