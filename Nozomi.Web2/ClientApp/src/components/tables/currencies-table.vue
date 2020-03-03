@@ -203,7 +203,11 @@
                     this.data = currencyList;
                     this.typeData = currencyTypes;
                 } catch(e) {
-                    console.error(e.message);
+                    this.$buefy.toast.open({
+                        message: "An error occurred on our side, please try again.",
+                        type: "is-danger",
+                        position: "is-bottom-right"
+                    });
                 }
                 
                 this.dataLoading = false;
