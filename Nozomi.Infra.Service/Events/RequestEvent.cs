@@ -396,7 +396,6 @@ namespace Nozomi.Service.Events
             CompiledGetAllByRequestType =
                 EF.CompileQuery((NozomiDbContext context, RequestType type) =>
                     context.Requests
-                        .AsQueryable()
                         .Include(cpr => cpr.RequestComponents)
                         .Include(r => r.CurrencyPair)
                         .Include(r => r.RequestProperties)

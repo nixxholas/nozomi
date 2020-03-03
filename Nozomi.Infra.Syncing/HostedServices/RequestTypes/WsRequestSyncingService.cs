@@ -265,7 +265,7 @@ namespace Nozomi.Infra.Syncing.HostedServices.RequestTypes
                     using (var scope = _scopeFactory.CreateScope())
                     {
                         var requestService = scope.ServiceProvider.GetRequiredService<IRequestService>();
-                        
+
                         if (Update(payloadToken, wsr.FirstOrDefault().ResponseType, wsrComponents)
                             && requestService.HasUpdated(wsr))
                         {
@@ -303,44 +303,42 @@ namespace Nozomi.Infra.Syncing.HostedServices.RequestTypes
                 using (var scope = _scopeFactory.CreateScope())
                 {
                     var componentService = scope.ServiceProvider.GetRequiredService<IComponentService>();
-                    
-                // Always reset
-                processingToken = token;
 
-                // Identifier processing
-                if (!string.IsNullOrEmpty(component.Identifier))
-                {
-                    var res = ProcessIdentifier(processingToken, component.Identifier);
+                    // Always reset
+                    processingToken = token;
 
-                    if (res.ResultType.Equals(NozomiResultType.Success))
+                    // Identifier processing
+                    if (!string.IsNullOrEmpty(component.Identifier))
                     {
-                        processingToken = res.Data;
-                    }
-                    else
-                    {
-                        // Failed
-                        componentService.Checked(component.Id);
-                        processingToken = null; // Set it to fail for the next statement
-                    }
-                }
+                        var res = ProcessIdentifier(processingToken, component.Identifier);
 
-                // Identifier & Resetting null checks
-                if (processingToken != null)
-                {
-                    var comArr = component.QueryComponent.Split("/"); // Split the string if its nesting
-                    var last = comArr.LastOrDefault(); // get the last to identify if its the last
-
-                    // Iterate the queryComponent Array
-                    foreach (var comArrEl in comArr)
-                    {
-                        // Null check
-                        if (comArrEl != null)
+                        if (res.ResultType.Equals(NozomiResultType.Success))
                         {
-                            // CHECK CURRENT TYPE
-                            // Identify if its an array or an object
-                            if (processingToken is JArray)
+                            processingToken = res.Data;
+                        }
+                        else
+                        {
+                            // Failed
+                            componentService.Checked(component.Id);
+                            processingToken = null; // Set it to fail for the next statement
+                        }
+                    }
+
+                    // Identifier & Resetting null checks
+                    if (processingToken != null)
+                    {
+                        var comArr = component.QueryComponent.Split("/"); // Split the string if its nesting
+                        var last = comArr.LastOrDefault(); // get the last to identify if its the last
+
+                        // Iterate the queryComponent Array
+                        foreach (var comArrEl in comArr)
+                        {
+                            // Null check
+                            if (comArrEl != null)
                             {
-                                try
+                                // CHECK CURRENT TYPE
+                                // Identify if its an array or an object
+                                if (processingToken is JArray)
                                 {
                                     // Is it the last?
                                     if (comArrEl != last)
@@ -392,7 +390,13 @@ namespace Nozomi.Infra.Syncing.HostedServices.RequestTypes
                                                     if (val > 0)
                                                     {
                                                         // Update it
-                                                        componentService.UpdatePairValue(component.Id, val);
+                                                        var res = componentService
+                                                            .UpdatePairValue(component.Id, val);
+
+                                                        if (res.ResultType.Equals(NozomiResultType.Failed))
+                                                        {
+                                                            _logger.LogError(res.Message);
+                                                        }
                                                     }
                                                 }
                                             }
@@ -420,7 +424,13 @@ namespace Nozomi.Infra.Syncing.HostedServices.RequestTypes
                                                     if (val > 0)
                                                     {
                                                         // Update it
-                                                        componentService.UpdatePairValue(component.Id, val);
+                                                        var res = componentService
+                                                            .UpdatePairValue(component.Id, val);
+
+                                                        if (res.ResultType.Equals(NozomiResultType.Failed))
+                                                        {
+                                                            _logger.LogError(res.Message);
+                                                        }
                                                     }
                                                 }
                                             }
@@ -432,148 +442,161 @@ namespace Nozomi.Infra.Syncing.HostedServices.RequestTypes
                                         }
                                     }
                                 }
-                                catch (Exception ex)
+                                else if (processingToken is JObject)
                                 {
-                                    Console.WriteLine(ex);
-                                }
-                            }
-                            else if (processingToken is JObject)
-                            {
-                                // Pump in the object
-                                var obj = processingToken.ToObject<JObject>();
+                                    // Pump in the object
+                                    var obj = processingToken.ToObject<JObject>();
 
-                                // Is it the last?
-                                if (comArrEl != last)
-                                {
-                                    // let's work it out
-                                    // update the token
-                                    processingToken = obj.SelectToken(comArrEl);
-                                }
-                                // Yes its the last
-                                else
-                                {
-                                    // See if theres any property we need to refer to.
-                                    var comArrElArr = comArrEl.Split("=>");
-
-                                    // Traverse first
-                                    var rawData = (string) obj.GetValue(comArrElArr[0]);
-
-                                    if (rawData != null)
+                                    // Is it the last?
+                                    if (comArrEl != last)
                                     {
-                                        // if its 1, we assume its just an array of a primitive type
-                                        if (comArrElArr.Length == 1)
-                                        {
-                                            // Retrieve the value.
-                                            var rawVal = rawData.ToString();
+                                        // let's work it out
+                                        // update the token
+                                        processingToken = obj.SelectToken(comArrEl);
+                                    }
+                                    // Yes its the last
+                                    else
+                                    {
+                                        // See if theres any property we need to refer to.
+                                        var comArrElArr = comArrEl.Split("=>");
 
+                                        // Traverse first
+                                        var rawData = (string) obj.GetValue(comArrElArr[0]);
+
+                                        if (rawData != null)
+                                        {
+                                            // if its 1, we assume its just an array of a primitive type
+                                            if (comArrElArr.Length == 1)
+                                            {
+                                                // Retrieve the value.
+                                                var rawVal = rawData.ToString();
+
+                                                // https://stackoverflow.com/questions/23131414/culture-invariant-decimal-tryparse
+                                                var style = NumberStyles.Any;
+                                                if (ExponentHelper.IsExponentialFormat(rawVal))
+                                                {
+                                                    style = NumberStyles.Float;
+                                                }
+
+                                                // If it is an exponent
+                                                if (decimal.TryParse(rawVal, style, CultureInfo.InvariantCulture,
+                                                    out var val))
+                                                {
+                                                    if (val > 0)
+                                                    {
+                                                        // Update it
+                                                        var res = componentService
+                                                            .UpdatePairValue(component.Id, val);
+
+                                                        if (res.ResultType.Equals(NozomiResultType.Failed))
+                                                        {
+                                                            _logger.LogError(res.Message);
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            // Oh no.. non-primitive...
+                                            else if (comArrElArr.Length == 2)
+                                            {
+                                                // Object-ify
+                                                var rawObj = JObject.Parse(rawData.ToString());
+
+                                                // Obtain the desired value
+                                                var rawVal = rawObj[comArrElArr[1]].ToString();
+
+                                                // As usual, update it
+                                                // https://stackoverflow.com/questions/23131414/culture-invariant-decimal-tryparse
+                                                var style = NumberStyles.Any;
+                                                if (ExponentHelper.IsExponentialFormat(rawVal))
+                                                {
+                                                    style = NumberStyles.Float;
+                                                }
+
+                                                // If it is an exponent
+                                                if (decimal.TryParse(rawVal, style, CultureInfo.InvariantCulture,
+                                                    out var val))
+                                                {
+                                                    if (val > 0)
+                                                    {
+                                                        // Update it
+                                                        var res = componentService
+                                                            .UpdatePairValue(component.Id, val);
+
+                                                        if (res.ResultType.Equals(NozomiResultType.Failed))
+                                                        {
+                                                            _logger.LogError(res.Message);
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            else
+                                            {
+                                                // Invalid
+                                                //return false;
+                                            }
+                                        }
+                                    }
+                                }
+                                // iterate JValue like a JObject
+                                else if (processingToken is JValue)
+                                {
+                                    // Pump in the object
+                                    //JObject obj = processingToken.ToObject<JObject>();
+                                    var obj = processingToken;
+
+                                    // Is it the last?
+                                    if (comArrEl != last)
+                                    {
+                                        // let's work it out
+                                        // update the token
+                                        processingToken = obj.SelectToken(comArrEl);
+                                    }
+                                    // Yes its the last
+                                    else
+                                    {
+                                        var rawData = (string) obj.SelectToken(component.QueryComponent);
+
+                                        if (rawData != null)
+                                        {
                                             // https://stackoverflow.com/questions/23131414/culture-invariant-decimal-tryparse
                                             var style = NumberStyles.Any;
-                                            if (ExponentHelper.IsExponentialFormat(rawVal))
+                                            if (ExponentHelper.IsExponentialFormat(rawData))
                                             {
                                                 style = NumberStyles.Float;
                                             }
 
                                             // If it is an exponent
-                                            if (decimal.TryParse(rawVal, style, CultureInfo.InvariantCulture,
-                                                out var val))
+                                            if (decimal.TryParse(rawData, style, CultureInfo.InvariantCulture,
+                                                out decimal val))
                                             {
                                                 if (val > 0)
                                                 {
                                                     // Update it
-                                                    componentService.UpdatePairValue(component.Id, val);
+                                                    var res = componentService
+                                                        .UpdatePairValue(component.Id, val);
+
+                                                    if (res.ResultType.Equals(NozomiResultType.Failed))
+                                                    {
+                                                        _logger.LogError(res.Message);
+                                                    }
                                                 }
                                             }
-                                        }
-                                        // Oh no.. non-primitive...
-                                        else if (comArrElArr.Length == 2)
-                                        {
-                                            // Object-ify
-                                            var rawObj = JObject.Parse(rawData.ToString());
-
-                                            // Obtain the desired value
-                                            var rawVal = rawObj[comArrElArr[1]].ToString();
-
-                                            // As usual, update it
-                                            // https://stackoverflow.com/questions/23131414/culture-invariant-decimal-tryparse
-                                            var style = NumberStyles.Any;
-                                            if (ExponentHelper.IsExponentialFormat(rawVal))
-                                            {
-                                                style = NumberStyles.Float;
-                                            }
-
-                                            // If it is an exponent
-                                            if (decimal.TryParse(rawVal, style, CultureInfo.InvariantCulture,
-                                                out var val))
-                                            {
-                                                if (val > 0)
-                                                {
-                                                    // Update it
-                                                    componentService.UpdatePairValue(component.Id, val);
-                                                }
-                                            }
-                                        }
-                                        else
-                                        {
-                                            // Invalid
-                                            //return false;
                                         }
                                     }
                                 }
                             }
-                            // iterate JValue like a JObject
-                            else if (processingToken is JValue)
+                            else
                             {
-                                // Pump in the object
-                                //JObject obj = processingToken.ToObject<JObject>();
-                                var obj = processingToken;
-
-                                // Is it the last?
-                                if (comArrEl != last)
-                                {
-                                    // let's work it out
-                                    // update the token
-                                    processingToken = obj.SelectToken(comArrEl);
-                                }
-                                // Yes its the last
-                                else
-                                {
-                                    var rawData = (string) obj.SelectToken(component.QueryComponent);
-
-                                    if (rawData != null)
-                                    {
-                                        // https://stackoverflow.com/questions/23131414/culture-invariant-decimal-tryparse
-                                        var style = NumberStyles.Any;
-                                        if (ExponentHelper.IsExponentialFormat(rawData))
-                                        {
-                                            style = NumberStyles.Float;
-                                        }
-
-                                        // If it is an exponent
-                                        if (decimal.TryParse(rawData, style, CultureInfo.InvariantCulture,
-                                            out decimal val))
-                                        {
-                                            if (val > 0)
-                                            {
-                                                // Update it
-                                                componentService.UpdatePairValue(component.Id, val);
-                                            }
-                                        }
-                                    }
-                                }
+                                // Something bad happened
+                                //return false;
                             }
-                        }
-                        else
-                        {
-                            // Something bad happened
-                            //return false;
                         }
                     }
-                }
-                else if (string.IsNullOrEmpty(component.Identifier))
-                {
-                    _logger.LogInformation($"Marking Request Component as checked: {component.Id}");
-                    return componentService.Checked(component.Id);
-                }
+                    else if (string.IsNullOrEmpty(component.Identifier))
+                    {
+                        _logger.LogInformation($"Marking Request Component as checked: {component.Id}");
+                        return componentService.Checked(component.Id);
+                    }
                 }
             }
 

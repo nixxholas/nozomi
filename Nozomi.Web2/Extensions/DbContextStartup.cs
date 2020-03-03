@@ -1,19 +1,22 @@
 using System;
+using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Nozomi.Repo.Data;
 using VaultSharp;
+using VaultSharp.Core;
 using VaultSharp.V1.AuthMethods.Token;
 
 namespace Nozomi.Web2.Extensions
 {
     public static class DbContextStartup
     {
-        public static void AddDbContextInjections(this IServiceCollection services)
+        public static void AddDbContextInjections(this IServiceCollection services,
+            Dictionary<string, object> nozomiVault = null)
         {
-            if (!Startup.Environment.IsProduction())
+            if (!Startup.Environment.IsProduction() && !Startup.Environment.IsStaging())
             {
                 // Greet the beloved dev
                 Console.WriteLine(@"Welcome to the dev environment, your machine is named: " + Environment.MachineName);
@@ -34,22 +37,9 @@ namespace Nozomi.Web2.Extensions
             }
             else
             {
-                var vaultUrl = Startup.Configuration["vaultUrl"];
-                var vaultToken = Startup.Configuration["vaultToken"];
-
-                if (string.IsNullOrEmpty(vaultToken))
-                    throw new SystemException("Invalid vault token.");
-
-                var authMethod = new TokenAuthMethodInfo(vaultToken);
-                var vaultClientSettings = new VaultClientSettings(
-                    !string.IsNullOrWhiteSpace(vaultUrl) ? vaultUrl : "https://blackbox.nozomi.one:8200",
-                    authMethod);
-                var vaultClient = new VaultClient(vaultClientSettings);
-
-                var nozomiVault = vaultClient.V1.Secrets.Cubbyhole.ReadSecretAsync("nozomi")
-                    .GetAwaiter()
-                    .GetResult().Data;
-
+                if (nozomiVault.Equals(null))
+                    throw new VaultApiException("Invalid Vault Configuration for DbContextStartup!");
+                
                 var mainDb = (string) nozomiVault["main"];
                 if (string.IsNullOrEmpty(mainDb))
                     throw new SystemException("Invalid main database configuration");

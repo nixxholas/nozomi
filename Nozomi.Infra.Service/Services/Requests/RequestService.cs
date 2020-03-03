@@ -172,6 +172,28 @@ namespace Nozomi.Service.Services.Requests
             return false;
         }
 
+        public void DelayFailure(Guid guid)
+        {
+            var request = _context.Requests.AsTracking().SingleOrDefault(r => r.Guid.Equals(guid));
+
+            if (request != null)
+            {
+                request.FailureCount += 1; // Bump failure
+                request.ModifiedAt = DateTime.UtcNow
+                    .AddMilliseconds(request.FailureDelay * request.FailureCount); // Bump the delay
+                _context.Requests.Update(request);
+                _context.SaveChanges();
+
+                _logger.LogInformation($"{_serviceName} DelayFailure (Guid): Delay due to failure " +
+                                       $"successfully pushed for request {guid} by " +
+                                       $"{request.FailureDelay * request.FailureCount / 1000}s.");
+                return;
+            }
+            
+            _logger.LogCritical($"{_serviceName} DelayFailure (Guid): Unable to delay failure for request " +
+                                $"{guid}");
+        }
+
         public bool HasUpdated(long requestId)
         {
             if (requestId > 0)
@@ -182,6 +204,7 @@ namespace Nozomi.Service.Services.Requests
 
                 if (req != null)
                 {
+                    req.FailureCount = 0; // RESET!!
                     req.ModifiedAt = DateTime.UtcNow;
 
                     _context.SaveChanges();

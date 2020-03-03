@@ -135,6 +135,13 @@ namespace Nozomi.Data.Models.Web
         [DataMember]
         public long FailureDelay { get; set; }
         
+        /// <summary>
+        /// Defines the number of repeated failures for this request.
+        /// </summary>
+        /// <remarks>Also allows us to determine a simple formula to linear extend the delay should
+        /// there be repeated attempts that continue to result in failure.</remarks>
+        public long FailureCount { get; set; }
+        
         public long? CurrencyId { get; set; }
         
         public Currency.Currency Currency { get; set; }
