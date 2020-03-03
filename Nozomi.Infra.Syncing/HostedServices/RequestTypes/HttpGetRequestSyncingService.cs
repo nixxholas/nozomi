@@ -467,8 +467,9 @@ namespace Nozomi.Infra.Syncing.HostedServices.RequestTypes
                                                    $"{currentRequests.FirstOrDefault().DataPath} Too many request");
 
                                 // Rate limited. Push back update timings
-                                requestService.Delay(firstRequest,
-                                    TimeSpan.FromMilliseconds(firstRequest.FailureDelay));
+                                // requestService.Delay(firstRequest,
+                                //     TimeSpan.FromMilliseconds(firstRequest.FailureDelay));
+                                requestService.DelayFailure(firstRequest.Guid);
                                 return false;
                         }
 

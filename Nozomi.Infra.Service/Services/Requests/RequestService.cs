@@ -203,6 +203,7 @@ namespace Nozomi.Service.Services.Requests
 
                 if (req != null)
                 {
+                    req.FailureCount = 0; // RESET!!
                     req.ModifiedAt = DateTime.UtcNow;
 
                     _context.SaveChanges();
