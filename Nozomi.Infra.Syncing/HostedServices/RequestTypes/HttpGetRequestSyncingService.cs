@@ -467,8 +467,6 @@ namespace Nozomi.Infra.Syncing.HostedServices.RequestTypes
                                                    $"{currentRequests.FirstOrDefault().DataPath} Too many requests");
 
                                 // Rate limited. Push back update timings
-                                // requestService.Delay(firstRequest,
-                                //     TimeSpan.FromMilliseconds(firstRequest.FailureDelay));
                                 requestService.DelayFailure(firstRequest.Guid);
                                 return false;
                         }
@@ -762,11 +760,6 @@ namespace Nozomi.Infra.Syncing.HostedServices.RequestTypes
                                                                      $" // Raw Value: {rawVal} | Invalid component value.");
                                                 }
                                             }
-                                            else
-                                            {
-                                                // Invalid
-                                                //return false;
-                                            }
                                         }
                                     }
                                 }
@@ -820,11 +813,6 @@ namespace Nozomi.Infra.Syncing.HostedServices.RequestTypes
                                         }
                                     }
                                 }
-                            }
-                            else
-                            {
-                                // Something bad happened
-                                // return false;
                             }
                         }
                     }
