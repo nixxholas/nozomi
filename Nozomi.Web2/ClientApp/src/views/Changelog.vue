@@ -242,6 +242,7 @@
                                     <li><b>Auth</b> - Well, we made our emails presentable ;)</li>
                                     <li><b>Compute</b> - We've just wrapped up our computation engine at the back. UI 
                                     will be introduced soon! This beast can compute any mathematical formula you can think of!</li>
+                                    <li><b>Backend</b> - Optimisation works on how we poll RESTful endpoints; We're handling 429 errors gracefully now :)</li>
                                 </ul>
                             </div>
                         </div>
