@@ -32,8 +32,6 @@ namespace Nozomi.Api.Limiter
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
-
             if (WebHostEnvironment.IsStaging() || WebHostEnvironment.IsProduction())
             {
                 var vaultUrl = Configuration["vaultUrl"];
@@ -56,9 +54,13 @@ namespace Nozomi.Api.Limiter
             }
             else
             {
-                var redisStr = Configuration.GetConnectionString("LocalRedis:" + @Environment.MachineName);
+                Console.WriteLine(@"Welcome to the dev environment, your machine is named: " + Environment.MachineName);
+                
+                var redisStr = Configuration.GetConnectionString("LocalRedis:" + Environment.MachineName);
                 services.ConfigureRedis(redisStr);
             }
+            
+            services.AddControllers();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
