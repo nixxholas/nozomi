@@ -12,6 +12,7 @@ namespace Nozomi.Api.Limiter.Extensions
         {
             if (!string.IsNullOrEmpty(configurationString))
                 // Sample multiplexer connection string - "redis0:6380,redis1:6380,allowAdmin=true"
+                // https://stackexchange.github.io/StackExchange.Redis/Configuration.html
                 services.AddSingleton<IConnectionMultiplexer>(
                     ConnectionMultiplexer.Connect(configurationString));
             else
