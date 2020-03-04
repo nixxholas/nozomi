@@ -34,7 +34,10 @@
         <b-tabs v-if="currencyTypes && currencyTypes.length > 0" v-model="activeTab">
             <b-tab-item v-for="(currencyType, index) in currencyTypes" 
                     :label="currencyType.name">
-                <CurrencyTable :type="currencyType.name" :isActive="activeTab === index" />
+                <CurrencyTable :type="currencyType.name" 
+                               :isActive="activeTab === index" 
+                               :currencyTypes="currencyTypes" 
+                />
             </b-tab-item>
         </b-tabs>
     </section>
