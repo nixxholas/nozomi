@@ -6,11 +6,13 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Nozomi.Api.Limiter.Extensions;
+using Nozomi.Repo.Auth.Data;
 using StackExchange.Redis;
 using VaultSharp;
 using VaultSharp.V1.AuthMethods.Token;
@@ -51,6 +53,15 @@ namespace Nozomi.Api.Limiter
                     .GetResult().Data;
                 
                 services.ConfigureRedis((string) vault["redis"]);
+
+                services.AddDbContextPool<AuthDbContext>(options =>
+                {
+                    options.UseNpgsql((string) vault["auth"], 
+                        nozomiDbContextBuilder => { nozomiDbContextBuilder.EnableRetryOnFailure(); }
+                    );
+                    options.EnableSensitiveDataLogging(false);
+                    options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+                });
             }
             else
             {
@@ -58,6 +69,15 @@ namespace Nozomi.Api.Limiter
                 
                 var redisStr = Configuration.GetConnectionString("LocalRedis:" + Environment.MachineName);
                 services.ConfigureRedis(redisStr);
+
+                services.AddDbContextPool<AuthDbContext>(options =>
+                {
+                    options.UseNpgsql(Configuration.GetConnectionString("LocalAuth:" + Environment.MachineName), 
+                        nozomiDbContextBuilder => { nozomiDbContextBuilder.EnableRetryOnFailure(); }
+                    );
+                    options.EnableSensitiveDataLogging(false);
+                    options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+                });
             }
             
             services.AddControllers();
