@@ -16,7 +16,8 @@ namespace Nozomi.Api.Limiter.Extensions
                 services.AddSingleton<IConnectionMultiplexer>(
                     ConnectionMultiplexer.Connect(configurationString));
             else
-                throw new RedisConnectionException(ConnectionFailureType.Loading, "");
+                throw new RedisConnectionException(ConnectionFailureType.Loading, "Empty Redis connection " +
+                                                                                  "string.");
 
         }
     }
