@@ -83,6 +83,10 @@
             isActive: {
                 type: Boolean,
                 default: null
+            },
+            currencyTypes: {
+                type: Array,
+                default: null
             }
         },
         components: {
@@ -191,17 +195,14 @@
                 try {
                     const [
                         currencyCount, 
-                        currencyList, 
-                        currencyTypes
+                        currencyList
                     ] = await Promise.all([
                         CurrencyService.getCurrencyCount(this.type),
-                        CurrencyService.listAll(this.currentPage - 1, this.perPage, this.type, sortAscending, this.sortFieldEnum),
-                        CurrencyTypeService.all()
+                        CurrencyService.listAll(this.currentPage - 1, this.perPage, this.type, sortAscending, this.sortFieldEnum)
                     ]);
                     
                     this.dataCount = currencyCount;
                     this.data = currencyList;
-                    this.typeData = currencyTypes;
                 } catch(e) {
                     this.$buefy.toast.open({
                         message: "An error occurred on our side, please try again.",
@@ -212,9 +213,28 @@
                 
                 this.dataLoading = false;
             },
+            async getTypesData() {
+                if (this.currencyTypes === null) {
+                    try {
+                        this.typeData = await CurrencyTypeService.all();
+                    } catch(e) {
+                        this.$buefy.toast.open({
+                            message: "An error occurred on our side, please try again.",
+                            type: "is-danger",
+                            position: "is-bottom-right"
+                        });    
+                    }
+                }
+            }
         },
         mounted: function () {
             this.getTableData();
+            this.getTypesData();
+            
+            // Use prop typeData as it is already loaded in parent component
+            if (this.currencyTypes !== null) {
+                this.typeData = this.currencyTypes;
+            }
         }
     }
 </script>
