@@ -13,5 +13,9 @@
       <ProjectReference Include="..\Nozomi.Infra.Api.Limiter\Nozomi.Infra.Api.Limiter.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Controllers" />
+    </ItemGroup>
+
 
 </Project>
