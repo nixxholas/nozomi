@@ -19,8 +19,9 @@ namespace Nozomi.Infra.Api.Limiter.Services
             _connectionMultiplexer = connectionMultiplexer;
         }
 
-        public BlockedApiKeyRedisService(IHttpContextAccessor contextAccessor, ILogger<BlockedApiKeyRedisService> logger, 
-            AuthDbContext context, IConnectionMultiplexer connectionMultiplexer) 
+        public BlockedApiKeyRedisService(IHttpContextAccessor contextAccessor, 
+            ILogger<BlockedApiKeyRedisService> logger, AuthDbContext context, 
+            IConnectionMultiplexer connectionMultiplexer) 
             : base(contextAccessor, logger, context)
         {
             _connectionMultiplexer = connectionMultiplexer;
@@ -43,7 +44,15 @@ namespace Nozomi.Infra.Api.Limiter.Services
 
         public void Remove(string key)
         {
+            if (!string.IsNullOrEmpty(key))
+            {
+                _connectionMultiplexer.GetDatabase().KeyDelete(key);
+                
+                _logger.LogInformation($"{_serviceName} Remove: key {key} successfully deleted.");
+                return;
+            }
             
+            throw new NullReferenceException("Invalid key.");
         }
     }
 }
