@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Nozomi.Infra.Api.Limiter.Services.Interfaces;
@@ -42,6 +43,9 @@ namespace Nozomi.Infra.Api.Limiter.Services
                 
                 _connectionMultiplexer.GetDatabase((int) RedisDatabases.UnrecordedApiKeyEvents)
                     .SetAdd(currentRequestEntry, fillAmount);
+                _logger.LogInformation($"{_serviceName} Fill: RedisKey {currentRequestEntry} added to " +
+                                       $"UnrecordedApiKeyEvents cache.");
+                return;
             }
             
             throw new ArgumentNullException("Invalid api key or fill amount.");
@@ -49,7 +53,29 @@ namespace Nozomi.Infra.Api.Limiter.Services
 
         public void Clear(string apiKey)
         {
-            throw new System.NotImplementedException();
+            if (!string.IsNullOrEmpty(apiKey))
+            {
+                _logger.LogInformation($"{_serviceName} Clear: Clearing unrecorded events for api key " +
+                                       $"{apiKey}");
+                var connections = _connectionMultiplexer.GetEndPoints();
+                var server = _connectionMultiplexer.GetServer(connections[0]);
+                var apiKeyPairs = server.Keys(pattern: $"*{apiKey}*").ToList();
+
+                if (apiKeyPairs.Any())
+                {
+                    foreach (var apiKeyPair in apiKeyPairs)
+                    {
+                        _connectionMultiplexer.GetDatabase((int) RedisDatabases.UnrecordedApiKeyEvents)
+                            .KeyDelete(apiKeyPair);
+                    }
+
+                    _logger.LogInformation($"{_serviceName} Clear: Unrecorded events cleared for key " +
+                                           $"{apiKey}.");
+                    return;
+                }
+            }
+            
+            throw new NullReferenceException("Invalid api key.");
         }
     }
 }
