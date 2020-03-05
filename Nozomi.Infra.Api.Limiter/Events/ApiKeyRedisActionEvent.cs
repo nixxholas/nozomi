@@ -1,6 +1,7 @@
 using System;
 using Microsoft.Extensions.Logging;
 using Nozomi.Infra.Api.Limiter.Events.Interfaces;
+using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.Auth.Data;
 using StackExchange.Redis;
@@ -22,7 +23,7 @@ namespace Nozomi.Infra.Api.Limiter.Events
         {
             if (!string.IsNullOrEmpty(key))
             {
-                var redisValue = _connectionMultiplexer.GetDatabase((int) NozomiRedisDatabase.BlockedApiKeys)
+                var redisValue = _connectionMultiplexer.GetDatabase((int) RedisDatabases.BlockedApiKeys)
                     .StringGet(key);
 
                 return redisValue.IsNullOrEmpty;
