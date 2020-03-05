@@ -6,15 +6,15 @@ using Nozomi.Repo.Auth.Data;
 
 namespace Nozomi.Infra.Api.Limiter.Services
 {
-    public class ApiKeyRedisEventService : BaseService<ApiKeyRedisEventService, AuthDbContext>, 
-        IApiKeyRedisEventService
+    public class ApiKeyRedisActionService : BaseService<ApiKeyRedisActionService, AuthDbContext>, 
+        IApiKeyRedisActionService
     {
-        public ApiKeyRedisEventService(ILogger<ApiKeyRedisEventService> logger, AuthDbContext context) 
+        public ApiKeyRedisActionService(ILogger<ApiKeyRedisActionService> logger, AuthDbContext context) 
             : base(logger, context)
         {
         }
 
-        public ApiKeyRedisEventService(IHttpContextAccessor contextAccessor, ILogger<ApiKeyRedisEventService> logger, 
+        public ApiKeyRedisActionService(IHttpContextAccessor contextAccessor, ILogger<ApiKeyRedisActionService> logger, 
             AuthDbContext context) : base(contextAccessor, logger, context)
         {
         }
