@@ -2,7 +2,7 @@ using System;
 
 namespace Nozomi.Infra.Api.Limiter.Services.Interfaces
 {
-    public interface IBlockedApiKeyRedisService
+    public interface INozomiRedisService
     {
         void Add(NozomiRedisDatabase databaseEnum, string key, string value);
 

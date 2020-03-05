@@ -8,19 +8,19 @@ using StackExchange.Redis;
 
 namespace Nozomi.Infra.Api.Limiter.Services
 {
-    public class BlockedApiKeyRedisService : BaseService<BlockedApiKeyRedisService, AuthDbContext>, 
-    IBlockedApiKeyRedisService
+    public class NozomiRedisService : BaseService<NozomiRedisService, AuthDbContext>, 
+    INozomiRedisService
     {
         private readonly IConnectionMultiplexer _connectionMultiplexer;
         
-        public BlockedApiKeyRedisService(ILogger<BlockedApiKeyRedisService> logger, AuthDbContext context, 
+        public NozomiRedisService(ILogger<NozomiRedisService> logger, AuthDbContext context, 
             IConnectionMultiplexer connectionMultiplexer) : base(logger, context)
         {
             _connectionMultiplexer = connectionMultiplexer;
         }
 
-        public BlockedApiKeyRedisService(IHttpContextAccessor contextAccessor, 
-            ILogger<BlockedApiKeyRedisService> logger, AuthDbContext context, 
+        public NozomiRedisService(IHttpContextAccessor contextAccessor, 
+            ILogger<NozomiRedisService> logger, AuthDbContext context, 
             IConnectionMultiplexer connectionMultiplexer) 
             : base(contextAccessor, logger, context)
         {
@@ -33,7 +33,7 @@ namespace Nozomi.Infra.Api.Limiter.Services
             {
                 // Dont' have to set expiry if its not going to expire
                 // https://github.com/StackExchange/StackExchange.Redis/issues/1095#issuecomment-473248185
-                _connectionMultiplexer.GetDatabase().StringSet(key, value);
+                _connectionMultiplexer.GetDatabase((int) databaseEnum).StringSet(key, value);
                 
                 _logger.LogInformation($"{_serviceName} Add: key {key} with value {value} successfully set.");
                 return;
@@ -46,7 +46,7 @@ namespace Nozomi.Infra.Api.Limiter.Services
         {
             if (!string.IsNullOrEmpty(key))
             {
-                _connectionMultiplexer.GetDatabase().KeyDelete(key);
+                _connectionMultiplexer.GetDatabase((int) databaseEnum).KeyDelete(key);
                 
                 _logger.LogInformation($"{_serviceName} Remove: key {key} successfully deleted.");
                 return;
