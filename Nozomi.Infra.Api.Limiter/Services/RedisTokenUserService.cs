@@ -7,18 +7,18 @@ using StackExchange.Redis;
 
 namespace Nozomi.Infra.Api.Limiter.Services
 {
-    public class RedisService : BaseService<RedisService, AuthDbContext>, IRedisService
+    public class RedisTokenUserService : BaseService<RedisTokenUserService, AuthDbContext>, IRedisTokenUserService
     {
         private readonly IConnectionMultiplexer _connectionMultiplexer;
         
-        public RedisService(ILogger<RedisService> logger, AuthDbContext context, 
+        public RedisTokenUserService(ILogger<RedisTokenUserService> logger, AuthDbContext context, 
             IConnectionMultiplexer connectionMultiplexer) : base(logger, context)
         {
             _connectionMultiplexer = connectionMultiplexer;
         }
 
-        public RedisService(IHttpContextAccessor contextAccessor, ILogger<RedisService> logger, AuthDbContext context, 
-            IConnectionMultiplexer connectionMultiplexer) 
+        public RedisTokenUserService(IHttpContextAccessor contextAccessor, ILogger<RedisTokenUserService> logger, 
+            AuthDbContext context, IConnectionMultiplexer connectionMultiplexer) 
             : base(contextAccessor, logger, context)
         {
             _connectionMultiplexer = connectionMultiplexer;
