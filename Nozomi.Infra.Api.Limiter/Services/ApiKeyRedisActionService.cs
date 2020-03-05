@@ -18,5 +18,15 @@ namespace Nozomi.Infra.Api.Limiter.Services
             AuthDbContext context) : base(contextAccessor, logger, context)
         {
         }
+
+        public void Fill(string apiKey, long fillAmount = 1)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void Clear(string apiKey)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }
