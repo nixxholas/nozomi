@@ -27,7 +27,7 @@ namespace Nozomi.Infra.Api.Limiter.Services
             _connectionMultiplexer = connectionMultiplexer;
         }
 
-        public void Add(string key, string value)
+        public void Add(NozomiRedisDatabase databaseEnum, string key, string value)
         {
             if (!string.IsNullOrEmpty(key) && !string.IsNullOrEmpty(value))
             {
@@ -42,7 +42,7 @@ namespace Nozomi.Infra.Api.Limiter.Services
             throw new NullReferenceException("Invalid key or value parameter.");
         }
 
-        public void Remove(string key)
+        public void Remove(NozomiRedisDatabase databaseEnum, string key)
         {
             if (!string.IsNullOrEmpty(key))
             {

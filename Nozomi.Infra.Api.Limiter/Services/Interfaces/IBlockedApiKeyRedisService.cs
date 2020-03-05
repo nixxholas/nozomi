@@ -4,8 +4,8 @@ namespace Nozomi.Infra.Api.Limiter.Services.Interfaces
 {
     public interface IBlockedApiKeyRedisService
     {
-        void Add(string key, string value);
+        void Add(NozomiRedisDatabase databaseEnum, string key, string value);
 
-        void Remove(string key);
+        void Remove(NozomiRedisDatabase databaseEnum, string key);
     }
 }
