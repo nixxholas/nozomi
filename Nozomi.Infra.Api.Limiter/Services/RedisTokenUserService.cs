@@ -23,5 +23,15 @@ namespace Nozomi.Infra.Api.Limiter.Services
         {
             _connectionMultiplexer = connectionMultiplexer;
         }
+
+        public void Consume(string userId, long weight = 1)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void TopUp(string userId, long tokenCount = 1)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }
