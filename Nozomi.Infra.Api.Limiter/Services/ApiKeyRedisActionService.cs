@@ -60,7 +60,7 @@ namespace Nozomi.Infra.Api.Limiter.Services
                 var connections = _connectionMultiplexer.GetEndPoints();
                 var server = _connectionMultiplexer.GetServer(connections[0]);
                 // https://stackoverflow.com/questions/41247952/stackexchange-redis-delete-all-keys-that-start-with
-                var apiKeyPairs = server.Keys(pattern: $"*{apiKey}*").ToList();
+                var apiKeyPairs = server.Keys(pattern: $"*{apiKey}*", pageSize: 1000).ToList();
 
                 if (apiKeyPairs.Any())
                 {
