@@ -4,6 +4,7 @@ namespace Nozomi.Preprocessing
     {
         Default = -1,
         UnrecordedApiKeyEvents = 0,
-        BlockedApiKeys = 1,
+        ApiKeyUser = 2,
+        BlockedApiKeys = 3,
     }
 }
