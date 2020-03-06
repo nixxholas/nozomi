@@ -22,7 +22,7 @@ namespace Nozomi.Infra.Api.Limiter.Attributes
     /// Uses the StackExchange.Redis to store each client quota usage to the decorated route.
     /// </remarks>
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
-    public class LeakyBucketAttribute : ActionFilterAttribute
+    public class TokenBucketAttribute : ActionFilterAttribute
     {
         /// <summary>
         /// A unique name for this route.
