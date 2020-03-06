@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 using Nozomi.Infra.Api.Limiter.Events.Interfaces;
 using Nozomi.Preprocessing;
@@ -16,6 +17,12 @@ namespace Nozomi.Infra.Api.Limiter.Events
             IConnectionMultiplexer connectionMultiplexer) : base(logger, context)
         {
             _connectionMultiplexer = connectionMultiplexer;
+        }
+
+        public IEnumerable<RedisKey> AllKeys(RedisDatabases redisDatabase = RedisDatabases.Default)
+        {
+            var endpoints = _connectionMultiplexer.GetEndPoints();
+            return _connectionMultiplexer.GetServer(endpoints[0]).Keys((int) redisDatabase);
         }
 
         public bool Exists(string key, RedisDatabases redisDatabase = RedisDatabases.BlockedApiKeys)
