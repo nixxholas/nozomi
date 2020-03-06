@@ -54,7 +54,7 @@ namespace Nozomi.Infra.Api.Limiter.Attributes
                 // Filtration checks
                 if (redisEvent.Exists(apiKey, RedisDatabases.ApiKeyUser) // Ensure key exists in mapping 
                     // And if the BlockApiKey list does not contain this key
-                    && !redisEvent.Exists(apiKey, RedisDatabases.BlockedApiKeys))
+                    && !redisEvent.Exists(apiKey, RedisDatabases.BlockedUserApiKeys))
                 {
                     var apiKeyRedisActionService =
                         c.HttpContext.RequestServices.GetRequiredService<IApiKeyRedisActionService>();

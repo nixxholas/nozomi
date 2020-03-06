@@ -23,7 +23,7 @@ namespace Nozomi.Infra.Api.Limiter.Events
         {
             if (!string.IsNullOrEmpty(key))
             {
-                var redisValue = _connectionMultiplexer.GetDatabase((int) RedisDatabases.BlockedApiKeys)
+                var redisValue = _connectionMultiplexer.GetDatabase((int) RedisDatabases.BlockedUserApiKeys)
                     .StringGet(key);
 
                 return redisValue.IsNullOrEmpty;
