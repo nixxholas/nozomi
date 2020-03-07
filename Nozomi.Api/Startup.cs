@@ -11,7 +11,13 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using Nozomi.Infra.Api.Limiter.Events;
+using Nozomi.Infra.Api.Limiter.Events.Interfaces;
+using Nozomi.Infra.Api.Limiter.Services;
+using Nozomi.Infra.Api.Limiter.Services.Interfaces;
 using Nozomi.Preprocessing;
+using Nozomi.Service.Events;
+using Nozomi.Service.Events.Interfaces;
 
 namespace Nozomi.Api
 {
@@ -36,6 +42,11 @@ namespace Nozomi.Api
                     Version = GlobalApiVariables.CURRENT_API_REVISION.ToString()
                 });
             });
+
+            services.AddTransient<INozomiRedisEvent, NozomiRedisEvent>();
+            services.AddTransient<IRequestEvent, RequestEvent>();
+
+            services.AddTransient<IApiKeyEventsService, ApiKeyEventsService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
