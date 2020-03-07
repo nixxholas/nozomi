@@ -1,7 +1,7 @@
 <template>
     <div>
         <h1 class="title">Currencies</h1>
-        <p class="subtitle">We support any types of currencies</p>
+        <p class="subtitle">We support any type of currencies</p>
 
         <b-field grouped group-multiline v-if="oidcIsAuthenticated">
             <div class="control">
