@@ -33,7 +33,7 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
                 {
                     // Redis connect!
                     var connectionMultiplexer = scope.ServiceProvider.GetRequiredService<IConnectionMultiplexer>();
-                    var database = connectionMultiplexer.GetDatabase((int) RedisDatabases.UnrecordedApiKeyEvents);
+                    var database = connectionMultiplexer.GetDatabase((int) RedisDatabases.ApiKeyEvents);
                 }
             }
             

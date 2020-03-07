@@ -41,7 +41,7 @@ namespace Nozomi.Infra.Api.Limiter.Services
                 if (!string.IsNullOrEmpty(customDescription)) // Add a custom description if any
                     currentRequestEntry += '_' + customDescription; 
                 
-                _connectionMultiplexer.GetDatabase((int) RedisDatabases.UnrecordedApiKeyEvents)
+                _connectionMultiplexer.GetDatabase((int) RedisDatabases.ApiKeyEvents)
                     .SetAdd(currentRequestEntry, fillAmount);
                 _logger.LogInformation($"{_serviceName} Fill: RedisKey {currentRequestEntry} added to " +
                                        $"UnrecordedApiKeyEvents cache.");
@@ -66,7 +66,7 @@ namespace Nozomi.Infra.Api.Limiter.Services
                 {
                     foreach (var apiKeyPair in apiKeyPairs)
                     {
-                        _connectionMultiplexer.GetDatabase((int) RedisDatabases.UnrecordedApiKeyEvents)
+                        _connectionMultiplexer.GetDatabase((int) RedisDatabases.ApiKeyEvents)
                             .KeyDelete(apiKeyPair);
                     }
 

@@ -9,7 +9,7 @@ namespace Nozomi.Preprocessing
         /// Keys are the Event's critical information
         /// Values is the weight of the event.
         /// </summary>
-        UnrecordedApiKeyEvents = 0,
+        ApiKeyEvents = 0,
         /// <summary>
         /// ApiKeyUser Database
         ///
