@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Nozomi.Base.Auth.Models;
 using Stripe;
 
 namespace Nozomi.Infra.Payment.Events.Bootstripe
@@ -14,11 +15,7 @@ namespace Nozomi.Infra.Payment.Events.Bootstripe
 
         bool PlanExists(string planId);
 
-        Task<IEnumerable<Card>> Cards(Base.Auth.Models.User user);
-
-        bool CardExists(string stripeUserId, string cardId);
-        
-        Task<IEnumerable<PaymentMethod>> ListPaymentMethods(string stripeUserId, string paymentMethodType = "card");
+        Task<IEnumerable<PaymentMethod>> ListPaymentMethods(User user, string paymentMethodType = "card");
 
         bool PaymentMethodExists(string stripeUserId, string paymentMethodId);
     }
