@@ -8,11 +8,11 @@ using StackExchange.Redis;
 
 namespace Nozomi.Infra.Api.Limiter.Events
 {
-    public class ApiKeyRedisActionEvent : BaseEvent<ApiKeyRedisActionEvent, AuthDbContext>, IApiKeyRedisActionEvent
+    public class ApiKeyUserRedisEvent : BaseEvent<ApiKeyUserRedisEvent, AuthDbContext>, IApiKeyUserRedisEvent
     {
         private readonly IConnectionMultiplexer _connectionMultiplexer;
         
-        public ApiKeyRedisActionEvent(ILogger<ApiKeyRedisActionEvent> logger, AuthDbContext context,
+        public ApiKeyUserRedisEvent(ILogger<ApiKeyUserRedisEvent> logger, AuthDbContext context,
             IConnectionMultiplexer connectionMultiplexer) 
             : base(logger, context)
         {
@@ -21,12 +21,12 @@ namespace Nozomi.Infra.Api.Limiter.Events
 
         public bool CanPour(string key)
         {
-            if (!string.IsNullOrEmpty(key))
+            if (!string.IsNullOrEmpty(key)) // Check if the key is null
             {
-                var redisValue = _connectionMultiplexer.GetDatabase((int) RedisDatabases.BlockedUserApiKeys)
-                    .StringGet(key);
+                var redisValue = _connectionMultiplexer.GetDatabase((int) RedisDatabases.ApiKeyUser)
+                    .StringGet(key); // Obtain the value
 
-                return redisValue.IsNullOrEmpty;
+                return !redisValue.IsNullOrEmpty; // If the value is null or empty, this guy is banned
             }
             
             throw new NullReferenceException("Invalid key.");

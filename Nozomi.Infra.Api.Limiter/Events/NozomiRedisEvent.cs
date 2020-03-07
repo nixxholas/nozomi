@@ -25,7 +25,7 @@ namespace Nozomi.Infra.Api.Limiter.Events
             return _connectionMultiplexer.GetServer(endpoints[0]).Keys((int) redisDatabase);
         }
 
-        public bool Exists(string key, RedisDatabases redisDatabase = RedisDatabases.BlockedUserApiKeys)
+        public bool Exists(string key, RedisDatabases redisDatabase = RedisDatabases.Default)
         {
             if (!string.IsNullOrEmpty(key))
             {

@@ -15,14 +15,12 @@ namespace Nozomi.Preprocessing
         ///
         /// Keys are APIs that map to its respective user.
         /// Values are the user's ID.
+        ///
+        /// Keys are always earmarked for expiry in 3 months to prevent stacking.
         /// </summary>
-        ApiKeyUser = 2,
-        /// <summary>
-        /// BlockedUserApiKeys Database
-        /// 
-        /// Keys are UserIds
-        /// Values are API Keys
-        /// </summary>
-        BlockedUserApiKeys = 3,
+        /// <remarks>
+        /// If the value is null, the user is banned for the billing month for exceeding his quota.
+        /// </remarks>
+        ApiKeyUser = 2
     }
 }

@@ -1,6 +1,6 @@
 namespace Nozomi.Infra.Api.Limiter.Events.Interfaces
 {
-    public interface IApiKeyRedisActionEvent
+    public interface IApiKeyUserRedisEvent
     {
         /// <summary>
         /// Can this API Key spill into the leaky bucket of the user?
