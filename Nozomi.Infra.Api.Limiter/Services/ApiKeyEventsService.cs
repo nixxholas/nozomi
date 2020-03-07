@@ -56,7 +56,7 @@ namespace Nozomi.Infra.Api.Limiter.Services
                 _connectionMultiplexer.GetDatabase((int) RedisDatabases.ApiKeyEvents)
                     .ListRightPush(apiKey, fillAmount);
                 _logger.LogInformation($"{_serviceName} Fill: API key usage {apiKey} of {fillAmount} tokens " +
-                                       $"added to ApiKeyEvents cache.");
+                                       "added to ApiKeyEvents cache.");
                 return;
             }
             

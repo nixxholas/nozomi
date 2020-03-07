@@ -15,9 +15,9 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
     /// 1. Pops the cached items as soon as possible
     /// 2. Processes the user claims for quota usage with the popped items
     /// </summary>
-    public class UnrecordedApiKeyEventHostedService : BaseHostedService<UnrecordedApiKeyEventHostedService>
+    public class ApiKeyEventHostedService : BaseHostedService<ApiKeyEventHostedService>
     {
-        public UnrecordedApiKeyEventHostedService(IServiceScopeFactory scopeFactory) : base(scopeFactory)
+        public ApiKeyEventHostedService(IServiceScopeFactory scopeFactory) : base(scopeFactory)
         {
         }
 
