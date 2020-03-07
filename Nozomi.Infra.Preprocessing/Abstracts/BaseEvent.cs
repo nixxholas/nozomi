@@ -25,6 +25,20 @@ namespace Nozomi.Preprocessing.Abstracts
         }
     }
     
+    public abstract class BaseEvent<T>
+        where T : class
+    {
+        public const string EventName = nameof(T);
+        protected ILogger<T> _logger;
+        protected readonly string _eventName;
+
+        public BaseEvent(ILogger<T> logger)
+        {
+            _logger = logger;
+            _eventName = typeof(T).FullName;
+        }
+    }
+    
     public abstract class BaseEvent<T, TContext, TEntity> : IBaseEvent<TEntity>
         where T : class
         where TEntity : class
