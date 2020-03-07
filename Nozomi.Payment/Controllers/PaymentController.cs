@@ -34,10 +34,6 @@ namespace Nozomi.Payment.Controllers
                         await _invoicesService.InvoiceFinalized(ParseEventToInvoice(stripeEvent));
                         return Ok();
 
-                    case Events.ChargeDisputeFundsWithdrawn:
-                        await _disputesService.FundsWithdrawn(ParseEventToDispute(stripeEvent));
-                        return Ok();
-                    
                     case Events.CustomerSubscriptionUpdated:
                         var subscription = ParseEventToSubscription(stripeEvent);
                         if (subscription.Status.ToLower().Equals("canceled"))
