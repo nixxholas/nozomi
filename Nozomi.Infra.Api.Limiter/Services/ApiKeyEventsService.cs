@@ -1,7 +1,10 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using IdentityModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using Nozomi.Infra.Api.Limiter.Events.Interfaces;
 using Nozomi.Infra.Api.Limiter.Services.Interfaces;
 using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Abstracts;
@@ -10,23 +13,26 @@ using StackExchange.Redis;
 
 namespace Nozomi.Infra.Api.Limiter.Services
 {
-    public class ApiKeyRedisActionService : BaseService<ApiKeyRedisActionService, AuthDbContext>, 
-        IApiKeyRedisActionService
+    public class ApiKeyEventsService : BaseService<ApiKeyEventsService, AuthDbContext>, 
+        IApiKeyEventsService
     {
         private readonly IConnectionMultiplexer _connectionMultiplexer;
+        private readonly INozomiRedisEvent _nozomiRedisEvent;
         
-        public ApiKeyRedisActionService(ILogger<ApiKeyRedisActionService> logger, AuthDbContext context,
-            IConnectionMultiplexer connectionMultiplexer) 
+        public ApiKeyEventsService(ILogger<ApiKeyEventsService> logger, AuthDbContext context,
+            INozomiRedisEvent nozomiRedisEvent, IConnectionMultiplexer connectionMultiplexer) 
             : base(logger, context)
         {
             _connectionMultiplexer = connectionMultiplexer;
+            _nozomiRedisEvent = nozomiRedisEvent;
         }
 
-        public ApiKeyRedisActionService(IHttpContextAccessor contextAccessor, ILogger<ApiKeyRedisActionService> logger, 
-            AuthDbContext context, IConnectionMultiplexer connectionMultiplexer) 
+        public ApiKeyEventsService(IHttpContextAccessor contextAccessor, ILogger<ApiKeyEventsService> logger, 
+            AuthDbContext context, INozomiRedisEvent nozomiRedisEvent, IConnectionMultiplexer connectionMultiplexer) 
             : base(contextAccessor, logger, context)
         {
             _connectionMultiplexer = connectionMultiplexer;
+            _nozomiRedisEvent = nozomiRedisEvent;
         }
 
         public void Fill(string apiKey, long fillAmount = 1, string customDescription = null)
@@ -36,21 +42,27 @@ namespace Nozomi.Infra.Api.Limiter.Services
                 // Let's use + in strings here to make things quicker since the above statement already has a check in
                 // place.
                 // https://stackoverflow.com/questions/47605/string-concatenation-concat-vs-operator
-                var currentRequestEntry = apiKey + '_' + DateTimeOffset.Now.ToUnixTimeSeconds();
+                // var currentRequestEntry = apiKey + '_' + DateTimeOffset.Now.ToUnixTimeSeconds();
 
+                // TODO: Support for custom descriptions
                 if (!string.IsNullOrEmpty(customDescription)) // Add a custom description if any
-                    currentRequestEntry += '_' + customDescription; 
+                    customDescription += '_' + DateTime.UtcNow.ToEpochTime();
                 
+                if (!_nozomiRedisEvent.Exists(apiKey, (int) RedisDatabases.ApiKeyEvents)) {}
+                    // TODO: Support ^
+
+                // Always push a new item to the right
                 _connectionMultiplexer.GetDatabase((int) RedisDatabases.ApiKeyEvents)
-                    .SetAdd(currentRequestEntry, fillAmount);
-                _logger.LogInformation($"{_serviceName} Fill: RedisKey {currentRequestEntry} added to " +
-                                       $"UnrecordedApiKeyEvents cache.");
+                    .ListRightPush(apiKey, fillAmount);
+                _logger.LogInformation($"{_serviceName} Fill: API key usage {apiKey} of {fillAmount} tokens " +
+                                       $"added to ApiKeyEvents cache.");
                 return;
             }
             
             throw new ArgumentNullException("Invalid api key or fill amount.");
         }
 
+        [Obsolete]
         public void Clear(string apiKey)
         {
             if (!string.IsNullOrEmpty(apiKey))

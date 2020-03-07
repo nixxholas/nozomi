@@ -56,7 +56,7 @@ namespace Nozomi.Infra.Api.Limiter.Attributes
                     && redisEvent.ContainsValue(apiKey, RedisDatabases.ApiKeyUser))
                 {
                     var apiKeyRedisActionService =
-                        c.HttpContext.RequestServices.GetRequiredService<IApiKeyRedisActionService>();
+                        c.HttpContext.RequestServices.GetRequiredService<IApiKeyEventsService>();
                     
                     // Push the usage and move on
                     apiKeyRedisActionService.Fill(apiKey, Weight);

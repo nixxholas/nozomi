@@ -1,6 +1,8 @@
+using System;
+
 namespace Nozomi.Infra.Api.Limiter.Services.Interfaces
 {
-    public interface IApiKeyRedisActionService
+    public interface IApiKeyEventsService
     {
         /// <summary>
         /// Informs Redis about how much the user has filled up for the request he has made.
@@ -15,6 +17,7 @@ namespace Nozomi.Infra.Api.Limiter.Services.Interfaces
         /// Clears all actions made by this API Key.
         /// </summary>
         /// <param name="apiKey">The API Key for KVP evaluation</param>
+        [Obsolete]
         void Clear(string apiKey);
     }
 }
