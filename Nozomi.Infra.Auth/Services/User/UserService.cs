@@ -308,10 +308,10 @@ namespace Nozomi.Infra.Auth.Services.User
             var subscriptionClaim = GetUserClaim(userId, claimType);
 
             if (subscriptionClaim == null)
-            {
-                CreateUserClaim(userId, archiveClaimType, subscriptionClaim.ClaimValue, methodName);
-                DeleteUserClaim(userId, subscriptionClaim, methodName);
-            }
+                throw new NullReferenceException($"{_serviceName} {methodName}: Unable to find user {userId} active subscription");
+            
+            CreateUserClaim(userId, archiveClaimType, subscriptionClaim.ClaimValue, methodName);
+            DeleteUserClaim(userId, subscriptionClaim, methodName);
         }
 
         private UserClaim GetUserClaim(string userId, string claimType)
