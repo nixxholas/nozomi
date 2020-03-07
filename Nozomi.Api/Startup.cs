@@ -19,6 +19,7 @@ using Nozomi.Infra.Api.Limiter.Services;
 using Nozomi.Infra.Api.Limiter.Services.Interfaces;
 using Nozomi.Preprocessing;
 using Nozomi.Repo.Auth.Data;
+using Nozomi.Repo.Data;
 using Nozomi.Service.Events;
 using Nozomi.Service.Events.Interfaces;
 using VaultSharp;
@@ -55,15 +56,15 @@ namespace Nozomi.Api
                     authMethod);
                 var vaultClient = new VaultClient(vaultClientSettings);
                 
-                var vault = vaultClient.V1.Secrets.Cubbyhole.ReadSecretAsync("api-limiter")
+                var vault = vaultClient.V1.Secrets.Cubbyhole.ReadSecretAsync("api")
                     .GetAwaiter()
                     .GetResult().Data;
                 
                 services.ConfigureRedis((string) vault["redis"]);
 
-                services.AddDbContextPool<AuthDbContext>(options =>
+                services.AddDbContextPool<NozomiDbContext>(options =>
                 {
-                    options.UseNpgsql((string) vault["auth"], 
+                    options.UseNpgsql((string) vault["main"], 
                         nozomiDbContextBuilder => { nozomiDbContextBuilder.EnableRetryOnFailure(); }
                     );
                     options.EnableSensitiveDataLogging(false);
@@ -78,9 +79,9 @@ namespace Nozomi.Api
                 
                 services.ConfigureRedis(redisStr);
 
-                services.AddDbContextPool<AuthDbContext>(options =>
+                services.AddDbContextPool<NozomiDbContext>(options =>
                 {
-                    options.UseNpgsql(Configuration.GetConnectionString("LocalAuth:" + Environment.MachineName), 
+                    options.UseNpgsql(Configuration.GetConnectionString("Local:" + Environment.MachineName), 
                         nozomiDbContextBuilder => { nozomiDbContextBuilder.EnableRetryOnFailure(); }
                     );
                     options.EnableSensitiveDataLogging(false);
