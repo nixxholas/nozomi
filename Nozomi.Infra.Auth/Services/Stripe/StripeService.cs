@@ -54,56 +54,6 @@ namespace Nozomi.Infra.Auth.Services.Stripe
             _userManager = userManager;
         }
 
-        public async Task PropagateCustomer(Base.Auth.Models.User user)
-        {
-            if (user != null)
-            {
-                // Check if he/she has stripe up or not first 
-                var stripeClaims = (await _userManager.GetClaimsAsync(user))
-                    .Where(c => c.Type.Equals(NozomiJwtClaimTypes.StripeCustomerId));
-
-                if (stripeClaims.Any())
-                {
-                    _logger.LogInformation($"{_serviceName} PropagateCustomer: User {user.Id} already has " +
-                                           $"stripe binded.");
-                    return;
-                }
-
-                var customer = new CustomerCreateOptions
-                {
-                    Email = user.Email,
-                };
-                var customerService = new CustomerService();
-                var result = await customerService.CreateAsync(customer);
-
-                if (result.StripeResponse.StatusCode == HttpStatusCode.OK)
-                {
-                    var claim = new Claim(NozomiJwtClaimTypes.StripeCustomerId, result.Id);
-                    var addClaimRes = await _userManager.AddClaimAsync(user, claim);
-
-                    if (!addClaimRes.Succeeded)
-                    {
-                        _logger.LogInformation($"{_serviceName} PropagateCustomer: There was an issue " +
-                                               $"pushing the stripe customer id of {result.Id} to user claims of " +
-                                               $"user {user.Id}.");
-                        throw new WebException($"{_serviceName} PropagateCustomer: There was an issue " +
-                                                             $"pushing the stripe customer id of {result.Id} to user claims of " +
-                                                             $"user {user.Id}.");
-                    }
-
-                    return; // ok!
-                }
-
-                _logger.LogInformation($"{_serviceName} PropagateCustomer: There was an issue " +
-                                       $"propagating the stripe id for user {user.Id}.");
-                throw new StripeException($"{_serviceName} PropagateCustomer: There was an issue " +
-                                          $"propagating the stripe id for user {user.Id}.");
-            }
-
-            _logger.LogInformation($"{_serviceName} PropagateCustomer: Invalid user.");
-            throw new InvalidConstraintException($"{_serviceName} PropagateCustomer: Invalid user.");
-        }
-
         public async Task AddPaymentMethod(string paymentMethodId, Base.Auth.Models.User user)
         {
             if (!string.IsNullOrEmpty(paymentMethodId) && user != null)

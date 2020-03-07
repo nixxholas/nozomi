@@ -23,6 +23,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Nozomi.Auth.Controllers.Home;
@@ -37,6 +38,7 @@ using Nozomi.Infra.Auth.Services.Address;
 using Nozomi.Infra.Auth.Services.Stripe;
 using Nozomi.Infra.Auth.Services.User;
 using Nozomi.Infra.Blockchain.Auth.Events.Interfaces;
+using Nozomi.Infra.Payment.Services.Bootstripe;
 using Nozomi.Preprocessing.Events.Interfaces;
 
 namespace Nozomi.Auth.Controllers.Account
@@ -57,6 +59,7 @@ namespace Nozomi.Auth.Controllers.Account
         private readonly IEventService _events;
         private readonly IAddressService _addressService;
         private readonly IStripeService _stripeService;
+        private readonly IBootstripeService _bootstripeService;
         private readonly IUserService _userService;
 
         public AccountController(
@@ -74,6 +77,7 @@ namespace Nozomi.Auth.Controllers.Account
             IEventService events, 
             IAddressService addressService,
             IStripeService stripeService,
+            IBootstripeService bootstripeService,
             IUserService userService) : base(logger, webHostEnvironment)
         {
             _emailSender = emailSender;
@@ -89,6 +93,7 @@ namespace Nozomi.Auth.Controllers.Account
             _addressService = addressService;
             _stripeService = stripeService;
             _userService = userService;
+            _bootstripeService = bootstripeService;
         }
         
         #region Helpers
@@ -826,7 +831,7 @@ namespace Nozomi.Auth.Controllers.Account
                 else
                 {
                     // Setup stripe
-                    await _stripeService.PropagateCustomer(user);
+                    await _bootstripeService.RegisterCustomer(user);
                     
                     // Obtain claim
                     var stripeCustomerIdClaim = (await _userManager.GetClaimsAsync(user))
