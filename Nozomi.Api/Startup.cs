@@ -22,6 +22,7 @@ using Nozomi.Repo.Auth.Data;
 using Nozomi.Repo.Data;
 using Nozomi.Service.Events;
 using Nozomi.Service.Events.Interfaces;
+using Swashbuckle.AspNetCore.Filters;
 using VaultSharp;
 using VaultSharp.V1.AuthMethods.Token;
 
@@ -97,6 +98,18 @@ namespace Nozomi.Api
                     Title = "Nozomi API", 
                     Version = GlobalApiVariables.CURRENT_API_REVISION.ToString()
                 });
+
+                config.OperationFilter<AddResponseHeadersFilter>();
+                
+                config.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+                {
+                    Description = "Standard Authorization header using an API Key. Example: \"{token}\"",
+                    In = ParameterLocation.Header,
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.ApiKey
+                });
+
+                config.OperationFilter<SecurityRequirementsOperationFilter>();
             });
 
             services.AddTransient<INozomiRedisEvent, NozomiRedisEvent>();
