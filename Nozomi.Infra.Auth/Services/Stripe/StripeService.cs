@@ -54,65 +54,6 @@ namespace Nozomi.Infra.Auth.Services.Stripe
             _userManager = userManager;
         }
 
-        public async Task Subscribe(string planId, Base.Auth.Models.User user)
-        {
-            if (user != null)
-            {
-                if (_stripeEvent.PlanExists(planId))
-                {
-                    var plan = await _planService.GetAsync(planId);
-
-                    var userClaims = await _userManager.GetClaimsAsync(user);
-
-                    // Ensure the user has his/her stripe customer id up
-                    if (!userClaims.Any() || !userClaims.Any(uc =>
-                            uc.Type.Equals(NozomiJwtClaimTypes.StripeCustomerId)))
-                    {
-                        // This shouldn't happen, but just in case
-                        _logger.LogInformation($"{_serviceName} addsubscribePlanCard: user has yet to bind to stripe");
-                        throw new KeyNotFoundException($"{_serviceName} subscribePlan: user has yet to bind to stripe");
-                    }
-
-                    var customerIdClaim = userClaims.SingleOrDefault(uc => uc.Type.Equals(NozomiJwtClaimTypes.StripeCustomerId));
-                    if (customerIdClaim != null)
-                    {
-                        var subscriptionOptions = new SubscriptionCreateOptions
-                        {
-                            Customer = customerIdClaim.Value,
-                            CancelAtPeriodEnd = false,
-                            Items = new List<SubscriptionItemOptions> {
-                                new SubscriptionItemOptions
-                                {
-                                    Plan = plan.Id
-                                }
-                            }
-                        };
-
-                        var subscription = await _subscriptionService.CreateAsync(subscriptionOptions);
-
-                        // If the subscription ain't null, bind it
-                        if (subscription != null)
-                        {
-                            var subscriptionUserClaim = new Claim(NozomiJwtClaimTypes.StripeSubscriptionId, subscription.Id);
-                            await _userManager.AddClaimAsync(user, subscriptionUserClaim);
-
-                            _logger.LogInformation($"{_serviceName} subscribePlan: {user.Id} successfully subscribed to new plan " +
-                                                    $" tokenized as {subscriptionUserClaim.Value}");
-                            return; // Done!
-                        }
-
-                        _logger.LogInformation($"{_serviceName} subscribePlan: There was an issue subscribing " +
-                                    $"user {user.Id} to {plan.Id}");
-                        throw new StripeException($"{_serviceName} subscribePlan: There was an issue subscribing " +
-                                                        $"user {user.Id} to {plan.Id}");
-                    }
-                    throw new NullReferenceException($"{_serviceName} subscribePlan: user has yet to bind to stripe");
-                }
-                throw new NullReferenceException($"{_serviceName} subscribePlan: plan does not exist.");
-            }
-            throw new NullReferenceException($"{_serviceName} subscribePlan: user is null.");
-        }
-
         public async Task Unsubscribe(Base.Auth.Models.User user)
         {
             if (user != null)
