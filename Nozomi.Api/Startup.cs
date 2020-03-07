@@ -22,6 +22,8 @@ using Nozomi.Repo.Auth.Data;
 using Nozomi.Repo.Data;
 using Nozomi.Service.Events;
 using Nozomi.Service.Events.Interfaces;
+using Nozomi.Service.Services.Requests;
+using Nozomi.Service.Services.Requests.Interfaces;
 using Swashbuckle.AspNetCore.Filters;
 using VaultSharp;
 using VaultSharp.V1.AuthMethods.Token;
@@ -116,6 +118,7 @@ namespace Nozomi.Api
             services.AddTransient<IRequestEvent, RequestEvent>();
 
             services.AddTransient<IApiKeyEventsService, ApiKeyEventsService>();
+            services.AddTransient<IRequestService, RequestService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
