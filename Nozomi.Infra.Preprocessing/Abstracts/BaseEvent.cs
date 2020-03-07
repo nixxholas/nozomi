@@ -7,6 +7,19 @@ using Nozomi.Preprocessing.Abstracts.Interfaces;
 
 namespace Nozomi.Preprocessing.Abstracts
 {
+    public abstract class BaseEvent<T>
+        where T : class
+    {
+        protected ILogger<T> _logger;
+        protected readonly string _eventName;
+
+        public BaseEvent(ILogger<T> logger)
+        {
+            _logger = logger;
+            _eventName = typeof(T).FullName;
+        }
+    }
+    
     public abstract class BaseEvent<T, TContext>
         where T : class
         where TContext : DbContext
