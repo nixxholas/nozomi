@@ -49,7 +49,7 @@ namespace Nozomi.Infra.Api.Limiter.Services
                 if (!string.IsNullOrEmpty(customDescription)) // Add a custom description if any
                     customDescription += '_' + DateTime.UtcNow.ToEpochTime();
                 
-                if (!_nozomiRedisEvent.Exists(apiKey, (int) RedisDatabases.ApiKeyEvents)) {}
+                if (!_nozomiRedisEvent.Exists(apiKey, RedisDatabases.ApiKeyEvents)) {}
                     Create(apiKey); // Create the api key into the redis cache first
 
                 // Always push a new item to the right
@@ -96,7 +96,7 @@ namespace Nozomi.Infra.Api.Limiter.Services
         {
             if (!string.IsNullOrEmpty(key))
             {
-                if (!_nozomiRedisEvent.Exists(key, (int) RedisDatabases.ApiKeyEvents))
+                if (!_nozomiRedisEvent.Exists(key,RedisDatabases.ApiKeyEvents))
                 {
                     // Since it doesn't exist yet, create it
                     _connectionMultiplexer.GetDatabase((int) RedisDatabases.ApiKeyEvents)
