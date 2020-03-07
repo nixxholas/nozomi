@@ -6,7 +6,9 @@ using Microsoft.Extensions.Logging;
 using Nozomi.Base.Auth.Global;
 using Nozomi.Base.BCL.Configurations;
 using Nozomi.Infra.Auth.Events.Stripe;
+using Nozomi.Infra.Auth.Events.UserEvent;
 using Nozomi.Infra.Auth.Services.QuotaClaims;
+using Nozomi.Infra.Auth.Services.User;
 using Nozomi.Infra.Payment.Services.Interfaces;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.Auth.Data;
@@ -17,10 +19,10 @@ namespace Nozomi.Infra.Payment.Services
 {
     class InvoicesService : BaseService<InvoicesService>, IInvoicesService
     {
-        private readonly IStripeEvent _stripeEvent;
+        private readonly IUserEvent _userEvent;
         private readonly IQuotaClaimsService _quotaClaimsService;
-        public InvoicesService(ILogger<InvoicesService> logger, IStripeEvent stripeEvent, IQuotaClaimsService quotaClaimsService) : base(logger) {
-            _stripeEvent = stripeEvent;
+        public InvoicesService(ILogger<InvoicesService> logger, IUserEvent userEvent, IQuotaClaimsService quotaClaimsService) : base(logger) {
+            _userEvent = userEvent;
             _quotaClaimsService = quotaClaimsService;
         }
 
@@ -29,7 +31,7 @@ namespace Nozomi.Infra.Payment.Services
             var methodName = "InvoiceFinalized";
             PerformInvoicePrecheck(invoice, methodName);
 
-            var user = await _stripeEvent.GetUserByCustomerId(invoice.CustomerId);
+            var user = await _userEvent.GetUserByCustomerId(invoice.CustomerId);
 
             if(user == null)
                 throw new NullReferenceException($"{_serviceName} {methodName}: Unable to find user tied to customer id.");

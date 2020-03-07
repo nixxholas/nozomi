@@ -151,7 +151,7 @@ namespace Nozomi.Infra.Payment.Services.SubscriptionHandling
                 throw new InvalidOperationException($"{_serviceName} {methodName}: ");
 
             var customerId = subscription.CustomerId;
-            var user = await _stripeEvent.GetUserByCustomerId(customerId);
+            var user = await _userEvent.GetUserByCustomerId(customerId);
 
             if (user == null)
                 throw new NullReferenceException(

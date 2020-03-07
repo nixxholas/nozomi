@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using Nozomi.Infra.Auth.Events.UserEvent;
 using Nozomi.Infra.Payment.Services.Bootstripe;
 using Nozomi.Infra.Payment.Services.SubscriptionHandling;
 
@@ -16,12 +17,14 @@ namespace Nozomi.Infra.Payment.Services
     {
         private readonly IStripeEvent _stripeEvent;
         private readonly IBootstripeService _bootstripeService;
+        private readonly IUserEvent _userEvent;
         private readonly ISubscriptionsHandlingService _subscriptionsHandlingService;
 
-        public DisputesService(ILogger<DisputesService> logger, IStripeEvent stripeEvent, IBootstripeService bootstripeService, ISubscriptionsHandlingService subscriptionsHandlingService) : base(logger) {
+        public DisputesService(ILogger<DisputesService> logger, IStripeEvent stripeEvent, IBootstripeService bootstripeService, ISubscriptionsHandlingService subscriptionsHandlingService, IUserEvent userEvent) : base(logger) {
             _stripeEvent = stripeEvent;
             _bootstripeService = bootstripeService;
             _subscriptionsHandlingService = subscriptionsHandlingService;
+            _userEvent = userEvent;
         }
 
         public async Task DisputeClosed(Dispute dispute)
@@ -45,7 +48,7 @@ namespace Nozomi.Infra.Payment.Services
             var methodName = "DisputeCreated";
             PerformDisputePreCheck(dispute, methodName);
 
-            var user = await _stripeEvent.GetUserByCustomerId(dispute.Charge.CustomerId);
+            var user = await _userEvent.GetUserByCustomerId(dispute.Charge.CustomerId);
 
             if(user == null)
                 throw new NullReferenceException($"{_serviceName} {methodName}: Unable to find user tied to customer id.");
@@ -65,7 +68,7 @@ namespace Nozomi.Infra.Payment.Services
 
             var customerId = dispute.Charge.CustomerId;
             
-            var user = await _stripeEvent.GetUserByCustomerId(customerId);
+            var user = await _userEvent.GetUserByCustomerId(customerId);
 
             if(user == null)
                 throw new NullReferenceException($"{_serviceName} {methodName}: Unable to find user tied to customer id: {customerId}");

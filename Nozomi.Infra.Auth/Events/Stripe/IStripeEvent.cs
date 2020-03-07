@@ -6,7 +6,5 @@ namespace Nozomi.Infra.Auth.Events.Stripe
 {
     public interface IStripeEvent
     {
-
-        Task<Base.Auth.Models.User> GetUserByCustomerId(string id);
     }
 }
