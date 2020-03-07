@@ -38,7 +38,7 @@ namespace Nozomi.Service.Services
         {
             if (inputModel.IsValid())
             {
-                var request = _requestEvent.GetByGuid(Guid.Parse(inputModel.RequestGuid), true);
+                var request = _requestEvent.GetByGuid(Guid.Parse(inputModel.RequestGuid), null, true);
                 
                 if (request != null && (request.RequestProperties == null || !request.RequestProperties
                         // Ensure we don't check for duplicate custom headers
