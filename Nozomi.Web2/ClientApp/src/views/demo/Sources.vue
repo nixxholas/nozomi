@@ -1,7 +1,7 @@
 <template>
     <div>
         <h1 class="title">Sources</h1>
-        <h2 class="subtitle">A glimpse at where our data came from</h2>
+        <h2 class="subtitle">Where our data is retrieved</h2>
 
         <b-field grouped group-multiline v-if="oidcIsAuthenticated">
             <div class="control">
