@@ -9,12 +9,12 @@ using StackExchange.Redis;
 
 namespace Nozomi.Infra.Api.Limiter.Events
 {
-    public class NozomiRedisEvent : BaseEvent<NozomiRedisEvent, AuthDbContext>, INozomiRedisEvent
+    public class NozomiRedisEvent : BaseEvent<NozomiRedisEvent>, INozomiRedisEvent
     {
         private readonly IConnectionMultiplexer _connectionMultiplexer;
         
-        public NozomiRedisEvent(ILogger<NozomiRedisEvent> logger, AuthDbContext context,
-            IConnectionMultiplexer connectionMultiplexer) : base(logger, context)
+        public NozomiRedisEvent(ILogger<NozomiRedisEvent> logger, IConnectionMultiplexer connectionMultiplexer) 
+            : base(logger)
         {
             _connectionMultiplexer = connectionMultiplexer;
         }
