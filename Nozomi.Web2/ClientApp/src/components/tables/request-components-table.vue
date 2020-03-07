@@ -131,6 +131,6 @@
 <style scoped>
     .is-parent-container {
         padding: 1rem 1.5rem;
-        margin-bottom: 5rem;
+        margin-bottom: 3rem;
     }
 </style>
