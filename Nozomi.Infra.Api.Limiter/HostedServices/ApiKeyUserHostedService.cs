@@ -19,9 +19,9 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
     /// 1. Removes a key's value if it has reached its quota
     /// 2. Adds new key entries.
     /// </summary>
-    public class ApiKeyUserRedisHostedService : BaseHostedService<ApiKeyUserRedisHostedService>
+    public class ApiKeyUserHostedService : BaseHostedService<ApiKeyUserHostedService>
     {
-        public ApiKeyUserRedisHostedService(IServiceScopeFactory scopeFactory) : base(scopeFactory)
+        public ApiKeyUserHostedService(IServiceScopeFactory scopeFactory) : base(scopeFactory)
         {
         }
 
@@ -37,6 +37,14 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
                 {
                     var authDbContext = scope.ServiceProvider.GetRequiredService<AuthDbContext>();
                     var redisEvent = scope.ServiceProvider.GetRequiredService<INozomiRedisEvent>();
+                    
+                    // Obtain all users with their API keys, quota limit and quota usage.
+                    
+                    // Add the new key entries first
+                    
+                    // Update keys with exceeded quotas
+                    
+                    // DONE!
 
                     // // Obtain all banned users
                     // var bannedUsers = redisEvent
