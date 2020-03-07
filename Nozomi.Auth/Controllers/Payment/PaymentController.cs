@@ -19,6 +19,8 @@ using Nozomi.Base.BCL.Configurations;
 using Nozomi.Infra.Auth.Events.Stripe;
 using Nozomi.Infra.Auth.Services.Stripe;
 using Nozomi.Infra.Auth.Services.User;
+using Nozomi.Infra.Payment.Services.Bootstripe;
+using Nozomi.Infra.Payment.Services.SubscriptionHandling;
 using Stripe;
 
 namespace Nozomi.Auth.Controllers.Payment
@@ -30,10 +32,11 @@ namespace Nozomi.Auth.Controllers.Payment
         private readonly IStripeEvent _stripeEvent;
         private readonly IStripeService _stripeService;
         private readonly IUserService _userService;
+        private readonly IBootstripeService _bootstripeService;
         
         public PaymentController(ILogger<PaymentController> logger, IWebHostEnvironment webHostEnvironment,
             IOptions<StripeOptions> stripeOptions,
-            UserManager<User> userManager, IStripeEvent stripeEvent, IStripeService stripeService, 
+            UserManager<User> userManager, IStripeEvent stripeEvent, IStripeService stripeService, IBootstripeService bootstripeService,
             IUserService userService) 
             : base(logger, webHostEnvironment)
         {
@@ -42,6 +45,7 @@ namespace Nozomi.Auth.Controllers.Payment
             _stripeEvent = stripeEvent;
             _stripeService = stripeService;
             _userService = userService;
+            _bootstripeService = bootstripeService;
         }
 
         [AllowAnonymous]
@@ -156,7 +160,7 @@ namespace Nozomi.Auth.Controllers.Payment
                 if (!string.IsNullOrEmpty(vm.PaymentMethodId)
                     && !_stripeEvent.PaymentMethodExists(stripeUserClaim.Value, vm.PaymentMethodId))
                 {
-                    await _stripeService.AddPaymentMethod(vm.PaymentMethodId, user);
+                    await _bootstripeService.AddPaymentMethod(vm.PaymentMethodId, user);
                 
                     // Return
                     _logger.LogInformation($"AddCard: card of ID {vm.PaymentMethodId} added to {user.Id}");
@@ -223,7 +227,7 @@ namespace Nozomi.Auth.Controllers.Payment
                     if (!string.IsNullOrEmpty(id)
                         && _stripeEvent.PaymentMethodExists(stripeUserClaim.Value, id))
                     {
-                        await _stripeService.RemovePaymentMethod(id, user);
+                        await _bootstripeService.RemovePaymentMethod(id, user);
                 
                         // Return
                         _logger.LogInformation($"RemovePaymentMethod: card of ID {id} removed from {user.Id}");
