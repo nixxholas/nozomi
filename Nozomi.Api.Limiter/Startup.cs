@@ -12,6 +12,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Nozomi.Api.Limiter.Extensions;
+using Nozomi.Infra.Api.Limiter.Events;
+using Nozomi.Infra.Api.Limiter.Events.Interfaces;
+using Nozomi.Infra.Api.Limiter.HostedServices;
+using Nozomi.Infra.Api.Limiter.Services;
+using Nozomi.Infra.Api.Limiter.Services.Interfaces;
 using Nozomi.Repo.Auth.Data;
 using StackExchange.Redis;
 using VaultSharp;
@@ -68,6 +73,7 @@ namespace Nozomi.Api.Limiter
                 Console.WriteLine(@"Welcome to the dev environment, your machine is named: " + Environment.MachineName);
                 
                 var redisStr = Configuration.GetConnectionString("LocalRedis:" + Environment.MachineName);
+                
                 services.ConfigureRedis(redisStr);
 
                 services.AddDbContextPool<AuthDbContext>(options =>
@@ -81,6 +87,17 @@ namespace Nozomi.Api.Limiter
             }
             
             services.AddControllers();
+
+            // Service layer injections
+            services.AddTransient<IApiKeyUserRedisEvent, ApiKeyUserRedisEvent>();
+            services.AddTransient<INozomiRedisEvent, NozomiRedisEvent>();
+
+            services.AddTransient<IApiKeyEventsService, ApiKeyEventsService>();
+            services.AddTransient<INozomiRedisService, NozomiRedisService>();
+
+            // Hosted service injections
+            services.AddHostedService<ApiKeyEventHostedService>();
+            services.AddHostedService<ApiKeyUserHostedService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
