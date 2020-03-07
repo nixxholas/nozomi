@@ -159,6 +159,36 @@ namespace Nozomi.Infra.Payment.Services.SubscriptionHandling
             _userService.RemoveSubscription(user.Id);
         }
 
+        public async Task UnsubscribeUser(User user)
+        {
+            const string methodName = "UnsubscribeUser";
+            PerformUserPrecheck(user, methodName);
+
+            var subscriptionId =  _userEvent.GetUserActiveSubscriptionId(user.Id);
+            
+            if(string.IsNullOrEmpty(subscriptionId))
+                throw new InvalidOperationException($"{_serviceName} {methodName}: User has no active subscription to cancel");
+
+            var subscription = await _subscriptionService.GetAsync(subscriptionId);
+
+            if (_stripeEvent.IsDefaultPlan(subscription.Plan.Id))
+                throw new InvalidOperationException($"{_serviceName} {methodName}: Unable to cancel subscription {subscriptionId} as it is the default plan");
+            
+            var cancelOptions = new SubscriptionCancelOptions
+            {
+                InvoiceNow = true,
+                Prorate = false
+            };
+            
+            subscription = await _subscriptionService.CancelAsync(subscriptionId, 
+                cancelOptions);
+            
+            if(subscription.CanceledAt == null)
+                throw new StripeException($"{_serviceName} {methodName}: An error occured while trying to cancel subscription {subscriptionId}");
+            
+            _userService.RemoveSubscription(user.Id);
+        }
+
         private void PerformUserPrecheck(User user, string methodName)
         {
             if(user == null)
