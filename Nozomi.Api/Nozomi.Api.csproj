@@ -9,5 +9,9 @@
       <ProjectReference Include="..\Nozomi.Infra.Service\Nozomi.Infra.Service.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="VaultSharp" Version="0.11.1002" />
+    </ItemGroup>
+
 
 </Project>
