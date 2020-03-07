@@ -21,6 +21,21 @@ namespace Nozomi.Infra.Payment.Services
             _bootstripeService = bootstripeService;
         }
 
+        public async Task DisputeClosed(Dispute dispute)
+        {
+            var methodName = "DisputeClosed";
+            PerformDisputePreCheck(dispute, methodName);
+
+            switch (dispute.Status.ToLower())
+            {
+                case "lost":
+                    await DisputeLost(dispute);
+                    return;
+                default:
+                    throw new InvalidOperationException($"{_serviceName} {methodName}: Dispute is not closed");
+            }
+        }
+
         [Obsolete]
         public async Task FundsWithdrawn(Dispute dispute)
         {

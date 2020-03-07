@@ -8,6 +8,7 @@ namespace Nozomi.Infra.Payment.Services.Interfaces
 {
     public interface IDisputesService
     {
+        Task DisputeClosed(Dispute dispute);
         Task FundsWithdrawn(Dispute dispute);
 
         Task DisputeLost(Dispute dispute);
