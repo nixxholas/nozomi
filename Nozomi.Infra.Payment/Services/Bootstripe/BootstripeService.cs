@@ -192,47 +192,6 @@ namespace Nozomi.Infra.Payment.Services.Bootstripe
             _userService.SetDefaultPaymentMethod(user.Id, paymentMethodId);
         }
 
-        public async Task Subscribe(string planId, User user)
-        {
-            const string methodName = "Subscribe";
-            PerformUserPrecheck(user, methodName);
-
-            if (!_userEvent.HasStripe(user.Id))
-                throw new InvalidOperationException($"{_serviceName} {methodName}: User is not registered for stripe");
-
-            var stripeCustomerId = _userEvent.GetStripeCustomerId(user.Id);
-
-            var plan = await _planService.GetAsync(planId);
-
-            if (plan == null)
-                throw new StripeException($"{_serviceName} {methodName}: Plan does not exist");
-            
-            var quotaValue = 0;
-            var quotaString = plan.Metadata["Quota"];
-            if (!int.TryParse(quotaString, out quotaValue))
-                throw new FormatException($"{_serviceName} {methodName}: Failed to parse plan quota to int");
-
-            var subscriptionOptions = new SubscriptionCreateOptions
-            {
-                Customer = stripeCustomerId,
-                CancelAtPeriodEnd = false,
-                Items = new List<SubscriptionItemOptions> 
-                {
-                    new SubscriptionItemOptions
-                    {
-                        Plan = plan.Id
-                    }
-                }
-            };
-
-            var subscription = await _subscriptionService.CreateAsync(subscriptionOptions);
-            if (subscription == null)
-                throw new StripeException($"{_serviceName} {methodName}: An error occured while trying to create subscription for plan {planId} for {user.Id}");
-
-            _userService.AddSubscription(user.Id, subscription.Id);
-            _quotaClaimsService.SetQuota(user.Id, quotaValue);
-        }
-
         public async Task ChangePlan(string planId, User user)
         {
             const string methodName = "ChangePlan";
