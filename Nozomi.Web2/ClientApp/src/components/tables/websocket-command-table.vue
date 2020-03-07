@@ -1,5 +1,5 @@
 <template>
-    <div v-bind:class="{ section: isSection }">
+    <div v-bind:class="{ section: isSection }" class="is-parent-container has-background-white">
         <WebsocketCommandModal :has-navbar="isSection"
                                :request-guid="requestGuid"
                                @added="addNewProperty"
@@ -152,5 +152,8 @@
 </script>
 
 <style scoped>
-
+    .is-parent-container {
+        padding: 1rem 1.5rem;
+        margin-bottom: 3rem;
+    }
 </style>
