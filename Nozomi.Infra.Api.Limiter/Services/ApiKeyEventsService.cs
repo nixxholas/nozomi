@@ -50,7 +50,7 @@ namespace Nozomi.Infra.Api.Limiter.Services
                     customDescription += '_' + DateTime.UtcNow.ToEpochTime();
                 
                 if (!_nozomiRedisEvent.Exists(apiKey, (int) RedisDatabases.ApiKeyEvents)) {}
-                    // TODO: Support ^
+                    Create(apiKey); // Create the api key into the redis cache first
 
                 // Always push a new item to the right
                 _connectionMultiplexer.GetDatabase((int) RedisDatabases.ApiKeyEvents)
