@@ -24,7 +24,7 @@ namespace Nozomi.Service.Events.Interfaces
         
         Request Get(Expression<Func<Request, bool>> predicate);
         
-        Request GetByGuid(Guid guid, bool track = false);
+        Request GetByGuid(Guid guid, string userId = null, bool track = false);
         
         Request GetActive(long id, bool track = false);
 
