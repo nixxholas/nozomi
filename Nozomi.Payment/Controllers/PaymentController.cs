@@ -43,7 +43,11 @@ namespace Nozomi.Payment.Controllers
                         if (subscription.Status.ToLower().Equals("canceled"))
                             await _subscriptionsHandlingService.SubscriptionCancelled(subscription);
                         return Ok();
-
+                    
+                    case Events.ChargeDisputeClosed:
+                        var dispute = ParseEventToDispute(stripeEvent);
+                        await _disputesService.DisputeClosed(dispute);
+                        return Ok();
                     default:
                         return BadRequest();
                 }
