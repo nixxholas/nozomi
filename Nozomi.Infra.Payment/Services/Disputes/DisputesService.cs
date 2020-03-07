@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Logging;
-using Nozomi.Infra.Auth.Events.Stripe;
 using Nozomi.Infra.Payment.Services.Interfaces;
 using Nozomi.Preprocessing.Abstracts;
 using Stripe;
@@ -15,13 +14,11 @@ namespace Nozomi.Infra.Payment.Services
 {
     class DisputesService : BaseService<DisputesService>, IDisputesService
     {
-        private readonly IStripeEvent _stripeEvent;
         private readonly IBootstripeService _bootstripeService;
         private readonly IUserEvent _userEvent;
         private readonly ISubscriptionsHandlingService _subscriptionsHandlingService;
 
-        public DisputesService(ILogger<DisputesService> logger, IStripeEvent stripeEvent, IBootstripeService bootstripeService, ISubscriptionsHandlingService subscriptionsHandlingService, IUserEvent userEvent) : base(logger) {
-            _stripeEvent = stripeEvent;
+        public DisputesService(ILogger<DisputesService> logger, IBootstripeService bootstripeService, ISubscriptionsHandlingService subscriptionsHandlingService, IUserEvent userEvent) : base(logger) {
             _bootstripeService = bootstripeService;
             _subscriptionsHandlingService = subscriptionsHandlingService;
             _userEvent = userEvent;

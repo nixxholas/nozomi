@@ -18,7 +18,6 @@ using Nozomi.Base.Auth.Global;
 using Nozomi.Base.Auth.Models;
 using Nozomi.Base.BCL.Configurations;
 using Nozomi.Data.Models.Currency;
-using Nozomi.Infra.Auth.Events.Stripe;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.Auth.Data;
 using Nozomi.Repo.BCL.Repository;
@@ -28,13 +27,11 @@ namespace Nozomi.Infra.Auth.Services.QuotaClaims
     public class QuotaClaimsService : BaseService<QuotaClaimsService, AuthDbContext>, IQuotaClaimsService
     {
         private readonly UserManager<Base.Auth.Models.User> _userManager;
-        private readonly IStripeEvent _stripeEvent;
         
         public QuotaClaimsService(ILogger<QuotaClaimsService> logger, IUnitOfWork<AuthDbContext> unitOfWork, 
-            IStripeEvent stripeEvent, UserManager<Base.Auth.Models.User> userManager) : base(logger, unitOfWork)
+            UserManager<Base.Auth.Models.User> userManager) : base(logger, unitOfWork)
         {
             _userManager = userManager;
-            _stripeEvent = stripeEvent;
         }
 
         public void SetQuota(string userId, int quotaAmt)

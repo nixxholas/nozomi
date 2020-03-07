@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualBasic.CompilerServices;
 using Nozomi.Base.Auth.Models;
-using Nozomi.Infra.Auth.Events.Stripe;
 using Nozomi.Infra.Auth.Events.UserEvent;
 using Nozomi.Infra.Auth.Services.QuotaClaims;
 using Nozomi.Infra.Auth.Services.User;
@@ -20,7 +19,6 @@ namespace Nozomi.Infra.Payment.Services.Bootstripe
     {
         private readonly IUserService _userService;
         private readonly IQuotaClaimsService _quotaClaimsService;
-        private readonly IStripeEvent _stripeEvent;
         private readonly IUserEvent _userEvent;
         
         private readonly CustomerService _customerService;
@@ -28,12 +26,11 @@ namespace Nozomi.Infra.Payment.Services.Bootstripe
         private readonly PlanService _planService;
         private readonly SubscriptionService _subscriptionService;
         
-        public BootstripeService(ILogger<BootstripeService> logger, IUserService userService, IUserEvent userEvent, IStripeEvent stripeEvent, IQuotaClaimsService quotaClaimsService) : base(logger)
+        public BootstripeService(ILogger<BootstripeService> logger, IUserService userService, IUserEvent userEvent, IQuotaClaimsService quotaClaimsService) : base(logger)
         {
             _userService = userService;
             _quotaClaimsService = quotaClaimsService;
             _userEvent = userEvent;
-            _stripeEvent = stripeEvent;
             
             _customerService = new CustomerService();
             _paymentMethodService = new PaymentMethodService();

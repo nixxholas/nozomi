@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Nozomi.Base.Auth.Global;
 using Nozomi.Base.BCL.Configurations;
-using Nozomi.Infra.Auth.Events.Stripe;
 using Nozomi.Infra.Auth.Events.UserEvent;
 using Nozomi.Infra.Auth.Services.QuotaClaims;
 using Nozomi.Infra.Auth.Services.User;
