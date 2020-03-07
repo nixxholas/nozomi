@@ -16,7 +16,6 @@ using Nozomi.Base.Auth.Global;
 using Nozomi.Base.Auth.Models;
 using Nozomi.Base.Auth.ViewModels.Payment;
 using Nozomi.Base.BCL.Configurations;
-using Nozomi.Infra.Auth.Events.Stripe;
 using Nozomi.Infra.Auth.Services.User;
 using Nozomi.Infra.Payment.Events.Bootstripe;
 using Nozomi.Infra.Payment.Services.Bootstripe;
@@ -29,7 +28,6 @@ namespace Nozomi.Auth.Controllers.Payment
     {
         private readonly IOptions<StripeOptions> _stripeOptions;
         private readonly UserManager<User> _userManager;
-        private readonly IStripeEvent _stripeEvent;
         private readonly IUserService _userService;
         private readonly IBootstripeService _bootstripeService;
         private readonly ISubscriptionsHandlingService _subscriptionsHandlingService;
@@ -37,14 +35,13 @@ namespace Nozomi.Auth.Controllers.Payment
         
         public PaymentController(ILogger<PaymentController> logger, IWebHostEnvironment webHostEnvironment,
             IOptions<StripeOptions> stripeOptions,
-            UserManager<User> userManager, IStripeEvent stripeEvent, IBootstripeService bootstripeService, IBootstripeEvent bootstripeEvent,
+            UserManager<User> userManager, IBootstripeService bootstripeService, IBootstripeEvent bootstripeEvent,
             ISubscriptionsHandlingService subscriptionsHandlingService,
             IUserService userService) 
             : base(logger, webHostEnvironment)
         {
             _stripeOptions = stripeOptions;
             _userManager = userManager;
-            _stripeEvent = stripeEvent;
             _userService = userService;
             _bootstripeService = bootstripeService;
             _bootstripeEvent = bootstripeEvent;

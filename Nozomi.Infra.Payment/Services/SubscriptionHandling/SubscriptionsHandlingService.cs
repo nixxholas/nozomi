@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Nozomi.Base.Auth.Models;
-using Nozomi.Infra.Auth.Events.Stripe;
 using Nozomi.Infra.Auth.Events.UserEvent;
 using Nozomi.Infra.Auth.Services.QuotaClaims;
 using Nozomi.Infra.Auth.Services.User;
@@ -21,17 +20,15 @@ namespace Nozomi.Infra.Payment.Services.SubscriptionHandling
         private readonly IQuotaClaimsService _quotaClaimsService;
         private readonly IUserEvent _userEvent;
         private readonly IUserService _userService;
-        private readonly IStripeEvent _stripeEvent;
         private readonly IBootstripeEvent _bootstripeEvent;
 
         private readonly SubscriptionService _subscriptionService;
         private readonly PlanService _planService;
         
-        public SubscriptionsHandlingService(ILogger<SubscriptionsHandlingService> logger, IQuotaClaimsService quotaClaimsService, IUserEvent userEvent, IUserService userService, IStripeEvent stripeEvent, IBootstripeEvent bootstripeEvent) : base(logger)
+        public SubscriptionsHandlingService(ILogger<SubscriptionsHandlingService> logger, IQuotaClaimsService quotaClaimsService, IUserEvent userEvent, IUserService userService, IBootstripeEvent bootstripeEvent) : base(logger)
         {
             _quotaClaimsService = quotaClaimsService;
             _userEvent = userEvent;
-            _stripeEvent = stripeEvent;
             _userService = userService;
             _bootstripeEvent = bootstripeEvent;
             
