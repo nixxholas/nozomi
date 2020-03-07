@@ -17,7 +17,6 @@ namespace Nozomi.Infra.Api.Limiter.Attributes
     /// <summary>
     /// Decorates any MVC route that needs to have client requests limited by API quotas.
     /// </summary>
-    /// 
     /// <remarks>
     /// Uses the StackExchange.Redis to store each client quota usage to the decorated route.
     /// </remarks>
