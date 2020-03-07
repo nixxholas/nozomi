@@ -35,7 +35,6 @@ using Nozomi.Base.Auth.ViewModels.Account;
 using Nozomi.Base.BCL.Helpers.Native.Text;
 using Nozomi.Base.Blockchain.Auth.Query.Validating;
 using Nozomi.Infra.Auth.Services.Address;
-using Nozomi.Infra.Auth.Services.Stripe;
 using Nozomi.Infra.Auth.Services.User;
 using Nozomi.Infra.Blockchain.Auth.Events.Interfaces;
 using Nozomi.Infra.Payment.Services.Bootstripe;
@@ -58,7 +57,6 @@ namespace Nozomi.Auth.Controllers.Account
         private readonly IValidatingEvent _validatingEvent;
         private readonly IEventService _events;
         private readonly IAddressService _addressService;
-        private readonly IStripeService _stripeService;
         private readonly IBootstripeService _bootstripeService;
         private readonly IUserService _userService;
 
@@ -76,7 +74,6 @@ namespace Nozomi.Auth.Controllers.Account
             IValidatingEvent validatingEvent,
             IEventService events, 
             IAddressService addressService,
-            IStripeService stripeService,
             IBootstripeService bootstripeService,
             IUserService userService) : base(logger, webHostEnvironment)
         {
@@ -91,7 +88,6 @@ namespace Nozomi.Auth.Controllers.Account
             _validatingEvent = validatingEvent;
             _events = events;
             _addressService = addressService;
-            _stripeService = stripeService;
             _userService = userService;
             _bootstripeService = bootstripeService;
         }

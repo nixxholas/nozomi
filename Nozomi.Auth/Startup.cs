@@ -26,7 +26,6 @@ using Nozomi.Base.Auth.Models;
 using Nozomi.Base.BCL.Configurations;
 using Nozomi.Infra.Auth.Events.Stripe;
 using Nozomi.Infra.Auth.Services.Address;
-using Nozomi.Infra.Auth.Services.Stripe;
 using Nozomi.Infra.Auth.Services.User;
 using Nozomi.Infra.Blockchain.Auth.Events;
 using Nozomi.Infra.Blockchain.Auth.Events.Interfaces;
@@ -262,8 +261,8 @@ namespace Nozomi.Auth
 
             services.AddTransient<IEmailSender, EmailSender>();
             services.AddScoped<IAddressService, AddressService>();
-            services.AddScoped<IStripeService, StripeService>();
             services.AddScoped<IUserService, UserService>();
+            //TODO: ADD NEW SERVICES FOR INFRA.PAYMENT
         }
 
         public void Configure(IApplicationBuilder app)
