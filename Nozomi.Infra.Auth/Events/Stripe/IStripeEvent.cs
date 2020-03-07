@@ -7,12 +7,6 @@ namespace Nozomi.Infra.Auth.Events.Stripe
     public interface IStripeEvent
     {
 
-        /// <summary>
-        /// Obtain all plans stashed for our product
-        /// </summary>
-        /// <returns></returns>
-        Task<IEnumerable<Plan>> Plans(bool activeOnly = true);
-
         Task<IEnumerable<PaymentMethod>> ListPaymentMethods(string stripeUserId, string paymentMethodType = "card");
 
         bool PaymentMethodExists(string stripeUserId, string paymentMethodId);

@@ -89,32 +89,6 @@ namespace Nozomi.Infra.Auth.Events.Stripe
             return false;
         }
 
-        public async Task<IEnumerable<Plan>> Plans(bool activeOnly = true)
-        {
-            if (_stripeProduct != null)
-            {
-                var planService = new PlanService();
-                var planListOptions = new PlanListOptions
-                {
-                    Active = activeOnly,
-                    Product = _stripeProduct.Id
-                };
-                
-                var plans = await planService.ListAsync(planListOptions);
-                if (plans.StripeResponse.StatusCode != HttpStatusCode.OK)
-                {
-                    _logger.LogWarning($"{_eventName} plans: Unable to load, plans cannot be " +
-                                       $"retrieved from Stripe.");
-                    throw new NullReferenceException($"{_eventName} plans: Unable to load, plans cannot be " +
-                                                     $"retrieved from Stripe.");
-                }
-
-                return plans.Data;
-            }
-
-            throw new NullReferenceException($"{_eventName} plans: Unable to load, Product is not configured.");
-        }
-
         public async Task<Base.Auth.Models.User> GetUserByCustomerId(string id)
         {
             if (string.IsNullOrEmpty(id))

@@ -55,7 +55,7 @@ namespace Nozomi.Auth.Controllers.Payment
         [HttpGet]
         public async Task<IActionResult> Plans()
         {
-            return Ok(await _stripeEvent.Plans());
+            return Ok(await _bootstripeEvent.GetPlans());
         }
         
         [Authorize(AuthenticationSchemes = "Bearer")]
