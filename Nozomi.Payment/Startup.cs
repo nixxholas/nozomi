@@ -2,10 +2,14 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
 using Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes;
+using Nozomi.Preprocessing.Filters;
+using Nozomi.Repo.Auth.Data;
 using Nozomi.Repo.BCL.Context;
 using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
@@ -46,7 +50,7 @@ namespace Nozomi.Payment
 
                 services
                     .AddEntityFrameworkNpgsql()
-                    .AddDbContext<NozomiDbContext>(options =>
+                    .AddDbContext<AuthDbContext>(options =>
                         {
                             options.UseNpgsql(str);
                             options.EnableSensitiveDataLogging();
@@ -68,7 +72,7 @@ namespace Nozomi.Payment
                     authMethod);
                 var vaultClient = new VaultClient(vaultClientSettings);
 
-                var nozomiVault = vaultClient.V1.Secrets.Cubbyhole.ReadSecretAsync("nozomi")
+                var nozomiVault = vaultClient.V1.Secrets.Cubbyhole.ReadSecretAsync("payments")
                     .GetAwaiter()
                     .GetResult().Data;
 
@@ -76,7 +80,7 @@ namespace Nozomi.Payment
                 if (string.IsNullOrEmpty(mainDb))
                     throw new SystemException("Invalid main database configuration");
                 // Database
-                services.AddDbContext<NozomiDbContext>(options =>
+                services.AddDbContext<AuthDbContext>(options =>
                 {
                     options.UseNpgsql(mainDb
                         , builder =>
@@ -102,8 +106,18 @@ namespace Nozomi.Payment
             services.AddTransient<IRcdHistoricItemService, RcdHistoricItemService>();
             services.AddTransient<IComponentService, ComponentService>();
             services.AddTransient<IRequestService, RequestService>();
-            services.AddHostedService<HttpGetRequestSyncingService>();
-            services.AddHostedService<HttpPostRequestSyncingService>();
+            
+            services.AddControllers(options =>
+                {
+                    options.Filters.Add(typeof(HttpGlobalExceptionFilter));
+                })
+                .AddNewtonsoftJson(options =>
+                {
+                    options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                })
+                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+            
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -113,11 +127,23 @@ namespace Nozomi.Payment
             {
                 app.UseDeveloperExceptionPage();
             }
-            
+
             using (var scope = 
                 app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
             using (var context = scope.ServiceProvider.GetService<NozomiDbContext>())
                 context.Database.Migrate();
+            
+            app.UseEndpoints(endpoints =>
+            {
+                // MapControllers adds support for attribute-routed controllers.
+                // MapAreaControllerRoute adds a conventional route for controllers
+                // in an area.
+                // MapControllerRoute adds a conventional route for controllers.
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller}/{action=Index}/{id?}");
+                endpoints.MapControllers();
+            });
 
             app.Run(async (context) => { await context.Response.WriteAsync("Hello World!"); });
         }
