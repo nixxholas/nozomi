@@ -132,9 +132,22 @@ namespace Nozomi.Infra.Payment.Events.Bootstripe
             return paymentMethods.Data;
         }
 
-        public bool PaymentMethodExists(string stripeUserId, string paymentMethodId)
+        public async Task<bool> PaymentMethodExistsUnderUser(User user, string paymentMethodId)
         {
-            throw new System.NotImplementedException();
+            const string methodName = "PaymentMethodExists";
+            PerformUserPrecheck(user, methodName);
+
+            var customerId = _userEvent.GetStripeCustomerId(user.Id);
+            
+            if(paymentMethodId.IsNullOrEmpty())
+                throw new ArgumentNullException($"{_eventName} {methodName}: Invalid payment method id");
+
+            var paymentMethod = await _paymentMethodService.GetAsync(paymentMethodId);
+
+            if (paymentMethod == null || !paymentMethod.CustomerId.Equals(customerId))
+                return false;
+
+            return true;
         }
         
         private void PerformUserPrecheck(User user, string methodName)

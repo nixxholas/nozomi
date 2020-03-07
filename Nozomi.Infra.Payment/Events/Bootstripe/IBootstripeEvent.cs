@@ -17,6 +17,6 @@ namespace Nozomi.Infra.Payment.Events.Bootstripe
 
         Task<IEnumerable<PaymentMethod>> ListPaymentMethods(User user, string paymentMethodType = "card");
 
-        bool PaymentMethodExists(string stripeUserId, string paymentMethodId);
+        Task<bool> PaymentMethodExistsUnderUser(User user, string paymentMethodId);
     }
 }
