@@ -6,5 +6,7 @@ namespace Nozomi.Api.Controllers.Request
     public interface IRequestController
     {
         IActionResult Get(string guid);
+
+        IActionResult Create(CreateRequestViewModel vm);
     }
 }
