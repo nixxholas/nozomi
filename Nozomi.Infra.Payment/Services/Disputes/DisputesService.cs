@@ -47,10 +47,10 @@ namespace Nozomi.Infra.Payment.Services
 
             var customerId = dispute.Charge.CustomerId;
             
-            var user = await _stripeEvent.GetUserByCustomerId(dispute.Charge.CustomerId);
+            var user = await _stripeEvent.GetUserByCustomerId(customerId);
 
             if(user == null)
-                throw new NullReferenceException($"{_serviceName} {methodName}: Unable to find user tied to customer id.");
+                throw new NullReferenceException($"{_serviceName} {methodName}: Unable to find user tied to customer id: {customerId}");
 
             //TODO: Retrieve free plan ID from appsettings
             await _bootstripeService.ChangePlan("plan_GeGfCW7hwiQYQk", user);
