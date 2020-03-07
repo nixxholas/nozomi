@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Nozomi.Infra.Payment.Services.DisputesHandling;
-using Nozomi.Infra.Payment.Services.Interfaces;
+using Nozomi.Infra.Payment.Services.InvoicesHandling;
 using Nozomi.Infra.Payment.Services.SubscriptionHandling;
 using Stripe;
 
@@ -16,7 +16,7 @@ namespace Nozomi.Payment.Controllers
     [Route("api/[controller]")]
     public class PaymentController : Controller
     {
-        private readonly IInvoicesService _invoicesService;
+        private readonly IInvoicesHandlingService _invoicesHandlingService;
         private readonly IDisputesHandlingService _disputesHandlingService;
         private readonly ISubscriptionsHandlingService _subscriptionsHandlingService;
 
@@ -32,7 +32,7 @@ namespace Nozomi.Payment.Controllers
                 // Handle the event
                 switch (stripeEvent.Type) {
                     case Events.InvoiceFinalized:
-                        await _invoicesService.InvoiceFinalized(ParseEventToInvoice(stripeEvent));
+                        await _invoicesHandlingService.InvoiceFinalized(ParseEventToInvoice(stripeEvent));
                         return Ok();
 
                     case Events.CustomerSubscriptionUpdated:

@@ -1,26 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Nozomi.Base.Auth.Global;
-using Nozomi.Base.BCL.Configurations;
 using Nozomi.Infra.Auth.Events.UserEvent;
 using Nozomi.Infra.Auth.Services.QuotaClaims;
-using Nozomi.Infra.Auth.Services.User;
-using Nozomi.Infra.Payment.Services.Interfaces;
 using Nozomi.Preprocessing.Abstracts;
-using Nozomi.Repo.Auth.Data;
-using Nozomi.Repo.BCL.Repository;
 using Stripe;
 
-namespace Nozomi.Infra.Payment.Services
+namespace Nozomi.Infra.Payment.Services.InvoicesHandling
 {
-    class InvoicesService : BaseService<InvoicesService>, IInvoicesService
+    class InvoicesHandlingService : BaseService<InvoicesHandlingService>, IInvoicesHandlingService
     {
         private readonly IUserEvent _userEvent;
         private readonly IQuotaClaimsService _quotaClaimsService;
-        public InvoicesService(ILogger<InvoicesService> logger, IUserEvent userEvent, IQuotaClaimsService quotaClaimsService) : base(logger) {
+        public InvoicesHandlingService(ILogger<InvoicesHandlingService> logger, IUserEvent userEvent, IQuotaClaimsService quotaClaimsService) : base(logger) {
             _userEvent = userEvent;
             _quotaClaimsService = quotaClaimsService;
         }

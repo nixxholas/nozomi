@@ -9,7 +9,6 @@ using Nozomi.Infra.Auth.Services.QuotaClaims;
 using Nozomi.Infra.Auth.Services.User;
 using Nozomi.Infra.Payment.Events.Bootstripe;
 using Nozomi.Infra.Payment.Services.Bootstripe;
-using Nozomi.Infra.Payment.Services.Interfaces;
 using Nozomi.Preprocessing.Abstracts;
 using Stripe;
 
