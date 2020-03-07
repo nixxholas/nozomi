@@ -1,12 +1,44 @@
+using System;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Nozomi.Data.ViewModels.Request;
+using Nozomi.Infra.Api.Limiter.Attributes;
+using Nozomi.Infra.Api.Limiter.Events.Interfaces;
 using Nozomi.Preprocessing.Abstracts;
+using Nozomi.Preprocessing.ActionResults;
+using Nozomi.Service.Events.Interfaces;
 
 namespace Nozomi.Api.Controllers.Request
 {
     public class RequestController : BaseApiController<RequestController>, IRequestController
     {
-        public RequestController(ILogger<RequestController> logger) : base(logger)
+        private readonly INozomiRedisEvent _nozomiRedisEvent;
+        private readonly IRequestEvent _requestEvent;
+
+        public RequestController(ILogger<RequestController> logger,
+            INozomiRedisEvent nozomiRedisEvent, IRequestEvent requestEvent) : base(logger)
         {
+            _nozomiRedisEvent = nozomiRedisEvent;
+            _requestEvent = requestEvent;
+        }
+
+        [TokenBucket(Name = "Request/Get", Weight = 1)]
+        [HttpGet("{guid}")]
+        [Produces("application/json")]
+        public IActionResult Get(string guid)
+        {
+            if (Guid.TryParse(guid, out var parsedGuid))
+            {
+                if (HttpContext.Request.Headers.TryGetValue("Authorization", out var apiKey))
+                    return Ok(_requestEvent.GetByGuid(parsedGuid, 
+                        _nozomiRedisEvent.GetValue(apiKey).ToString()));
+
+                _logger.LogWarning($"{_controllerName} Get: User managed to bypass the token bucket " +
+                                   "attribute without an API key!");
+                return new InternalServerErrorObjectResult("Not sure how you got here, but no.");
+            }
+
+            return BadRequest("Invalid Guid.");
         }
     }
 }
