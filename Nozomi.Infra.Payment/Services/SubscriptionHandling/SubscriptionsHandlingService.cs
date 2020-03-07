@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Nozomi.Base.Auth.Models;
+using Nozomi.Base.BCL.Configurations;
 using Nozomi.Infra.Auth.Events.UserEvent;
 using Nozomi.Infra.Auth.Services.QuotaClaims;
 using Nozomi.Infra.Auth.Services.User;
@@ -20,16 +22,18 @@ namespace Nozomi.Infra.Payment.Services.SubscriptionHandling
         private readonly IUserEvent _userEvent;
         private readonly IUserService _userService;
         private readonly IBootstripeEvent _bootstripeEvent;
+        private readonly IOptions<StripeOptions> _stripeConfiguration;
 
         private readonly SubscriptionService _subscriptionService;
         private readonly PlanService _planService;
         
-        public SubscriptionsHandlingService(ILogger<SubscriptionsHandlingService> logger, IQuotaClaimsService quotaClaimsService, IUserEvent userEvent, IUserService userService, IBootstripeEvent bootstripeEvent) : base(logger)
+        public SubscriptionsHandlingService(ILogger<SubscriptionsHandlingService> logger, IQuotaClaimsService quotaClaimsService, IUserEvent userEvent, IUserService userService, IBootstripeEvent bootstripeEvent, IOptions<StripeOptions> stripeConfiguration) : base(logger)
         {
             _quotaClaimsService = quotaClaimsService;
             _userEvent = userEvent;
             _userService = userService;
             _bootstripeEvent = bootstripeEvent;
+            _stripeConfiguration = stripeConfiguration;
             
             _subscriptionService = new SubscriptionService();
             _planService = new PlanService();
@@ -153,10 +157,9 @@ namespace Nozomi.Infra.Payment.Services.SubscriptionHandling
                 throw new NullReferenceException(
                     $"{_serviceName} {methodName}: Unable to retrieve user based on customer id {customerId}");
             
-            //TODO: Get default plan quota
-            var quota = 5000;
-            _quotaClaimsService.SetQuota(user.Id, quota);
             _userService.RemoveSubscription(user.Id);
+            var defaultPlanId = _stripeConfiguration.Value.DefaultPlanId;
+            await Subscribe(defaultPlanId, user);
         }
 
         public async Task UnsubscribeUser(User user)
@@ -189,9 +192,10 @@ namespace Nozomi.Infra.Payment.Services.SubscriptionHandling
             if(subscription.CanceledAt == null)
                 throw new StripeException($"{_serviceName} {methodName}: An error occured while trying to cancel subscription {subscriptionId}");
             
-            //TODO: GET DEFAULT QUOTA FROM PLAN ID
-            _quotaClaimsService.SetQuota(user.Id, 5000);
             _userService.RemoveSubscription(user.Id);
+
+            var defaultPlanId = _stripeConfiguration.Value.DefaultPlanId;
+            await Subscribe(defaultPlanId, user);
         }
 
         private void PerformUserPrecheck(User user, string methodName)
