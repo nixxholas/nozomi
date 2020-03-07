@@ -186,6 +186,8 @@ namespace Nozomi.Infra.Payment.Services.SubscriptionHandling
             if(subscription.CanceledAt == null)
                 throw new StripeException($"{_serviceName} {methodName}: An error occured while trying to cancel subscription {subscriptionId}");
             
+            //TODO: GET DEFAULT QUOTA FROM PLAN ID
+            _quotaClaimsService.SetQuota(user.Id, 5000);
             _userService.RemoveSubscription(user.Id);
         }
 
