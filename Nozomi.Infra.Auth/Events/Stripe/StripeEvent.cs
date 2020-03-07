@@ -164,16 +164,6 @@ namespace Nozomi.Infra.Auth.Events.Stripe
             return false;
         }
 
-        public bool IsDefaultPlan(string planId)
-        {
-            if (!string.IsNullOrEmpty(planId))
-            {
-                return planId.Equals(_stripeOptions.Value.DefaultPlanId);
-            }
-            _logger.LogWarning($"{_eventName} IsDefaultPlan: Null plan id.");
-            return false;
-        }
-
         public async Task<IEnumerable<Plan>> Plans(bool activeOnly = true)
         {
             if (_stripeProduct != null)

@@ -8,6 +8,8 @@ using Nozomi.Infra.Auth.Events.Stripe;
 using Nozomi.Infra.Auth.Events.UserEvent;
 using Nozomi.Infra.Auth.Services.QuotaClaims;
 using Nozomi.Infra.Auth.Services.User;
+using Nozomi.Infra.Payment.Events.Bootstripe;
+using Nozomi.Infra.Payment.Services.Bootstripe;
 using Nozomi.Infra.Payment.Services.Interfaces;
 using Nozomi.Preprocessing.Abstracts;
 using Stripe;
@@ -20,16 +22,18 @@ namespace Nozomi.Infra.Payment.Services.SubscriptionHandling
         private readonly IUserEvent _userEvent;
         private readonly IUserService _userService;
         private readonly IStripeEvent _stripeEvent;
+        private readonly IBootstripeEvent _bootstripeEvent;
 
         private readonly SubscriptionService _subscriptionService;
         private readonly PlanService _planService;
         
-        public SubscriptionsHandlingService(ILogger<SubscriptionsHandlingService> logger, IQuotaClaimsService quotaClaimsService, IUserEvent userEvent, IUserService userService, IStripeEvent stripeEvent) : base(logger)
+        public SubscriptionsHandlingService(ILogger<SubscriptionsHandlingService> logger, IQuotaClaimsService quotaClaimsService, IUserEvent userEvent, IUserService userService, IStripeEvent stripeEvent, IBootstripeEvent bootstripeEvent) : base(logger)
         {
             _quotaClaimsService = quotaClaimsService;
             _userEvent = userEvent;
             _stripeEvent = stripeEvent;
             _userService = userService;
+            _bootstripeEvent = bootstripeEvent;
             
             _subscriptionService = new SubscriptionService();
             _planService = new PlanService();
@@ -170,8 +174,11 @@ namespace Nozomi.Infra.Payment.Services.SubscriptionHandling
                 throw new InvalidOperationException($"{_serviceName} {methodName}: User has no active subscription to cancel");
 
             var subscription = await _subscriptionService.GetAsync(subscriptionId);
+            
+            if(subscription == null)
+                throw new StripeException($"{_serviceName} {methodName}: An error occured while trying to retrieve subscription {subscriptionId}");
 
-            if (_stripeEvent.IsDefaultPlan(subscription.Plan.Id))
+            if (_bootstripeEvent.IsDefaultPlan(subscription.Plan.Id))
                 throw new InvalidOperationException($"{_serviceName} {methodName}: Unable to cancel subscription {subscriptionId} as it is the default plan");
             
             var cancelOptions = new SubscriptionCancelOptions

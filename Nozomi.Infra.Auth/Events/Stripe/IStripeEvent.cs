@@ -6,9 +6,7 @@ namespace Nozomi.Infra.Auth.Events.Stripe
 {
     public interface IStripeEvent
     {
-        
-        bool IsDefaultPlan(string planId);
-        
+
         /// <summary>
         /// Obtain all plans stashed for our product
         /// </summary>
