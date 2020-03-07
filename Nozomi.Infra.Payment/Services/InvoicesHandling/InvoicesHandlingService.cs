@@ -8,7 +8,7 @@ using Stripe;
 
 namespace Nozomi.Infra.Payment.Services.InvoicesHandling
 {
-    class InvoicesHandlingService : BaseService<InvoicesHandlingService>, IInvoicesHandlingService
+    public class InvoicesHandlingService : BaseService<InvoicesHandlingService>, IInvoicesHandlingService
     {
         private readonly IUserEvent _userEvent;
         private readonly IQuotaClaimsService _quotaClaimsService;

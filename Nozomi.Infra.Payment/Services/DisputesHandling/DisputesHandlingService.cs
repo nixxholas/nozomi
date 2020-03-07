@@ -9,7 +9,7 @@ using Stripe;
 
 namespace Nozomi.Infra.Payment.Services.DisputesHandling
 {
-    class DisputesHandlingService : BaseService<DisputesHandlingService>, IDisputesHandlingService
+    public class DisputesHandlingService : BaseService<DisputesHandlingService>, IDisputesHandlingService
     {
         private readonly IBootstripeService _bootstripeService;
         private readonly IUserEvent _userEvent;
