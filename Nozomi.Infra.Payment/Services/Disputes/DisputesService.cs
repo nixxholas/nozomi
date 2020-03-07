@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using Nozomi.Infra.Payment.Services.Bootstripe;
+using Nozomi.Infra.Payment.Services.SubscriptionHandling;
 
 namespace Nozomi.Infra.Payment.Services
 {
@@ -15,10 +16,12 @@ namespace Nozomi.Infra.Payment.Services
     {
         private readonly IStripeEvent _stripeEvent;
         private readonly IBootstripeService _bootstripeService;
+        private readonly ISubscriptionsHandlingService _subscriptionsHandlingService;
 
-        public DisputesService(ILogger<DisputesService> logger, IStripeEvent stripeEvent, IBootstripeService bootstripeService) : base(logger) {
+        public DisputesService(ILogger<DisputesService> logger, IStripeEvent stripeEvent, IBootstripeService bootstripeService, ISubscriptionsHandlingService subscriptionsHandlingService) : base(logger) {
             _stripeEvent = stripeEvent;
             _bootstripeService = bootstripeService;
+            _subscriptionsHandlingService = subscriptionsHandlingService;
         }
 
         public async Task DisputeClosed(Dispute dispute)
@@ -48,7 +51,7 @@ namespace Nozomi.Infra.Payment.Services
                 throw new NullReferenceException($"{_serviceName} {methodName}: Unable to find user tied to customer id.");
 
             //TODO: Retrieve free plan ID from appsettings
-            await _bootstripeService.ChangePlan("plan_GeGfCW7hwiQYQk", user);
+            await _subscriptionsHandlingService.ChangePlan("plan_GeGfCW7hwiQYQk", user);
             return;
         }
 
@@ -68,7 +71,7 @@ namespace Nozomi.Infra.Payment.Services
                 throw new NullReferenceException($"{_serviceName} {methodName}: Unable to find user tied to customer id: {customerId}");
 
             //TODO: Retrieve free plan ID from appsettings
-            await _bootstripeService.ChangePlan("plan_GeGfCW7hwiQYQk", user);
+            await _subscriptionsHandlingService.ChangePlan("plan_GeGfCW7hwiQYQk", user);
         }
 
         private void PerformDisputePreCheck(Dispute dispute, string methodName) {
