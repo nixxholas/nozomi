@@ -7,7 +7,7 @@
                 </div>
             </div>
             
-            <div class="level-right">
+            <div class="level-right" v-if="showCreateFeature && guid">
                 <div class="level-item">
                     <CreateRequestComponentModal v-bind:guid="guid" />
                 </div>
