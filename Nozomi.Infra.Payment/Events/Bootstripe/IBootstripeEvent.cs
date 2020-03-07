@@ -8,9 +8,9 @@ namespace Nozomi.Infra.Payment.Events.Bootstripe
     {
         bool IsDefaultPlan(string planId);
         
-        Task<IEnumerable<Plan>> Plans(bool activeOnly = true);
+        Task<IEnumerable<Plan>> GetPlans(bool activeOnly = true);
 
-        Plan Plan(string planId);
+        Plan GetPlan(string planId);
 
         bool PlanExists(string planId);
 
