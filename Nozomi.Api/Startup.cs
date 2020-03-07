@@ -98,7 +98,13 @@ namespace Nozomi.Api
             {
                 config.SwaggerDoc(GlobalApiVariables.CURRENT_API_VERSION, new OpenApiInfo {
                     Title = "Nozomi API", 
-                    Version = GlobalApiVariables.CURRENT_API_REVISION.ToString()
+                    Version = string.Concat("r", GlobalApiVariables.CURRENT_API_REVISION.ToString()),
+                    Description = "Powered by you, the Nozomi API is capable of delivering real-time data for " +
+                                  "all of your target endpoints. The API comes with an unlimited amount of components, " +
+                                  "each serving your specific needs. Throughout this documentation you will learn " +
+                                  "about API structure, methods, potential errors and code examples. " +
+                                  "In case if there are any questions left unanswered, please make sure to contact " +
+                                  "us and our team will be happy to help out."
                 });
 
                 config.OperationFilter<AddResponseHeadersFilter>();
@@ -147,7 +153,7 @@ namespace Nozomi.Api
                 c.DocumentTitle = "Nozomi API Documentation";
                 c.RoutePrefix = "";
                 c.SwaggerEndpoint($"/{GlobalApiVariables.CURRENT_API_VERSION}/swagger.json", 
-                    $"Nozomi API rev. {GlobalApiVariables.CURRENT_API_REVISION}");
+                    $"Nozomi API");
             });
         }
     }
