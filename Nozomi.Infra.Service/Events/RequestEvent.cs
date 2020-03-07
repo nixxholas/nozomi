@@ -98,9 +98,12 @@ namespace Nozomi.Service.Events
                        .SingleOrDefault(predicate) ?? null;
         }
 
-        public Request GetByGuid(Guid guid, bool track = false)
+        public Request GetByGuid(Guid guid, string userId = null, bool track = false)
         {
             var query = _context.Requests.AsNoTracking();
+
+            if (!string.IsNullOrEmpty(userId))
+                query = query.Where(r => r.CreatedById.Equals(userId));
 
             if (track)
             {

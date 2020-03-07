@@ -1,7 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using StackExchange.Redis;
 
-namespace Nozomi.Api.Limiter.Extensions
+namespace Nozomi.Api.Extensions
 {
     public static class StartupRedis
     {
