@@ -80,7 +80,18 @@ namespace Nozomi.Infra.Payment.Events.Bootstripe
 
         public bool PlanExists(string planId)
         {
-            throw new System.NotImplementedException();
+            const string methodName = "PlanExists";
+            
+            if (string.IsNullOrEmpty(planId))
+                throw new ArgumentNullException($"{_eventName} {methodName}: Plan id is null");
+            var planListOptions = new PlanListOptions
+            {
+                Active = true,
+                Product = _stripeOptions.Value.ProductId,
+            };
+            var plans = _planService.List(planListOptions);
+
+            return plans.Data.Any(p => p.Id.Equals(planId));
         }
 
         public Task<IEnumerable<Card>> Cards(User user)
