@@ -13,5 +13,7 @@ namespace Nozomi.Infra.Auth.Events.UserEvent
         string GetStripeCustomerId(string userId);
 
         string GetUserActiveSubscriptionId(string userId);
+
+        IEnumerable<string> GetUserPaymentMethods(string userId);
     }
 }

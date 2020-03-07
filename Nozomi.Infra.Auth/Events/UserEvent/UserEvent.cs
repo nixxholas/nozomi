@@ -80,6 +80,16 @@ namespace Nozomi.Infra.Auth.Events.UserEvent
             return claim?.ClaimValue;
         }
 
+        public IEnumerable<string> GetUserPaymentMethods(string userId)
+        {
+            const string methodName = "GetUserPaymentMethods";
+            const string claimType = NozomiJwtClaimTypes.StripeCustomerPaymentMethodId;
+
+            var userClaims = GetUserClaims(userId, claimType);
+            
+            return userClaims.Select(uc => uc.ClaimValue);
+        }
+
         private UserClaim GetUserClaim(string userId, string claimType)
         {
             return _unitOfWork.GetRepository<UserClaim>().GetQueryable().AsTracking().SingleOrDefault(claim => claim.ClaimType.Equals(claimType) && claim.UserId.Equals(userId));
