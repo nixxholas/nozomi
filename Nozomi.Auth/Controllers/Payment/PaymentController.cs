@@ -299,7 +299,7 @@ namespace Nozomi.Auth.Controllers.Payment
             if (user != null)
             {
                 // Since the user has no existing subscriptions, proceed.
-                await _stripeService.Unsubscribe(user);
+                await _subscriptionsHandlingService.UnsubscribeUser(user);
                 
                 // Return
                 _logger.LogInformation($"Unsubscribe: Subscription removed from {user.Id}");
