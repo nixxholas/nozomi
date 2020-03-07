@@ -19,5 +19,11 @@ namespace Nozomi.Infra.Api.Limiter.Services.Interfaces
         /// <param name="apiKey">The API Key for KVP evaluation</param>
         [Obsolete]
         void Clear(string apiKey);
+
+        /// <summary>
+        /// Creates a new redis key entry for ApiKeyEvents.
+        /// </summary>
+        /// <param name="key">The API Key to set as a key for the redis entry.</param>
+        void Create(string key);
     }
 }

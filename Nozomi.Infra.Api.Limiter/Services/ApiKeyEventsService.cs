@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using IdentityModel;
 using Microsoft.AspNetCore.Http;
@@ -89,6 +90,27 @@ namespace Nozomi.Infra.Api.Limiter.Services
             }
             
             throw new NullReferenceException("Invalid api key.");
+        }
+
+        public void Create(string key)
+        {
+            if (!string.IsNullOrEmpty(key))
+            {
+                if (!_nozomiRedisEvent.Exists(key, (int) RedisDatabases.ApiKeyEvents))
+                {
+                    // Since it doesn't exist yet, create it
+                    _connectionMultiplexer.GetDatabase((int) RedisDatabases.ApiKeyEvents)
+                        .StringSet(key, RedisValue.Null);
+                    _logger.LogInformation($"{_serviceName} Create: Key {key} added to cache.");
+
+                    return;
+                }
+                
+                _logger.LogWarning($"{_serviceName} Create: Key {key} already exists.");
+                throw new DuplicateNameException("Duplicate key.");
+            }
+            
+            throw new NullReferenceException("Invalid key.");
         }
     }
 }
