@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Nozomi.Infra.Payment.Services.DisputesHandling;
 using Nozomi.Infra.Payment.Services.Interfaces;
 using Nozomi.Infra.Payment.Services.SubscriptionHandling;
 using Stripe;
@@ -16,7 +17,7 @@ namespace Nozomi.Payment.Controllers
     public class PaymentController : Controller
     {
         private readonly IInvoicesService _invoicesService;
-        private readonly IDisputesService _disputesService;
+        private readonly IDisputesHandlingService _disputesHandlingService;
         private readonly ISubscriptionsHandlingService _subscriptionsHandlingService;
 
         [HttpPost]
@@ -42,7 +43,7 @@ namespace Nozomi.Payment.Controllers
                     
                     case Events.ChargeDisputeClosed:
                         var dispute = ParseEventToDispute(stripeEvent);
-                        await _disputesService.DisputeClosed(dispute);
+                        await _disputesHandlingService.DisputeClosed(dispute);
                         return Ok();
                     default:
                         return BadRequest();

@@ -1,24 +1,21 @@
-﻿using Microsoft.Extensions.Logging;
-using Nozomi.Infra.Payment.Services.Interfaces;
-using Nozomi.Preprocessing.Abstracts;
-using Stripe;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Nozomi.Infra.Auth.Events.UserEvent;
 using Nozomi.Infra.Payment.Services.Bootstripe;
 using Nozomi.Infra.Payment.Services.SubscriptionHandling;
+using Nozomi.Preprocessing.Abstracts;
+using Stripe;
 
-namespace Nozomi.Infra.Payment.Services
+namespace Nozomi.Infra.Payment.Services.DisputesHandling
 {
-    class DisputesService : BaseService<DisputesService>, IDisputesService
+    class DisputesHandlingService : BaseService<DisputesHandlingService>, IDisputesHandlingService
     {
         private readonly IBootstripeService _bootstripeService;
         private readonly IUserEvent _userEvent;
         private readonly ISubscriptionsHandlingService _subscriptionsHandlingService;
 
-        public DisputesService(ILogger<DisputesService> logger, IBootstripeService bootstripeService, ISubscriptionsHandlingService subscriptionsHandlingService, IUserEvent userEvent) : base(logger) {
+        public DisputesHandlingService(ILogger<DisputesHandlingService> logger, IBootstripeService bootstripeService, ISubscriptionsHandlingService subscriptionsHandlingService, IUserEvent userEvent) : base(logger) {
             _bootstripeService = bootstripeService;
             _subscriptionsHandlingService = subscriptionsHandlingService;
             _userEvent = userEvent;
