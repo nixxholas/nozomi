@@ -8,6 +8,6 @@ namespace Nozomi.Infra.Api.Limiter.Events.Interfaces
     {
         IEnumerable<RedisKey> AllKeys(RedisDatabases redisDatabase = RedisDatabases.Default);
         
-        bool Exists(string key, RedisDatabases redisDatabase = RedisDatabases.BlockedUserApiKeys);
+        bool Exists(string key, RedisDatabases redisDatabase = RedisDatabases.Default);
     }
 }
