@@ -13,6 +13,7 @@
                             :currency-slug="currencySlug"
                             :currency-pair-guid="currencyPairGuid"
                             :currency-type-short-form="currencyTypeShortForm"
+                            @created="refetchAnalysedComponents"
                     />
                 </div>    
             </div>
@@ -109,10 +110,7 @@
 
             // Load all parent's ACs
             if (self.currencySlug || self.currencyPairGuid || self.currencyTypeShortForm) {
-                AnalysedComponentService.all(self.currencySlug, self.currencyPairGuid, self.currencyTypeShortForm)
-                    .then(function (res) {
-                        self.data = res.data;
-                    });
+                this.fetchAnalysedComponents();
             } else {
                 // TODO: Implement non-filtered table
             }
@@ -124,6 +122,21 @@
                 }).catch(function (err) {
                 console.dir(err);
             });
+        },
+        methods: {
+            async refetchAnalysedComponents(isAddedSuccessfully) {
+                if (isAddedSuccessfully) {
+                    console.warn("Refetching data");
+                    this.fetchAnalysedComponents();
+                }
+            },
+            async fetchAnalysedComponents() {
+                try {
+                    const response = await AnalysedComponentService.all(this.currencySlug, this.currencyPairGuid, 
+                        this.currencyTypeShortForm);
+                    this.data = response.data;
+                } catch(e) { }
+            }
         }
     }
 </script>
