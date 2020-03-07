@@ -192,7 +192,7 @@ namespace Nozomi.Auth.Controllers.Payment
                 if (stripeUserClaim == null)
                     return BadRequest("Please bootstripe first!");
 
-                return Ok(await _stripeEvent.ListPaymentMethods(stripeUserClaim.Value));
+                return Ok(await _bootstripeEvent.ListPaymentMethods(user));
             }
 
             return BadRequest("Invalid user!");
@@ -218,8 +218,7 @@ namespace Nozomi.Auth.Controllers.Payment
                     return BadRequest("Please bootstripe and add a card first!");
                 
                 // Obtain the user's payment methods
-                var paymentMethods = await 
-                    _stripeEvent.ListPaymentMethods(stripeUserClaim.Value);
+                var paymentMethods = await _bootstripeEvent.ListPaymentMethods(user);
                 
                 // Ensure he/she has more than one payment method currently
                 if (paymentMethods != null && paymentMethods.Count() > 1 
