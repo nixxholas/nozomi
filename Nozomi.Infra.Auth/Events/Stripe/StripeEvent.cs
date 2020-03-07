@@ -36,22 +36,6 @@ namespace Nozomi.Infra.Auth.Events.Stripe
             _userManager = userManager;
         }
 
-        public Plan Plan(string planId)
-        {
-            if (string.IsNullOrEmpty(planId))
-                return null; // Invalid plan id
-            
-            var planService = new PlanService();
-            var planListOptions = new PlanListOptions
-            {
-                Active = true,
-                Product = _stripeOptions.Value.ProductId,
-            };
-            var plans = planService.List(planListOptions);
-
-            return plans.Data.FirstOrDefault(p => p.Id.Equals(planId));
-        }
-
         public bool PlanExists(string planId)
         {
             if (string.IsNullOrEmpty(planId))
