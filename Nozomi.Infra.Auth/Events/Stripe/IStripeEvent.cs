@@ -13,8 +13,6 @@ namespace Nozomi.Infra.Auth.Events.Stripe
         /// <returns></returns>
         Task<IEnumerable<Plan>> Plans(bool activeOnly = true);
 
-        bool PlanExists(string planId);
-
         Task<IEnumerable<Card>> Cards(Base.Auth.Models.User user);
 
         bool CardExists(string stripeUserId, string cardId);

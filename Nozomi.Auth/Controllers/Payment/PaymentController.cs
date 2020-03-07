@@ -18,6 +18,7 @@ using Nozomi.Base.Auth.ViewModels.Payment;
 using Nozomi.Base.BCL.Configurations;
 using Nozomi.Infra.Auth.Events.Stripe;
 using Nozomi.Infra.Auth.Services.User;
+using Nozomi.Infra.Payment.Events.Bootstripe;
 using Nozomi.Infra.Payment.Services.Bootstripe;
 using Nozomi.Infra.Payment.Services.SubscriptionHandling;
 using Stripe;
@@ -32,10 +33,11 @@ namespace Nozomi.Auth.Controllers.Payment
         private readonly IUserService _userService;
         private readonly IBootstripeService _bootstripeService;
         private readonly ISubscriptionsHandlingService _subscriptionsHandlingService;
+        private readonly IBootstripeEvent _bootstripeEvent;
         
         public PaymentController(ILogger<PaymentController> logger, IWebHostEnvironment webHostEnvironment,
             IOptions<StripeOptions> stripeOptions,
-            UserManager<User> userManager, IStripeEvent stripeEvent, IBootstripeService bootstripeService,
+            UserManager<User> userManager, IStripeEvent stripeEvent, IBootstripeService bootstripeService, IBootstripeEvent bootstripeEvent,
             ISubscriptionsHandlingService subscriptionsHandlingService,
             IUserService userService) 
             : base(logger, webHostEnvironment)
@@ -45,6 +47,7 @@ namespace Nozomi.Auth.Controllers.Payment
             _stripeEvent = stripeEvent;
             _userService = userService;
             _bootstripeService = bootstripeService;
+            _bootstripeEvent = bootstripeEvent;
             _subscriptionsHandlingService = subscriptionsHandlingService;
         }
 
@@ -263,7 +266,7 @@ namespace Nozomi.Auth.Controllers.Payment
             // Safetynet
             if (user != null && !string.IsNullOrEmpty(id)
                              // Ensure the plan in question exists and is enabled
-                             && _stripeEvent.PlanExists(id))
+                             && _bootstripeEvent.PlanExists(id))
             {
                 // Since the user has no existing subscriptions, proceed.
                 await _subscriptionsHandlingService.Subscribe(id, user);
