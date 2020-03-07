@@ -7,10 +7,12 @@ namespace Nozomi.Preprocessing.Abstracts
     [Route("[controller]/[action]")]
     public class BaseApiController<T> : Controller where T : class
     {
+        protected readonly string _controllerName;
         protected readonly ILogger<T> _logger;
 
         public BaseApiController(ILogger<T> logger)
         {
+            _controllerName = typeof(T).Name;
             _logger = logger;
         }
     }
