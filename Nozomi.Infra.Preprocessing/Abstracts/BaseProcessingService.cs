@@ -12,11 +12,8 @@ namespace Nozomi.Preprocessing.Abstracts
 {
     public abstract class BaseProcessingService<T> : BaseHostedService<T> where T : class
     {
-        public readonly string _hostedServiceName;
-        
         public BaseProcessingService(IServiceScopeFactory scopeFactory) : base(scopeFactory)
         {
-            _hostedServiceName = typeof(T).Name;
         }
 
         // [Obsolete]
