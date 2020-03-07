@@ -53,8 +53,8 @@ namespace Nozomi.Infra.Api.Limiter.Attributes
                 
                 // Filtration checks
                 if (redisEvent.Exists(apiKey, RedisDatabases.ApiKeyUser) // Ensure key exists in mapping 
-                    // And if the BlockApiKey list does not contain this key
-                    && !redisEvent.Exists(apiKey, RedisDatabases.BlockedUserApiKeys))
+                    // And if the ApiKeyUser list does contain this key and it has a value
+                    && redisEvent.ContainsValue(apiKey, RedisDatabases.ApiKeyUser))
                 {
                     var apiKeyRedisActionService =
                         c.HttpContext.RequestServices.GetRequiredService<IApiKeyRedisActionService>();
@@ -64,7 +64,7 @@ namespace Nozomi.Infra.Api.Limiter.Attributes
                 }
                 else
                 {
-                    c.HttpContext.Response.StatusCode = (int) HttpStatusCode.TooManyRequests;
+                    c.HttpContext.Response.StatusCode = (int) HttpStatusCode.NotAcceptable;
                 }
             }
             else
