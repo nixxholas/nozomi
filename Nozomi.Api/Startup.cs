@@ -121,11 +121,16 @@ namespace Nozomi.Api
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
 
-            app.UseSwagger();
+            app.UseSwagger(c =>
+            {
+                c.RouteTemplate = "/{documentName}/swagger.json";
+            });
             
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint($"/swagger/{GlobalApiVariables.CURRENT_API_VERSION}/swagger.json", 
+                c.DocumentTitle = "Nozomi API Documentation";
+                c.RoutePrefix = "";
+                c.SwaggerEndpoint($"/{GlobalApiVariables.CURRENT_API_VERSION}/swagger.json", 
                     $"Nozomi API rev. {GlobalApiVariables.CURRENT_API_REVISION}");
             });
         }
