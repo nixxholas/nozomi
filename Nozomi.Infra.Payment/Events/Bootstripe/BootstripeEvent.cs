@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -37,9 +38,28 @@ namespace Nozomi.Infra.Payment.Events.Bootstripe
             return planId.Equals(_stripeOptions.Value.DefaultPlanId);
         }
 
-        public Task<IEnumerable<Plan>> GetPlans(bool activeOnly = true)
+        public async Task<IEnumerable<Plan>> GetPlans(bool activeOnly = true)
         {
-            throw new System.NotImplementedException();
+            if(_stripeProduct == null)
+                throw new NullReferenceException($"{_eventName} plans: Unable to load, Product is not configured.");
+            
+            var planListOptions = new PlanListOptions
+            {
+                Active = activeOnly,
+                Product = _stripeProduct.Id
+            };
+
+            var plans = await _planService.ListAsync(planListOptions);
+            
+            if (plans.StripeResponse.StatusCode != HttpStatusCode.OK)
+            {
+                _logger.LogWarning($"{_eventName} plans: Unable to load, plans cannot be " +
+                                   $"retrieved from Stripe.");
+                throw new NullReferenceException($"{_eventName} plans: Unable to load, plans cannot be " +
+                                                 $"retrieved from Stripe.");
+            }
+            
+            return plans.Data;
         }
 
         public Plan GetPlan(string planId)
