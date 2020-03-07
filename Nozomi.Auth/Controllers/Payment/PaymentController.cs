@@ -33,10 +33,12 @@ namespace Nozomi.Auth.Controllers.Payment
         private readonly IStripeService _stripeService;
         private readonly IUserService _userService;
         private readonly IBootstripeService _bootstripeService;
+        private readonly ISubscriptionsHandlingService _subscriptionsHandlingService;
         
         public PaymentController(ILogger<PaymentController> logger, IWebHostEnvironment webHostEnvironment,
             IOptions<StripeOptions> stripeOptions,
             UserManager<User> userManager, IStripeEvent stripeEvent, IStripeService stripeService, IBootstripeService bootstripeService,
+            ISubscriptionsHandlingService subscriptionsHandlingService,
             IUserService userService) 
             : base(logger, webHostEnvironment)
         {
@@ -46,6 +48,7 @@ namespace Nozomi.Auth.Controllers.Payment
             _stripeService = stripeService;
             _userService = userService;
             _bootstripeService = bootstripeService;
+            _subscriptionsHandlingService = subscriptionsHandlingService;
         }
 
         [AllowAnonymous]
@@ -266,7 +269,7 @@ namespace Nozomi.Auth.Controllers.Payment
                              && _stripeEvent.PlanExists(id))
             {
                 // Since the user has no existing subscriptions, proceed.
-                await _stripeService.Subscribe(id, user);
+                await _subscriptionsHandlingService.Subscribe(id, user);
                 
                 // Return
                 _logger.LogInformation($"Subscribe: plan of ID {id} added to {user.Id}");
