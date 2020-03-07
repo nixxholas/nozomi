@@ -31,10 +31,13 @@
 <!--          <CurrencyTable type="Cryptocurrency" />-->
 <!--        </b-tab-item>-->
 <!--      </b-tabs>-->
-        <b-tabs v-if="currencyTypes && currencyTypes.length > 0">
-            <b-tab-item v-for="currencyType in currencyTypes" 
+        <b-tabs v-if="currencyTypes && currencyTypes.length > 0" v-model="activeTab">
+            <b-tab-item v-for="(currencyType, index) in currencyTypes" 
                     :label="currencyType.name">
-                <CurrencyTable :type="currencyType.name" />
+                <CurrencyTable :type="currencyType.name" 
+                               :isActive="activeTab === index" 
+                               :currencyTypes="currencyTypes" 
+                />
             </b-tab-item>
         </b-tabs>
     </section>
@@ -58,6 +61,7 @@
         },
         data() {
             return {
+                activeTab: 0,
                 currencyTypeTable: {
                     loading: false,
                     data: []
