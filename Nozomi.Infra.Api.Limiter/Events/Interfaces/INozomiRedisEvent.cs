@@ -11,5 +11,7 @@ namespace Nozomi.Infra.Api.Limiter.Events.Interfaces
         bool Exists(string key, RedisDatabases redisDatabase = RedisDatabases.Default);
 
         bool ContainsValue(string key, RedisDatabases redisDatabase = RedisDatabases.Default);
+
+        RedisValue GetValue(string key, RedisDatabases redisDatabase = RedisDatabases.Default);
     }
 }
