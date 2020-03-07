@@ -161,7 +161,7 @@ namespace Nozomi.Auth.Controllers.Payment
                 
                 // Process card addition
                 if (!string.IsNullOrEmpty(vm.PaymentMethodId)
-                    && !_stripeEvent.PaymentMethodExists(stripeUserClaim.Value, vm.PaymentMethodId))
+                    && !await _bootstripeEvent.PaymentMethodExistsUnderUser(user, vm.PaymentMethodId))
                 {
                     await _bootstripeService.AddPaymentMethod(vm.PaymentMethodId, user);
                 
@@ -227,7 +227,7 @@ namespace Nozomi.Auth.Controllers.Payment
                 {
                     // Process card removal
                     if (!string.IsNullOrEmpty(id)
-                        && _stripeEvent.PaymentMethodExists(stripeUserClaim.Value, id))
+                        && await _bootstripeEvent.PaymentMethodExistsUnderUser(user, id))
                     {
                         await _bootstripeService.RemovePaymentMethod(id, user);
                 

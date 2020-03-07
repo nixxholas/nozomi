@@ -36,59 +36,6 @@ namespace Nozomi.Infra.Auth.Events.Stripe
             _userManager = userManager;
         }
 
-        public async Task<IEnumerable<PaymentMethod>> ListPaymentMethods(string stripeUserId, 
-            string paymentMethodType = "card")
-        {
-            if (!string.IsNullOrEmpty(stripeUserId))
-            {
-                // Obtain the list of payment methods via Stripe
-                var options = new PaymentMethodListOptions
-                {
-                    Customer = stripeUserId,
-                    Type = paymentMethodType
-                };
-                var paymentMethodService = new PaymentMethodService();
-                var paymentMethods = await paymentMethodService.ListAsync(options);
-
-                if (paymentMethods.StripeResponse.StatusCode != HttpStatusCode.OK)
-                {
-                    _logger.LogWarning($"{_eventName} ListPaymentMethods: Unable to load, there was a " +
-                                       $"problem in attempting to retrieve the payment methods for {stripeUserId} " +
-                                       $"from Stripe.");
-                    throw new NullReferenceException($"{_eventName} ListPaymentMethods: Unable to load, there was a " +
-                                                     $"problem in attempting to retrieve the payment methods for {stripeUserId} " +
-                                                     $"from Stripe.");
-                }
-
-                return paymentMethods.Data;
-            }
-
-            throw new NullReferenceException($"{_eventName} ListPaymentMethods: stripeUserId parameter is null.");
-        }
-
-        public bool PaymentMethodExists(string stripeUserId, string paymentMethodId)
-        {
-            if (!string.IsNullOrEmpty(paymentMethodId))
-            {
-                var paymentMethodService = new PaymentMethodService();
-                // Let stripe handle the card ownership checks
-                var paymentMethod = paymentMethodService.Get(paymentMethodId);
-
-                if (paymentMethod != null && !string.IsNullOrEmpty(paymentMethod.CustomerId) 
-                                          && paymentMethod.CustomerId.Equals(stripeUserId))
-                {
-                    return true;
-                }
-                
-                _logger.LogInformation($"{_eventName} PaymentMethodExists: StripeUserId {stripeUserId} is attempting " +
-                                   $"to access a card he/she does not own {paymentMethodId}.");
-                return false;
-            }
-            
-            _logger.LogWarning($"{_eventName} PaymentMethodExists: Null payment method id.");
-            return false;
-        }
-
         public async Task<Base.Auth.Models.User> GetUserByCustomerId(string id)
         {
             if (string.IsNullOrEmpty(id))
