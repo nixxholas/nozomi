@@ -13,6 +13,8 @@ import CurrencyIndex from '../views/currency/Index';
 // @ts-ignore
 import SourceIndex from '../views/source/Index';
 // @ts-ignore
+import Demo from '../views/demo/index';
+// @ts-ignore
 import DashboardHome from '../views/dashboard/Index';
 // @ts-ignore
 import SettingsIndex from '../views/settings/Index';
@@ -36,6 +38,9 @@ export const routes = [
   { name: 'source-index', path: '/sources', props: true, display: 'Sources', 
     component: SourceIndex,
     meta: { icon: 'landmark', isPublic: true, onNav: true }
+  },
+  { name: 'demo', path: '/demo', component: Demo, display: 'Demo',
+    meta: { icon: 'info', isPublic: false, onNav: false }
   },
   { name: 'about', path: '/about', component: About, display: 'About',
     meta: { icon: 'info', isPublic: true, onNav: false }

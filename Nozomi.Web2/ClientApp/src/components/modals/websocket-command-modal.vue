@@ -9,19 +9,24 @@
                 <b-icon size="is-small" icon="trash" />
             </b-button>
         </div>
-        <b-navbar v-else-if="hasNavbar" 
-                  :spaced="true">
-            <template slot="brand">
-                <b class="has-text-dark">Websocket Commands</b>
-            </template>
-            <template slot="end">
-                <b-button native-type="button"
-                          type="is-primary"
-                          @click="isCommandModalActive = true">
-                    Create
-                </b-button>
-            </template>
-        </b-navbar>
+        
+        <div class="level" v-else-if="hasNavbar">
+            <div class="level-left">
+                <div class="level-item">
+                    <h1 class="title is-5">Websocket Commands</h1>
+                </div>
+            </div>
+            <div class="level-right">
+                <div class="level-item">
+                    <b-button native-type="button"
+                              type="is-primary"
+                              @click="isCommandModalActive = true">
+                        Create
+                    </b-button>
+                </div>
+            </div>
+        </div>
+        
         <button v-else
                 class="button is-primary"
                 @click="isCommandModalActive = true">

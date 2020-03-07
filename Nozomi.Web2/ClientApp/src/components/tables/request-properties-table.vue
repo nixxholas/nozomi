@@ -1,14 +1,18 @@
 <template>
-    <div class="section">
-        <b-navbar :spaced="true">
-            <template slot="brand">
-                <b class="has-text-dark">Properties</b>
-            </template>
-            <template v-if="showCreateFeature && requestGuid"
-                      slot="end">
-                <RequestPropertyModal :request-guid="requestGuid" @created="reload"/>
-            </template>
-        </b-navbar>
+    <div class="is-parent-container section has-background-white">
+        <div class="level">
+            <div class="level-left">
+                <div class="level-item">
+                    <h1 class="title is-5">Properties</h1>
+                </div>
+            </div>
+            <div class="level-right" v-if="showCreateFeature && requestGuid">
+                <div class="level-item">
+                    <RequestPropertyModal :request-guid="requestGuid" @created="reload"/>
+                </div>
+            </div>
+        </div>
+        
         <b-table :loading="tableLoading"
                  :data="data">
             <template slot-scope="props">
@@ -112,5 +116,8 @@
 </script>
 
 <style scoped>
-
+    .is-parent-container {
+        padding: 1rem 1.5rem;
+        margin-bottom: 3rem;
+    }
 </style>

@@ -92,7 +92,7 @@
     import store from '@/store/index';
     // Request Component imports
     import CreateRCComponent from '@/components/modals/create-request-component-modal';
-    import RequestModal from '@/components/modals/request-modal'
+    import RequestModal from '@/components/modals/request-modal';
     import RequestService from "@/services/RequestService";
     import AnalysedComponentsTable from "@/components/tables/analysed-components-table";
     import RequestComponentsTable from "@/components/tables/request-components-table";

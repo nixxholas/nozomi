@@ -1,16 +1,24 @@
 <template>
-    <div class="section">
-        <b-navbar :spaced="true">
-            <template slot="brand">
-                <b class="has-text-dark">Analysed Components</b>
-            </template>
-            <template v-if="showCreateFeature"
-                      slot="end">
-                <AnalysedComponentModal :currency-slug="currencySlug"
-                                        :currency-pair-guid="currencyPairGuid"
-                                        :currency-type-short-form="currencyTypeShortForm"/>
-            </template>
-        </b-navbar>
+    <div class="is-parent-container section has-background-white">
+        <div class="level is-paddingless">
+            <div class="level-left">
+                <div class="level-item">
+                    <h1 class="title is-5">Analysed Components</h1>
+                </div>
+            </div>
+            
+            <div class="level-right" v-if="showCreateFeature">
+                <div class="level-item">
+                    <AnalysedComponentModal 
+                            :currency-slug="currencySlug"
+                            :currency-pair-guid="currencyPairGuid"
+                            :currency-type-short-form="currencyTypeShortForm"
+                            @created="refetchAnalysedComponents"
+                    />
+                </div>    
+            </div>
+        </div>
+        
         <b-table :data="data">
             <template slot-scope="props">
                 <b-table-column field="type" label="Type" sortable centered>
@@ -102,10 +110,7 @@
 
             // Load all parent's ACs
             if (self.currencySlug || self.currencyPairGuid || self.currencyTypeShortForm) {
-                AnalysedComponentService.all(self.currencySlug, self.currencyPairGuid, self.currencyTypeShortForm)
-                    .then(function (res) {
-                        self.data = res.data;
-                    });
+                this.fetchAnalysedComponents();
             } else {
                 // TODO: Implement non-filtered table
             }
@@ -117,10 +122,27 @@
                 }).catch(function (err) {
                 console.dir(err);
             });
+        },
+        methods: {
+            async refetchAnalysedComponents(isAddedSuccessfully) {
+                if (isAddedSuccessfully) {
+                    console.warn("Refetching data");
+                    this.fetchAnalysedComponents();
+                }
+            },
+            async fetchAnalysedComponents() {
+                try {
+                    const response = await AnalysedComponentService.all(this.currencySlug, this.currencyPairGuid, 
+                        this.currencyTypeShortForm);
+                    this.data = response.data;
+                } catch(e) { }
+            }
         }
     }
 </script>
 
 <style scoped>
-
+    .is-parent-container {
+        padding: 1rem 1.5rem;
+    }
 </style>

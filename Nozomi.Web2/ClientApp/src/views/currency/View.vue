@@ -145,7 +145,9 @@
                                                                            @created="updateCurrencyPairs"/>
                                                     </div>
                                                 </nav>
-                                                <CurrencyPairsTable :main-ticker="data.abbreviation" />
+                                                <CurrencyPairsTable :main-ticker="data.abbreviation"
+                                                                    :refetch-currency-pair="refetchCurrencyPair"
+                                                />
                                             </div>
                                         </div>
                                     </section>
@@ -322,8 +324,6 @@
                 throw error;
             }
         },
-        // mounted: function () {
-        // },
         methods: {
             getTypeByKey(key) {
                 if (!key)
@@ -347,8 +347,10 @@
 
                 return null;
             },
-            async updateCurrencyPairs() {
-                // TODO: We need to somehow beep the table component that there's a new update
+            async updateCurrencyPairs(value) {
+                if (value) {
+                    this.refetchCurrencyPair = Date.now();
+                }
             },
             async updateSources() {
                 // Obtain all of the currency's sources.
@@ -455,6 +457,7 @@
                 activeTab: 0,
                 isLoading: false,
                 loadFail: false,
+                refetchCurrencyPair: null,
                 data: {},
                 sources: {
                     loading: false,

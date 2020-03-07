@@ -87,6 +87,10 @@
             currencyTypes: {
                 type: Array,
                 default: null
+            },
+            currencyLastUpdated: {
+                type: Number,
+                default: null
             }
         },
         components: {
@@ -124,8 +128,13 @@
             }
         },
         watch: {
-            isActive: function(){ 
+            isActive() { 
                 this.getTableData();
+            },
+            currencyLastUpdated(newValue) {
+                if (newValue) {
+                    this.getTableData();
+                }
             }
         },
         methods: {
@@ -227,7 +236,7 @@
                 }
             }
         },
-        mounted: function () {
+        mounted() {
             this.getTableData();
             this.getTypesData();
             

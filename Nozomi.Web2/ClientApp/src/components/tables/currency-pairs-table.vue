@@ -69,11 +69,15 @@
             sourceGuid: {
                 default: null,
                 type: String
+            },
+            refetchCurrencyPair: {
+                type: Number,
+                default: null
             }
         },
         data: function() {
             return {
-                loading: true,
+                loading: false,
                 count: 0,
                 data: [],
                 page: 0,
@@ -82,21 +86,16 @@
                 sortOrder: 'desc',
             }
         },
+        watch: {
+            refetchCurrencyPair(newValue) {
+                if (newValue) {
+                    this.getAllCurrencyPair();
+                }
+            }  
+        },
         mounted: function() {
-            let self = this;
-            
-            CurrencyPairService.getCount(self.mainTicker)
-                .then(function(res) {
-                    self.count = res;
-            });
-            
-            CurrencyPairService.all(self.page, self.perPage, self.sourceGuid, self.mainTicker,
-                self.defaultSortOrder === "asc", self.sortField)
-                .then(function(res) {
-                    self.data = res;
-                });
-            
-            self.loading = false;
+            this.getCurrencyPairCount();
+            this.getAllCurrencyPair();
         },
         methods: {
             onPageChange(page) {
@@ -107,6 +106,26 @@
                     .then(function(res) {
                         self.data = res;
                     });
+            },
+            async getCurrencyPairCount() {
+                this.loading = true;
+
+                try {
+                    this.count = await CurrencyPairService.getCount(this.mainTicker);
+                } catch(e) {}
+
+                this.loading = false;
+            },
+            async getAllCurrencyPair() {
+                this.loading = true;
+                
+                try {
+                    const sortBy = this.defaultSort === "asc";
+                    this.data = await CurrencyPairService.all(this.page, this.perPage, this.sourceGuid, this.mainTicker, 
+                        sortBy, this.sortField)
+                } catch(e) {}
+                
+                this.loading = false;
             }
         }
     }
