@@ -21,6 +21,7 @@ namespace Nozomi.Infra.Payment.Services
             _bootstripeService = bootstripeService;
         }
 
+        [Obsolete]
         public async Task FundsWithdrawn(Dispute dispute)
         {
             var methodName = "DisputeCreated";
@@ -34,6 +35,25 @@ namespace Nozomi.Infra.Payment.Services
             //TODO: Retrieve free plan ID from appsettings
             await _bootstripeService.ChangePlan("plan_GeGfCW7hwiQYQk", user);
             return;
+        }
+
+        public async Task DisputeLost(Dispute dispute)
+        {
+            var methodName = "DisputeLost";
+            PerformDisputePreCheck(dispute, methodName);
+            
+            if(!dispute.Status.Equals("lost"))
+                throw new InvalidOperationException($"{_serviceName} {methodName}: Dispute is not lost");
+
+            var customerId = dispute.Charge.CustomerId;
+            
+            var user = await _stripeEvent.GetUserByCustomerId(dispute.Charge.CustomerId);
+
+            if(user == null)
+                throw new NullReferenceException($"{_serviceName} {methodName}: Unable to find user tied to customer id.");
+
+            //TODO: Retrieve free plan ID from appsettings
+            await _bootstripeService.ChangePlan("plan_GeGfCW7hwiQYQk", user);
         }
 
         private void PerformDisputePreCheck(Dispute dispute, string methodName) {
