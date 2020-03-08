@@ -1,4 +1,5 @@
 using System;
+using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.ViewModels.Request;
@@ -9,6 +10,7 @@ using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Preprocessing.ActionResults;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Services.Requests.Interfaces;
+using Swashbuckle.AspNetCore.Filters;
 
 namespace Nozomi.Api.Controllers.Request
 {
@@ -30,6 +32,7 @@ namespace Nozomi.Api.Controllers.Request
 
         [TokenBucket(Name = "Request/Get", Weight = 1)]
         [HttpGet("{guid}")]
+        [SwaggerResponseExample((int) HttpStatusCode.OK, typeof(RequestViewModel.RequestViewModelExample))]
         public IActionResult Get(string guid)
         {
             if (Guid.TryParse(guid, out var parsedGuid))

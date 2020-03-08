@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Nozomi.Data.Models.Web;
 using Nozomi.Data.ViewModels.Component;
 using Nozomi.Data.ViewModels.RequestProperty;
+using Swashbuckle.AspNetCore.Filters;
 
 namespace Nozomi.Data.ViewModels.Request
 {
@@ -52,5 +53,27 @@ namespace Nozomi.Data.ViewModels.Request
         public ICollection<ComponentViewModel> Components { get; set; }
         
         public ICollection<RequestPropertyViewModel> Properties { get; set; }
+
+        public class RequestViewModelExample : IExamplesProvider<RequestViewModel>
+        {
+            public RequestViewModel GetExamples()
+            {
+                return new RequestViewModel
+                {
+                    Guid = Guid.NewGuid(),
+                    IsEnabled = true,
+                    RequestType = RequestType.HttpGet,
+                    ResponseType = ResponseType.Json,
+                    DataPath = "",
+                    Delay = 5000,
+                    FailureDelay = 600000,
+                    Components = new List<ComponentViewModel>(),
+                    Properties = new List<RequestPropertyViewModel>(),
+                    CurrencySlug = "BTC",
+                    CurrencyPairGuid = Guid.NewGuid().ToString(),
+                    CurrencyTypeGuid = Guid.NewGuid().ToString()
+                };
+            }
+        }
     }
 }
