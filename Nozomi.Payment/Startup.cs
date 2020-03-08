@@ -120,7 +120,7 @@ namespace Nozomi.Payment
 
             using (var scope = 
                 app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
-            using (var context = scope.ServiceProvider.GetService<NozomiDbContext>())
+            using (var context = scope.ServiceProvider.GetService<AuthDbContext>())
                 context.Database.Migrate();
             
             app.UseEndpoints(endpoints =>
