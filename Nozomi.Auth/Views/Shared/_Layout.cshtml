@@ -1,6 +1,7 @@
 ﻿@using IdentityServer4.Extensions
 @{
     string name = null;
+    string returnUrl = ViewData["ReturnUrl"] as string;
     if (!true.Equals(ViewData["signed-out"]))
     {
         name = Context.User?.GetDisplayName();
@@ -22,10 +23,19 @@
 <body>
     <nav class="navbar is-dark is-fixed-top" role="navigation" aria-label="main navigation">
           <div class="navbar-brand">
-              <a class="navbar-item" href="~/">
-                  @* <img src="~/icon.png" class="icon-banner" width="32" height="200"> *@
-                  Nozomi Pass
-              </a>
+              @if (!String.IsNullOrEmpty(returnUrl))
+              {
+                  <a class="navbar-item" asp-controller="Account" asp-action="RedirectBackToSite" asp-route-returnUrl="@ViewData["ReturnUrl"]">
+                      Nozomi Pass
+                  </a>
+              }
+              else
+              {
+                  <a class="navbar-item" href="~/">
+                      Nozomi Pass
+                  </a>
+                                
+              }
           </div>
 
             @if (!string.IsNullOrWhiteSpace(name))
