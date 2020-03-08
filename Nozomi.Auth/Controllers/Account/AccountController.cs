@@ -124,6 +124,8 @@ namespace Nozomi.Auth.Controllers.Account
         [AllowAnonymous]
         public async Task<IActionResult> ConfirmEmail(string userId, string code, string returnUrl)
         {
+            ViewData["ReturnUrl"] = returnUrl;
+            
             if (userId == null || code == null)
             {
                 return RedirectToAction(nameof(HomeController.Index), "Home");
@@ -144,6 +146,7 @@ namespace Nozomi.Auth.Controllers.Account
         [HttpGet]
         public IActionResult Register(string returnUrl)
         {
+            ViewData["ReturnUrl"] = returnUrl;
             var vm = BuildRegisterViewModel(returnUrl);
             
             return View(vm);
@@ -317,6 +320,8 @@ namespace Nozomi.Auth.Controllers.Account
         [HttpGet]
         public async Task<IActionResult> Login(string returnUrl, string userEmail = null)
         {
+            ViewData["ReturnUrl"] = returnUrl;
+            
             // build a model so we know what to show on the login page
             var vm = await BuildLoginViewModelAsync(returnUrl);
 
@@ -429,6 +434,8 @@ namespace Nozomi.Auth.Controllers.Account
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginInputModel model, string button)
         {
+            ViewData["ReturnUrl"] = model.ReturnUrl;
+            
             // check if we are in the context of an authorization request
             var context = await _interaction.GetAuthorizationContextAsync(model.ReturnUrl);
             
@@ -695,6 +702,7 @@ namespace Nozomi.Auth.Controllers.Account
         [AllowAnonymous]
         public IActionResult ForgotPassword(string returnUrl)
         {
+            ViewData["ReturnUrl"] = returnUrl;
             ForgotPasswordInputModel model = BuildForgotPasswordInputViewModel(returnUrl);
             
             return View(model);
@@ -707,6 +715,8 @@ namespace Nozomi.Auth.Controllers.Account
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ForgotPassword(ForgotPasswordInputModel model)
         {
+            ViewData["ReturnUrl"] = model.ReturnUrl;
+            
             if (model.IsValid())
             {
                 User user = await _userManager.FindByEmailAsync(model.Email);
@@ -752,6 +762,8 @@ namespace Nozomi.Auth.Controllers.Account
         [AllowAnonymous]
         public IActionResult ResetPassword(string code = null, string email = null, string returnUrl = null)
         {
+            ViewData["ReturnUrl"] = returnUrl;
+            
             ResetPasswordInputModel model = new ResetPasswordInputModel
             {
                 Code = code,
@@ -769,6 +781,8 @@ namespace Nozomi.Auth.Controllers.Account
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ResetPassword(ResetPasswordInputModel model)
         {
+            ViewData["ReturnUrl"] = model.ReturnUrl;
+            
             if (!ModelState.IsValid)
             {
                 return View(model);
@@ -805,6 +819,8 @@ namespace Nozomi.Auth.Controllers.Account
         [AllowAnonymous]
         public async Task<ActionResult> SendCode(string returnUrl = null, bool rememberMe = false)
         {
+            ViewData["ReturnUrl"] = returnUrl;
+            
             var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
             if (user == null)
             {
