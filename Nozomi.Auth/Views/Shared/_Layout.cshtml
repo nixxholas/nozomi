@@ -23,19 +23,9 @@
 <body>
     <nav class="navbar is-dark is-fixed-top" role="navigation" aria-label="main navigation">
           <div class="navbar-brand">
-              @if (!String.IsNullOrEmpty(returnUrl))
-              {
-                  <a class="navbar-item" asp-controller="Account" asp-action="RedirectBackToSite" asp-route-returnUrl="@ViewData["ReturnUrl"]">
-                      Nozomi Pass
-                  </a>
-              }
-              else
-              {
-                  <a class="navbar-item" href="~/">
-                      Nozomi Pass
-                  </a>
-                                
-              }
+              <a class="navbar-item" asp-controller="Account" asp-action="RedirectBackToSite" asp-route-returnUrl="@ViewData["ReturnUrl"]">
+                  Nozomi Pass
+              </a>
           </div>
 
             @if (!string.IsNullOrWhiteSpace(name))
