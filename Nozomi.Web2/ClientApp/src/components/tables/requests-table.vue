@@ -2,7 +2,6 @@
     <b-table
             :loading="isLoading"
             :data="requestData"
-            :columns="requestColumns"
             detailed
             detail-key="guid">
         <template slot-scope="props">
@@ -33,10 +32,6 @@
             <b-table-column field="actions" label="">
                 <div class="buttons">
                   <RequestModal :request="props.row"/>
-                    <b-button type="is-danger"
-                              icon-left="trash">
-                        Delete
-                    </b-button>
                 </div>
             </b-table-column>
         </template>
@@ -45,6 +40,13 @@
                 <b-tag type="is-dark">Unique ID</b-tag>
                 <b-tag type="is-info">{{ props.row.guid }}</b-tag>
             </b-taglist>
+            
+            <!-- 50 is the hardcoded type for websockets -->
+            <WebsocketCommandTable v-if="props.row.requestType === 50"
+                                   :show-create-feature="true" :request-guid="props.row.guid"/>
+            
+            <RequestPropertiesTable :show-create-feature="true" :request-guid="props.row.guid"/>
+            
             <nav class="level is-mobile">
                 <div class="level-item has-text-centered">
                     <div>
@@ -57,6 +59,7 @@
                     </div>
                 </div>
             </nav>
+            
             <RequestComponentsTable :show-create-feature="true"
                                     v-if="props.row.guid" 
                                     v-bind:guid="props.row.guid"/>
@@ -89,15 +92,21 @@
     import store from '@/store/index';
     // Request Component imports
     import CreateRCComponent from '@/components/modals/create-request-component-modal';
-    import RequestModal from '@/components/modals/request-modal'
+    import RequestModal from '@/components/modals/request-modal';
     import RequestService from "@/services/RequestService";
     import AnalysedComponentsTable from "@/components/tables/analysed-components-table";
     import RequestComponentsTable from "@/components/tables/request-components-table";
     import {mapActions} from "vuex";
+    import RequestPropertiesTable from "@/components/tables/request-properties-table";
+    import WebsocketCommandModal from "@/components/modals/websocket-command-modal";
+    import WebsocketCommandTable from "@/components/tables/websocket-command-table";
 
     export default {
         name: "requests-table",
-        components: { AnalysedComponentsTable, RequestComponentsTable, 
+        components: {
+            WebsocketCommandTable,
+            WebsocketCommandModal,
+            RequestPropertiesTable, AnalysedComponentsTable, RequestComponentsTable, 
             CreateRCComponent, RequestModal },
         props: {
             request: {
@@ -111,37 +120,37 @@
                 requestTypes: [],
                 responseTypes: [],
                 requestData: [],
-                requestColumns: [
-                    {
-                        field: 'guid',
-                        label: 'ID',
-                        width: '40',
-                    },
-                    {
-                        field: 'requestType',
-                        label: 'Type',
-                    },
-                    {
-                        field: 'responseType',
-                        label: 'Response Type',
-                    },
-                    {
-                        field: 'dataPath',
-                        label: 'URL',
-                    },
-                    {
-                        field: 'delay',
-                        label: 'Delay',
-                        centered: true,
-                        numeric: true
-                    },
-                    {
-                        field: 'failureDelay',
-                        label: 'Failure Delay',
-                        centered: true,
-                        numeric: true
-                    }
-                ]
+                // requestColumns: [
+                //     {
+                //         field: 'guid',
+                //         label: 'ID',
+                //         width: '40',
+                //     },
+                //     {
+                //         field: 'requestType',
+                //         label: 'Type',
+                //     },
+                //     {
+                //         field: 'responseType',
+                //         label: 'Response Type',
+                //     },
+                //     {
+                //         field: 'dataPath',
+                //         label: 'URL',
+                //     },
+                //     {
+                //         field: 'delay',
+                //         label: 'Delay',
+                //         centered: true,
+                //         numeric: true
+                //     },
+                //     {
+                //         field: 'failureDelay',
+                //         label: 'Failure Delay',
+                //         centered: true,
+                //         numeric: true
+                //     }
+                // ]
             }
         },
         methods: {

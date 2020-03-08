@@ -10,8 +10,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Nozomi.Infra.Analysis.Service\Nozomi.Infra.Analysis.Service.csproj" />
     <ProjectReference Include="..\Nozomi.Infra.Payment\Nozomi.Infra.Payment.csproj" />
+    <ProjectReference Include="..\Nozomi.Infra.Syncing\Nozomi.Infra.Syncing.csproj" />
   </ItemGroup>
 
 </Project>

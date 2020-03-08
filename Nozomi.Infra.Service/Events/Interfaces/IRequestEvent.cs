@@ -12,6 +12,10 @@ namespace Nozomi.Service.Events.Interfaces
 {
     public interface IRequestEvent
     {
+        bool Exists(long requestId, bool ignoreDeletedOrDisabled = false, string userId = null);
+
+        bool Exists(string requestGuid, bool ignoreDeletedOrDisabled = false, string userId = null);
+        
         bool Exists(ComponentType type, long requestId);
         
         bool Exists(ComponentType type, string requestGuid);
@@ -20,11 +24,11 @@ namespace Nozomi.Service.Events.Interfaces
         
         Request Get(Expression<Func<Request, bool>> predicate);
         
-        Request GetByGuid(Guid guid, bool track = false);
+        Request GetByGuid(Guid guid, string userId = null, bool track = false);
         
         Request GetActive(long id, bool track = false);
 
-        IQueryable<RequestViewModel> GetAll(string userId = null, bool enabledOnly = true, bool track = false);
+        IQueryable<RequestViewModel> ViewAll(string userId = null, bool enabledOnly = true, bool track = false);
 
         /// <summary>
         /// Select all Requests with a limit of 50.

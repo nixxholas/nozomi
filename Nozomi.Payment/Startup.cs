@@ -7,11 +7,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
-using Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes;
 using Nozomi.Preprocessing.Filters;
 using Nozomi.Repo.Auth.Data;
-using Nozomi.Repo.BCL.Context;
-using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
 using Nozomi.Service.Events;
 using Nozomi.Service.Events.Interfaces;
@@ -93,17 +90,10 @@ namespace Nozomi.Payment
                 }, ServiceLifetime.Transient);
             }
             
-            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-
-            services.AddTransient<IUnitOfWork<NozomiDbContext>, UnitOfWork<NozomiDbContext>>();
-            services.AddTransient<IDbContext, NozomiDbContext>();
-
             services.AddScoped<ICurrencyEvent, CurrencyEvent>();
             services.AddScoped<ICurrencyPairEvent, CurrencyPairEvent>();
             services.AddScoped<ICurrencyTypeEvent, CurrencyTypeEvent>();
             services.AddScoped<IRequestEvent, RequestEvent>();
-            services.AddScoped<ITickerEvent, TickerEvent>();
-            services.AddTransient<IRcdHistoricItemService, RcdHistoricItemService>();
             services.AddTransient<IComponentService, ComponentService>();
             services.AddTransient<IRequestService, RequestService>();
             

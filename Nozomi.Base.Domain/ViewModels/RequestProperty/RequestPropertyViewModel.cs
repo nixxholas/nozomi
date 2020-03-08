@@ -1,22 +1,18 @@
+using System;
 using Nozomi.Data.Models.Web;
 
 namespace Nozomi.Data.ViewModels.RequestProperty
 {
-    public class RequestPropertyViewModel
+    public class RequestPropertyViewModel : CreateRequestPropertyInputModel
     {
-        public RequestPropertyViewModel() {}
-
-        public RequestPropertyViewModel(RequestPropertyType type, string key, string value)
+        public RequestPropertyViewModel(Guid guid, RequestPropertyType type, string key, string value)
         {
+            Guid = guid.ToString();
             Type = type;
             Key = key;
             Value = value;
         }
         
-        public RequestPropertyType Type { get; set; }
-        
-        public string Key { get; set; }
-        
-        public string Value { get; set; }
+        public string Guid { get; set; }
     }
 }

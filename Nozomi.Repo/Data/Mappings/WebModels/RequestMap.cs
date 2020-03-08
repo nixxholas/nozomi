@@ -17,6 +17,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
 
             entityTypeBuilder.Property(r => r.Delay).HasDefaultValue(0).IsRequired();
             entityTypeBuilder.Property(r => r.FailureDelay).HasDefaultValue(3600000).IsRequired();
+            entityTypeBuilder.Property(r => r.FailureCount).HasDefaultValue(0);
             
             // We need this to determine the type of request to execute with
             entityTypeBuilder.Property(r => r.RequestType).IsRequired();
@@ -26,11 +27,14 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
             // Sometimes, some APIs don't really have a deep declaration requirement
             entityTypeBuilder.Property(r => r.DataPath).IsRequired(false);
 
-            entityTypeBuilder.HasMany(r => r.RequestComponents).WithOne(rc => rc.Request)
+            entityTypeBuilder.HasMany(r => r.RequestComponents)
+                .WithOne(rc => rc.Request)
                 .HasForeignKey(rc => rc.RequestId).OnDelete(DeleteBehavior.Cascade);
-            entityTypeBuilder.HasMany(r => r.RequestProperties).WithOne(rp => rp.Request)
+            entityTypeBuilder.HasMany(r => r.RequestProperties)
+                .WithOne(rp => rp.Request)
                 .HasForeignKey(rp => rp.RequestId).OnDelete(DeleteBehavior.Cascade);
-            entityTypeBuilder.HasMany(r => r.WebsocketCommands).WithOne(wsc => wsc.Request)
+            entityTypeBuilder.HasMany(r => r.WebsocketCommands)
+                .WithOne(wsc => wsc.Request)
                 .HasForeignKey(wsc => wsc.RequestId).OnDelete(DeleteBehavior.Cascade);
         }
     }

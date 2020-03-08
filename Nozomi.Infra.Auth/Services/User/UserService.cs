@@ -6,15 +6,12 @@ using IdentityModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
 using Nozomi.Base.Auth.Global;
 using Nozomi.Base.Auth.Models;
 using Nozomi.Base.Auth.ViewModels.Account;
-using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.Auth.Data;
-using Nozomi.Repo.BCL.Repository;
 
 namespace Nozomi.Infra.Auth.Services.User
 {
@@ -22,16 +19,16 @@ namespace Nozomi.Infra.Auth.Services.User
     {
         private readonly UserManager<Base.Auth.Models.User> _userManager;
         
-        public UserService(ILogger<UserService> logger, IUnitOfWork<AuthDbContext> unitOfWork,
+        public UserService(ILogger<UserService> logger, AuthDbContext context,
             UserManager<Base.Auth.Models.User> userManager) 
-            : base(logger, unitOfWork)
+            : base(logger, context)
         {
             _userManager = userManager;
         }
 
         public UserService(IHttpContextAccessor contextAccessor, ILogger<UserService> logger, 
-            IUnitOfWork<AuthDbContext> unitOfWork, UserManager<Base.Auth.Models.User> userManager) 
-            : base(contextAccessor, logger, unitOfWork)
+            AuthDbContext context, UserManager<Base.Auth.Models.User> userManager) 
+            : base(contextAccessor, logger, context)
         {
             _userManager = userManager;
         }
@@ -40,8 +37,7 @@ namespace Nozomi.Infra.Auth.Services.User
         {
             if (!string.IsNullOrEmpty(userId))
             {
-                return _unitOfWork.GetRepository<Base.Auth.Models.User>()
-                    .GetQueryable()
+                return _context.Users
                     .AsNoTracking()
                     .Where(u => u.Id.Equals(userId))
                     .Include(u => u.UserClaims)
@@ -57,8 +53,7 @@ namespace Nozomi.Infra.Auth.Services.User
         {
             if (!string.IsNullOrEmpty(stripeCustId) && !string.IsNullOrEmpty(userId))
             {
-                var user = _unitOfWork.GetRepository<Base.Auth.Models.User>()
-                    .GetQueryable()
+                var user = _context.Users
                     .AsNoTracking()
                     .Where(u => u.Id.Equals(userId))
                     .Include(u => u.UserClaims)
@@ -69,14 +64,14 @@ namespace Nozomi.Infra.Auth.Services.User
                 // Check!
                 if (user != null)
                 {
-                    _unitOfWork.GetRepository<UserClaim>().Add(new UserClaim
+                    _context.UserClaims.Add(new UserClaim
                     {
                         UserId = userId,
                         ClaimType = NozomiJwtClaimTypes.StripeCustomerId,
                         ClaimValue = stripeCustId
                     });
 
-                    _unitOfWork.Commit(userId);
+                    _context.SaveChanges(userId);
                     
                     return Task.CompletedTask;
                 }
@@ -89,8 +84,7 @@ namespace Nozomi.Infra.Auth.Services.User
         {
             if (vm.IsValid())
             {
-                var user = _unitOfWork.GetRepository<Base.Auth.Models.User>()
-                    .GetQueryable()
+                var user = _context.Users
                     .AsTracking()
                     .Where(u => u.Id.Equals(userId))
                     .Include(u => u.UserClaims)
@@ -134,8 +128,7 @@ namespace Nozomi.Infra.Auth.Services.User
                             if (!string.IsNullOrEmpty(uClaim.Value.GetString())
                                 && !user.UserName.Equals(uClaim.Value.GetString())
                                 // Dupe checks
-                                && !_unitOfWork.GetRepository<Base.Auth.Models.User>().GetQueryable()
-                                    .Any(u => u.NormalizedUserName.Equals(uClaim.Value.GetString())))
+                                && !_context.Users.Any(u => u.NormalizedUserName.Equals(uClaim.Value.GetString())))
                             {
                                 // Update the username
                                 user.UserName = uClaim.Value.GetString();
@@ -215,8 +208,8 @@ namespace Nozomi.Infra.Auth.Services.User
                 }
                 
                 // Push to DB
-                _unitOfWork.GetRepository<Base.Auth.Models.User>().Update(user);
-                _unitOfWork.Commit(userId);
+                _context.Users.Update(user);
+                _context.SaveChanges(userId);
 
                 return; // Done
             }
@@ -316,12 +309,12 @@ namespace Nozomi.Infra.Auth.Services.User
 
         private UserClaim GetUserClaim(string userId, string claimType)
         {
-            return _unitOfWork.GetRepository<UserClaim>().GetQueryable().AsTracking().SingleOrDefault(claim => claim.ClaimType.Equals(claimType) && claim.UserId.Equals(userId));
+            return _context.UserClaims.AsTracking().SingleOrDefault(claim => claim.ClaimType.Equals(claimType) && claim.UserId.Equals(userId));
         }
 
         private IEnumerable<UserClaim> GetUserClaims(string userId, string claimType)
         {
-            return _unitOfWork.GetRepository<UserClaim>().GetQueryable().AsTracking().Where(claim => claim.ClaimType.Equals(claimType) && claim.UserId.Equals(userId));
+            return _context.UserClaims.AsTracking().Where(claim => claim.ClaimType.Equals(claimType) && claim.UserId.Equals(userId));
         }
 
         private void CreateUserClaim(string userId, string claimType, string claimValue, string methodName)
@@ -333,22 +326,22 @@ namespace Nozomi.Infra.Auth.Services.User
                 UserId = userId
             };
             
-            _unitOfWork.GetRepository<UserClaim>().Add(userClaim);
-            if(_unitOfWork.Commit(userId) != 1)
+            _context.UserClaims.Add(userClaim);
+            if(_context.SaveChanges(userId) != 1)
                 throw new InvalidOperationException($"{_serviceName} {methodName}: Failed to create user claim");
         }
 
         private void UpdateUserClaim(string userId, UserClaim userClaim, string methodName)
         {
-            _unitOfWork.GetRepository<UserClaim>().Update(userClaim);
-            if (_unitOfWork.Commit(userId) != 1)
+            _context.UserClaims.Update(userClaim);
+            if (_context.SaveChanges(userId) != 1)
                 throw new InvalidOperationException($"{_serviceName} {methodName}: Failed to update user claim");
         }
 
         private void DeleteUserClaim(string userId, UserClaim userClaim, string methodName)
         {
-            _unitOfWork.GetRepository<UserClaim>().Delete(userClaim);
-            if(_unitOfWork.Commit(userId) != 1)
+            _context.UserClaims.Remove(userClaim);
+            if(_context.SaveChanges(userId) != 1)
                 throw new InvalidOperationException($"{_serviceName} {methodName}: Failed to delete user claim");
         }
 

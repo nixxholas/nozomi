@@ -3,10 +3,7 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.Models.Currency;
-using Nozomi.Data.ResponseModels.Currency;
-using Nozomi.Data.ResponseModels.Source;
 using Nozomi.Preprocessing.Abstracts;
-using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
 using Nozomi.Service.Events.Interfaces;
 
@@ -14,7 +11,7 @@ namespace Nozomi.Service.Events
 {
     public class SourceEvent : BaseEvent<SourceEvent, NozomiDbContext>, ISourceEvent
     {
-        public SourceEvent(ILogger<SourceEvent> logger, IUnitOfWork<NozomiDbContext> unitOfWork) 
+        public SourceEvent(ILogger<SourceEvent> logger, NozomiDbContext unitOfWork) 
             : base(logger, unitOfWork)
         {
         }
@@ -24,9 +21,7 @@ namespace Nozomi.Service.Events
             if (string.IsNullOrEmpty(guid) || string.IsNullOrWhiteSpace(guid))
                 return null;
 
-            var query = _unitOfWork.GetRepository<Source>()
-                .GetQueryable()
-                .AsNoTracking();
+            var query = _context.Sources.AsNoTracking();
 
             if (filterActive)
                 query = query.Where(s => s.DeletedAt == null && s.IsEnabled);
@@ -37,9 +32,7 @@ namespace Nozomi.Service.Events
 
         public IEnumerable<Nozomi.Data.ViewModels.Source.SourceViewModel> GetAll()
         {
-            return _unitOfWork.GetRepository<Source>()
-                .GetQueryable()
-                .AsNoTracking()
+            return _context.Sources.AsNoTracking()
                 .Where(s => s.DeletedAt == null && s.IsEnabled)
                 .Include(s => s.SourceType)
                 .Select(s => new Nozomi.Data.ViewModels.Source.SourceViewModel
@@ -48,15 +41,13 @@ namespace Nozomi.Service.Events
                     Abbreviation = s.Abbreviation,
                     ApiDocsUrl = s.APIDocsURL,
                     Name = s.Name,
-                    SourceTypeGuid = s.SourceType.Guid.ToString()
+                    SourceTypeGuid = s.SourceType.Guid
                 });
         }
 
         public IEnumerable<Source> GetAllActive(bool countPairs = false, bool includeNested = false)
         {
-            var query = _unitOfWork.GetRepository<Source>()
-                .GetQueryable()
-                .Where(s => s.DeletedAt == null && s.IsEnabled);
+            var query = _context.Sources.Where(s => s.DeletedAt == null && s.IsEnabled);
 
             if (countPairs)
             {
@@ -80,9 +71,7 @@ namespace Nozomi.Service.Events
         
         public IEnumerable<Source> GetAllNonDeleted(bool countPairs = false, bool includeNested = false)
         {
-            var query = _unitOfWork.GetRepository<Source>()
-                .GetQueryable()
-                .Where(s => s.DeletedAt == null);
+            var query = _context.Sources.Where(s => s.DeletedAt == null);
 
             if (countPairs)
             {
@@ -107,7 +96,7 @@ namespace Nozomi.Service.Events
         // Get all including disabled sources.
 //        public IEnumerable<Source> GetAll(bool countPairs = false, bool includeNested = false)
 //        {
-//            var query = _unitOfWork.GetRepository<Source>()
+//            var query = _context.GetRepository<Source>()
 //                .GetQueryable();
 //
 //            if (countPairs)
@@ -133,9 +122,7 @@ namespace Nozomi.Service.Events
         public IEnumerable<dynamic> GetAllActiveObsc(bool includeNested = false)
         {
             if (includeNested) {
-                return _unitOfWork.GetRepository<Source>()
-                    .GetQueryable()
-                    .Where(cs => cs.DeletedAt == null)
+                return _context.Sources.Where(cs => cs.DeletedAt == null)
                     .Where(cs => cs.IsEnabled)
                     .Include(cs => cs.SourceCurrencies)
                     .Include(cs => cs.CurrencyPairs)
@@ -148,9 +135,7 @@ namespace Nozomi.Service.Events
                         currencyPairs = cs.CurrencyPairs
                     });
             } else {
-                return _unitOfWork.GetRepository<Source>()
-                    .GetQueryable()
-                    .Where(cs => cs.DeletedAt == null)
+                return _context.Sources.Where(cs => cs.DeletedAt == null)
                     .Where(cs => cs.IsEnabled)
                     .Select(cs => new
                     {
@@ -166,54 +151,23 @@ namespace Nozomi.Service.Events
             if (string.IsNullOrWhiteSpace(guid))
                 return false;
             
-            return _unitOfWork.GetRepository<Source>()
-                .Get(s => s.DeletedAt == null
-                          && s.Guid.ToString().Equals(guid))
-                .Any();
+            return _context.Sources
+                .Any(s => s.DeletedAt == null
+                          && s.Guid.ToString().Equals(guid));
         }
 
         public bool AbbreviationIsUsed(string abbrv)
         {
-            return _unitOfWork.GetRepository<Source>()
-                .Get(s => s.DeletedAt == null &&
-                          s.Abbreviation.Equals(abbrv.ToUpper()))
-                .Any();
-        }
-
-        public XSourceResponse Get(long id)
-        {
-            return _unitOfWork.GetRepository<Source>()
-                .GetQueryable()
-                .Where(s => s.DeletedAt == null && s.IsEnabled && s.Id.Equals(id))
-                .Include(s => s.SourceCurrencies)
-                    .ThenInclude(sc => sc.Currency)
-                        .ThenInclude(c => c.CurrencyType)
-                .Select(s => new XSourceResponse
-                {
-                    Abbreviation = s.Abbreviation,
-                    Name = s.Name,
-                    Currencies = s.SourceCurrencies
-                        .Where(c => c.IsEnabled && c.DeletedAt == null)
-                        .Select(c => new CurrencyResponse
-                        {
-                            Id = c.Id,
-                            CurrencyTypeId = c.Currency.CurrencyTypeId,
-                            CurrencyType = c.Currency.CurrencyType.Name,
-                            Abbreviation = c.Currency.Abbreviation,
-                            Name = c.Currency.Name
-                        })
-                        .ToList()
-                })
-                .SingleOrDefault();
+            return _context.Sources
+                .Any(s => s.DeletedAt == null &&
+                          s.Abbreviation.Equals(abbrv.ToUpper()));
         }
 
         public IEnumerable<Source> GetAllCurrencySourceOptions(IEnumerable<CurrencySource> currencySources)
         {
             IEnumerable<Source> sources = currencySources.Select(cs => cs.Source).ToList();
             
-            var query = _unitOfWork.GetRepository<Source>()
-                .GetQueryable()
-                .Where(s => s.DeletedAt == null && s.IsEnabled
+            var query = _context.Sources.Where(s => s.DeletedAt == null && s.IsEnabled
                             && sources.All(x => x.Id != s.Id))
                 .ToList();
             
@@ -223,9 +177,7 @@ namespace Nozomi.Service.Events
 
         public IEnumerable<Source> GetCurrencySources(string slug, int page = 0)
         {            
-            return _unitOfWork.GetRepository<CurrencySource>()
-                .GetQueryable()
-                .AsNoTracking()
+            return _context.CurrencySources.AsNoTracking()
                 .Where(cs => cs.DeletedAt == null && cs.IsEnabled)
                 .Include(cs => cs.Currency)
                 .Where(cs => cs.Currency.Slug.Equals(slug))
@@ -233,33 +185,6 @@ namespace Nozomi.Service.Events
                 .Skip(page * 20)
                 .Take(20)
                 .Select(cs => cs.Source);
-        }
-
-        public XSourceResponse Get(string abbreviation)
-        {
-            return _unitOfWork.GetRepository<Source>()
-                .GetQueryable()
-                .Where(s => s.DeletedAt == null && s.IsEnabled && s.Abbreviation.Equals(abbreviation))
-                .Include(s => s.SourceCurrencies)
-                .ThenInclude(sc => sc.Currency)
-                .ThenInclude(c => c.CurrencyType)
-                .Select(s => new XSourceResponse
-                {
-                    Abbreviation = s.Abbreviation,
-                    Name = s.Name,
-                    Currencies = s.SourceCurrencies
-                        .Where(c => c.IsEnabled && c.DeletedAt == null)
-                        .Select(c => new CurrencyResponse
-                        {
-                            Id = c.Id,
-                            CurrencyTypeId = c.Currency.CurrencyTypeId,
-                            CurrencyType = c.Currency.CurrencyType.Name,
-                            Abbreviation = c.Currency.Abbreviation,
-                            Name = c.Currency.Name
-                        })
-                        .ToList()
-                })
-                .SingleOrDefault();
         }
     }
 }

@@ -62,7 +62,6 @@
             
             SourceTypeService.getAll()
                     .then(function(res) {
-                      console.dir(res);
                       self.data = res;
 
                       self.dataLoading = false;

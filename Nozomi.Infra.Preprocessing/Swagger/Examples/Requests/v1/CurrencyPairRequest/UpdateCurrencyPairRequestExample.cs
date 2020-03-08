@@ -23,7 +23,7 @@ namespace Nozomi.Preprocessing.Swagger.Examples.Requests.v1.CurrencyPairRequest
                     new UpdateCurrencyPairComponent()
                     {
                         Id = 1,
-                        ComponentType = ComponentType.Ask,
+                        ComponentType = (long)GenericComponentType.Ask,
                         QueryComponent = "Ask"
                     }
                 },

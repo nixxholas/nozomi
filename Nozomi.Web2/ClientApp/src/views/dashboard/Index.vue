@@ -19,16 +19,16 @@
                 </div>
                 <div class="tile">
                     <div class="tile is-parent">
-                        <article class="tile is-child notification is-info">
+                        <article class="tile is-child notification is-dark">
                             <p class="title">Source Types</p>
                             <p class="subtitle">
-                                <SourceTypeModal />
+                                <SourceTypeModal @created="createdNewSourceType" />
                             </p>
-                            <SourceTypesTable />
+                            <SourceTypesTable ref="sourceTypeTable" />
                         </article>
                     </div>
                     <div class="tile is-parent">
-                        <article class="tile is-child notification is-info">
+                        <article class="tile is-child notification is-dark">
                             <p class="title">Currency Types</p>
                             <p class="subtitle">
                                 <CurrencyTypeModal />
@@ -38,7 +38,7 @@
                     </div>
                 </div>
                 <div class="tile is-parent">
-                    <article class="tile is-child notification is-danger">
+                    <article class="tile is-child notification is-dark">
                         <b-field group-multiline positon="is-left">
                             <div class="control">
                                 <p class="title">Requests</p>
@@ -84,10 +84,13 @@
         },
         methods: {
             ...mapActions('oidcStore', ['authenticateOidc', 'signOutOidc']),
-            createdNewRequest: function (value) {
+            createdNewRequest: function(value) {
                 if (value)
                     this.$refs.reqTable.updateRequests();
-            }
+            },
+            createdNewSourceType: function() {
+                this.$refs.sourceTypeTable.update();
+            },
         },
         mounted: function () {
         }

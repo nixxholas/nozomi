@@ -6,11 +6,9 @@ using IdentityModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Nozomi.Base.BCL;
-using Nozomi.Data.ResponseModels;
-using Nozomi.Data.ResponseModels.AnalysedComponent;
 using Nozomi.Data.ViewModels.CurrencyType;
 using Nozomi.Preprocessing;
+using Nozomi.Preprocessing.Attributes;
 using Nozomi.Preprocessing.Statics;
 using Nozomi.Service.Events.Analysis.Interfaces;
 using Nozomi.Service.Events.Interfaces;
@@ -35,6 +33,7 @@ namespace Nozomi.Web2.Controllers.v1.CurrencyType
         }
 
         [HttpGet]
+        [Throttle(Name = "CurrencyType/All", Milliseconds = 100)]
         public IActionResult All([FromQuery]int index = 0, [FromQuery]int itemsPerPage = 200)
         {
             return Ok(_currencyTypeEvent.All());
@@ -42,6 +41,7 @@ namespace Nozomi.Web2.Controllers.v1.CurrencyType
 
         [Authorize(Roles = NozomiPermissions.AllowAllStaffRoles)]
         [HttpPost]
+        [Throttle(Name = "CurrencyType/Create", Milliseconds = 1000)]
         public IActionResult Create([FromBody]CreateCurrencyTypeViewModel vm)
         {
             var sub = ((ClaimsIdentity) User.Identity)
@@ -57,50 +57,8 @@ namespace Nozomi.Web2.Controllers.v1.CurrencyType
             return BadRequest("Please re-authenticate again");
         }
 
-        [HttpGet("{page}")]
-        [Obsolete]
-        public ICollection<ExtendedAnalysedComponentResponse<EpochValuePair<string>>> GetAll(int page = 0)
-        {
-            #if DEBUG
-            var testRes = _analysedComponentEvent.GetAllCurrencyTypeAnalysedComponents(page, true, true)
-                .Select(ac => new ExtendedAnalysedComponentResponse<EpochValuePair<string>>
-                {
-                    ParentName = ac.CurrencyType.Name,
-                    ComponentType = NozomiServiceConstants.analysedComponentTypes
-                        .SingleOrDefault(act => act.Value.Equals((int) ac.ComponentType)).Key,
-                    Historical = ac.AnalysedHistoricItems
-                        .Select(ahi => new EpochValuePair<string>
-                        {
-                            Time = (ahi.HistoricDateTime.ToUniversalTime() - CoreConstants.Epoch).TotalSeconds,
-                            Value = ahi.Value
-                        })
-                        .OrderBy(dvp => dvp.Time)
-                        .ToList(),
-                    Value = ac.Value
-                })
-                .ToList();
-            #endif
-
-            return _analysedComponentEvent.GetAllCurrencyTypeAnalysedComponents(page, true, true)
-                .Select(ac => new ExtendedAnalysedComponentResponse<EpochValuePair<string>>
-                {
-                    ParentName = ac.CurrencyType.Name,
-                    ComponentType = NozomiServiceConstants.analysedComponentTypes
-                        .SingleOrDefault(act => act.Value.Equals((int) ac.ComponentType)).Key,
-                    Historical = ac.AnalysedHistoricItems
-                        .Select(ahi => new EpochValuePair<string>
-                        {
-                            Time = (ahi.HistoricDateTime.ToUniversalTime() - CoreConstants.Epoch).TotalSeconds,
-                            Value = ahi.Value
-                        })
-                        .OrderBy(dvp => dvp.Time)
-                        .ToList(),
-                    Value = ac.Value
-                })
-                .ToList();
-        }
-
         [HttpGet]
+        [Throttle(Name = "CurrencyType/ListAll", Milliseconds = 1000)]
         public IActionResult ListAll([FromQuery]int page = 0, [FromQuery]int itemsPerPage = 50, [FromQuery]bool orderAscending = true, 
             [FromQuery]string orderingParam = "TypeShortForm")
         {
@@ -109,6 +67,7 @@ namespace Nozomi.Web2.Controllers.v1.CurrencyType
         
         [Authorize(Roles = NozomiPermissions.AllowAllStaffRoles)]
         [HttpPut]
+        [Throttle(Name = "CurrencyType/Update", Milliseconds = 1000)]
         public IActionResult Update([FromBody]UpdateCurrencyTypeViewModel vm)
         {
             var sub = ((ClaimsIdentity) User.Identity)

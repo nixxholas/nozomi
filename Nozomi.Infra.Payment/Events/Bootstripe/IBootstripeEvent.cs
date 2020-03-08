@@ -8,6 +8,8 @@ namespace Nozomi.Infra.Payment.Events.Bootstripe
     public interface IBootstripeEvent
     {
         bool IsDefaultPlan(string planId);
+
+        Task<string> GetUserCurrentPlanIdAsync(string userId);
         
         Task<IEnumerable<Plan>> GetPlans(bool activeOnly = true);
 

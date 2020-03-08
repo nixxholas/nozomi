@@ -1,10 +1,8 @@
 using System;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.ViewModels.CurrencyType;
 using Nozomi.Preprocessing.Abstracts;
-using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Services.Interfaces;
@@ -16,7 +14,7 @@ namespace Nozomi.Service.Services
         private readonly ICurrencyTypeEvent _currencyTypeEvent;
         
         public CurrencyTypeService(ILogger<CurrencyTypeService> logger, 
-            ICurrencyTypeEvent currencyTypeEvent, IUnitOfWork<NozomiDbContext> unitOfWork) : base(logger, unitOfWork)
+            ICurrencyTypeEvent currencyTypeEvent, NozomiDbContext context) : base(logger, context)
         {
             _currencyTypeEvent = currencyTypeEvent;
         }
@@ -27,8 +25,8 @@ namespace Nozomi.Service.Services
             {
                 var currencyType = new CurrencyType(vm.TypeShortForm, vm.Name);
                 
-                _unitOfWork.GetRepository<CurrencyType>().Add(currencyType);
-                _unitOfWork.Commit(userId);
+                _context.CurrencyTypes.Add(currencyType);
+                _context.SaveChanges(userId);
 
                 return;
             }
@@ -50,8 +48,8 @@ namespace Nozomi.Service.Services
                     currencyType.DeletedAt = DateTime.UtcNow;
                     currencyType.DeletedById = userId;
                     
-                    _unitOfWork.GetRepository<CurrencyType>().Update(currencyType);
-                    _unitOfWork.Commit(userId);
+                    _context.CurrencyTypes.Update(currencyType);
+                    _context.SaveChanges(userId);
 
                     return; // Do not execute further since we're done
                 }                    
@@ -63,8 +61,8 @@ namespace Nozomi.Service.Services
                 if (!string.IsNullOrEmpty(vm.Name))
                     currencyType.Name = vm.Name;
                 
-                _unitOfWork.GetRepository<CurrencyType>().Update(currencyType);
-                _unitOfWork.Commit(userId);
+                _context.CurrencyTypes.Update(currencyType);
+                _context.SaveChanges(userId);
 
                 return; // Do not execute further since we're done
             }

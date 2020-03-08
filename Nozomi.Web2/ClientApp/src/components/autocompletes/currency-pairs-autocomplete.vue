@@ -114,6 +114,11 @@
                     if (self.incomingCurrencyPairGuid && response 
                         && response.length > 0) {
                         self.selected = response.filter(e => e.guid === self.incomingCurrencyPairGuid)[0];
+                        
+                        if (self.selected.source)
+                            self.query = self.selected.mainTicker + self.selected.counterTicker + " from " + self.selected.source.name;
+                        else
+                            self.selected = self.selected.mainTicker + self.selected.counterTicker;
                     }
                 })
                 .catch(function (error) {

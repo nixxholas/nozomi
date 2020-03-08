@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data;
+using Nozomi.Preprocessing.Attributes;
 using Nozomi.Service.Events.Interfaces;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -25,6 +26,7 @@ namespace Nozomi.Web2.Controllers.v1.CurrencyPairComponent
         [SwaggerOperation(
             Summary = "Obtains all Request Components related to the specific Request ID."
         )]
+        [Throttle(Name = "CurrencyPairComponent/AllByRequestId", Milliseconds = 1000)]
         public NozomiResult<ICollection<Data.Models.Web.Component>> AllByRequestId(long requestId, bool includeNested = false)
         {
             return new NozomiResult<ICollection<Data.Models.Web.Component>>
@@ -32,6 +34,7 @@ namespace Nozomi.Web2.Controllers.v1.CurrencyPairComponent
         }
 
         [HttpGet]
+        [Throttle(Name = "CurrencyPairComponent/All", Milliseconds = 1000)]
         public NozomiResult<ICollection<Data.Models.Web.Component>> All(int index = 0, bool includeNested = false)
         {
             return new NozomiResult<ICollection<Data.Models.Web.Component>>

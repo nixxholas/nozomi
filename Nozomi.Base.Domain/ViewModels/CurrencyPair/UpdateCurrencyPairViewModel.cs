@@ -4,7 +4,7 @@ namespace Nozomi.Data.ViewModels.CurrencyPair
 {
     public class UpdateCurrencyPairViewModel : CurrencyPairViewModel
     {
-        public bool IsValid()
+        public new bool IsValid()
         {
             var validator = new UpdateCurrencyPairValidator();
             return validator.Validate(this).IsValid;

@@ -144,7 +144,8 @@ namespace Nozomi.Auth
                         JwtClaimTypes.Role,
                         NozomiAuthConstants.StandardScopes.DefaultCryptoAddress,
                         NozomiJwtClaimTypes.StripeCustomerId,
-                        NozomiJwtClaimTypes.StripeCustomerPaymentMethodId },
+                        NozomiJwtClaimTypes.StripeCustomerPaymentMethodId
+                    },
 
                     // this API has limit to its scopes
                     Scopes =

@@ -2,13 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.ViewModels.CurrencyType;
 using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Abstracts;
-using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
 using Nozomi.Service.Events.Interfaces;
 
@@ -16,32 +14,26 @@ namespace Nozomi.Service.Events
 {
     public class CurrencyTypeEvent : BaseEvent<CurrencyPairEvent, NozomiDbContext>, ICurrencyTypeEvent
     {
-        public CurrencyTypeEvent(ILogger<CurrencyPairEvent> logger, IUnitOfWork<NozomiDbContext> unitOfWork)
+        public CurrencyTypeEvent(ILogger<CurrencyPairEvent> logger, NozomiDbContext unitOfWork)
             : base(logger, unitOfWork)
         {
         }
 
         public bool Exists(string typeShortForm)
         {
-            return _unitOfWork.GetRepository<CurrencyType>()
-                .GetQueryable()
-                .AsNoTracking()
+            return _context.CurrencyTypes.AsNoTracking()
                 .Any(ct => ct.TypeShortForm.Equals(typeShortForm));
         }
 
         public bool Exists(Guid guid)
         {
-            return _unitOfWork.GetRepository<CurrencyType>()
-                .GetQueryable()
-                .AsNoTracking()
+            return _context.CurrencyTypes.AsNoTracking()
                 .Any(ct => ct.Guid.Equals(guid));
         }
 
         public bool Exists(long id)
         {
-            return _unitOfWork.GetRepository<CurrencyType>()
-                .GetQueryable()
-                .AsNoTracking()
+            return _context.CurrencyTypes.AsNoTracking()
                 .Any(ct => ct.Id.Equals(id));
         }
 
@@ -50,9 +42,7 @@ namespace Nozomi.Service.Events
             if (itemsPerPage > 200 || itemsPerPage <= 0) // Always default to 200
                 itemsPerPage = 200;
             
-            return _unitOfWork.GetRepository<CurrencyType>()
-                .GetQueryable()
-                .AsNoTracking()
+            return _context.CurrencyTypes.AsNoTracking()
                 .Where(ct => ct.DeletedAt == null && ct.IsEnabled)
                 .Skip(index * itemsPerPage)
                 .Take(itemsPerPage)
@@ -68,9 +58,7 @@ namespace Nozomi.Service.Events
         {
             if (!string.IsNullOrWhiteSpace(typeShortForm))
             {
-                var currencyType = _unitOfWork.GetRepository<CurrencyType>()
-                    .GetQueryable()
-                    .AsNoTracking()
+                var currencyType = _context.CurrencyTypes.AsNoTracking()
                     .Where(ct => ct.DeletedAt == null && ct.IsEnabled
                                                       && ct.TypeShortForm.Equals(typeShortForm));
 
@@ -93,9 +81,7 @@ namespace Nozomi.Service.Events
 
         public CurrencyType Get(Guid guid, bool track = false)
         {
-            var currencyType = _unitOfWork.GetRepository<CurrencyType>()
-                .GetQueryable()
-                .AsNoTracking()
+            var currencyType = _context.CurrencyTypes.AsNoTracking()
                 .Where(ct => ct.DeletedAt == null && ct.IsEnabled
                                                   && ct.Guid.Equals(guid));
 
@@ -119,9 +105,7 @@ namespace Nozomi.Service.Events
         {
             if (id > 0)
             {
-                var currencyType = _unitOfWork.GetRepository<CurrencyType>()
-                    .GetQueryable()
-                    .AsNoTracking()
+                var currencyType = _context.CurrencyTypes.AsNoTracking()
                     .Where(ct => ct.DeletedAt == null && ct.IsEnabled
                                                       && ct.Id.Equals(id));
 
@@ -146,9 +130,7 @@ namespace Nozomi.Service.Events
         {
             if (index >= 0)
             {
-                var cTypes = _unitOfWork.GetRepository<CurrencyType>()
-                    .GetQueryable()
-                    .AsNoTracking()
+                var cTypes = _context.CurrencyTypes.AsNoTracking()
                     .Where(ct => ct.DeletedAt == null && ct.IsEnabled);
 
                 if (track)
@@ -178,9 +160,7 @@ namespace Nozomi.Service.Events
             if (itemsPerPage < 0 || itemsPerPage > NozomiServiceConstants.CurrencyTypeTakeoutLimit)
                 itemsPerPage = NozomiServiceConstants.CurrencyTypeTakeoutLimit;
             
-            var query = _unitOfWork.GetRepository<CurrencyType>()
-                .GetQueryable()
-                .AsNoTracking()
+            var query = _context.CurrencyTypes.AsNoTracking()
                 .Where(ct => ct.DeletedAt == null && ct.IsEnabled);
             
             switch (orderingParam)
@@ -218,9 +198,7 @@ namespace Nozomi.Service.Events
         /// <returns>Currency type in question</returns>
         public CurrencyType Pop(Guid guid)
         {
-            return _unitOfWork.GetRepository<CurrencyType>()
-                .GetQueryable()
-                .AsTracking()
+            return _context.CurrencyTypes.AsTracking()
                 .SingleOrDefault(ct => ct.Guid.Equals(guid));
         }
     }

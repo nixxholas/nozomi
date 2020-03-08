@@ -5,7 +5,6 @@ using Microsoft.Extensions.Logging;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.ViewModels.SourceType;
 using Nozomi.Preprocessing.Abstracts;
-using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Services.Interfaces;
@@ -17,8 +16,8 @@ namespace Nozomi.Service.Services
         private readonly ISourceTypeEvent _sourceTypeEvent;
         
         public SourceTypeService(ILogger<SourceTypeService> logger, 
-            IUnitOfWork<NozomiDbContext> unitOfWork, ISourceTypeEvent sourceTypeEvent) 
-            : base(logger, unitOfWork)
+            NozomiDbContext context, ISourceTypeEvent sourceTypeEvent) 
+            : base(logger, context)
         {
             _sourceTypeEvent = sourceTypeEvent;
         }
@@ -29,8 +28,8 @@ namespace Nozomi.Service.Services
             {
                 var sourceType = new SourceType(vm.Abbreviation, vm.Name);
                 
-                _unitOfWork.GetRepository<SourceType>().Add(sourceType);
-                _unitOfWork.Commit(userId);
+                _context.SourceTypes.Add(sourceType);
+                _context.SaveChanges(userId);
 
                 return;
             }
@@ -52,8 +51,8 @@ namespace Nozomi.Service.Services
                         sourceType.DeletedAt = DateTime.UtcNow;
                         sourceType.DeletedById = userId;
                         
-                        _unitOfWork.GetRepository<SourceType>().Update(sourceType);
-                        _unitOfWork.Commit(userId);
+                        _context.SourceTypes.Update(sourceType);
+                        _context.SaveChanges(userId);
 
                         return true;
                     }
@@ -68,8 +67,8 @@ namespace Nozomi.Service.Services
                         && !_sourceTypeEvent.Exists(vm.Abbreviation))
                         sourceType.Abbreviation = vm.Abbreviation;
                     
-                    _unitOfWork.GetRepository<SourceType>().Update(sourceType);
-                    _unitOfWork.Commit(userId);
+                    _context.SourceTypes.Update(sourceType);
+                    _context.SaveChanges(userId);
 
                     return true;
                 }

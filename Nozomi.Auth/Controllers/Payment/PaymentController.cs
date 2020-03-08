@@ -16,6 +16,7 @@ using Nozomi.Base.Auth.Global;
 using Nozomi.Base.Auth.Models;
 using Nozomi.Base.Auth.ViewModels.Payment;
 using Nozomi.Base.BCL.Configurations;
+using Nozomi.Infra.Auth.Events.UserEvent;
 using Nozomi.Infra.Auth.Services.User;
 using Nozomi.Infra.Payment.Events.Bootstripe;
 using Nozomi.Infra.Payment.Services.Bootstripe;
@@ -34,8 +35,8 @@ namespace Nozomi.Auth.Controllers.Payment
         private readonly IBootstripeEvent _bootstripeEvent;
         
         public PaymentController(ILogger<PaymentController> logger, IWebHostEnvironment webHostEnvironment,
-            IOptions<StripeOptions> stripeOptions,
-            UserManager<User> userManager, IBootstripeService bootstripeService, IBootstripeEvent bootstripeEvent,
+            IOptions<StripeOptions> stripeOptions, UserManager<User> userManager,
+            IBootstripeService bootstripeService, IBootstripeEvent bootstripeEvent,
             ISubscriptionsHandlingService subscriptionsHandlingService,
             IUserService userService) 
             : base(logger, webHostEnvironment)
@@ -46,6 +47,22 @@ namespace Nozomi.Auth.Controllers.Payment
             _bootstripeService = bootstripeService;
             _bootstripeEvent = bootstripeEvent;
             _subscriptionsHandlingService = subscriptionsHandlingService;
+        }
+
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        [HttpGet]
+        public async Task<IActionResult> CurrentPlan()
+        {
+            // Validate
+            var user = await _userManager.FindByIdAsync(((ClaimsIdentity) User.Identity)
+                .Claims.FirstOrDefault(c => c.Type.Equals(JwtClaimTypes.Subject)
+                                            || c.Type.Equals(ClaimTypes.NameIdentifier))?.Value);
+            
+            // Safetynet
+            if (user == null)
+                return BadRequest("Please reauthenticate again!");
+                
+            return Ok(await _bootstripeEvent.GetUserCurrentPlanIdAsync(user.Id));
         }
 
         [AllowAnonymous]
@@ -241,6 +258,31 @@ namespace Nozomi.Auth.Controllers.Payment
             }
 
             return BadRequest("Invalid card token!");
+        }
+
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        [HttpPut("{id}")]
+        public async Task<IActionResult> ChangeSubscription(string id)
+        {
+            // Validate
+            var user = await _userManager.FindByIdAsync(((ClaimsIdentity) User.Identity)
+                .Claims.FirstOrDefault(c => c.Type.Equals(JwtClaimTypes.Subject)
+                                            || c.Type.Equals(ClaimTypes.NameIdentifier))?.Value);
+            
+            // Safetynet
+            if (user != null && !string.IsNullOrEmpty(id)
+                             // Ensure the plan in question exists and is enabled
+                             && _bootstripeEvent.PlanExists(id))
+            {
+                // Since the user has no existing subscriptions, proceed.
+                await _subscriptionsHandlingService.ChangePlan(id, user);
+                
+                // Return
+                _logger.LogInformation($"Subscribe: plan of ID {id} added to {user.Id}");
+                return Ok("Plan has successfully been subscribed!");
+            }
+
+            return BadRequest("Invalid plan!");
         }
 
         /// <summary>

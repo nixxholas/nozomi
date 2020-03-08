@@ -115,35 +115,46 @@
 
         <section class="hero is-light is-bold">
             <div class="hero-body">
-                <div class="container">
+                <div class="container has-text-centered">
                     <h1 class="title is-1">
                         Our team
                     </h1>
+                    
+                    <div class="columns is-centered is-multiline">
+                        <div class="column is-one-third">
+                            <figure class="image avatar is-256x256">
+                                <img class="is-rounded" src="/assets/img/people/nicholas.jpg" />
+                            </figure>
+                            <p class="title is-4">
+                                Nicholas Chen
+                            </p>
+                            <p class="subtitle">
+                                Engineering
+                            </p>
+                        </div>
+                        
+                        <div class="column is-one-third">
+                            <figure class="image avatar is-256x256">
+                                <img class="is-rounded" src="/assets/img/people/qixiang.jpg" />
+                            </figure>
+                            <p class="title is-4">
+                                Cho Qi Xiang
+                            </p>
+                            <p class="subtitle">
+                                Partner
+                            </p>
+                        </div>
 
-                    <div class="tile is-ancestor">
-                        <div class="tile is-vertical is-4">
-                            <div class="tile is-parent">
-                                <div class="tile is-child">
-                                    <div class="image is-384x384">
-                                        <img src="/assets/img/people/nicholas.jpg" />
-                                    </div>
-                                    <p class="title is-4 pt-2"><b>Nicholas Chen</b></p>
-                                    <p class="subtitle">Engineering</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="tile is-vertical is-4">
-                            <div class="tile is-parent">
-                                <div class="tile is-child">
-                                    <div class="image is-384x384">
-                                        <img src="/assets/img/people/qixiang.jpg" />
-                                    </div>
-                                    <p class="title is-4 pt-2"><b>Cho Qi Xiang</b></p>
-                                    <p class="subtitle">Partner</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="tile is-vertical is-4">
+                        <div class="column is-one-third">
+                            <figure class="image avatar is-256x256">
+                                <img class="is-rounded" src="/assets/img/people/binghuang.jpg" />
+                            </figure>
+                            <p class="title is-4">
+                                Chin Bing Huang
+                            </p>
+                            <p class="subtitle">
+                                Partner
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -201,6 +212,8 @@
     }
 </script>
 
-<style>
-
+<style scoped>
+    .avatar {
+        margin: 20px auto 20px auto;
+    }
 </style>

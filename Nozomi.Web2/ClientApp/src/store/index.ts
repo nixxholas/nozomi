@@ -56,4 +56,4 @@ const store: StoreOptions<RootState> = {
   plugins: [vuexPersist.plugin]
 };
 
-export default new Vuex.Store<RootState>(store);
+export default new Vuex.Store(store);

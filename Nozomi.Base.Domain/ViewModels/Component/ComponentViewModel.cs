@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Nozomi.Data.Models.Currency;
+using Nozomi.Data.Models.Web;
 using Nozomi.Data.ViewModels.ComponentHistoricItem;
 
 namespace Nozomi.Data.ViewModels.Component
@@ -9,7 +10,10 @@ namespace Nozomi.Data.ViewModels.Component
     {
         public Guid Guid { get; set; }
         
-        public ComponentType Type { get; set; }
+        /// <summary>
+        /// ComponentTypeId
+        /// </summary>
+        public long Type { get; set; }
         
         public string Value { get; set; }
         

@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Nozomi.Data.ResponseModels.Source;
+using Nozomi.Data.ViewModels.Source;
 
 namespace Nozomi.Data.ViewModels.SourceType
 {
@@ -12,6 +12,6 @@ namespace Nozomi.Data.ViewModels.SourceType
         
         public string Abbreviation { get; set; }
         
-        public IEnumerable<LegacySourceViewModel> Sources { get; set; }
+        public IEnumerable<SourceViewModel> Sources { get; set; }
     }
 }

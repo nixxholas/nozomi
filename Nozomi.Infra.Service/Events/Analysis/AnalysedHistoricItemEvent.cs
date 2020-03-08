@@ -5,12 +5,10 @@ using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nozomi.Base.BCL.Responses;
-using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Data.ViewModels.AnalysedHistoricItem;
 using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Abstracts;
-using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
 using Nozomi.Service.Events.Analysis.Interfaces;
 
@@ -22,26 +20,22 @@ namespace Nozomi.Service.Events.Analysis
         private readonly IAnalysedComponentEvent _analysedComponentEvent;
         
         public AnalysedHistoricItemEvent(ILogger<AnalysedHistoricItemEvent> logger, 
-            IAnalysedComponentEvent analysedComponentEvent, IUnitOfWork<NozomiDbContext> unitOfWork) 
-            : base(logger, unitOfWork)
+            IAnalysedComponentEvent analysedComponentEvent, NozomiDbContext context) 
+            : base(logger, context)
         {
             _analysedComponentEvent = analysedComponentEvent;
         }
 
         public AnalysedHistoricItem Latest(long analysedComponentId)
         {
-            return _unitOfWork.GetRepository<AnalysedHistoricItem>()
-                .GetQueryable()
-                .AsNoTracking()
+            return _context.AnalysedHistoricItems.AsNoTracking()
                 .OrderByDescending(ahi => ahi.HistoricDateTime)
                 .FirstOrDefault(ahi => ahi.AnalysedComponentId.Equals(analysedComponentId));
         }
 
         public long Count(long analysedComponentId)
         {
-            return _unitOfWork.GetRepository<AnalysedHistoricItem>()
-                .GetQueryable()
-                .AsNoTracking()
+            return _context.AnalysedHistoricItems.AsNoTracking()
                 .Where(ahi => ahi.AnalysedComponentId.Equals(analysedComponentId) &&
                               ahi.DeletedAt == null && ahi.IsEnabled)
                 .LongCount();
@@ -52,9 +46,7 @@ namespace Nozomi.Service.Events.Analysis
             if (// null check 
                 analysedComponentId <= 0 || page < 0) return new List<AnalysedHistoricItem>();
 
-            return _unitOfWork.GetRepository<AnalysedHistoricItem>()
-                .GetQueryable()
-                .AsNoTracking()
+            return _context.AnalysedHistoricItems.AsNoTracking()
                 .Where(ahi => ahi.AnalysedComponentId.Equals(analysedComponentId)
                               // Obtain the ahi that is older than the current time - since
                               && ahi.HistoricDateTime < DateTime.UtcNow.Subtract(since))
@@ -69,9 +61,7 @@ namespace Nozomi.Service.Events.Analysis
         {
             if (analysedComponentId > 0)
             {
-                var query = _unitOfWork.GetRepository<AnalysedHistoricItem>()
-                    .GetQueryable()
-                    .AsNoTracking()
+                var query = _context.AnalysedHistoricItems.AsNoTracking()
                     .Where(ahi => ahi.DeletedAt == null && ahi.IsEnabled 
                                                         && ahi.AnalysedComponentId.Equals(analysedComponentId));
 
@@ -91,9 +81,7 @@ namespace Nozomi.Service.Events.Analysis
 
         public IEnumerable<AnalysedHistoricItemViewModel> List(Guid guid, int page = 0, int itemsPerPage = 50)
         {
-            return _unitOfWork.GetRepository<AnalysedHistoricItem>()
-                .GetQueryable()
-                .AsNoTracking()
+            return _context.AnalysedHistoricItems.AsNoTracking()
                 .Where(ahi => ahi.DeletedAt == null && ahi.IsEnabled)
                 .Include(ahi => ahi.AnalysedComponent)
                 .Where(ahi => ahi.AnalysedComponent.Guid.Equals(guid))
@@ -127,9 +115,7 @@ namespace Nozomi.Service.Events.Analysis
                                        $"analysed component {analysedComponentId}");
                 
                 // Obtain all Historic items for the correlated components.
-                var query = _unitOfWork.GetRepository<AnalysedHistoricItem>()
-                    .GetQueryable()
-                    .Include(ahi => ahi.AnalysedComponent)
+                var query = _context.AnalysedHistoricItems.Include(ahi => ahi.AnalysedComponent)
                     .Where(ahi => 
                         // Currency-based check
                         (correlator.CurrencyId != null && correlator.CurrencyId.Equals(ahi.AnalysedComponent.CurrencyId))
@@ -179,9 +165,7 @@ namespace Nozomi.Service.Events.Analysis
                 var correlations = _analysedComponentEvent.GetAllByCorrelation(analysedComponentId);
                 
                 // Inside?
-                var query = _unitOfWork.GetRepository<AnalysedHistoricItem>()
-                    .GetQueryable()
-                    .AsNoTracking()
+                var query = _context.AnalysedHistoricItems.AsNoTracking()
                     .Where(ahi => correlations.Any(ac => ac.Id.Equals(ahi.AnalysedComponentId)))
                     .Include(ahi => ahi.AnalysedComponent)
                         .ThenInclude(ac => ac.Currency)
@@ -211,11 +195,10 @@ namespace Nozomi.Service.Events.Analysis
             // Safetynet
             if (analysedComponentId > 0 && componentType > 0 && page >= 0)
             {
-                var baseAC = _unitOfWork.GetRepository<AnalysedComponent>()
-                    .GetQueryable()
+                var baseAc = _context.AnalysedComponents
                     .SingleOrDefault(ac => ac.Id.Equals(analysedComponentId));
 
-                if (baseAC == null)
+                if (baseAc == null)
                 {
                     _logger.LogWarning($"[{EventName}] TraverseRelatedHistory: No base AC for " +
                                        $"analysed component {analysedComponentId}");
@@ -230,17 +213,15 @@ namespace Nozomi.Service.Events.Analysis
                 
                 // Look for the right one
                 // https://stackoverflow.com/questions/661028/how-can-i-divide-two-integers-to-get-a-double
-                var count = decimal.Divide(_unitOfWork.GetRepository<AnalysedHistoricItem>()
-                    .GetQueryable()
-                    .Include(ahi => ahi.AnalysedComponent)
+                var count = decimal.Divide(_context.AnalysedHistoricItems.Include(ahi => ahi.AnalysedComponent)
                     .Where(ahi => ahi.AnalysedComponent.ComponentType.Equals(componentType)
                         && (
                             // Currency-based matching
-                            (ahi.AnalysedComponent.CurrencyId != null && ahi.AnalysedComponent.CurrencyId.Equals(baseAC.CurrencyId))
+                            (ahi.AnalysedComponent.CurrencyId != null && ahi.AnalysedComponent.CurrencyId.Equals(baseAc.CurrencyId))
                             // Currencypair-based matching
-                            || (ahi.AnalysedComponent.CurrencyPairId != null && ahi.AnalysedComponent.CurrencyPairId.Equals(baseAC.CurrencyPairId))
+                            || (ahi.AnalysedComponent.CurrencyPairId != null && ahi.AnalysedComponent.CurrencyPairId.Equals(baseAc.CurrencyPairId))
                             // Currency type-based matching
-                            || (ahi.AnalysedComponent.CurrencyTypeId != null && ahi.AnalysedComponent.CurrencyTypeId.Equals(baseAC.CurrencyTypeId))
+                            || (ahi.AnalysedComponent.CurrencyTypeId != null && ahi.AnalysedComponent.CurrencyTypeId.Equals(baseAc.CurrencyTypeId))
                             ))
                     .LongCount(), res.ElementsPerPage); // 5000 is a page's maximum number of elements.
                 
@@ -262,20 +243,18 @@ namespace Nozomi.Service.Events.Analysis
                     (page.Equals(0)))
                 {
                     // Obtain the first page
-                    res.Data = _unitOfWork.GetRepository<AnalysedHistoricItem>()
-                        .GetQueryable()
-                        .Include(ahi => ahi.AnalysedComponent)
+                    res.Data = _context.AnalysedHistoricItems.Include(ahi => ahi.AnalysedComponent)
                         .Where(ahi => ahi.AnalysedComponent.ComponentType.Equals(componentType)
                                       && (
                                           // Currency-based matching
                                           (ahi.AnalysedComponent.CurrencyId != null &&
-                                           ahi.AnalysedComponent.CurrencyId.Equals(baseAC.CurrencyId))
+                                           ahi.AnalysedComponent.CurrencyId.Equals(baseAc.CurrencyId))
                                           // Currencypair-based matching
                                           || (ahi.AnalysedComponent.CurrencyPairId != null &&
-                                              ahi.AnalysedComponent.CurrencyPairId.Equals(baseAC.CurrencyPairId))
+                                              ahi.AnalysedComponent.CurrencyPairId.Equals(baseAc.CurrencyPairId))
                                           // Currency type-based matching
                                           || (ahi.AnalysedComponent.CurrencyTypeId != null &&
-                                              ahi.AnalysedComponent.CurrencyTypeId.Equals(baseAC.CurrencyTypeId))
+                                              ahi.AnalysedComponent.CurrencyTypeId.Equals(baseAc.CurrencyTypeId))
                                       ))
                         .Skip((int) (page * res.ElementsPerPage))
                         .Take((int) res.ElementsPerPage) // Take only ruled
@@ -295,9 +274,7 @@ namespace Nozomi.Service.Events.Analysis
         {
             if (index >= 0 && !string.IsNullOrEmpty(slug))
             {
-                var history = _unitOfWork.GetRepository<Currency>()
-                    .GetQueryable()
-                    .AsNoTracking()
+                var history = _context.Currencies.AsNoTracking()
                     .Where(c => c.DeletedAt == null && c.IsEnabled
                                                     && c.Slug.Equals(slug,
                                                         StringComparison.InvariantCultureIgnoreCase));

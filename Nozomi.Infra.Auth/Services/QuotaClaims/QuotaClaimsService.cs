@@ -1,26 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Globalization;
 using System.Linq;
-using System.Net;
-using System.Reflection.Metadata;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Nozomi.Base.Auth.Global;
 using Nozomi.Base.Auth.Models;
-using Nozomi.Base.BCL.Configurations;
-using Nozomi.Data.Models.Currency;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.Auth.Data;
-using Nozomi.Repo.BCL.Repository;
 
 namespace Nozomi.Infra.Auth.Services.QuotaClaims
 {
@@ -28,8 +14,8 @@ namespace Nozomi.Infra.Auth.Services.QuotaClaims
     {
         private readonly UserManager<Base.Auth.Models.User> _userManager;
         
-        public QuotaClaimsService(ILogger<QuotaClaimsService> logger, IUnitOfWork<AuthDbContext> unitOfWork, 
-            UserManager<Base.Auth.Models.User> userManager) : base(logger, unitOfWork)
+        public QuotaClaimsService(ILogger<QuotaClaimsService> logger, AuthDbContext authDbContext,
+            UserManager<Base.Auth.Models.User> userManager) : base(logger, authDbContext)
         {
             _userManager = userManager;
         }
@@ -92,7 +78,7 @@ namespace Nozomi.Infra.Auth.Services.QuotaClaims
 
         private UserClaim GetUserClaim(string userId, string claimType)
         {
-            return _unitOfWork.GetRepository<UserClaim>().GetQueryable().AsTracking().SingleOrDefault(claim => claim.ClaimType.Equals(claimType) && claim.UserId.Equals(userId));
+            return _context.UserClaims.AsTracking().SingleOrDefault(claim => claim.ClaimType.Equals(claimType) && claim.UserId.Equals(userId));
         }
 
         private void CreateUserClaim(string userId, string claimType, string claimValue, string methodName)
@@ -104,15 +90,15 @@ namespace Nozomi.Infra.Auth.Services.QuotaClaims
                 UserId = userId
             };
             
-            _unitOfWork.GetRepository<UserClaim>().Add(userClaim);
-            if(_unitOfWork.Commit(userId) != 1)
+            _context.UserClaims.Add(userClaim);
+            if(_context.SaveChanges(userId) != 1)
                 throw new InvalidOperationException($"{_serviceName} {methodName}: Failed to create user claim");
         }
 
         private void UpdateUserClaim(string userId, UserClaim userClaim, string methodName)
         {
-            _unitOfWork.GetRepository<UserClaim>().Update(userClaim);
-            if (_unitOfWork.Commit(userId) != 1)
+            _context.UserClaims.Update(userClaim);
+            if (_context.SaveChanges(userId) != 1)
                 throw new InvalidOperationException($"{_serviceName} {methodName}: Failed to update user claim");
         }
 

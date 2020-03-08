@@ -5,9 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes;
-using Nozomi.Repo.BCL.Context;
-using Nozomi.Repo.BCL.Repository;
+using Nozomi.Infra.Syncing.HostedServices.RequestTypes;
 using Nozomi.Repo.Data;
 using Nozomi.Service.Events;
 using Nozomi.Service.Events.Interfaces;
@@ -45,14 +43,12 @@ namespace Nozomi.HttpSyncing
                 var str = Configuration.GetConnectionString("Local:" + @Environment.MachineName);
 
                 services
-                    .AddEntityFrameworkNpgsql()
-                    .AddDbContext<NozomiDbContext>(options =>
+                    .AddDbContextPool<NozomiDbContext>(options =>
                         {
                             options.UseNpgsql(str);
                             options.EnableSensitiveDataLogging();
                             options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
-                        },
-                        ServiceLifetime.Transient);
+                        });
             }
             else
             {
@@ -76,7 +72,7 @@ namespace Nozomi.HttpSyncing
                 if (string.IsNullOrEmpty(mainDb))
                     throw new SystemException("Invalid main database configuration");
                 // Database
-                services.AddDbContext<NozomiDbContext>(options =>
+                services.AddDbContextPool<NozomiDbContext>(options =>
                 {
                     options.UseNpgsql(mainDb
                         , builder =>
@@ -86,20 +82,14 @@ namespace Nozomi.HttpSyncing
                     );
                     options.EnableSensitiveDataLogging(false);
                     options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
-                }, ServiceLifetime.Transient);
+                });
             }
-            
-            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-
-            services.AddTransient<IUnitOfWork<NozomiDbContext>, UnitOfWork<NozomiDbContext>>();
-            services.AddTransient<IDbContext, NozomiDbContext>();
 
             services.AddScoped<ICurrencyEvent, CurrencyEvent>();
             services.AddScoped<ICurrencyPairEvent, CurrencyPairEvent>();
             services.AddScoped<ICurrencyTypeEvent, CurrencyTypeEvent>();
             services.AddScoped<IRequestEvent, RequestEvent>();
-            services.AddScoped<ITickerEvent, TickerEvent>();
-            services.AddTransient<IRcdHistoricItemService, RcdHistoricItemService>();
+            services.AddTransient<IComponentHistoricItemService, ComponentHistoricItemService>();
             services.AddTransient<IComponentService, ComponentService>();
             services.AddTransient<IRequestService, RequestService>();
             services.AddHostedService<HttpGetRequestSyncingService>();

@@ -8,14 +8,20 @@ namespace Nozomi.Data.Models.Web
     public class RequestProperty : Entity
     {
         public RequestProperty() {}
-        
+
         /// <summary>
         /// Manual-based construction
         /// </summary>
         /// <param name="requestPropertyType"></param>
         /// <param name="key"></param>
         /// <param name="value"></param>
-        public RequestProperty(RequestPropertyType requestPropertyType, string key, string value) {}
+        public RequestProperty(Guid guid, RequestPropertyType requestPropertyType, string key, string value)
+        {
+            Guid = guid;
+            RequestPropertyType = requestPropertyType;
+            Key = key;
+            Value = value;
+        }
         
         public long Id { get; set; }
         

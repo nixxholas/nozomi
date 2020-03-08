@@ -9,9 +9,8 @@ using Microsoft.Extensions.Logging;
 using Nozomi.Base.BCL;
 using Nozomi.Base.BCL.Responses;
 using Nozomi.Data;
-using Nozomi.Data.ResponseModels;
-using Nozomi.Data.ResponseModels.Currency;
 using Nozomi.Data.ViewModels.Currency;
+using Nozomi.Preprocessing.Attributes;
 using Nozomi.Preprocessing.Statics;
 using Nozomi.Service.Events.Analysis.Interfaces;
 using Nozomi.Service.Events.Interfaces;
@@ -40,6 +39,7 @@ namespace Nozomi.Web2.Controllers.v1.Currency
 
         [Authorize(Roles = NozomiPermissions.AllowAllStaffRoles)]
         [HttpPost]
+        [Throttle(Name = "Currency/Create", Milliseconds = 2000)]
         public IActionResult Create(CreateCurrencyViewModel vm)
         {
             var sub = ((ClaimsIdentity) User.Identity)
@@ -57,6 +57,7 @@ namespace Nozomi.Web2.Controllers.v1.Currency
 
         [Authorize(Roles = NozomiPermissions.AllowAllStaffRoles)]
         [HttpPut]
+        [Throttle(Name = "Currency/Edit", Milliseconds = 2000)]
         public IActionResult Edit(ModifyCurrencyViewModel vm)
         {
             var sub = ((ClaimsIdentity) User.Identity)
@@ -73,6 +74,7 @@ namespace Nozomi.Web2.Controllers.v1.Currency
         }
 
         [HttpGet]
+        [Throttle(Name = "Currency/All", Milliseconds = 1000)]
         public IActionResult All([FromQuery]string currencyType = "CRYPTO", [FromQuery]int itemsPerIndex = 20,
             [FromQuery]int index = 0, [FromQuery]CurrencySortingEnum currencySortType = CurrencySortingEnum.None, 
             [FromQuery]Data.Models.Web.Analytical.AnalysedComponentType sortType = 
@@ -93,6 +95,7 @@ namespace Nozomi.Web2.Controllers.v1.Currency
         }
 
         [HttpGet("{slug}")]
+        [Throttle(Name = "Currency/GetPairCount", Milliseconds = 1000)]
         public IActionResult GetPairCount([FromRoute]string slug)
         {
             if (string.IsNullOrWhiteSpace(slug))
@@ -102,24 +105,28 @@ namespace Nozomi.Web2.Controllers.v1.Currency
         }
 
         [HttpGet("{slug}")]
+        [Throttle(Name = "Currency/Get", Milliseconds = 250)]
         public CurrencyViewModel Get(string slug)
         {
             return _currencyEvent.Get(slug);
         }
 
         [HttpGet]
+        [Throttle(Name = "Currency/ListAllSlugs", Milliseconds = 1000)]
         public NozomiResult<ICollection<string>> ListAllSlugs()
         {
             return new NozomiResult<ICollection<string>>(_currencyEvent.ListAllSlugs());
         }
 
         [HttpGet]
+        [Throttle(Name = "Currency/List", Milliseconds = 250)]
         public IActionResult List([FromQuery]string slug = null)
         {
             return Ok(_currencyEvent.All(slug));
         }
 
         [HttpGet]
+        [Throttle(Name = "Currency/ListAll", Milliseconds = 100)]
         public ICollection<CurrencyViewModel> ListAll([FromQuery]int page = 0, [FromQuery]int itemsPerPage = 50, 
             [FromQuery]string currencyTypeName = null, [FromQuery]bool orderAscending = true, 
             [FromQuery]CurrencySortingEnum orderingParam = CurrencySortingEnum.None)
@@ -127,62 +134,12 @@ namespace Nozomi.Web2.Controllers.v1.Currency
             return _currencyEvent.ListAll(page, itemsPerPage, currencyTypeName, orderAscending, orderingParam).ToList();
         }
 
-        [HttpGet("{slug}")]
-        [Obsolete]
-        public NozomiResult<DetailedCurrencyResponse> Detailed(string slug)
-        {
-            return new NozomiResult<DetailedCurrencyResponse>(_currencyEvent.GetDetailedBySlug(slug,
-                new List<Data.Models.Currency.ComponentType>()
-                {
-                    Data.Models.Currency.ComponentType.CirculatingSupply
-                },
-                new List<Data.Models.Web.Analytical.AnalysedComponentType>()
-                {
-                    Data.Models.Web.Analytical.AnalysedComponentType.MarketCap,
-                    Data.Models.Web.Analytical.AnalysedComponentType.CurrentAveragePrice,
-                    Data.Models.Web.Analytical.AnalysedComponentType.HourlyAveragePrice
-                }));
-        }
-
-        [HttpGet("{index}")]
-        [Obsolete]
-        public ICollection<GeneralisedCurrencyResponse> GetAllDetailed([FromQuery]string currencyType = "CRYPTO",
-            int index = 0, int countPerIndex = 20)
-        {
-            return _currencyEvent.GetAllDetailed(currencyType, index, countPerIndex);
-        }
-
         [HttpGet]
+        [Throttle(Name = "Currency/GetSlugToIdMap", Milliseconds = 2000)]
         [Obsolete]
         public NozomiResult<IReadOnlyDictionary<string, long>> GetSlugToIdMap()
         {
             return new NozomiResult<IReadOnlyDictionary<string, long>>(_currencyEvent.ListAllMapped());
-        }
-
-        /// <summary>
-        /// Obtain the historical data for the currency.
-        ///
-        /// We'll integrate time scale as soon as possible.
-        /// </summary>
-        [HttpGet("{slug}/{index}/{perPage}")]
-        [Obsolete]
-        public NozomiPaginatedResult<EpochValuePair<decimal>> Historical(string slug, int index = 0, int perPage = 0)
-        {
-            var res = _analysedHistoricItemEvent.GetCurrencyPriceHistory(slug, index, perPage);
-
-            if (!res.Data.Any()) return new NozomiPaginatedResult<EpochValuePair<decimal>>();
-
-            return new NozomiPaginatedResult<EpochValuePair<decimal>>
-            {
-                Pages = res.Pages,
-                ElementsPerPage = res.ElementsPerPage,
-                Data = res.Data
-                   .Select(ahi => new EpochValuePair<decimal>
-                   {
-                       Time = (ahi.HistoricDateTime.ToUniversalTime() - CoreConstants.Epoch).TotalSeconds,
-                       Value = decimal.Parse(ahi.Value)
-                   }).ToList()
-            };
         }
     }
 }

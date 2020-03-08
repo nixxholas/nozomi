@@ -1,28 +1,40 @@
+using System;
 using System.Collections.Generic;
 using Nozomi.Data.Models.Web.Websocket;
 using Nozomi.Data.ViewModels.WebsocketCommandProperty;
 
 namespace Nozomi.Data.ViewModels.WebsocketCommand
 {
-    public class WebsocketCommandViewModel
+    public class WebsocketCommandViewModel : CreateWebsocketCommandInputModel
     {
         public WebsocketCommandViewModel() {}
 
-        public WebsocketCommandViewModel(CommandType type, string name, long delay,
-            ICollection<WebsocketCommandPropertyViewModel> properties)
+        public WebsocketCommandViewModel(long id, CommandType type, string name, long delay,
+            bool isEnabled, ICollection<WebsocketCommandPropertyViewModel> properties)
         {
+            Id = id;
             Type = type;
             Name = name;
             Delay = delay;
+            IsEnabled = isEnabled;
+            Properties = properties;
+        }
+
+        public WebsocketCommandViewModel(string guid, CommandType type, string name, long delay,
+            bool isEnabled, ICollection<WebsocketCommandPropertyViewModel> properties)
+        {
+            Guid = guid;
+            Type = type;
+            Name = name;
+            Delay = delay;
+            IsEnabled = isEnabled;
             Properties = properties;
         }
         
-        public CommandType Type { get; set; }
+        public long Id { get; set; }
         
-        public string Name { get; set; }
+        public string Guid { get; set; }
         
-        public long Delay { get; set; }
-        
-        public ICollection<WebsocketCommandPropertyViewModel> Properties { get; set; } 
+        public new IEnumerable<WebsocketCommandPropertyViewModel> Properties { get; set; }
     }
 }

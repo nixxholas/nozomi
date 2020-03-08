@@ -1,14 +1,19 @@
 <template>
-    <div class="section">
-        <b-navbar :spaced="true">
-            <template slot="brand">
-                <b class="has-text-dark">Components</b>
-            </template>
-            <template v-if="showCreateFeature && guid"
-                      slot="end">
-                <CreateRequestComponentModal v-bind:guid="guid"/>
-            </template>
-        </b-navbar>
+    <div class="is-parent-container section has-background-white">
+        <div class="level is-paddingless">
+            <div class="level-left">
+                <div class="level-item">
+                    <h1 class="title is-5">Components</h1>
+                </div>
+            </div>
+            
+            <div class="level-right" v-if="showCreateFeature && guid">
+                <div class="level-item">
+                    <CreateRequestComponentModal v-bind:guid="guid" />
+                </div>
+            </div>
+        </div>
+        
         <b-table :data="data">
             <template slot-scope="props">
                 <b-table-column field="type" label="Type" sortable centered>
@@ -124,5 +129,8 @@
 </script>
 
 <style scoped>
-
+    .is-parent-container {
+        padding: 1rem 1.5rem;
+        margin-bottom: 3rem;
+    }
 </style>

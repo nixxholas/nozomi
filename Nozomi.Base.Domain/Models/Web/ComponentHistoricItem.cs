@@ -6,8 +6,8 @@ namespace Nozomi.Data.Models.Web
 {
     [DataContract]
     public class ComponentHistoricItem : Entity
-    {
-        public long Id { get; set; }
+    {        
+        public Guid Guid { get; set; }
         
         [DataMember]
         public DateTime HistoricDateTime { get; set; }

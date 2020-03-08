@@ -5,17 +5,14 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nozomi.Base.BCL;
-using Nozomi.Base.BCL.Extensions;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web;
 using Nozomi.Data.Models.Web.Analytical;
-using Nozomi.Data.ResponseModels.CurrencyPair;
 using Nozomi.Data.ViewModels.AnalysedComponent;
 using Nozomi.Data.ViewModels.CurrencyPair;
 using Nozomi.Data.ViewModels.Source;
 using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Abstracts;
-using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
 using Nozomi.Service.Events.Interfaces;
 
@@ -23,24 +20,23 @@ namespace Nozomi.Service.Events
 {
     public class CurrencyPairEvent : BaseEvent<CurrencyPairEvent, NozomiDbContext>, ICurrencyPairEvent
     {
-        public CurrencyPairEvent(ILogger<CurrencyPairEvent> logger, IUnitOfWork<NozomiDbContext> unitOfWork)
+        public CurrencyPairEvent(ILogger<CurrencyPairEvent> logger, NozomiDbContext unitOfWork)
             : base(logger, unitOfWork)
         {
         }
 
         public ICollection<CurrencyPair> GetAllByMainCurrency(string mainCurrencyAbbrv = CoreConstants.GenericCurrency)
         {
-            return _unitOfWork.GetRepository<CurrencyPair>()
-                .GetQueryable()
-                .AsNoTracking()
+            return _context.CurrencyPairs.AsNoTracking()
                 .Where(cp => cp.DeletedAt == null && cp.IsEnabled
                                                   && cp.MainTicker.Equals(mainCurrencyAbbrv,
                                                       StringComparison.InvariantCultureIgnoreCase))
                 .ToList();
         }
 
+        [Obsolete]
         public ICollection<Component> GetComponents(long analysedComponentId, bool track = false, int index = 0, 
-            bool ensureValid = true, ICollection<ComponentType> componentTypes = null)
+            bool ensureValid = true, ICollection<GenericComponentType> componentTypes = null)
         {
             if (analysedComponentId <= 0 )
                 return new List<Component>();
@@ -49,43 +45,30 @@ namespace Nozomi.Service.Events
                 index = 0;
 
             // Obtain the component first
-            var aComp = _unitOfWork.GetRepository<AnalysedComponent>()
-                .GetQueryable()
+            var aComp = _context.AnalysedComponents
                 .AsNoTracking()
                 .SingleOrDefault(ac => ac.DeletedAt == null && ac.IsEnabled && ac.Id.Equals(analysedComponentId));
 
             if (aComp != null && aComp.CurrencyPairId !> 0)
             {
-                var components = _unitOfWork.GetRepository<Component>()
-                    .GetQueryable()
-                    .AsNoTracking()
-                    .Where(c => c.DeletedAt == null && c.IsEnabled)
-                    .Include(r => r.Request)
+                var components = _context.Components.AsNoTracking();
+                    
+                if (ensureValid)
+                    components = components.Where(c => c.DeletedAt == null && c.IsEnabled);
+
+                components = components.Include(r => r.Request)
                     .ThenInclude(r => r.CurrencyPair)
                     .Where(c => c.Request.CurrencyPairId.Equals(aComp.CurrencyPairId))
+                    .Include(e => e.RcdHistoricItems)
                     .Skip(index * NozomiServiceConstants.RequestComponentTakeoutLimit)
                     .Take(NozomiServiceConstants.RequestComponentTakeoutLimit);
-
+                
                 if (components.Any())
                 {
-                    if (track)
-                    {
-                        var trackedComponents = components
-                            .Include(c => c.RcdHistoricItems);
-
-                        if (componentTypes != null && componentTypes.Any())
-                            return trackedComponents
-                                .AsEnumerable()
-                                .Where(c => componentTypes.Contains(c.ComponentType))
-                                .ToList();
-
-                        return trackedComponents.ToList();
-                    }
-
                     if (componentTypes != null && componentTypes.Any())
                         return components
                             .AsEnumerable()
-                            .Where(c => componentTypes.Contains(c.ComponentType))
+                            .Where(c => componentTypes.Contains((GenericComponentType)c.ComponentTypeId))
                             .ToList();
 
                     return components.ToList();
@@ -104,9 +87,7 @@ namespace Nozomi.Service.Events
             if (page < 0)
                 page = 0;
             
-            var query = _unitOfWork.GetRepository<CurrencyPair>()
-                .GetQueryable()
-                .AsNoTracking()
+            var query = _context.CurrencyPairs.AsNoTracking()
                 .Where(cp => cp.IsEnabled && cp.DeletedAt == null && cp.SourceId > 0);
 
             if (!string.IsNullOrEmpty(mainTicker))
@@ -174,15 +155,11 @@ namespace Nozomi.Service.Events
         public long GetCount(string mainTicker = null)
         {
             if (string.IsNullOrWhiteSpace(mainTicker) || string.IsNullOrEmpty(mainTicker))
-                return _unitOfWork.GetRepository<CurrencyPair>()
-                    .GetQueryable()
-                    .AsNoTracking()
+                return _context.CurrencyPairs.AsNoTracking()
                     .Where(cp => cp.DeletedAt == null && cp.IsEnabled)
                     .LongCount();
 
-            return _unitOfWork.GetRepository<CurrencyPair>()
-                .GetQueryable()
-                .AsNoTracking()
+            return _context.CurrencyPairs.AsNoTracking()
                 .Where(cp => cp.DeletedAt == null && cp.IsEnabled && cp.MainTicker.Equals(mainTicker))
                 .LongCount();
         }
@@ -190,9 +167,7 @@ namespace Nozomi.Service.Events
         public ICollection<CurrencyPair> GetAllByCounterCurrency(string counterCurrencyAbbrv =
             CoreConstants.GenericCounterCurrency)
         {
-            return _unitOfWork.GetRepository<CurrencyPair>()
-                .GetQueryable()
-                .AsNoTracking()
+            return _context.CurrencyPairs.AsNoTracking()
                 .Where(cp => cp.DeletedAt == null && cp.IsEnabled
                                                   && cp.CounterTicker.Equals(counterCurrencyAbbrv,
                                                       StringComparison.InvariantCultureIgnoreCase))
@@ -204,9 +179,7 @@ namespace Nozomi.Service.Events
         {
             if (!string.IsNullOrEmpty(tickerPairAbbreviation))
             {
-                var query = _unitOfWork.GetRepository<CurrencyPair>()
-                    .GetQueryable()
-                    .AsNoTracking()
+                var query = _context.CurrencyPairs.AsNoTracking()
                     .Where(cp => cp.DeletedAt == null && cp.IsEnabled
                                                       && string.Concat(cp.MainTicker, cp.CounterTicker)
                                                           .Equals(tickerPairAbbreviation,
@@ -228,8 +201,7 @@ namespace Nozomi.Service.Events
         public bool HasRelatedComponent(long analysedComponentId, AnalysedComponentType type)
         {
             // Obtain the original component first
-            var component = _unitOfWork.GetRepository<AnalysedComponent>()
-                .GetQueryable()
+            var component = _context.AnalysedComponents
                 .AsNoTracking()
                 .SingleOrDefault(ac => ac.Id.Equals(analysedComponentId));
 
@@ -237,8 +209,7 @@ namespace Nozomi.Service.Events
             if (component == null)
                 return false;
             
-            return _unitOfWork.GetRepository<AnalysedComponent>()
-                .GetQueryable()
+            return _context.AnalysedComponents
                 .Any(ac => (ac.CurrencyPairId.Equals(component.CurrencyPairId) ||
                                        ac.CurrencyId.Equals(component.CurrencyId) ||
                                        ac.CurrencyTypeId.Equals(component.CurrencyTypeId)) &&
@@ -248,7 +219,7 @@ namespace Nozomi.Service.Events
         public AnalysedComponent GetRelatedAnalysedComponent(long analysedComponentId, AnalysedComponentType type,
             bool track = false)
         {
-//            var query = _unitOfWork.GetRepository<CurrencyPair>()
+//            var query = _context.GetRepository<CurrencyPair>()
 //                .GetQueryable()
 //                .AsNoTracking()
 //                .Where(cp => cp.DeletedAt == null && cp.IsEnabled)
@@ -256,8 +227,7 @@ namespace Nozomi.Service.Events
 //                .Where(cp => cp.AnalysedComponents.Any(ac => ac.Id.Equals(analysedComponentId)));
 
             // Obtain the original component first
-            var component = _unitOfWork.GetRepository<AnalysedComponent>()
-                .GetQueryable()
+            var component = _context.AnalysedComponents
                 .AsNoTracking()
                 .SingleOrDefault(ac => ac.Id.Equals(analysedComponentId));
 
@@ -265,8 +235,7 @@ namespace Nozomi.Service.Events
             if (component == null)
                 return null;
 
-            var query = _unitOfWork.GetRepository<AnalysedComponent>()
-                .GetQueryable()
+            var query = _context.AnalysedComponents
                 .AsNoTracking();
             
             if (track)
@@ -294,9 +263,7 @@ namespace Nozomi.Service.Events
         {
             if (analysedComponentId <= 0)
             {
-                var query = _unitOfWork.GetRepository<CurrencyPair>()
-                    .GetQueryable()
-                    .AsNoTracking()
+                var query = _context.CurrencyPairs.AsNoTracking()
                     .Where(cp => cp.DeletedAt == null && cp.IsEnabled)
                     .Include(cp => cp.AnalysedComponents)
                     // Look for the Currency pair that contains the component requested
@@ -322,9 +289,7 @@ namespace Nozomi.Service.Events
 
         public ICollection<CurrencyPair> GetAll()
         {
-            return _unitOfWork.GetRepository<CurrencyPair>()
-                .GetQueryable()
-                .AsNoTracking()
+            return _context.CurrencyPairs.AsNoTracking()
                 .Where(cp => cp.DeletedAt == null)
                 .ToList();
         }
@@ -332,17 +297,13 @@ namespace Nozomi.Service.Events
         public CurrencyPair Get(long id, bool track = false, string userId = null)
         {
             if (track)
-                return _unitOfWork.GetRepository<CurrencyPair>()
-                    .GetQueryable()
-                    .Include(cp => cp.Requests)
+                return _context.CurrencyPairs.Include(cp => cp.Requests)
                     .Include(cp => cp.Source)
                     .Include(cp => cp.AnalysedComponents)
                     .SingleOrDefault(cp => cp.Id.Equals(id) && cp.DeletedAt == null);
 
-            return _unitOfWork
-                .GetRepository<CurrencyPair>()
-                .GetQueryable()
-                .AsNoTracking()
+            return _context
+                .CurrencyPairs.AsNoTracking()
                 .SingleOrDefault(cp => cp.Id.Equals(id) && cp.DeletedAt == null);
         }
 
@@ -352,17 +313,13 @@ namespace Nozomi.Service.Events
                 throw new InvalidConstraintException("Can't parse the given guid.");
             
             if (track)
-                return _unitOfWork.GetRepository<CurrencyPair>()
-                    .GetQueryable()
-                    .Include(cp => cp.Requests)
+                return _context.CurrencyPairs.Include(cp => cp.Requests)
                     .Include(cp => cp.Source)
                     .Include(cp => cp.AnalysedComponents)
                     .SingleOrDefault(cp => cp.Guid.Equals(parsedGuid) && cp.DeletedAt == null);
 
-            return _unitOfWork
-                .GetRepository<CurrencyPair>()
-                .GetQueryable()
-                .AsNoTracking()
+            return _context
+                .CurrencyPairs.AsNoTracking()
                 .SingleOrDefault(cp => cp.Guid.Equals(parsedGuid) && cp.DeletedAt == null);
         }
 
@@ -372,38 +329,14 @@ namespace Nozomi.Service.Events
                 throw new InvalidConstraintException("Can't parse the given guid.");
             
             if (track)
-                return _unitOfWork.GetRepository<CurrencyPair>()
-                    .GetQueryable()
-                    .Include(cp => cp.Requests)
+                return _context.CurrencyPairs.Include(cp => cp.Requests)
                     .Include(cp => cp.Source)
                     .Include(cp => cp.AnalysedComponents)
                     .SingleOrDefault(cp => cp.Guid.Equals(guid) && cp.DeletedAt == null);
 
-            return _unitOfWork
-                .GetRepository<CurrencyPair>()
-                .GetQueryable()
-                .AsNoTracking()
+            return _context
+                .CurrencyPairs.AsNoTracking()
                 .SingleOrDefault(cp => cp.Guid.Equals(guid) && cp.DeletedAt == null);
-        }
-
-        public ICollection<DistinctCurrencyPairResponse> ListAll()
-        {
-            return _unitOfWork.GetRepository<CurrencyPair>()
-                .GetQueryable()
-                .AsNoTracking()
-                .Where(cp => cp.DeletedAt == null && cp.IsEnabled)
-                .Include(cp => cp.Source)
-                .Select(cp => new DistinctCurrencyPairResponse()
-                {
-                    MainTicker = cp.MainTicker,
-                    CounterTicker = cp.CounterTicker,
-                    CurrencyPairType = cp.CurrencyPairType,
-                    Id = cp.Id,
-                    SourceAbbreviation = cp.Source.Abbreviation,
-                    SourceName = cp.Source.Name
-                })
-                .DefaultIfEmpty()
-                .ToList();
         }
 
         public IEnumerable<CurrencyPairViewModel> Search(string queryTickerPair = null, int page = 0, 
@@ -413,9 +346,7 @@ namespace Nozomi.Service.Events
                 queryTickerPair = queryTickerPair.ToUpper();
             
             #if DEBUG
-            var res = _unitOfWork.GetRepository<CurrencyPair>()
-                .GetQueryable()
-                .Where(cp => cp.IsEnabled && cp.DeletedAt == null
+            var res = _context.CurrencyPairs.Where(cp => cp.IsEnabled && cp.DeletedAt == null
                                           && !string.IsNullOrEmpty(cp.MainTicker)
                                           && !string.IsNullOrEmpty(cp.CounterTicker))
                 .OrderBy(cp => string.Concat(cp.MainTicker, cp.CounterTicker))
@@ -424,9 +355,7 @@ namespace Nozomi.Service.Events
                 .ToList();
             #endif
 
-            return _unitOfWork.GetRepository<CurrencyPair>()
-                .GetQueryable()
-                .Where(cp => cp.IsEnabled && cp.DeletedAt == null
+            return _context.CurrencyPairs.Where(cp => cp.IsEnabled && cp.DeletedAt == null
                                           && !string.IsNullOrEmpty(cp.MainTicker)
                                           && !string.IsNullOrEmpty(cp.CounterTicker))
                 .OrderBy(cp => string.Concat(cp.MainTicker, cp.CounterTicker))

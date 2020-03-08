@@ -4,6 +4,8 @@ namespace Nozomi.Data.ViewModels.Request
 {
     public class UpdateRequestViewModel : RequestViewModel
     {
+        public new bool? IsEnabled { get; set; }
+        
         public new bool IsValid()
         {
             var validator = new UpdateRequestValidator();
@@ -15,7 +17,7 @@ namespace Nozomi.Data.ViewModels.Request
             public UpdateRequestValidator()
             {
                 RuleFor(r => r.Guid).NotEmpty().NotNull();
-                RuleFor(r => r.IsEnabled).NotNull();
+                // RuleFor(r => r.IsEnabled).NotNull();
                 RuleFor(r => r.RequestType).IsInEnum();
                 RuleFor(r => r.ResponseType).IsInEnum();
                 RuleFor(r => r.DataPath).NotEmpty();

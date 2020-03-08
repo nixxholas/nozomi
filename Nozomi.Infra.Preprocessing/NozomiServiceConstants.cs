@@ -3,6 +3,7 @@ using Nozomi.Base.BCL.Helpers.Enumerator;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web;
 using Nozomi.Data.Models.Web.Analytical;
+using Nozomi.Data.Models.Web.Websocket;
 
 namespace Nozomi.Preprocessing
 {
@@ -21,8 +22,8 @@ namespace Nozomi.Preprocessing
             EnumHelper.GetEnumValuesAndDescriptions<AnalysedComponentType>();
         public static List<KeyValuePair<string, int>> CurrencyPropertyTypes =
             EnumHelper.GetEnumValuesAndDescriptions<CurrencyPropertyType>();
-        public static List<KeyValuePair<string, int>> requestComponentTypes = 
-            EnumHelper.GetEnumValuesAndDescriptions<ComponentType>();
+        // public static List<KeyValuePair<string, int>> requestComponentTypes = 
+        //     EnumHelper.GetEnumValuesAndDescriptions<ComponentType>();
         public static List<KeyValuePair<string, int>> requestTypes =
             EnumHelper.GetEnumValuesAndDescriptions<RequestType>();
         public static List<KeyValuePair<string, int>> responseTypes =
@@ -31,6 +32,10 @@ namespace Nozomi.Preprocessing
             EnumHelper.GetEnumValuesAndDescriptions<RequestPropertyType>();
         public static List<KeyValuePair<string, int>> currencyPairType =
             EnumHelper.GetEnumValuesAndDescriptions<CurrencyPairType>();
+        public static List<KeyValuePair<string, int>> websocketCommandType =
+            EnumHelper.GetEnumValuesAndDescriptions<CommandType>();
+        public static List<KeyValuePair<string, int>> websocketCommandPropertyType =
+            EnumHelper.GetEnumValuesAndDescriptions<CommandPropertyType>();
 
         public static readonly List<KeyValuePair<int, string>> AnalysedComponentTypeMap =
             EnumHelper.GetEnumDescriptionsAndValues<AnalysedComponentType>();

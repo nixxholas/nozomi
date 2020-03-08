@@ -1,5 +1,6 @@
 using Nozomi.Data.AreaModels.v1.CurrencyPairComponent;
 using Nozomi.Data.Models.Currency;
+using Nozomi.Data.Models.Web;
 using Swashbuckle.AspNetCore.Filters;
 
 namespace Nozomi.Preprocessing.Swagger.Examples.Requests.v1.CurrencyPairComponent
@@ -10,7 +11,7 @@ namespace Nozomi.Preprocessing.Swagger.Examples.Requests.v1.CurrencyPairComponen
         {
             return new CreateCurrencyPairComponent()
             {
-                ComponentType = ComponentType.High,
+                ComponentType = (long)GenericComponentType.High,
                 QueryComponent = "High",
                 RequestId = 1
             };
