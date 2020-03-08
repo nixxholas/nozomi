@@ -19,7 +19,6 @@ namespace Nozomi.Infra.Payment.Events.Bootstripe
     {
         private readonly PlanService _planService;
         private readonly IOptions<StripeOptions> _stripeOptions;
-        private readonly Product _stripeProduct;
         private readonly PaymentMethodService _paymentMethodService;
         private readonly IUserEvent _userEvent;
 
@@ -30,8 +29,6 @@ namespace Nozomi.Infra.Payment.Events.Bootstripe
             StripeConfiguration.ApiKey = stripeOptions.Value.SecretKey;
             _stripeOptions = stripeOptions;
 
-            var productService = new ProductService();
-            _stripeProduct = productService.Get(stripeOptions.Value.ProductId);
             _paymentMethodService = new PaymentMethodService();
             _userEvent = userEvent;
         }
@@ -79,22 +76,30 @@ namespace Nozomi.Infra.Payment.Events.Bootstripe
 
         public async Task<IEnumerable<Plan>> GetPlans(bool activeOnly = true)
         {
-            if (_stripeProduct == null)
-                throw new NullReferenceException($"{_eventName} plans: Unable to load, Product is not configured.");
+            if (_stripeOptions == null || string.IsNullOrEmpty(_stripeOptions.Value.ProductId))
+                throw new NullReferenceException($"{_eventName} GetPlans: Unable to load, Stripe/ProductId is " +
+                                                 "not configured.");
+            
+            var productService = new ProductService();
+            var product = productService.Get(_stripeOptions.Value.ProductId);
+
+            if (product == null)
+                throw new NullReferenceException($"{_eventName} GetPlans: Unable to load, Product is " +
+                                                 "not configured.");
 
             var planListOptions = new PlanListOptions
             {
                 Active = activeOnly,
-                Product = _stripeProduct.Id
+                Product = product.Id
             };
 
             var plans = await _planService.ListAsync(planListOptions);
 
             if (plans.StripeResponse.StatusCode != HttpStatusCode.OK)
             {
-                _logger.LogWarning($"{_eventName} plans: Unable to load, plans cannot be " +
+                _logger.LogWarning($"{_eventName} GetPlans: Unable to load, plans cannot be " +
                                    $"retrieved from Stripe.");
-                throw new NullReferenceException($"{_eventName} plans: Unable to load, plans cannot be " +
+                throw new NullReferenceException($"{_eventName} GetPlans: Unable to load, plans cannot be " +
                                                  $"retrieved from Stripe.");
             }
 
