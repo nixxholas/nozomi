@@ -31,16 +31,18 @@ export const routes = [
   { name: 'home', path: '/', component: HomePage, display: 'Home',
     meta: { icon: 'home', isPublic: true, onNav: false }
   },
-  { name: 'currency-index', path: '/currencies', props: true, display: 'Currencies',
-    component: CurrencyIndex,
-    meta: { icon: 'coins', isPublic: true, onNav: true }
-  },
-  { name: 'source-index', path: '/sources', props: true, display: 'Sources', 
-    component: SourceIndex,
-    meta: { icon: 'landmark', isPublic: true, onNav: true }
-  },
-  { name: 'demo', path: '/demo', component: Demo, display: 'Demo',
-    meta: { icon: 'info', isPublic: false, onNav: false }
+  // { name: 'currency-index', path: '/currencies', props: true, display: 'Currencies',
+  //   component: CurrencyIndex,
+  //   meta: { icon: 'coins', isPublic: true, onNav: true }
+  // },
+  // { name: 'source-index', path: '/sources', props: true, display: 'Sources', 
+  //   component: SourceIndex,
+  //   meta: { icon: 'landmark', isPublic: true, onNav: true }
+  // },
+  {
+    name: 'demo-index', path: '/demo', props: true, display: 'Demo',
+    component: Demo,
+    meta: {icon: '', isPublic: true, onNav: true}
   },
   { name: 'about', path: '/about', component: About, display: 'About',
     meta: { icon: 'info', isPublic: true, onNav: false }
