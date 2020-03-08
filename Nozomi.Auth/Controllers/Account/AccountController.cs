@@ -124,6 +124,8 @@ namespace Nozomi.Auth.Controllers.Account
         [AllowAnonymous]
         public async Task<IActionResult> ConfirmEmail(string userId, string code, string returnUrl)
         {
+            ViewData["ReturnUrl"] = returnUrl;
+            
             if (userId == null || code == null)
             {
                 return RedirectToAction(nameof(HomeController.Index), "Home");
@@ -144,6 +146,7 @@ namespace Nozomi.Auth.Controllers.Account
         [HttpGet]
         public IActionResult Register(string returnUrl)
         {
+            ViewData["ReturnUrl"] = returnUrl;
             var vm = BuildRegisterViewModel(returnUrl);
             
             return View(vm);
@@ -317,6 +320,8 @@ namespace Nozomi.Auth.Controllers.Account
         [HttpGet]
         public async Task<IActionResult> Login(string returnUrl, string userEmail = null)
         {
+            ViewData["ReturnUrl"] = returnUrl;
+            
             // build a model so we know what to show on the login page
             var vm = await BuildLoginViewModelAsync(returnUrl);
 
@@ -429,6 +434,8 @@ namespace Nozomi.Auth.Controllers.Account
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginInputModel model, string button)
         {
+            ViewData["ReturnUrl"] = model.ReturnUrl;
+            
             // check if we are in the context of an authorization request
             var context = await _interaction.GetAuthorizationContextAsync(model.ReturnUrl);
             
@@ -695,6 +702,7 @@ namespace Nozomi.Auth.Controllers.Account
         [AllowAnonymous]
         public IActionResult ForgotPassword(string returnUrl)
         {
+            ViewData["ReturnUrl"] = returnUrl;
             ForgotPasswordInputModel model = BuildForgotPasswordInputViewModel(returnUrl);
             
             return View(model);
@@ -707,6 +715,8 @@ namespace Nozomi.Auth.Controllers.Account
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ForgotPassword(ForgotPasswordInputModel model)
         {
+            ViewData["ReturnUrl"] = model.ReturnUrl;
+            
             if (model.IsValid())
             {
                 User user = await _userManager.FindByEmailAsync(model.Email);
@@ -752,6 +762,8 @@ namespace Nozomi.Auth.Controllers.Account
         [AllowAnonymous]
         public IActionResult ResetPassword(string code = null, string email = null, string returnUrl = null)
         {
+            ViewData["ReturnUrl"] = returnUrl;
+            
             ResetPasswordInputModel model = new ResetPasswordInputModel
             {
                 Code = code,
@@ -769,6 +781,8 @@ namespace Nozomi.Auth.Controllers.Account
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ResetPassword(ResetPasswordInputModel model)
         {
+            ViewData["ReturnUrl"] = model.ReturnUrl;
+            
             if (!ModelState.IsValid)
             {
                 return View(model);
@@ -805,6 +819,8 @@ namespace Nozomi.Auth.Controllers.Account
         [AllowAnonymous]
         public async Task<ActionResult> SendCode(string returnUrl = null, bool rememberMe = false)
         {
+            ViewData["ReturnUrl"] = returnUrl;
+            
             var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
             if (user == null)
             {
@@ -878,6 +894,50 @@ namespace Nozomi.Auth.Controllers.Account
             }
 
             return BadRequest("Invalid input/s, please ensure that the entries are correctly filled!");
+        }
+        
+        // GET: /Account/RedirectBackToSite
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> RedirectBackToSite(string returnUrl)
+        {
+            var context = await _interaction.GetAuthorizationContextAsync(returnUrl);
+
+            if (context != null)
+            {
+                if (await _clientStore.IsPkceClientAsync(context.ClientId))
+                {
+                    // if the client is PKCE then we assume it's native, so this change in how to
+                    // return the response is for better UX for the end user.
+                    return View("Redirect", new RedirectViewModel {RedirectUrl = returnUrl});
+                }
+                
+                // Removes routes and retain Scheme and Authority
+                // e.g. https://nozomi.one/oidc-callback to https://nozomi.one
+                // https://stackoverflow.com/questions/21640/net-get-protocol-host-and-port
+                Uri redirectUri = new Uri(context.RedirectUri);
+                string authorityUrl = redirectUri.GetLeftPart(UriPartial.Authority);
+                
+                // we can trust model.ReturnUrl since GetAuthorizationContextAsync returned non-null
+                return Redirect(authorityUrl);
+            }
+
+            // request for a local page
+            if (Url.IsLocalUrl(returnUrl))
+            {
+                return Redirect(returnUrl);
+            }
+            else if (string.IsNullOrEmpty(returnUrl))
+            {
+                // Force redirect back to nozomi SPA
+                bool isDevelopment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ==
+                                       Environments.Development;
+                string spaUrl =  isDevelopment ? "https://localhost:5001" : "https://nozomi.one";
+                return Redirect(spaUrl);
+            }
+            
+            // user might have clicked on a malicious link - should be logged
+            throw new Exception("invalid return URL");
         }
 
         /*****************************************/
