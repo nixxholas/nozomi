@@ -98,7 +98,7 @@ namespace Nozomi.Auth
                     authMethod);
                 var vaultClient = new VaultClient(vaultClientSettings);
 
-                var nozomiVault = vaultClient.V1.Secrets.Cubbyhole.ReadSecretAsync("nozomi")
+                var nozomiVault = vaultClient.V1.Secrets.Cubbyhole.ReadSecretAsync("auth")
                     .GetAwaiter()
                     .GetResult().Data;
 
