@@ -102,7 +102,7 @@ namespace Nozomi.Auth
                     .GetAwaiter()
                     .GetResult().Data;
 
-                var mainDb = (string) nozomiVault["main"];
+                var mainDb = (string) nozomiVault["web"];
                 if (string.IsNullOrEmpty(mainDb))
                     throw new SystemException("Invalid main database configuration");
                 // Database
@@ -115,7 +115,7 @@ namespace Nozomi.Auth
                     options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
                 }, ServiceLifetime.Transient);
 
-                var authDb = (string) nozomiVault["coreauth"];
+                var authDb = (string) nozomiVault["auth"];
                 if (string.IsNullOrEmpty(authDb))
                     throw new SystemException("Invalid main database configuration");
                 // Database
