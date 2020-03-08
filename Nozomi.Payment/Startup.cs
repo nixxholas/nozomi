@@ -106,8 +106,6 @@ namespace Nozomi.Payment
                     options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
                 })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
-            
-            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -122,6 +120,8 @@ namespace Nozomi.Payment
                 app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
             using (var context = scope.ServiceProvider.GetService<AuthDbContext>())
                 context.Database.Migrate();
+
+            app.UseRouting();
             
             app.UseEndpoints(endpoints =>
             {
