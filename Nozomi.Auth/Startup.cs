@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Collections.Generic;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
@@ -68,6 +69,20 @@ namespace Nozomi.Auth
                 var coreStr = Configuration.GetConnectionString("LocalCore:" + Environment.MachineName);
                 services.AddDbContext<NozomiDbContext>(options =>
                     options.UseNpgsql(coreStr));
+                
+                // Setup all the 3rd party library options
+                services.Configure<SendgridOptions>(options =>
+                {
+                    options.SendGridKey = "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";
+                    options.SendGridUser = "Nozomi Auth";
+                });
+                services.Configure<StripeOptions>(options =>
+                {
+                    options.DefaultPlanId = Configuration["Stripe:DefaultPlanId"];
+                    options.ProductId = Configuration["Stripe:ProductId"];
+                    options.PublishableKey = Configuration["Stripe:PublishableKey"];
+                    options.SecretKey = Configuration["Stripe:SecretKey"];
+                });
             }
             else
             {
@@ -112,6 +127,40 @@ namespace Nozomi.Auth
                     options.EnableSensitiveDataLogging(false);
                     options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
                 }, ServiceLifetime.Transient);
+
+                // Vault props for Sendgrid
+                var sendgridKey = (string) nozomiVault["sendgrid-key"];
+                var sendgridUser = (string) nozomiVault["sendgrid-user"];
+                // Setup all the 3rd party library options
+                services.Configure<SendgridOptions>(options =>
+                {
+                    if (string.IsNullOrEmpty(sendgridKey))
+                        throw new KeyNotFoundException("SendgridOptions: Invalid Sendgrid Key!");
+                    options.SendGridKey = sendgridKey;
+                    if (string.IsNullOrEmpty(sendgridUser))
+                        throw new KeyNotFoundException("SendgridOptions: Invalid Sendgrid User!");
+                    options.SendGridUser = sendgridUser;
+                });
+
+                var stripeDefaultPlanId = (string) nozomiVault["StripeDefaultPlanId"];
+                var stripeProductId = (string) nozomiVault["StripeProductId"];
+                var stripePublishableKey = (string) nozomiVault["StripePublishableKey"];
+                var stripeSecretKey = (string) nozomiVault["StripeSecretKey"];
+                services.Configure<StripeOptions>(options =>
+                {
+                    if (string.IsNullOrEmpty(stripeDefaultPlanId))
+                        throw new KeyNotFoundException("StripeOptions: Invalid Stripe Default Plan Id!");
+                    options.DefaultPlanId = stripeDefaultPlanId;
+                    if (string.IsNullOrEmpty(stripeProductId))
+                        throw new KeyNotFoundException("StripeOptions: Invalid Stripe target Product Id!");
+                    options.ProductId = stripeProductId;
+                    if (string.IsNullOrEmpty(stripePublishableKey))
+                        throw new KeyNotFoundException("StripeOptions: Invalid Stripe Publishable Key!");
+                    options.PublishableKey = stripePublishableKey;
+                    if (string.IsNullOrEmpty(stripeSecretKey))
+                        throw new KeyNotFoundException("StripeOptions: Invalid Stripe Secret!");
+                    options.SecretKey = stripeSecretKey;
+                });
             }
 
             // Cross Origin Requests for Nozomi Auth
@@ -165,18 +214,6 @@ namespace Nozomi.Auth
 
             services.Configure<IdentityOptions>(options =>
                 options.ClaimsIdentity.RoleClaimType = ClaimTypes.Role);
-            services.Configure<SendgridOptions>(options =>
-            {
-                options.SendGridKey = "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";
-                options.SendGridUser = "Nozomi Auth";
-            });
-            services.Configure<StripeOptions>(options =>
-            {
-                options.DefaultPlanId = Configuration["Stripe:DefaultPlanId"];
-                options.ProductId = Configuration["Stripe:ProductId"];
-                options.PublishableKey = Configuration["Stripe:PublishableKey"];
-                options.SecretKey = Configuration["Stripe:SecretKey"];
-            });
 
             var identityConfig = new IdentityConfig(HostingEnvironment);
 
@@ -285,8 +322,6 @@ namespace Nozomi.Auth
                 app.UseExceptionHandler("/Home/Error");
                 app.UseHsts();
             }
-
-            StripeConfiguration.ApiKey = Configuration["Stripe:SecretKey"];
 
             app.UseAutoDbMigration(HostingEnvironment);
 
