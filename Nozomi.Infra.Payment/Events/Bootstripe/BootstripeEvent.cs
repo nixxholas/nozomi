@@ -17,7 +17,6 @@ namespace Nozomi.Infra.Payment.Events.Bootstripe
 {
     public class BootstripeEvent : BaseEvent<BootstripeEvent>, IBootstripeEvent
     {
-        private readonly PlanService _planService;
         private readonly IOptions<StripeOptions> _stripeOptions;
         private readonly PaymentMethodService _paymentMethodService;
         private readonly IUserEvent _userEvent;
@@ -93,7 +92,8 @@ namespace Nozomi.Infra.Payment.Events.Bootstripe
                 Product = product.Id
             };
 
-            var plans = await _planService.ListAsync(planListOptions);
+            var planService = new PlanService();
+            var plans = await planService.ListAsync(planListOptions);
 
             if (plans.StripeResponse.StatusCode != HttpStatusCode.OK)
             {
@@ -112,12 +112,13 @@ namespace Nozomi.Infra.Payment.Events.Bootstripe
             if (string.IsNullOrEmpty(planId))
                 throw new ArgumentNullException($"{_eventName} {methodName}: Plan ID is null");
 
+            var planService = new PlanService();
             var planListOptions = new PlanListOptions
             {
                 Active = true,
                 Product = _stripeOptions.Value.ProductId,
             };
-            var plans = _planService.List(planListOptions);
+            var plans = planService.List(planListOptions);
 
             return plans.Data.FirstOrDefault(p => p.Id.Equals(planId));
         }
@@ -128,12 +129,14 @@ namespace Nozomi.Infra.Payment.Events.Bootstripe
 
             if (string.IsNullOrEmpty(planId))
                 throw new ArgumentNullException($"{_eventName} {methodName}: Plan id is null");
+
+            var planService = new PlanService();
             var planListOptions = new PlanListOptions
             {
                 Active = true,
                 Product = _stripeOptions.Value.ProductId,
             };
-            var plans = _planService.List(planListOptions);
+            var plans = planService.List(planListOptions);
 
             return plans.Data.Any(p => p.Id.Equals(planId));
         }
