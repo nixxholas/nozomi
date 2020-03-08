@@ -1,5 +1,7 @@
+using System;
 using FluentValidation;
 using Nozomi.Data.Models.Web;
+using Swashbuckle.AspNetCore.Filters;
 
 namespace Nozomi.Data.ViewModels.Request
 {
@@ -38,6 +40,7 @@ namespace Nozomi.Data.ViewModels.Request
 
         public enum RequestParentType
         {
+            Default = -1,
             Currency = 0,
             CurrencyPair = 1,
             CurrencyType = 2
@@ -89,6 +92,25 @@ namespace Nozomi.Data.ViewModels.Request
                     .Unless(r =>
                         // Ignore the check if a currency or currency pair is selected
                         !string.IsNullOrEmpty(r.CurrencySlug) || !string.IsNullOrEmpty(r.CurrencyPairGuid));
+            }
+        }
+
+        public class CreateRequestViewModelExample : IExamplesProvider<CreateRequestViewModel>
+        {
+            public CreateRequestViewModel GetExamples()
+            {
+                return new CreateRequestViewModel
+                {
+                    ParentType = RequestParentType.Default,
+                    RequestType = RequestType.HttpGet,
+                    ResponseType = ResponseType.Json,
+                    DataPath = "",
+                    Delay = 5000,
+                    FailureDelay = 600000,
+                    CurrencySlug = "BTC",
+                    CurrencyPairGuid = Guid.NewGuid().ToString(),
+                    CurrencyTypeGuid = Guid.NewGuid().ToString()
+                };
             }
         }
     }

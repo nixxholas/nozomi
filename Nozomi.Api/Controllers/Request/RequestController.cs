@@ -51,6 +51,8 @@ namespace Nozomi.Api.Controllers.Request
 
         [TokenBucket(Name = "Request/Create", Weight = 3)]
         [HttpPost]
+        [SwaggerRequestExample(typeof(CreateRequestViewModel), 
+            typeof(CreateRequestViewModel.CreateRequestViewModelExample))]
         public IActionResult Create(CreateRequestViewModel vm)
         {
             if (vm.IsValid() && HttpContext.Request.Headers.TryGetValue("Authorization", out var apiKey))
