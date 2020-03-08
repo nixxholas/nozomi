@@ -31,6 +31,7 @@ using Nozomi.Infra.Payment.Events.Bootstripe;
 using Nozomi.Infra.Payment.Services.Bootstripe;
 using Nozomi.Infra.Payment.Services.DisputesHandling;
 using Nozomi.Infra.Payment.Services.InvoicesHandling;
+using Nozomi.Infra.Payment.Services.SubscriptionHandling;
 using Nozomi.Preprocessing.Events;
 using Nozomi.Preprocessing.Events.Interfaces;
 using Nozomi.Preprocessing.Options;
@@ -283,14 +284,6 @@ namespace Nozomi.Auth
                     options.Audience = "nozomi.web";
                 });
 
-            // Database
-            // services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-            //
-            // services.AddTransient<IUnitOfWork<AuthDbContext>, UnitOfWork<AuthDbContext>>();
-            // services.AddTransient<IDbContext, AuthDbContext>();
-            // services.AddTransient<NozomiDbContext, UnitOfWork<NozomiDbContext>>();
-            // services.AddTransient<IDbContext, NozomiDbContext>();
-
             services.AddTransient<IAddressEvent, AddressEvent>();
             services.AddTransient<IValidatingEvent, ValidatingEvent>();
 
@@ -308,6 +301,7 @@ namespace Nozomi.Auth
             services.AddScoped<IBootstripeService, BootstripeService>();
             services.AddScoped<IDisputesHandlingService, DisputesHandlingService>();
             services.AddScoped<IInvoicesHandlingService, InvoicesHandlingService>();
+            services.AddScoped<ISubscriptionsHandlingService, SubscriptionsHandlingService>();
         }
 
         public void Configure(IApplicationBuilder app)
