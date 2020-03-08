@@ -3,15 +3,11 @@
 
 
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Bogus;
 using IdentityModel;
-using IdentityModel.Client;
 using IdentityServer4.Events;
 using IdentityServer4.Extensions;
 using IdentityServer4.Models;
@@ -23,7 +19,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Nozomi.Auth.Controllers.Home;
@@ -36,9 +31,9 @@ using Nozomi.Base.BCL.Helpers.Native.Text;
 using Nozomi.Base.Blockchain.Auth.Query.Validating;
 using Nozomi.Infra.Auth.Events.EmailSender;
 using Nozomi.Infra.Auth.Services.Address;
-using Nozomi.Infra.Auth.Services.Stripe;
 using Nozomi.Infra.Auth.Services.User;
 using Nozomi.Infra.Blockchain.Auth.Events.Interfaces;
+using Nozomi.Infra.Payment.Services.Bootstripe;
 using Nozomi.Preprocessing.Events.Interfaces;
 
 namespace Nozomi.Auth.Controllers.Account
@@ -59,7 +54,7 @@ namespace Nozomi.Auth.Controllers.Account
         private readonly IValidatingEvent _validatingEvent;
         private readonly IEventService _events;
         private readonly IAddressService _addressService;
-        private readonly IStripeService _stripeService;
+        private readonly IBootstripeService _bootstripeService;
         private readonly IUserService _userService;
 
         public AccountController(
@@ -77,7 +72,7 @@ namespace Nozomi.Auth.Controllers.Account
             IValidatingEvent validatingEvent,
             IEventService events, 
             IAddressService addressService,
-            IStripeService stripeService,
+            IBootstripeService bootstripeService,
             IUserService userService) : base(logger, webHostEnvironment)
         {
             _emailSender = emailSender;
@@ -92,8 +87,8 @@ namespace Nozomi.Auth.Controllers.Account
             _validatingEvent = validatingEvent;
             _events = events;
             _addressService = addressService;
-            _stripeService = stripeService;
             _userService = userService;
+            _bootstripeService = bootstripeService;
         }
         
         #region Helpers
@@ -864,7 +859,7 @@ namespace Nozomi.Auth.Controllers.Account
                 else
                 {
                     // Setup stripe
-                    await _stripeService.PropagateCustomer(user);
+                    await _bootstripeService.RegisterCustomer(user);
                     
                     // Obtain claim
                     var stripeCustomerIdClaim = (await _userManager.GetClaimsAsync(user))

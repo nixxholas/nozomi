@@ -19,13 +19,17 @@ using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Nozomi.Base.Auth.Models;
 using Nozomi.Base.BCL.Configurations;
+using Nozomi.Infra.Auth.Events.UserEvent;
 using Nozomi.Infra.Auth.Events.EmailSender;
-using Nozomi.Infra.Auth.Events.Stripe;
 using Nozomi.Infra.Auth.Services.Address;
-using Nozomi.Infra.Auth.Services.Stripe;
+using Nozomi.Infra.Auth.Services.QuotaClaims;
 using Nozomi.Infra.Auth.Services.User;
 using Nozomi.Infra.Blockchain.Auth.Events;
 using Nozomi.Infra.Blockchain.Auth.Events.Interfaces;
+using Nozomi.Infra.Payment.Events.Bootstripe;
+using Nozomi.Infra.Payment.Services.Bootstripe;
+using Nozomi.Infra.Payment.Services.DisputesHandling;
+using Nozomi.Infra.Payment.Services.InvoicesHandling;
 using Nozomi.Preprocessing.Events;
 using Nozomi.Preprocessing.Events.Interfaces;
 using Nozomi.Preprocessing.Options;
@@ -251,14 +255,22 @@ namespace Nozomi.Auth
             // services.AddTransient<IDbContext, NozomiDbContext>();
 
             services.AddTransient<IAddressEvent, AddressEvent>();
-            services.AddTransient<IStripeEvent, StripeEvent>();
             services.AddTransient<IValidatingEvent, ValidatingEvent>();
 
             services.AddTransient<IEmailSender, EmailSender>();
+            
+            //Infra.Auth Services & Events
+            services.AddTransient<IUserEvent, UserEvent>();
             services.AddTransient<IAuthEmailSender, AuthEmailSender>();
             services.AddScoped<IAddressService, AddressService>();
-            services.AddScoped<IStripeService, StripeService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IQuotaClaimsService, QuotaClaimsService>();
+            
+            //Infra.Payment Services & Events
+            services.AddTransient<IBootstripeEvent, BootstripeEvent>();
+            services.AddScoped<IBootstripeService, BootstripeService>();
+            services.AddScoped<IDisputesHandlingService, DisputesHandlingService>();
+            services.AddScoped<IInvoicesHandlingService, InvoicesHandlingService>();
         }
 
         public void Configure(IApplicationBuilder app)

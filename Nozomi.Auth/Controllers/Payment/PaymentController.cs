@@ -16,9 +16,11 @@ using Nozomi.Base.Auth.Global;
 using Nozomi.Base.Auth.Models;
 using Nozomi.Base.Auth.ViewModels.Payment;
 using Nozomi.Base.BCL.Configurations;
-using Nozomi.Infra.Auth.Events.Stripe;
-using Nozomi.Infra.Auth.Services.Stripe;
+using Nozomi.Infra.Auth.Events.UserEvent;
 using Nozomi.Infra.Auth.Services.User;
+using Nozomi.Infra.Payment.Events.Bootstripe;
+using Nozomi.Infra.Payment.Services.Bootstripe;
+using Nozomi.Infra.Payment.Services.SubscriptionHandling;
 using Stripe;
 
 namespace Nozomi.Auth.Controllers.Payment
@@ -27,21 +29,24 @@ namespace Nozomi.Auth.Controllers.Payment
     {
         private readonly IOptions<StripeOptions> _stripeOptions;
         private readonly UserManager<User> _userManager;
-        private readonly IStripeEvent _stripeEvent;
-        private readonly IStripeService _stripeService;
         private readonly IUserService _userService;
+        private readonly IBootstripeService _bootstripeService;
+        private readonly ISubscriptionsHandlingService _subscriptionsHandlingService;
+        private readonly IBootstripeEvent _bootstripeEvent;
         
         public PaymentController(ILogger<PaymentController> logger, IWebHostEnvironment webHostEnvironment,
-            IOptions<StripeOptions> stripeOptions,
-            UserManager<User> userManager, IStripeEvent stripeEvent, IStripeService stripeService, 
+            IOptions<StripeOptions> stripeOptions, UserManager<User> userManager,
+            IBootstripeService bootstripeService, IBootstripeEvent bootstripeEvent,
+            ISubscriptionsHandlingService subscriptionsHandlingService,
             IUserService userService) 
             : base(logger, webHostEnvironment)
         {
             _stripeOptions = stripeOptions;
             _userManager = userManager;
-            _stripeEvent = stripeEvent;
-            _stripeService = stripeService;
             _userService = userService;
+            _bootstripeService = bootstripeService;
+            _bootstripeEvent = bootstripeEvent;
+            _subscriptionsHandlingService = subscriptionsHandlingService;
         }
 
         [Authorize(AuthenticationSchemes = "Bearer")]
@@ -57,14 +62,14 @@ namespace Nozomi.Auth.Controllers.Payment
             if (user == null)
                 return BadRequest("Please reauthenticate again!");
                 
-            return Ok(await _stripeEvent.GetUserCurrentPlanIdAsync(user.Id));
+            return Ok(await _bootstripeEvent.GetUserCurrentPlanIdAsync(user.Id));
         }
 
         [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> Plans()
         {
-            return Ok(await _stripeEvent.Plans());
+            return Ok(await _bootstripeEvent.GetPlans());
         }
         
         [Authorize(AuthenticationSchemes = "Bearer")]
@@ -170,9 +175,9 @@ namespace Nozomi.Auth.Controllers.Payment
                 
                 // Process card addition
                 if (!string.IsNullOrEmpty(vm.PaymentMethodId)
-                    && !_stripeEvent.PaymentMethodExists(stripeUserClaim.Value, vm.PaymentMethodId))
+                    && !await _bootstripeEvent.PaymentMethodExistsUnderUser(user, vm.PaymentMethodId))
                 {
-                    await _stripeService.AddPaymentMethod(vm.PaymentMethodId, user);
+                    await _bootstripeService.AddPaymentMethod(vm.PaymentMethodId, user);
                 
                     // Return
                     _logger.LogInformation($"AddCard: card of ID {vm.PaymentMethodId} added to {user.Id}");
@@ -201,7 +206,7 @@ namespace Nozomi.Auth.Controllers.Payment
                 if (stripeUserClaim == null)
                     return BadRequest("Please bootstripe first!");
 
-                return Ok(await _stripeEvent.ListPaymentMethods(stripeUserClaim.Value));
+                return Ok(await _bootstripeEvent.ListPaymentMethods(user));
             }
 
             return BadRequest("Invalid user!");
@@ -227,8 +232,7 @@ namespace Nozomi.Auth.Controllers.Payment
                     return BadRequest("Please bootstripe and add a card first!");
                 
                 // Obtain the user's payment methods
-                var paymentMethods = await 
-                    _stripeEvent.ListPaymentMethods(stripeUserClaim.Value);
+                var paymentMethods = await _bootstripeEvent.ListPaymentMethods(user);
                 
                 // Ensure he/she has more than one payment method currently
                 if (paymentMethods != null && paymentMethods.Count() > 1 
@@ -237,9 +241,9 @@ namespace Nozomi.Auth.Controllers.Payment
                 {
                     // Process card removal
                     if (!string.IsNullOrEmpty(id)
-                        && _stripeEvent.PaymentMethodExists(stripeUserClaim.Value, id))
+                        && await _bootstripeEvent.PaymentMethodExistsUnderUser(user, id))
                     {
-                        await _stripeService.RemovePaymentMethod(id, user);
+                        await _bootstripeService.RemovePaymentMethod(id, user);
                 
                         // Return
                         _logger.LogInformation($"RemovePaymentMethod: card of ID {id} removed from {user.Id}");
@@ -266,13 +270,12 @@ namespace Nozomi.Auth.Controllers.Payment
                                             || c.Type.Equals(ClaimTypes.NameIdentifier))?.Value);
             
             // Safetynet
-            if (user != null && !string.IsNullOrEmpty(id))
-                // This check is done at 
+            if (user != null && !string.IsNullOrEmpty(id)
                              // Ensure the plan in question exists and is enabled
-                             //&& _stripeEvent.PlanExists(id))
+                             && _bootstripeEvent.PlanExists(id))
             {
                 // Since the user has no existing subscriptions, proceed.
-                await _stripeService.ChangeSubscription(id, user);
+                await _subscriptionsHandlingService.ChangePlan(id, user);
                 
                 // Return
                 _logger.LogInformation($"Subscribe: plan of ID {id} added to {user.Id}");
@@ -301,10 +304,10 @@ namespace Nozomi.Auth.Controllers.Payment
             // Safetynet
             if (user != null && !string.IsNullOrEmpty(id)
                              // Ensure the plan in question exists and is enabled
-                             && _stripeEvent.PlanExists(id))
+                             && _bootstripeEvent.PlanExists(id))
             {
                 // Since the user has no existing subscriptions, proceed.
-                await _stripeService.Subscribe(id, user);
+                await _subscriptionsHandlingService.Subscribe(id, user);
                 
                 // Return
                 _logger.LogInformation($"Subscribe: plan of ID {id} added to {user.Id}");
@@ -334,7 +337,7 @@ namespace Nozomi.Auth.Controllers.Payment
             if (user != null)
             {
                 // Since the user has no existing subscriptions, proceed.
-                await _stripeService.Unsubscribe(user);
+                await _subscriptionsHandlingService.UnsubscribeUser(user);
                 
                 // Return
                 _logger.LogInformation($"Unsubscribe: Subscription removed from {user.Id}");
