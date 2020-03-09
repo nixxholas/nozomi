@@ -20,6 +20,15 @@ namespace Nozomi.Payment.Controllers
         private readonly IDisputesHandlingService _disputesHandlingService;
         private readonly ISubscriptionsHandlingService _subscriptionsHandlingService;
 
+        public PaymentController(IInvoicesHandlingService invoicesHandlingService, 
+            IDisputesHandlingService disputesHandlingService, 
+            ISubscriptionsHandlingService subscriptionsHandlingService)
+        {
+            _invoicesHandlingService = invoicesHandlingService;
+            _disputesHandlingService = disputesHandlingService;
+            _subscriptionsHandlingService = subscriptionsHandlingService;
+        }
+
         [HttpPost]
         public async Task<IActionResult> Index()
         {
