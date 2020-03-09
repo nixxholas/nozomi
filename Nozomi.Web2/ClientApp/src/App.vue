@@ -33,7 +33,7 @@
                     </div>
                     <div class="column">
                         <h6 class="title">Resources</h6>
-                        <a href="/docs">Documentation</a>
+                        <a href="https://api.nozomi.one">Documentation</a>
                     </div>
                     <div class="column">
                         <h6 class="title">Legal</h6>
