@@ -114,7 +114,8 @@ namespace Nozomi.Api
                     options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
                 });
             }
-            
+
+            services.AddResponseCompression();
             services.AddControllers();
 
             // https://docs.microsoft.com/en-us/aspnet/core/security/enforcing-ssl?view=aspnetcore-3.1&tabs=visual-studio#options
