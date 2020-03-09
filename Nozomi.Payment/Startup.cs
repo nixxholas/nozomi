@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -37,6 +38,17 @@ namespace Nozomi.Payment
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<ForwardedHeadersOptions>(options =>
+            {
+                options.KnownNetworks.Clear();
+                options.KnownProxies.Clear();
+
+                // https://github.com/IdentityServer/IdentityServer4/issues/1331
+                options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+                options.RequireHeaderSymmetry = false;
+                options.ForwardLimit = 2;
+            });
+            
             if (HostingEnvironment.IsDevelopment())
             {
                 // Greet the beloved dev
@@ -57,6 +69,13 @@ namespace Nozomi.Payment
             }
             else
             {
+                services.AddHsts(opt =>
+                {
+                    opt.Preload = true;
+                    opt.IncludeSubDomains = true;
+                    opt.MaxAge = TimeSpan.FromDays(60);
+                });
+                
                 var vaultUrl = Configuration["vaultUrl"];
                 var vaultToken = Configuration["vaultToken"];
 
@@ -106,6 +125,14 @@ namespace Nozomi.Payment
                     options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
                 })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+
+            // https://docs.microsoft.com/en-us/aspnet/core/security/enforcing-ssl?view=aspnetcore-3.1&tabs=visual-studio#options
+            // Calling AddHttpsRedirection is only necessary to change the values of HttpsPort or RedirectStatusCode.
+            services.AddHttpsRedirection(options =>
+            {
+                options.RedirectStatusCode = StatusCodes.Status307TemporaryRedirect;
+            });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -114,6 +141,14 @@ namespace Nozomi.Payment
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+            }
+            else
+            {
+                app.UseHttpsRedirection();
+                app.UseHsts();
+
+                // ref: https://github.com/aspnet/Docs/issues/2384
+                app.UseForwardedHeaders();
             }
 
             using (var scope = 
