@@ -3,12 +3,22 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
+using Nozomi.Base.Auth.Models;
+using Nozomi.Infra.Auth.Events.UserEvent;
+using Nozomi.Infra.Auth.Services.QuotaClaims;
+using Nozomi.Infra.Auth.Services.User;
+using Nozomi.Infra.Payment.Events.Bootstripe;
+using Nozomi.Infra.Payment.Services.Bootstripe;
+using Nozomi.Infra.Payment.Services.DisputesHandling;
+using Nozomi.Infra.Payment.Services.InvoicesHandling;
+using Nozomi.Infra.Payment.Services.SubscriptionHandling;
 using Nozomi.Preprocessing.Filters;
 using Nozomi.Repo.Auth.Data;
 using Nozomi.Service.Events;
@@ -58,7 +68,7 @@ namespace Nozomi.Payment
                 var str = Configuration.GetConnectionString("Local:" + @Environment.MachineName);
 
                 services
-                    .AddEntityFrameworkNpgsql()
+                    // .AddEntityFrameworkNpgsql()
                     .AddDbContext<AuthDbContext>(options =>
                         {
                             options.UseNpgsql(str);
@@ -109,13 +119,26 @@ namespace Nozomi.Payment
                 }, ServiceLifetime.Transient);
             }
             
-            services.AddScoped<ICurrencyEvent, CurrencyEvent>();
-            services.AddScoped<ICurrencyPairEvent, CurrencyPairEvent>();
-            services.AddScoped<ICurrencyTypeEvent, CurrencyTypeEvent>();
-            services.AddScoped<IRequestEvent, RequestEvent>();
-            services.AddTransient<IComponentService, ComponentService>();
-            services.AddTransient<IRequestService, RequestService>();
-            
+            services.AddIdentity<User, Role>()
+                .AddEntityFrameworkStores<AuthDbContext>()
+                .AddDefaultTokenProviders();
+
+            services.AddTransient<IBootstripeEvent, BootstripeEvent>();
+            services.AddTransient<ICurrencyEvent, CurrencyEvent>();
+            services.AddTransient<ICurrencyPairEvent, CurrencyPairEvent>();
+            services.AddTransient<ICurrencyTypeEvent, CurrencyTypeEvent>();
+            services.AddTransient<IRequestEvent, RequestEvent>();
+            services.AddTransient<IUserEvent, UserEvent>();
+
+            services.AddScoped<IBootstripeService, BootstripeService>();
+            services.AddScoped<IComponentService, ComponentService>();
+            services.AddScoped<IDisputesHandlingService, DisputesHandlingService>();
+            services.AddScoped<IInvoicesHandlingService, InvoicesHandlingService>();
+            services.AddScoped<IQuotaClaimsService, QuotaClaimsService>();
+            services.AddScoped<IRequestService, RequestService>();
+            services.AddScoped<ISubscriptionsHandlingService, SubscriptionsHandlingService>();
+            services.AddScoped<IUserService, UserService>();
+
             services.AddControllers(options =>
                 {
                     options.Filters.Add(typeof(HttpGlobalExceptionFilter));
