@@ -6,7 +6,7 @@
                 <div class="plan-price">
                     <span class="plan-price-amount">
                         <span class="plan-price-currency">$</span>
-                        {{ plan.amount > 0 ? plan.amount / plan.amount_decimal : plan.amount }}
+                        {{ getPlanAmountInDollars(plan.amount) }}
                     </span>/month
                 </div>
                 <div class="plan-items" v-if="plan.metadata">
@@ -119,6 +119,13 @@
         },
         methods: {
             ...mapActions('oidcStore', ['authenticateOidc', 'signOutOidc']),
+            getPlanAmountInDollars(amountInCents) {
+                if (amountInCents > 0) {
+                    return amountInCents / 100;
+                }
+
+                return amountInCents;
+            },
             changeSubscription: function(planId) {
                 let self = this;
                 self.isLoading = true;
