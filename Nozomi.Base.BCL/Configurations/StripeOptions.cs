@@ -12,5 +12,9 @@ namespace Nozomi.Base.BCL.Configurations
         /// The id of the default plan 
         /// </summary>
         public string DefaultPlanId { get; set; }
+        /// <summary>
+        /// Stripe Webhook Secret key
+        /// </summary>
+        public string WebhookSecret { get; set; }
     }
 }
