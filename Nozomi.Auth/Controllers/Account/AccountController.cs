@@ -1064,7 +1064,12 @@ namespace Nozomi.Auth.Controllers.Account
 
             if ((string.IsNullOrEmpty(vm.PostLogoutRedirectUri) || string.IsNullOrWhiteSpace(vm.PostLogoutRedirectUri))
                 && StringHelper.IsUrl(referralUrl))
-                vm.PostLogoutRedirectUri = referralUrl;
+            {
+                // Redirects logged out user to main page excluding route
+                Uri redirectUri = new Uri(referralUrl);
+                vm.PostLogoutRedirectUri = redirectUri.GetLeftPart(UriPartial.Authority);
+            }
+                
 
             if (User?.Identity.IsAuthenticated == true)
             {

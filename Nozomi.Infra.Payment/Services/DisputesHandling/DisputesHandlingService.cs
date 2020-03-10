@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Nozomi.Base.BCL.Configurations;
 using Nozomi.Infra.Auth.Events.UserEvent;
 using Nozomi.Infra.Payment.Services.Bootstripe;
 using Nozomi.Infra.Payment.Services.SubscriptionHandling;
@@ -11,12 +13,14 @@ namespace Nozomi.Infra.Payment.Services.DisputesHandling
 {
     public class DisputesHandlingService : BaseService<DisputesHandlingService>, IDisputesHandlingService
     {
-        private readonly IBootstripeService _bootstripeService;
+        private readonly IOptions<StripeOptions> _stripeOptions;
         private readonly IUserEvent _userEvent;
         private readonly ISubscriptionsHandlingService _subscriptionsHandlingService;
 
-        public DisputesHandlingService(ILogger<DisputesHandlingService> logger, IBootstripeService bootstripeService, ISubscriptionsHandlingService subscriptionsHandlingService, IUserEvent userEvent) : base(logger) {
-            _bootstripeService = bootstripeService;
+        public DisputesHandlingService(ILogger<DisputesHandlingService> logger, IOptions<StripeOptions> stripeOptions,
+            ISubscriptionsHandlingService subscriptionsHandlingService, IUserEvent userEvent) : base(logger)
+        {
+            _stripeOptions = stripeOptions;
             _subscriptionsHandlingService = subscriptionsHandlingService;
             _userEvent = userEvent;
         }
@@ -48,7 +52,7 @@ namespace Nozomi.Infra.Payment.Services.DisputesHandling
                 throw new NullReferenceException($"{_serviceName} {methodName}: Unable to find user tied to customer id.");
 
             //TODO: Retrieve free plan ID from appsettings
-            await _subscriptionsHandlingService.ChangePlan("plan_GeGfCW7hwiQYQk", user);
+            await _subscriptionsHandlingService.ChangePlan(_stripeOptions.Value.DefaultPlanId, user);
             return;
         }
 
@@ -67,8 +71,7 @@ namespace Nozomi.Infra.Payment.Services.DisputesHandling
             if(user == null)
                 throw new NullReferenceException($"{_serviceName} {methodName}: Unable to find user tied to customer id: {customerId}");
 
-            //TODO: Retrieve free plan ID from appsettings
-            await _subscriptionsHandlingService.ChangePlan("plan_GeGfCW7hwiQYQk", user);
+            await _subscriptionsHandlingService.ChangePlan(_stripeOptions.Value.DefaultPlanId, user);
         }
 
         private void PerformDisputePreCheck(Dispute dispute, string methodName) {

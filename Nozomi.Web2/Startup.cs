@@ -172,9 +172,20 @@ namespace Nozomi.Web2
 
             // ref: https://github.com/aspnet/Docs/issues/2384
             app.UseForwardedHeaders();
-
+            
             app.UseStaticFiles();
-            app.UseSpaStaticFiles();
+            
+            // Cache static files for image / css for 1 year
+            // https://stackoverflow.com/questions/46589968/asp-net-core-2-static-files-cache-busting-default-document-default-html
+            // https://stackoverflow.com/questions/50861997/cache-busting-index-html-in-a-net-core-angular-5-website
+            app.UseSpaStaticFiles(new StaticFileOptions
+            {
+                OnPrepareResponse = context =>
+                {
+                    context.Context.Response.Headers.Add("Cache-Control", "max-age=31536000");
+                    context.Context.Response.Headers.Add("Expires", "31536000");
+                }
+            });
 
             app.UseCookiePolicy();
 
@@ -236,7 +247,23 @@ namespace Nozomi.Web2
                 endpoints.MapRazorPages();
             });
 
-            app.UseSpa(spa => { spa.Options.SourcePath = "ClientApp"; });
+            // Prevents cache for index.html to ensure that latest SPA is loaded
+            // https://stackoverflow.com/questions/50861997/cache-busting-index-html-in-a-net-core-angular-5-website
+            app.UseSpa(spa =>
+            {
+                spa.Options.SourcePath = "ClientApp";
+                spa.Options.DefaultPageStaticFileOptions = new StaticFileOptions
+                {
+                    OnPrepareResponse = context =>
+                    {
+                        if (context.File.Name == "index.html")
+                        {
+                            context.Context.Response.Headers.Add("Cache-Control", "no-cache, no-store");
+                            context.Context.Response.Headers.Add("Expires", "-1");
+                        }
+                    }
+                };
+            });
 
             app.UseAutoDbMigration(Environment);
         }

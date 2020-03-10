@@ -12,7 +12,9 @@ namespace Nozomi.Infra.Payment.Services.InvoicesHandling
     {
         private readonly IUserEvent _userEvent;
         private readonly IQuotaClaimsService _quotaClaimsService;
-        public InvoicesHandlingService(ILogger<InvoicesHandlingService> logger, IUserEvent userEvent, IQuotaClaimsService quotaClaimsService) : base(logger) {
+        
+        public InvoicesHandlingService(ILogger<InvoicesHandlingService> logger, IUserEvent userEvent, 
+            IQuotaClaimsService quotaClaimsService) : base(logger) {
             _userEvent = userEvent;
             _quotaClaimsService = quotaClaimsService;
         }
@@ -24,12 +26,11 @@ namespace Nozomi.Infra.Payment.Services.InvoicesHandling
 
             var user = await _userEvent.GetUserByCustomerId(invoice.CustomerId);
 
-            if(user == null)
-                throw new NullReferenceException($"{_serviceName} {methodName}: Unable to find user tied to customer id.");
+            if (user == null)
+                throw new NullReferenceException($"{_serviceName} {methodName}: " +
+                                                 "Unable to find user tied to customer id.");
             
             _quotaClaimsService.ResetUsage(user.Id);
-
-            return;
         }
 
         private void PerformInvoicePrecheck(Invoice invoice, string methodName)

@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -42,6 +44,23 @@ namespace Nozomi.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<CookiePolicyOptions>(options =>
+            {
+                // This lambda determines whether user consent for non-essential cookies is needed for a given request.
+                options.CheckConsentNeeded = context => false;
+                options.MinimumSameSitePolicy = SameSiteMode.None;
+            });
+            services.Configure<ForwardedHeadersOptions>(options =>
+            {
+                options.KnownNetworks.Clear();
+                options.KnownProxies.Clear();
+
+                // https://github.com/IdentityServer/IdentityServer4/issues/1331
+                options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+                options.RequireHeaderSymmetry = false;
+                options.ForwardLimit = 2;
+            });
+            
             if (WebHostEnvironment.IsStaging() || WebHostEnvironment.IsProduction())
             {
                 var vaultUrl = Configuration["vaultUrl"];
@@ -49,6 +68,13 @@ namespace Nozomi.Api
 
                 if (string.IsNullOrEmpty(vaultToken))
                     throw new SystemException("Invalid vault token.");
+
+                services.AddHsts(opt =>
+                {
+                    opt.Preload = true;
+                    opt.IncludeSubDomains = true;
+                    opt.MaxAge = TimeSpan.FromDays(60);
+                });
 
                 var authMethod = new TokenAuthMethodInfo(vaultToken);
                 var vaultClientSettings = new VaultClientSettings(
@@ -88,8 +114,16 @@ namespace Nozomi.Api
                     options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
                 });
             }
-            
+
+            services.AddResponseCompression();
             services.AddControllers();
+
+            // https://docs.microsoft.com/en-us/aspnet/core/security/enforcing-ssl?view=aspnetcore-3.1&tabs=visual-studio#options
+            // Calling AddHttpsRedirection is only necessary to change the values of HttpsPort or RedirectStatusCode.
+            services.AddHttpsRedirection(options =>
+            {
+                options.RedirectStatusCode = StatusCodes.Status307TemporaryRedirect;
+            });
 
             services.AddSwaggerGen(config =>
             {
@@ -115,9 +149,14 @@ namespace Nozomi.Api
             else
             {
                 app.UseHsts();
+
+                app.UseResponseCompression();
             }
 
             app.UseHttpsRedirection();
+
+            // ref: https://github.com/aspnet/Docs/issues/2384
+            app.UseForwardedHeaders();
 
             app.UseRouting();
 
