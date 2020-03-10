@@ -68,6 +68,16 @@ namespace Nozomi.Payment
                 // Postgres DB Setup
                 var str = Configuration.GetConnectionString("Local:" + @Environment.MachineName);
 
+                // Configure StripeOptions
+                services.Configure<StripeOptions>(options =>
+                {
+                    options.DefaultPlanId = Configuration["Stripe:DefaultPlanId"];
+                    options.ProductId = Configuration["Stripe:ProductId"];
+                    options.PublishableKey = Configuration["Stripe:PublishableKey"];
+                    options.SecretKey = Configuration["Stripe:SecretKey"];
+                    options.WebhookSecret = Configuration["Stripe:WebhookSecret"];
+                });
+                
                 services
                     // .AddEntityFrameworkNpgsql()
                     .AddDbContext<AuthDbContext>(options =>
