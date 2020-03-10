@@ -17,9 +17,7 @@ namespace Nozomi.Infra.Payment.Events.Bootstripe
 {
     public class BootstripeEvent : BaseEvent<BootstripeEvent>, IBootstripeEvent
     {
-        private readonly PlanService _planService;
         private readonly IOptions<StripeOptions> _stripeOptions;
-        private readonly Product _stripeProduct;
         private readonly PaymentMethodService _paymentMethodService;
         private readonly IUserEvent _userEvent;
 
@@ -30,8 +28,6 @@ namespace Nozomi.Infra.Payment.Events.Bootstripe
             StripeConfiguration.ApiKey = stripeOptions.Value.SecretKey;
             _stripeOptions = stripeOptions;
 
-            var productService = new ProductService();
-            _stripeProduct = productService.Get(stripeOptions.Value.ProductId);
             _paymentMethodService = new PaymentMethodService();
             _userEvent = userEvent;
         }
@@ -79,22 +75,31 @@ namespace Nozomi.Infra.Payment.Events.Bootstripe
 
         public async Task<IEnumerable<Plan>> GetPlans(bool activeOnly = true)
         {
-            if (_stripeProduct == null)
-                throw new NullReferenceException($"{_eventName} plans: Unable to load, Product is not configured.");
+            if (_stripeOptions == null || string.IsNullOrEmpty(_stripeOptions.Value.ProductId))
+                throw new NullReferenceException($"{_eventName} GetPlans: Unable to load, Stripe/ProductId is " +
+                                                 "not configured.");
+            
+            var productService = new ProductService();
+            var product = productService.Get(_stripeOptions.Value.ProductId);
+
+            if (product == null)
+                throw new NullReferenceException($"{_eventName} GetPlans: Unable to load, Product is " +
+                                                 "not configured.");
 
             var planListOptions = new PlanListOptions
             {
                 Active = activeOnly,
-                Product = _stripeProduct.Id
+                Product = product.Id
             };
 
-            var plans = await _planService.ListAsync(planListOptions);
+            var planService = new PlanService();
+            var plans = await planService.ListAsync(planListOptions);
 
             if (plans.StripeResponse.StatusCode != HttpStatusCode.OK)
             {
-                _logger.LogWarning($"{_eventName} plans: Unable to load, plans cannot be " +
+                _logger.LogWarning($"{_eventName} GetPlans: Unable to load, plans cannot be " +
                                    $"retrieved from Stripe.");
-                throw new NullReferenceException($"{_eventName} plans: Unable to load, plans cannot be " +
+                throw new NullReferenceException($"{_eventName} GetPlans: Unable to load, plans cannot be " +
                                                  $"retrieved from Stripe.");
             }
 
@@ -107,12 +112,13 @@ namespace Nozomi.Infra.Payment.Events.Bootstripe
             if (string.IsNullOrEmpty(planId))
                 throw new ArgumentNullException($"{_eventName} {methodName}: Plan ID is null");
 
+            var planService = new PlanService();
             var planListOptions = new PlanListOptions
             {
                 Active = true,
                 Product = _stripeOptions.Value.ProductId,
             };
-            var plans = _planService.List(planListOptions);
+            var plans = planService.List(planListOptions);
 
             return plans.Data.FirstOrDefault(p => p.Id.Equals(planId));
         }
@@ -123,12 +129,14 @@ namespace Nozomi.Infra.Payment.Events.Bootstripe
 
             if (string.IsNullOrEmpty(planId))
                 throw new ArgumentNullException($"{_eventName} {methodName}: Plan id is null");
+
+            var planService = new PlanService();
             var planListOptions = new PlanListOptions
             {
                 Active = true,
                 Product = _stripeOptions.Value.ProductId,
             };
-            var plans = _planService.List(planListOptions);
+            var plans = planService.List(planListOptions);
 
             return plans.Data.Any(p => p.Id.Equals(planId));
         }

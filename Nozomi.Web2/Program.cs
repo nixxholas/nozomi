@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Serilog;
+using Serilog.Events;
+using Serilog.Sinks.SystemConsole.Themes;
 
 namespace Nozomi.Web2
 {
@@ -20,16 +23,19 @@ namespace Nozomi.Web2
         static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .UseContentRoot(Directory.GetCurrentDirectory())
-                // .ConfigureAppConfiguration((builderContext, config) =>
-                // {
-                //     config.AddEnvironmentVariables();
-                // })
-                // .ConfigureLogging((hostingContext, builder) =>
-                // {
-                //     builder.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
-                //     builder.AddConsole();
-                //     builder.AddDebug();
-                // })
+                .UseSerilog((context, configuration) =>
+                {
+                    configuration
+                        .MinimumLevel.Debug()
+                        .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+                        .MinimumLevel.Override("System", LogEventLevel.Warning)
+                        .MinimumLevel.Override("Microsoft.AspNetCore.Authentication", LogEventLevel.Information)
+                        .Enrich.FromLogContext()
+                        .WriteTo.Console(
+                            outputTemplate:
+                            "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}",
+                            theme: AnsiConsoleTheme.Literate);
+                })
                 .UseKestrel(options =>
                 {
                     options.AddServerHeader = false;

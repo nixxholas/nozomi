@@ -2,12 +2,24 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
+using Nozomi.Base.Auth.Models;
+using Nozomi.Base.BCL.Configurations;
+using Nozomi.Infra.Auth.Events.UserEvent;
+using Nozomi.Infra.Auth.Services.QuotaClaims;
+using Nozomi.Infra.Auth.Services.User;
+using Nozomi.Infra.Payment.Events.Bootstripe;
+using Nozomi.Infra.Payment.Services.Bootstripe;
+using Nozomi.Infra.Payment.Services.DisputesHandling;
+using Nozomi.Infra.Payment.Services.InvoicesHandling;
+using Nozomi.Infra.Payment.Services.SubscriptionHandling;
 using Nozomi.Preprocessing.Filters;
 using Nozomi.Repo.Auth.Data;
 using Nozomi.Service.Events;
@@ -37,6 +49,17 @@ namespace Nozomi.Payment
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<ForwardedHeadersOptions>(options =>
+            {
+                options.KnownNetworks.Clear();
+                options.KnownProxies.Clear();
+
+                // https://github.com/IdentityServer/IdentityServer4/issues/1331
+                options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+                options.RequireHeaderSymmetry = false;
+                options.ForwardLimit = 2;
+            });
+            
             if (HostingEnvironment.IsDevelopment())
             {
                 // Greet the beloved dev
@@ -46,7 +69,7 @@ namespace Nozomi.Payment
                 var str = Configuration.GetConnectionString("Local:" + @Environment.MachineName);
 
                 services
-                    .AddEntityFrameworkNpgsql()
+                    // .AddEntityFrameworkNpgsql()
                     .AddDbContext<AuthDbContext>(options =>
                         {
                             options.UseNpgsql(str);
@@ -57,6 +80,13 @@ namespace Nozomi.Payment
             }
             else
             {
+                services.AddHsts(opt =>
+                {
+                    opt.Preload = true;
+                    opt.IncludeSubDomains = true;
+                    opt.MaxAge = TimeSpan.FromDays(60);
+                });
+                
                 var vaultUrl = Configuration["vaultUrl"];
                 var vaultToken = Configuration["vaultToken"];
 
@@ -73,6 +103,26 @@ namespace Nozomi.Payment
                     .GetAwaiter()
                     .GetResult().Data;
 
+                // Always attempt to configure stripe first
+                services.Configure<StripeOptions>(options =>
+                {
+                    if (string.IsNullOrEmpty((string) nozomiVault["stripe-product-id"]))
+                        throw new ApplicationException("Invalid Stripe target Product Id!");
+                    options.ProductId = (string) nozomiVault["stripe-product-id"];
+                    if (string.IsNullOrEmpty((string) nozomiVault["stripe-default-plan-id"]))
+                        throw new ApplicationException("Invalid Stripe default Plan Id!");
+                    options.DefaultPlanId = (string) nozomiVault["stripe-default-plan-id"];
+                    if (string.IsNullOrEmpty((string) nozomiVault["stripe-publishable-key"]))
+                        throw new ApplicationException("Invalid Stripe Publishable Key!");
+                    options.PublishableKey = (string) nozomiVault["stripe-publishable-key"];
+                    if (string.IsNullOrEmpty((string) nozomiVault["stripe-secret-key"]))
+                        throw new ApplicationException("Invalid Stripe Secret Key!");
+                    options.SecretKey = (string) nozomiVault["stripe-secret-key"];
+                    if (string.IsNullOrEmpty((string) nozomiVault["stripe-webhook-secret"]))
+                        throw new ApplicationException("Invalid Stripe Webhook secret!");
+                    options.WebhookSecret = (string) nozomiVault["stripe-webhook-secret"];
+                });
+                
                 var mainDb = (string) nozomiVault["main"];
                 if (string.IsNullOrEmpty(mainDb))
                     throw new SystemException("Invalid main database configuration");
@@ -90,13 +140,26 @@ namespace Nozomi.Payment
                 }, ServiceLifetime.Transient);
             }
             
-            services.AddScoped<ICurrencyEvent, CurrencyEvent>();
-            services.AddScoped<ICurrencyPairEvent, CurrencyPairEvent>();
-            services.AddScoped<ICurrencyTypeEvent, CurrencyTypeEvent>();
-            services.AddScoped<IRequestEvent, RequestEvent>();
-            services.AddTransient<IComponentService, ComponentService>();
-            services.AddTransient<IRequestService, RequestService>();
-            
+            services.AddIdentity<User, Role>()
+                .AddEntityFrameworkStores<AuthDbContext>()
+                .AddDefaultTokenProviders();
+
+            services.AddTransient<IBootstripeEvent, BootstripeEvent>();
+            services.AddTransient<ICurrencyEvent, CurrencyEvent>();
+            services.AddTransient<ICurrencyPairEvent, CurrencyPairEvent>();
+            services.AddTransient<ICurrencyTypeEvent, CurrencyTypeEvent>();
+            services.AddTransient<IRequestEvent, RequestEvent>();
+            services.AddTransient<IUserEvent, UserEvent>();
+
+            services.AddScoped<IBootstripeService, BootstripeService>();
+            services.AddScoped<IComponentService, ComponentService>();
+            services.AddScoped<IDisputesHandlingService, DisputesHandlingService>();
+            services.AddScoped<IInvoicesHandlingService, InvoicesHandlingService>();
+            services.AddScoped<IQuotaClaimsService, QuotaClaimsService>();
+            services.AddScoped<IRequestService, RequestService>();
+            services.AddScoped<ISubscriptionsHandlingService, SubscriptionsHandlingService>();
+            services.AddScoped<IUserService, UserService>();
+
             services.AddControllers(options =>
                 {
                     options.Filters.Add(typeof(HttpGlobalExceptionFilter));
@@ -106,6 +169,14 @@ namespace Nozomi.Payment
                     options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
                 })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+
+            // https://docs.microsoft.com/en-us/aspnet/core/security/enforcing-ssl?view=aspnetcore-3.1&tabs=visual-studio#options
+            // Calling AddHttpsRedirection is only necessary to change the values of HttpsPort or RedirectStatusCode.
+            services.AddHttpsRedirection(options =>
+            {
+                options.RedirectStatusCode = StatusCodes.Status307TemporaryRedirect;
+            });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -114,6 +185,14 @@ namespace Nozomi.Payment
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+            }
+            else
+            {
+                app.UseHttpsRedirection();
+                app.UseHsts();
+
+                // ref: https://github.com/aspnet/Docs/issues/2384
+                app.UseForwardedHeaders();
             }
 
             using (var scope = 
