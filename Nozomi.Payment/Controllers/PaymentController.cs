@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Nozomi.Infra.Payment.Services.DisputesHandling;
@@ -32,11 +33,11 @@ namespace Nozomi.Payment.Controllers
         [HttpPost]
         public async Task<IActionResult> Index()
         {
-            var json = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync();
+            var payload = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync();
 
             try
             {
-                var stripeEvent = EventUtility.ParseEvent(json);
+                var stripeEvent = EventUtility.ParseEvent(payload);
 
                 // Handle the event
                 switch (stripeEvent.Type) {
@@ -48,7 +49,7 @@ namespace Nozomi.Payment.Controllers
                         var subscription = ParseEventToSubscription(stripeEvent);
                         if (subscription.Status.ToLower().Equals("canceled"))
                             await _subscriptionsHandlingService.SubscriptionCancelled(subscription);
-                        return Ok();
+                        return Ok();    
                     
                     case Events.ChargeDisputeClosed:
                         var dispute = ParseEventToDispute(stripeEvent);
