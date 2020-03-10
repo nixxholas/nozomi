@@ -18,7 +18,6 @@ namespace Nozomi.Infra.Payment.Events.Bootstripe
     public class BootstripeEvent : BaseEvent<BootstripeEvent>, IBootstripeEvent
     {
         private readonly IOptions<StripeOptions> _stripeOptions;
-        private readonly PaymentMethodService _paymentMethodService;
         private readonly IUserEvent _userEvent;
 
         public BootstripeEvent(ILogger<BootstripeEvent> logger, IOptions<StripeOptions> stripeOptions,
@@ -27,8 +26,7 @@ namespace Nozomi.Infra.Payment.Events.Bootstripe
             // apiKey = Secret Key
             StripeConfiguration.ApiKey = stripeOptions.Value.SecretKey;
             _stripeOptions = stripeOptions;
-
-            _paymentMethodService = new PaymentMethodService();
+            
             _userEvent = userEvent;
         }
 
@@ -157,7 +155,8 @@ namespace Nozomi.Infra.Payment.Events.Bootstripe
                 Type = paymentMethodType
             };
 
-            var paymentMethods = await _paymentMethodService.ListAsync(options);
+            var paymentMethodService = new PaymentMethodService();
+            var paymentMethods = await paymentMethodService.ListAsync(options);
             if (paymentMethods.StripeResponse.StatusCode != HttpStatusCode.OK)
             {
                 _logger.LogWarning($"{_eventName} {methodName}: Unable to load, there was a " +
@@ -181,7 +180,8 @@ namespace Nozomi.Infra.Payment.Events.Bootstripe
             if (paymentMethodId.IsNullOrEmpty())
                 throw new ArgumentNullException($"{_eventName} {methodName}: Invalid payment method id");
 
-            var paymentMethod = await _paymentMethodService.GetAsync(paymentMethodId);
+            var paymentMethodService = new PaymentMethodService();
+            var paymentMethod = await paymentMethodService.GetAsync(paymentMethodId);
 
             if (paymentMethod == null || !paymentMethod.CustomerId.Equals(customerId))
                 return false;
