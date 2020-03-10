@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
 using Nozomi.Base.Auth.Models;
+using Nozomi.Base.BCL.Configurations;
 using Nozomi.Infra.Auth.Events.UserEvent;
 using Nozomi.Infra.Auth.Services.QuotaClaims;
 using Nozomi.Infra.Auth.Services.User;
@@ -102,6 +103,26 @@ namespace Nozomi.Payment
                     .GetAwaiter()
                     .GetResult().Data;
 
+                // Always attempt to configure stripe first
+                services.Configure<StripeOptions>(options =>
+                {
+                    if (string.IsNullOrEmpty((string) nozomiVault["stripe-product-id"]))
+                        throw new ApplicationException("Invalid Stripe target Product Id!");
+                    options.ProductId = (string) nozomiVault["stripe-product-id"];
+                    if (string.IsNullOrEmpty((string) nozomiVault["stripe-default-plan-id"]))
+                        throw new ApplicationException("Invalid Stripe default Plan Id!");
+                    options.DefaultPlanId = (string) nozomiVault["stripe-default-plan-id"];
+                    if (string.IsNullOrEmpty((string) nozomiVault["stripe-publishable-key"]))
+                        throw new ApplicationException("Invalid Stripe Publishable Key!");
+                    options.PublishableKey = (string) nozomiVault["stripe-publishable-key"];
+                    if (string.IsNullOrEmpty((string) nozomiVault["stripe-secret-key"]))
+                        throw new ApplicationException("Invalid Stripe Secret Key!");
+                    options.SecretKey = (string) nozomiVault["stripe-secret-key"];
+                    if (string.IsNullOrEmpty((string) nozomiVault["stripe-webhook-secret"]))
+                        throw new ApplicationException("Invalid Stripe Webhook secret!");
+                    options.WebhookSecret = (string) nozomiVault["stripe-webhook-secret"];
+                });
+                
                 var mainDb = (string) nozomiVault["main"];
                 if (string.IsNullOrEmpty(mainDb))
                     throw new SystemException("Invalid main database configuration");
