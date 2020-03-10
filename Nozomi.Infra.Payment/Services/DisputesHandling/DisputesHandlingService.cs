@@ -11,12 +11,11 @@ namespace Nozomi.Infra.Payment.Services.DisputesHandling
 {
     public class DisputesHandlingService : BaseService<DisputesHandlingService>, IDisputesHandlingService
     {
-        private readonly IBootstripeService _bootstripeService;
         private readonly IUserEvent _userEvent;
         private readonly ISubscriptionsHandlingService _subscriptionsHandlingService;
 
-        public DisputesHandlingService(ILogger<DisputesHandlingService> logger, IBootstripeService bootstripeService, ISubscriptionsHandlingService subscriptionsHandlingService, IUserEvent userEvent) : base(logger) {
-            _bootstripeService = bootstripeService;
+        public DisputesHandlingService(ILogger<DisputesHandlingService> logger, 
+            ISubscriptionsHandlingService subscriptionsHandlingService, IUserEvent userEvent) : base(logger) {
             _subscriptionsHandlingService = subscriptionsHandlingService;
             _userEvent = userEvent;
         }
