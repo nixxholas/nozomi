@@ -25,6 +25,7 @@ using Stripe;
 
 namespace Nozomi.Auth.Controllers.Payment
 {
+    [SecurityHeaders]
     public class PaymentController : BaseController<PaymentController>
     {
         private readonly IOptions<StripeOptions> _stripeOptions;
