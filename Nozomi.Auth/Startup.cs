@@ -170,7 +170,7 @@ namespace Nozomi.Auth
                 options.AddPolicy(NozomiSpecificOrigins,
                     policyBuilder =>
                     {
-                        if (HostingEnvironment.IsProduction())
+                        if (!HostingEnvironment.IsDevelopment())
                             policyBuilder.WithOrigins("https://nozomi.one", "https://www.nozomi.one")
                                 .AllowAnyHeader()
                                 .AllowAnyMethod();
