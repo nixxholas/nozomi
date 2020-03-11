@@ -183,10 +183,7 @@ namespace Nozomi.Infra.Payment.Events.Bootstripe
             var paymentMethodService = new PaymentMethodService();
             var paymentMethod = await paymentMethodService.GetAsync(paymentMethodId);
 
-            if (paymentMethod == null || !paymentMethod.CustomerId.Equals(customerId))
-                return false;
-
-            return true;
+            return paymentMethod != null && paymentMethod.CustomerId.Equals(customerId);
         }
 
         private void PerformUserPrecheck(User user, string methodName)
