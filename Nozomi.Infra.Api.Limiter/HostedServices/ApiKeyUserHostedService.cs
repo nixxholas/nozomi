@@ -57,7 +57,7 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
                             {
                                 
                             }
-                            else // Else, it falls within the criteria for it to be processed
+                            else // Else, it falls within the criteria for it to be processed    
                             {
                                 // Look for the user's current usage
                                 var userUsageClaim = userClaims
