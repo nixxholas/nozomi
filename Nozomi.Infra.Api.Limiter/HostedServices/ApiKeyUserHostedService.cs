@@ -39,11 +39,38 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
                     var redisEvent = scope.ServiceProvider.GetRequiredService<INozomiRedisEvent>();
                     
                     // Obtain all users with their API keys, quota limit and quota usage.
+                    var userClaims = authDbContext.UserClaims
+                        .Where(uc => uc.ClaimType.Equals(NozomiJwtClaimTypes.ApiKeys)
+                                     || uc.ClaimType.Equals(NozomiJwtClaimTypes.UserQuota)
+                                     || uc.ClaimType.Equals(NozomiJwtClaimTypes.UserUsage));
+                    
+                    // Ensure that there's a userclaim to perform these actions
+                    if (userClaims.Any())
+                    {
+                        // Iterate every quota first.
+                        foreach (var userQuotaClaim in userClaims
+                            .Where(uc => uc.ClaimType.Equals(NozomiJwtClaimTypes.UserQuota)))
+                        {
+                            if (string.IsNullOrEmpty(userQuotaClaim.UserId) // Ensure user id is existent
+                                // Then ensure that the quota value is long-able
+                                || !long.TryParse(userQuotaClaim.ClaimValue, out var userQuota))
+                            {
+                                
+                            }
+                            else // Else, it falls within the criteria for it to be processed
+                            {
+                                // Look for the user's current usage
+                                var userUsageClaim = userClaims
+                                    .FirstOrDefault(uc => uc.UserId.Equals(userQuotaClaim.UserId));
+                            }
+
+                        }
+                    }
                     
                     // Add the new key entries first
-                    
+
                     // Update keys with exceeded quotas
-                    
+
                     // DONE!
 
                     // // Obtain all banned users
