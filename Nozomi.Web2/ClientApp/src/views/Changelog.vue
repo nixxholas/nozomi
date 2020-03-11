@@ -228,7 +228,7 @@
                         <div class="timeline-item is-info">
                             <div class="timeline-marker is-info"></div>
                             <div class="timeline-content">
-                                <p class="heading">04 March 2020 - <b>beta 13</b></p>
+                                <p class="heading">12 March 2020 - <b>beta 13</b></p>
                                 <ul>
                                     <li><b>Web</b> - You can now delete requests</li>
                                     <li><b>Web</b> - You can now create websocket commands</li>
@@ -240,6 +240,8 @@
                                     <li><b>Web</b> - Bugs and issues tracker is now online!</li>
                                     <li><b>Auth</b> - General User interface improvements</li>
                                     <li><b>Auth</b> - Well, we made our emails presentable ;)</li>
+                                    <li><b>Auth</b> - More security patches</li>
+                                    <li><b>API</b> - We've reworked how you can interact with APIs to make them reliable and resilient.</li>
                                     <li><b>Compute</b> - We've just wrapped up our computation engine at the back. UI 
                                     will be introduced soon! This beast can compute any mathematical formula you can think of!</li>
                                     <li><b>Backend</b> - Optimisation works on how we poll RESTful endpoints; We're handling 429 errors gracefully now :)</li>
