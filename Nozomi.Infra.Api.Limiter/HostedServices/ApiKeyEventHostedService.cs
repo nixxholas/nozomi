@@ -57,6 +57,7 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
                             var userKey = nozomiRedisEvent.GetValue(key, 
                                 RedisDatabases.ApiKeyUser);
 
+                            // Since we got the user's key,
                             if (!userKey.IsNullOrEmpty)
                             {
                                 var authDbContext = scope.ServiceProvider.GetRequiredService<AuthDbContext>();
@@ -64,8 +65,8 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
                                 // Obtain the user's quota
                                 var userQuota = authDbContext.UserClaims
                                     .AsTracking() // Ensure we track to modify directly
-                                    .SingleOrDefault(uc => 
-                                        uc.ClaimType.Equals(NozomiJwtClaimTypes.UserQuota));
+                                    .SingleOrDefault(uc => uc.UserId.Equals(userKey) 
+                                                           && uc.ClaimType.Equals(NozomiJwtClaimTypes.UserQuota));
 
                                 if (userQuota != null && long.TryParse(userQuota.ClaimValue, out var quotaCount))
                                 {
@@ -86,16 +87,21 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
                                                            $"count detected for user {userQuota.UserId}");
                                     }
                                 }
+                                else // User quota not found, bad bad bad
+                                {
+                                    _logger.LogWarning($"{_hostedServiceName} ExecuteAsync: Quota for user " +
+                                                       $"{userKey} not found.");
+                                }
                             }
-                            else
+                            else // API Key is not linked to a User, bad bad bad
                             {
-                                // Pop it back in
-                                database.ListRightPush(key, oldestWeight);
-                                
                                 _logger.LogWarning($"{_hostedServiceName}: ExecuteAsync: Invalid API Key.." +
                                                    $" Key: {key}");
                             }
-
+                        }
+                        else // Weight is not a valid integer/long..
+                        {
+                            
                         }
                         
                         
