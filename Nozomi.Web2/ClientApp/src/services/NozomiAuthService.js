@@ -32,5 +32,32 @@ export default {
                 reject(error);
             });
         });
+    },
+        
+    resendConfirmationEmail() {
+        return new Promise((resolve, reject) => {
+            const { authority, client_id, redirect_uri, response_type, scope } = oidcSettings;
+            const postData = {
+                returnUrl: redirect_uri
+            };
+            
+            axios.post(`${authority}/Account/ResendConfirmationEmail`, postData, {
+                headers: {
+                    Authorization: `Bearer ${store.state.oidcStore.access_token}`
+                }
+            })
+                .then(response => {
+                    if (response.status === 200) {
+                        resolve(response.data);
+                    } else if (response.status === 400) {
+                        reject("Invalid information provided");
+                    } else {
+                        reject("Unauthorized access");
+                    }
+                })
+                .catch(error => {
+                    reject(error);
+                });
+        });
     }
 }
