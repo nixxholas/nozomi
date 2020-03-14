@@ -19,6 +19,9 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
     /// Maintains the UnrecordedApiKeyEvents Redis Cache.
     /// 1. Pops the cached items as soon as possible
     /// 2. Processes the user claims for quota usage with the popped items
+    ///
+    /// This hostedservices' job is never to 'ban' the user. Its primary job is to increase the usage unconditionally.
+    /// Once the usage exceeds the quota, ApiKeyUserHostedService's job is to sort that out.
     /// </summary>
     public class ApiKeyEventHostedService : BaseHostedService<ApiKeyEventHostedService>
     {
@@ -63,28 +66,28 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
                                 var authDbContext = scope.ServiceProvider.GetRequiredService<AuthDbContext>();
 
                                 // Obtain the user's quota
-                                var userQuota = authDbContext.UserClaims
+                                var userUsage = authDbContext.UserClaims
                                     .AsTracking() // Ensure we track to modify directly
                                     .SingleOrDefault(uc => uc.UserId.Equals(userKey) 
-                                                           && uc.ClaimType.Equals(NozomiJwtClaimTypes.UserQuota));
+                                                           && uc.ClaimType.Equals(NozomiJwtClaimTypes.UserUsage));
 
-                                if (userQuota != null && long.TryParse(userQuota.ClaimValue, out var quotaCount))
+                                if (userUsage != null && long.TryParse(userUsage.ClaimValue, out var quotaCount))
                                 {
                                     // Quota is around
                                     if (quotaCount > 0)
                                     {
-                                        userQuota.ClaimValue = (quotaCount + weight).ToString(); // Update it
-                                        authDbContext.UserClaims.Update(userQuota);
+                                        userUsage.ClaimValue = (quotaCount + weight).ToString(); // Update it
+                                        authDbContext.UserClaims.Update(userUsage);
                                         await authDbContext.SaveChangesAsync(stoppingToken);
                                     
                                         _logger.LogInformation($"{_hostedServiceName} ExecuteAsync: User " +
-                                                               $"{userQuota.UserId} with quota count updated to " +
-                                                               $"{userQuota.ClaimValue}");
+                                                               $"{userUsage.UserId} with quota count updated to " +
+                                                               $"{userUsage.ClaimValue}");
                                     }
                                     else // Quota is bad
                                     {
                                         _logger.LogWarning($"{_hostedServiceName} ExecuteAsync: Erroneous quota " +
-                                                           $"count detected for user {userQuota.UserId}");
+                                                           $"count detected for user {userUsage.UserId}");
                                     }
                                 }
                                 else // User quota not found, bad bad bad
