@@ -125,7 +125,8 @@ namespace Nozomi.Infra.Payment.Services.Bootstripe
 
             var paymentMethodOptions = new PaymentMethodListOptions
             {
-                Customer = stripeCustomerId
+                Customer = stripeCustomerId,
+                Type = "card"
             };
 
             var paymentMethodService = new PaymentMethodService();
