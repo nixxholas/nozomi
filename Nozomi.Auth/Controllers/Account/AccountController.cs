@@ -895,6 +895,48 @@ namespace Nozomi.Auth.Controllers.Account
 
             return BadRequest("Invalid input/s, please ensure that the entries are correctly filled!");
         }
+
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        [HttpPost]
+        public async Task<IActionResult> ResendConfirmationEmail([FromBody] ResendEmailInputModel vm)
+        {
+            Uri redirectUri = new Uri(vm.ReturnUrl);
+            string authorityUrl = redirectUri.GetLeftPart(UriPartial.Authority);
+            string validatedAuthorityUrl = AccountOptions.AllowedRedirectDomains.FirstOrDefault(s => s == authorityUrl);
+
+            if (!vm.IsValid() || validatedAuthorityUrl == null)
+            {
+                return BadRequest();
+            }
+            
+            User user = await _userManager.FindByIdAsync(((ClaimsIdentity) User.Identity)
+                .Claims.FirstOrDefault(c => c.Type.Equals(JwtClaimTypes.Subject)
+                                            || c.Type.Equals(ClaimTypes.NameIdentifier))?.Value);
+            if (user == null)
+            {
+                return Unauthorized();
+            }
+
+            bool isEmailVerified = await _userManager.IsEmailConfirmedAsync(user);
+            if (isEmailVerified)
+            {
+                return Ok("Email has already been verified");
+            }
+
+            string code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            var urlParameters = new
+            {
+                userId = user.Id,
+                code = code,
+                returnUrl = validatedAuthorityUrl
+            };
+
+            string callbackUrl = Url.Action("ConfirmEmail", "Account", urlParameters,
+                protocol: HttpContext.Request.Scheme);
+            await _authEmailSender.SendEmailConfirmationAsync(user.Email, callbackUrl);
+
+            return Ok("Confirmation email sent");
+        }
         
         // GET: /Account/RedirectBackToSite
         [HttpGet]
