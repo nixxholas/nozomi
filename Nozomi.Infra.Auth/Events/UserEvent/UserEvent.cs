@@ -9,6 +9,7 @@ using Nozomi.Base.Auth.Global;
 using Nozomi.Base.Auth.Models;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.Auth.Data;
+using Polly.Retry;
 
 namespace Nozomi.Infra.Auth.Events.UserEvent
 {
@@ -46,6 +47,21 @@ namespace Nozomi.Infra.Auth.Events.UserEvent
                 .Include(u => u.UserClaims)
                 .Any(u => u.UserClaims != null && u.UserClaims.Count > 0
                                                && u.UserClaims.Any(uc => uc.ClaimType.Equals(NozomiJwtClaimTypes.StripeCustomerDefaultPaymentId)));
+        }
+
+        public bool HasPaymentMethod(string userId, string paymentMethodId)
+        {
+            const string methodName = "HasDefaultPaymentMethod";
+            const string claimType = NozomiJwtClaimTypes.StripeCustomerPaymentMethodId;
+            
+            if(string.IsNullOrEmpty(userId))
+                throw new ArgumentNullException($"{_eventName} {methodName}: Invalid userId.");
+            if(string.IsNullOrEmpty(paymentMethodId))
+                throw new ArgumentNullException($"{_eventName} {methodName}: Invalid paymentMethodId");
+            
+            var userClaim = GetUserClaims(userId, claimType).SingleOrDefault(uc => uc.ClaimValue.Equals(paymentMethodId));
+
+            return userClaim != null;
         }
 
         public string GetStripeCustomerId(string userId)
