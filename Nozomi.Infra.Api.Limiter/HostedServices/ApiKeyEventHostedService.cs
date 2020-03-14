@@ -41,12 +41,12 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
                     var endpoints = connectionMultiplexer.GetEndPoints();
                     
                     // Iterate all keys
-                    foreach (var key in connectionMultiplexer.GetServer(endpoints[0])
+                    foreach (var apiKey in connectionMultiplexer.GetServer(endpoints[0])
                         .Keys((int) RedisDatabases.ApiKeyEvents))
                     {
                         var database = connectionMultiplexer.GetDatabase((int) RedisDatabases.ApiKeyEvents);
                         // Pop the elements from the left
-                        var oldestWeight = database.ListLeftPop(key);
+                        var oldestWeight = database.ListLeftPop(apiKey);
 
                         // If it is a valid value
                         if (oldestWeight.HasValue && oldestWeight.IsInteger && long.TryParse(oldestWeight, 
@@ -54,7 +54,7 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
                         {
                             // First navigate to the user first
                             var nozomiRedisEvent = scope.ServiceProvider.GetRequiredService<INozomiRedisEvent>();
-                            var userKey = nozomiRedisEvent.GetValue(key, 
+                            var userKey = nozomiRedisEvent.GetValue(apiKey, 
                                 RedisDatabases.ApiKeyUser);
 
                             // Since we got the user's key,
@@ -96,15 +96,14 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
                             else // API Key is not linked to a User, bad bad bad
                             {
                                 _logger.LogWarning($"{_hostedServiceName}: ExecuteAsync: Invalid API Key.." +
-                                                   $" Key: {key}");
+                                                   $" Key: {apiKey}");
                             }
                         }
                         else // Weight is not a valid integer/long..
                         {
-                            
+                            _logger.LogWarning($"{_hostedServiceName} ExecuteAsync: Invalid event weight " +
+                                               $"for API Key {apiKey} with a weight of {oldestWeight}");
                         }
-                        
-                        
                     }
                 }
 
