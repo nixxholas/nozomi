@@ -54,6 +54,7 @@
     import SourceTypeService from '@/services/SourceTypeService';
 
     export default {
+        name: "sources-component",
         components: {
             CreateSourceModal
         },
