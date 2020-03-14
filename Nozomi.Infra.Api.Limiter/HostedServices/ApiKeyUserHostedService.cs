@@ -114,57 +114,13 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
                                 _logger.LogInformation($"{_hostedServiceName} ExecuteAsync: No usage and/or " +
                                                        $"quota found for user {user.Id}.");
                             }
-                            
-                            // if (string.IsNullOrEmpty(user.UserId) // Ensure user id is existent
-                            //     // Then ensure that the quota value is long-able
-                            //     || !long.TryParse(user.ClaimValue, out var userQuota))
-                            // {
-                            //     
-                            // }
-                            // else // Else, it falls within the criteria for it to be processed    
-                            // {
-                            //     // Look for the user's current usage
-                            //     var userUsageClaim = users
-                            //         .FirstOrDefault(uc => uc.UserId.Equals(user.UserId));
-                            // }
-
                         }
                     }
-                    
-                    // Add the new key entries first
-
-                    // Update keys with exceeded quotas
-
-                    // DONE!
-
-                    // // Obtain all banned users
-                    // var bannedUsers = redisEvent
-                    //     .AllKeys(RedisDatabases.BlockedUserApiKeys)
-                    //     .DefaultIfEmpty()
-                    //     .ToList();
-                    //
-                    // if (bannedUsers.Any())
-                    // {
-                    //     var redisService = scope.ServiceProvider.GetRequiredService<INozomiRedisService>();
-                    //     
-                    //     // Iterate every banned user
-                    //     foreach (var bannedUser in bannedUsers)
-                    //     {
-                    //         // Remove the token if it exists
-                    //         redisService.Remove(RedisDatabases.ApiKeyUser, bannedUser);
-                    //     }
-                    // }
-                    //
-                    // // Obtain all currently active user tokens
-                    // var userTokens = authDbContext.UserClaims
-                    //     .Where(uc => !bannedUsers.Contains(uc.UserId) // Ensure the user is not banned
-                    //                  && uc.ClaimType.Equals(NozomiJwtClaimTypes.ApiKeys)); // Obtain only API Keys
-                    //
-                    // // Iterate every token
-                    // foreach (var userToken in userTokens)
-                    // {
-                    //     // Add the token if it doesn't exist
-                    // }
+                    else
+                    {
+                        _logger.LogInformation($"{_hostedServiceName} ExecuteAsync: Apparently, no users to " +
+                                               "check!");
+                    }
                 }
             }
             
