@@ -5,17 +5,13 @@
 
         <div class="box">
             <b-tabs type="is-toggle-rounded" v-model="activeTab" expanded>
-                <b-tab-item label="Overview">
-                    <AggregatesComponent/>
+                
+                <b-tab-item v-for="(tab, index) in tabs" :key="tab.name" :label="tab.name">
+                    <keep-alive>
+                        <component :is="tab.component" v-if="activeTab === index" />
+                    </keep-alive>
                 </b-tab-item>
-
-                <b-tab-item label="Currencies">
-                    <CurrenciesComponent/>
-                </b-tab-item>
-
-                <b-tab-item label="Sources">
-                    <SourcesComponent/>
-                </b-tab-item>
+                
             </b-tabs>
         </div>
     </div>
@@ -35,6 +31,20 @@
         data: function () {
             return {
                 activeTab: 0,
+                tabs: [
+                    {
+                        name: "Overview",
+                        component: AggregatesComponent
+                    },
+                    {
+                        name: "Currencies",
+                        component: CurrenciesComponent
+                    },
+                    {
+                        name: "Sources",
+                        component: SourcesComponent
+                    }
+                ],
             };
         },
     }
