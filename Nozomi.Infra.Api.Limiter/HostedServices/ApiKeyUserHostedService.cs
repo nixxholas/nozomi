@@ -37,14 +37,14 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
                 using (var scope = _scopeFactory.CreateScope())
                 {
                     var authDbContext = scope.ServiceProvider.GetRequiredService<AuthDbContext>();
-                    
+
                     // Obtain all users who have API keys
                     var users = authDbContext.Users
                         .AsNoTracking()
                         .Include(u => u.UserClaims)
                         .Where(u => u.UserClaims
                             .Any(uc => uc.ClaimType.Equals(NozomiJwtClaimTypes.ApiKeys)));
-                    
+
                     // Ensure that there's any users before iterating
                     if (users.Any())
                     {
@@ -55,7 +55,7 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
                             var requiredUserClaims = authDbContext.UserClaims
                                 .AsNoTracking()
                                 .Where(uc => uc.UserId.Equals(user.Id)
-                                             && (uc.ClaimType.Equals(NozomiJwtClaimTypes.UserQuota) 
+                                             && (uc.ClaimType.Equals(NozomiJwtClaimTypes.UserQuota)
                                                  || uc.ClaimType.Equals(NozomiJwtClaimTypes.UserUsage)));
 
                             // Quota
@@ -67,23 +67,24 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
                                 uc.ClaimType.Equals(NozomiJwtClaimTypes.UserUsage));
 
                             // Safetynet
-                            if (quotaClaim != null && usageClaim != null && long.TryParse(quotaClaim.ClaimValue, 
+                            if (quotaClaim != null && usageClaim != null && long.TryParse(quotaClaim.ClaimValue,
                                 out var quota) && long.TryParse(usageClaim.ClaimValue, out var usage))
                             {
-                                // Check if quota and usage has exceeded the limits
-                                if (usage > quota) // Limit reached, bar user from usage.
+                                // Obtain the Api Keys first
+                                var userApiKeys = authDbContext.UserClaims
+                                    .AsNoTracking()
+                                    .Where(uc => uc.ClaimType.Equals(NozomiJwtClaimTypes.ApiKeys));
+
+                                if (userApiKeys.Any()) // Any API keys?
                                 {
-                                    // =========================== REMOVAL LOGIC FIRST =========================== //
-
-                                    var userApiKeys = authDbContext.UserClaims
-                                        .AsNoTracking()
-                                        .Where(uc => uc.ClaimType.Equals(NozomiJwtClaimTypes.ApiKeys));
-
-                                    _logger.LogInformation($"{_hostedServiceName} ExecuteAsync: User {user.Id}" +
-                                                           $" has exceeded his usage by {usage - quota}. Ban time!");
-
-                                    if (userApiKeys.Any()) // Any API keys?
+                                    // Check if quota and usage has exceeded the limits
+                                    if (usage > quota) // Limit reached, bar user from usage.
                                     {
+                                        // =========================== REMOVAL LOGIC FIRST =========================== //
+
+                                        _logger.LogInformation($"{_hostedServiceName} ExecuteAsync: User {user.Id}" +
+                                                               $" has exceeded his usage by {usage - quota}. Ban time!");
+
                                         var nozomiRedisService =
                                             scope.ServiceProvider.GetRequiredService<INozomiRedisService>();
                                         foreach (var userApiKey in userApiKeys) // BAN!!
@@ -94,19 +95,32 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
                                                                    $"user {user.Id} in Redis.");
                                         }
                                     }
-                                    else // Nope, warn!!!
+                                    else // Limit not reached, ensure API keys exist
                                     {
-                                        _logger.LogWarning($"{_hostedServiceName} ExecuteAsync: wait, " +
-                                                           $"peculiar event, user {user.Id} has no API keys but has " +
-                                                           $"hit his limit of {quota}..");
+                                        // =========================== ADDITION LOGIC =========================== //
+
+                                        var redisEvent = scope.ServiceProvider.GetRequiredService<INozomiRedisEvent>();
+                                        var redisService =
+                                            scope.ServiceProvider.GetRequiredService<INozomiRedisService>();
+
+                                        // Iterate the user's api keys and populate the cache if needed
+                                        foreach (var userApiKey in userApiKeys)
+                                        {
+                                            if (redisEvent.Exists(userApiKey.ClaimValue)) continue;
+                                            // Add it into the cache
+                                            redisService.Add(RedisDatabases.ApiKeyUser, userApiKey.ClaimValue, 
+                                                user.Id);
+                                            _logger.LogInformation($"{_hostedServiceName} ExecuteAsync: " +
+                                                                   $" Api Key {userApiKey.ClaimValue} added with " +
+                                                                   $"symlink to user {user.Id}");
+                                        }
                                     }
                                 }
-                                else
+                                else // Nope, warn!!!
                                 {
-                                    // =========================== ADDITION LOGIC =========================== //
-
-                                    var redisEvent = scope.ServiceProvider.GetRequiredService<INozomiRedisEvent>();
-                                    
+                                    _logger.LogWarning($"{_hostedServiceName} ExecuteAsync: wait, " +
+                                                       $"peculiar event, user {user.Id} has no API keys but has " +
+                                                       $"hit his limit of {quota}..");
                                 }
                             }
                             else
@@ -123,7 +137,7 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
                     }
                 }
             }
-            
+
             _logger.LogWarning($"{_hostedServiceName} has broken out of its loop.");
         }
     }
