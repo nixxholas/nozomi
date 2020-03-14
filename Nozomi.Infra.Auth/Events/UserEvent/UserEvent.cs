@@ -111,8 +111,11 @@ namespace Nozomi.Infra.Auth.Events.UserEvent
 
             var users = await _userManager.GetUsersForClaimAsync(customerIdClaim.ToClaim());
 
-            if (users.Count > 1 || users.Count < 1)
-                throw new InvalidOperationException($"{_eventName} GetUserByCustomerId: More than one user binded to the same stripe customer id.");
+            if (users.Count > 1)
+                throw new InvalidOperationException($"{_eventName} GetUserByCustomerId: More than one user is" +
+                                                    $"binded to the same stripe customer id.");
+            else if (!users.Any())
+                throw new InvalidOperationException($"{_eventName} GetUserByCustomerId: No user found.");
 
             return users.First();
         }
