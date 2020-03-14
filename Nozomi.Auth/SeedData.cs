@@ -171,6 +171,53 @@ namespace Nozomi.Auth
                         Console.WriteLine("alice already exists");
                     }
 
+                    var stripeDummy = userMgr.FindByNameAsync("stripe").Result;
+                    if (stripeDummy == null)
+                    {
+                        stripeDummy = new User
+                        {
+                            UserName = "stripe"
+                        };
+                        var result = userMgr.CreateAsync(stripeDummy, "Pass123$").Result;
+                        if (!result.Succeeded)
+                        {
+                            throw new Exception(result.Errors.First().Description);
+                        }
+
+                        result = userMgr.AddClaimsAsync(stripeDummy, new Claim[]
+                        {
+                            new Claim(JwtClaimTypes.Name, "Stripe Dummy"),
+                            new Claim(JwtClaimTypes.GivenName, "Stripe"),
+                            new Claim(JwtClaimTypes.FamilyName, "Dummy"),
+                            new Claim(JwtClaimTypes.Email, "Stripe@stripe.com"),
+                            new Claim(JwtClaimTypes.EmailVerified, "true", ClaimValueTypes.Boolean),
+                            new Claim(JwtClaimTypes.WebSite, "http://stripe.com"),
+                            new Claim(JwtClaimTypes.Address,
+                                @"{ 'street_address': 'One Hacker Way', 'locality': 'Heidelberg', 'postal_code': 69118, 'country': 'Germany' }",
+                                IdentityServer4.IdentityServerConstants.ClaimValueTypes.Json),
+                            new Claim(NozomiJwtClaimTypes.StripeCustomerId, "cus_00000000000000"),
+                            new Claim(NozomiJwtClaimTypes.StripeSubscriptionId, "sub_00000000000000"), 
+                        }).Result;
+                        if (!result.Succeeded)
+                        {
+                            throw new Exception(result.Errors.First().Description);
+                        }
+
+                        Console.WriteLine("stripe created");
+
+                        var ownerAddResult = userMgr.AddToRoleAsync(stripeDummy, RoleEnum.Owner.GetDescription()).Result;
+                        if (!ownerAddResult.Succeeded)
+                        {
+                            throw new Exception(result.Errors.First().Description);
+                        }
+                        
+                        Console.WriteLine("stripe added to owners");
+                    }
+                    else
+                    {
+                        Console.WriteLine("stripe already exists");
+                    }
+                    
                     var nicholas = userMgr.FindByNameAsync("nicholas").Result;
                     if (nicholas == null)
                     {
