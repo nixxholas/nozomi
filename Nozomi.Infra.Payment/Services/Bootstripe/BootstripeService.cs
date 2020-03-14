@@ -121,7 +121,7 @@ namespace Nozomi.Infra.Payment.Services.Bootstripe
             
             var stripeCustomerId = _userEvent.GetStripeCustomerId(user.Id);
             
-            CheckPaymentMethodOwnership(stripeCustomerId, paymentMethodId, methodName);
+            CheckPaymentMethodOwnership(user.Id, paymentMethodId, methodName);
 
             var paymentMethodOptions = new PaymentMethodListOptions
             {
