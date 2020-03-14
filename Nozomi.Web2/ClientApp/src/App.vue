@@ -51,8 +51,9 @@
 </template>
 
 <script>
+    import { mapGetters, mapActions } from 'vuex';
     import NavMenu from './nav-menu';
-
+    
     export default {
         components: {
             'nav-menu': NavMenu,
@@ -60,9 +61,14 @@
         data() {
             return {
                 buildTime: '',
+                shouldShowResendEmailNotification: false
             }
         },
+        computed: {
+            ...mapGetters('oidcStore', ['oidcUser'])
+        },
         methods: {
+            ...mapActions('oidcStore', ['authenticateOidcSilent']),
             hasWeb3() {
                 try {
                     return window.ethereum || window.web3;
@@ -72,6 +78,13 @@
                 }
             }
         },
+        mounted() {
+            // Attempts to renew id_token to remove notification when user
+            // verified their email
+            if (!this.oidcUser.email_verified) {
+                this.authenticateOidcSilent();
+            }
+        }
     }
 </script>
 
