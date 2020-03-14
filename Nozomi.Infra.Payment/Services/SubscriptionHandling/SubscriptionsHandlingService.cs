@@ -114,12 +114,14 @@ namespace Nozomi.Infra.Payment.Services.SubscriptionHandling
                 Items = new List<SubscriptionItemOptions> {
                     new SubscriptionItemOptions
                     {
+                        Id = subscription.Items.Data[0].Id,
                         Plan = planId
                     }
                 }
             };
             
-            subscription = await _subscriptionService.UpdateAsync(subscription.Id, subscriptionChangeOptions);
+            await _subscriptionService.UpdateAsync(subscription.Id, subscriptionChangeOptions);
+            subscription = await _subscriptionService.GetAsync(subscription.Id, SubscriptionExpandableOption());
             
             if (!subscription.Plan.Id.Equals(planId)) {
                 _logger.LogInformation($"{_serviceName} {methodName}: There was an issue " +
