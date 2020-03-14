@@ -64,6 +64,9 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
                                 if (quotaCount > 0)
                                 {
                                     userQuota.ClaimValue = (quotaCount + weight).ToString(); // Update it
+                                    authDbContext.UserClaims.Update(userQuota);
+                                    await authDbContext.SaveChangesAsync(stoppingToken);
+                                    
                                     _logger.LogInformation($"{_hostedServiceName} ExecuteAsync: User " +
                                                            $"{userQuota.UserId} with quota count updated to " +
                                                            $"{userQuota.ClaimValue}");
