@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Nozomi.Base.Auth.Global;
 using Nozomi.Base.Auth.Models;
 using Nozomi.Base.BCL.Helpers.Enumerator;
 using Nozomi.Repo.Auth.Data;
@@ -145,7 +146,10 @@ namespace Nozomi.Auth
                             new Claim(JwtClaimTypes.WebSite, "http://alice.com"),
                             new Claim(JwtClaimTypes.Address,
                                 @"{ 'street_address': 'One Hacker Way', 'locality': 'Heidelberg', 'postal_code': 69118, 'country': 'Germany' }",
-                                IdentityServer4.IdentityServerConstants.ClaimValueTypes.Json)
+                                IdentityServer4.IdentityServerConstants.ClaimValueTypes.Json),
+                            new Claim(NozomiJwtClaimTypes.StripeCustomerId, "cus_GiPXYNorAJsVIL"), 
+                            new Claim(NozomiJwtClaimTypes.StripeCustomerDefaultPaymentId, "pm_1GAyifBrK0ZsVPPfIAwyWRdB"),
+                            new Claim(NozomiJwtClaimTypes.StripeCustomerPaymentMethodId, "pm_1GAyifBrK0ZsVPPfIAwyWRdB"), 
                         }).Result;
                         if (!result.Succeeded)
                         {
@@ -191,7 +195,9 @@ namespace Nozomi.Auth
                             new Claim(JwtClaimTypes.Address,
                                 @"{ 'street_address': 'One Hacker Way', 'locality': 'Heidelberg', 'postal_code': 69118, 'country': 'Germany' }",
                                 IdentityServer4.IdentityServerConstants.ClaimValueTypes.Json),
-                            new Claim("location", "somewhere")
+                            new Claim(NozomiJwtClaimTypes.StripeCustomerId, "cus_GiBLTRABM7wu1N"),
+                            new Claim(NozomiJwtClaimTypes.StripeCustomerDefaultPaymentId, "pm_1GAkzXBrK0ZsVPPf1tCLQwVR"),
+                            new Claim(NozomiJwtClaimTypes.StripeCustomerPaymentMethodId, "pm_1GAkzXBrK0ZsVPPf1tCLQwVR"), 
                         }).Result;
                         if (!result.Succeeded)
                         {
