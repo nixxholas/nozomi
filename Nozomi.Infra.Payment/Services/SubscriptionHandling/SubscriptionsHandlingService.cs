@@ -96,7 +96,7 @@ namespace Nozomi.Infra.Payment.Services.SubscriptionHandling
             if(activeSubscriptionId == null)
                 throw new InvalidOperationException($"{_serviceName} {methodName}: Active subscription Id does not exist");
 
-            var subscription = await _subscriptionService.GetAsync(activeSubscriptionId);
+            var subscription = await _subscriptionService.GetAsync(activeSubscriptionId, SubscriptionExpandableOption());
             
             if(subscription == null)
                 throw new StripeException($"{_serviceName} {methodName}: Could not retrieve subscription by id {activeSubscriptionId}");
@@ -172,7 +172,7 @@ namespace Nozomi.Infra.Payment.Services.SubscriptionHandling
             if(string.IsNullOrEmpty(subscriptionId))
                 throw new InvalidOperationException($"{_serviceName} {methodName}: User has no active subscription to cancel");
 
-            var subscription = await _subscriptionService.GetAsync(subscriptionId);
+            var subscription = await _subscriptionService.GetAsync(subscriptionId, SubscriptionExpandableOption());
             
             if(subscription == null)
                 throw new StripeException($"{_serviceName} {methodName}: An error occured while trying to retrieve subscription {subscriptionId}");
@@ -208,6 +208,13 @@ namespace Nozomi.Infra.Payment.Services.SubscriptionHandling
         {
             if(subscription == null)
                 throw new ArgumentNullException($"{_serviceName} {methodName}: Subscription is null");
+        }
+
+        private SubscriptionGetOptions SubscriptionExpandableOption()
+        {
+            var options = new SubscriptionGetOptions();
+            options.AddExpand("plan");
+            return options;
         }
     }
 }
