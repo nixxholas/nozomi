@@ -1,6 +1,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Nozomi.Base.Auth.Global;
@@ -36,33 +37,96 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
                 using (var scope = _scopeFactory.CreateScope())
                 {
                     var authDbContext = scope.ServiceProvider.GetRequiredService<AuthDbContext>();
-                    var redisEvent = scope.ServiceProvider.GetRequiredService<INozomiRedisEvent>();
                     
-                    // Obtain all users with their API keys, quota limit and quota usage.
-                    var userClaims = authDbContext.UserClaims
-                        .Where(uc => uc.ClaimType.Equals(NozomiJwtClaimTypes.ApiKeys)
-                                     || uc.ClaimType.Equals(NozomiJwtClaimTypes.UserQuota)
-                                     || uc.ClaimType.Equals(NozomiJwtClaimTypes.UserUsage));
+                    // Obtain all users who have API keys
+                    var users = authDbContext.Users
+                        .AsNoTracking()
+                        .Include(u => u.UserClaims)
+                        .Where(u => u.UserClaims
+                            .Any(uc => uc.ClaimType.Equals(NozomiJwtClaimTypes.ApiKeys)));
                     
-                    // Ensure that there's a userclaim to perform these actions
-                    if (userClaims.Any())
+                    // Ensure that there's any users before iterating
+                    if (users.Any())
                     {
-                        // Iterate every quota first.
-                        foreach (var userQuotaClaim in userClaims
-                            .Where(uc => uc.ClaimType.Equals(NozomiJwtClaimTypes.UserQuota)))
+                        // Iterate every user
+                        foreach (var user in users)
                         {
-                            if (string.IsNullOrEmpty(userQuotaClaim.UserId) // Ensure user id is existent
-                                // Then ensure that the quota value is long-able
-                                || !long.TryParse(userQuotaClaim.ClaimValue, out var userQuota))
+                            // Obtain the user's quota and usage
+                            var requiredUserClaims = authDbContext.UserClaims
+                                .AsNoTracking()
+                                .Where(uc => uc.UserId.Equals(user.Id)
+                                             && (uc.ClaimType.Equals(NozomiJwtClaimTypes.UserQuota) 
+                                                 || uc.ClaimType.Equals(NozomiJwtClaimTypes.UserUsage)));
+
+                            // Quota
+                            var quotaClaim = requiredUserClaims.SingleOrDefault(uc =>
+                                uc.ClaimType.Equals(NozomiJwtClaimTypes.UserQuota));
+
+                            // Usage
+                            var usageClaim = requiredUserClaims.SingleOrDefault(uc =>
+                                uc.ClaimType.Equals(NozomiJwtClaimTypes.UserUsage));
+
+                            // Safetynet
+                            if (quotaClaim != null && usageClaim != null && long.TryParse(quotaClaim.ClaimValue, 
+                                out var quota) && long.TryParse(usageClaim.ClaimValue, out var usage))
                             {
-                                
+                                // Check if quota and usage has exceeded the limits
+                                if (usage > quota) // Limit reached, bar user from usage.
+                                {
+                                    // =========================== REMOVAL LOGIC FIRST =========================== //
+
+                                    var userApiKeys = authDbContext.UserClaims
+                                        .AsNoTracking()
+                                        .Where(uc => uc.ClaimType.Equals(NozomiJwtClaimTypes.ApiKeys));
+
+                                    _logger.LogInformation($"{_hostedServiceName} ExecuteAsync: User {user.Id}" +
+                                                           $" has exceeded his usage by {usage - quota}. Ban time!");
+
+                                    if (userApiKeys.Any()) // Any API keys?
+                                    {
+                                        var nozomiRedisService =
+                                            scope.ServiceProvider.GetRequiredService<INozomiRedisService>();
+                                        foreach (var userApiKey in userApiKeys) // BAN!!
+                                        {
+                                            nozomiRedisService.Remove(RedisDatabases.ApiKeyUser, userApiKey.ClaimValue);
+                                            _logger.LogInformation($"{_hostedServiceName} ExecuteAsync: " +
+                                                                   $" API Key {userApiKey.ClaimValue} removed for " +
+                                                                   $"user {user.Id} in Redis.");
+                                        }
+                                    }
+                                    else // Nope, warn!!!
+                                    {
+                                        _logger.LogWarning($"{_hostedServiceName} ExecuteAsync: wait, " +
+                                                           $"peculiar event, user {user.Id} has no API keys but has " +
+                                                           $"hit his limit of {quota}..");
+                                    }
+                                }
+                                else
+                                {
+                                    // =========================== ADDITION LOGIC =========================== //
+
+                                    var redisEvent = scope.ServiceProvider.GetRequiredService<INozomiRedisEvent>();
+                                    
+                                }
                             }
-                            else // Else, it falls within the criteria for it to be processed    
+                            else
                             {
-                                // Look for the user's current usage
-                                var userUsageClaim = userClaims
-                                    .FirstOrDefault(uc => uc.UserId.Equals(userQuotaClaim.UserId));
+                                _logger.LogInformation($"{_hostedServiceName} ExecuteAsync: No usage and/or " +
+                                                       $"quota found for user {user.Id}.");
                             }
+                            
+                            // if (string.IsNullOrEmpty(user.UserId) // Ensure user id is existent
+                            //     // Then ensure that the quota value is long-able
+                            //     || !long.TryParse(user.ClaimValue, out var userQuota))
+                            // {
+                            //     
+                            // }
+                            // else // Else, it falls within the criteria for it to be processed    
+                            // {
+                            //     // Look for the user's current usage
+                            //     var userUsageClaim = users
+                            //         .FirstOrDefault(uc => uc.UserId.Equals(user.UserId));
+                            // }
 
                         }
                     }
