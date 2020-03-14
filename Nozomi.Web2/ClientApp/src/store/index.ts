@@ -4,7 +4,7 @@ import VuexPersist from 'vuex-persist';
 import { oidcSettings } from "./config";
 // TODO: Wait for the vuex-oidc PR for typings to merge
 // @ts-ignore
-import { vuexOidcCreateStoreModule } from 'vuex-oidc';
+import { vuexOidcCreateStoreModule, vuexOidcProcessSilentSignInCallback } from 'vuex-oidc';
 import { RootState } from './types';
 import {NotificationProgrammatic as Notification} from "buefy";
 
@@ -14,6 +14,7 @@ const vuexPersist = new VuexPersist<RootState>({
 });
 
 Vue.use(Vuex);
+vuexOidcProcessSilentSignInCallback(oidcSettings);
 
 // Vuex structure based on https://codeburst.io/vuex-and-typescript-3427ba78cfa8
 
