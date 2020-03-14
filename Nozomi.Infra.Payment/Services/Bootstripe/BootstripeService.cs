@@ -118,10 +118,10 @@ namespace Nozomi.Infra.Payment.Services.Bootstripe
 
             if (!_userService.HasStripe(user.Id))
                 throw new InvalidOperationException($"{_serviceName} {methodName}: User is not registered for stripe.");
-
-            CheckPaymentMethodOwnership(user.Id, paymentMethodId, methodName);
-
+            
             var stripeCustomerId = _userEvent.GetStripeCustomerId(user.Id);
+            
+            CheckPaymentMethodOwnership(stripeCustomerId, paymentMethodId, methodName);
 
             var paymentMethodOptions = new PaymentMethodListOptions
             {
