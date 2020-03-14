@@ -228,8 +228,10 @@
                         <div class="timeline-item is-info">
                             <div class="timeline-marker is-info"></div>
                             <div class="timeline-content">
-                                <p class="heading">12 March 2020 - <b>beta 13</b></p>
+                                <p class="heading">15 March 2020 - <b>beta 13</b></p>
                                 <ul>
+                                    <li><b>Web</b> - Rate limiting is up!</li>
+                                    <li><b>Web</b> - We've now shifted the market indices to the demo page, preparing our "what we do" at the homepage!</li>
                                     <li><b>Web</b> - You can now delete requests</li>
                                     <li><b>Web</b> - You can now create websocket commands</li>
                                     <li><b>Web</b> - You can now delete websocket commands</li>
@@ -238,6 +240,7 @@
                                     <li><b>Web</b> - You can now delete websocket command properties</li>
                                     <li><b>Web</b> - You can now update websocket command properties</li>
                                     <li><b>Web</b> - Bugs and issues tracker is now online!</li>
+                                    <li><b>Auth</b> - Resend email confirmation support</li>
                                     <li><b>Auth</b> - General User interface improvements</li>
                                     <li><b>Auth</b> - Well, we made our emails presentable ;)</li>
                                     <li><b>Auth</b> - More security patches</li>
@@ -245,6 +248,7 @@
                                     <li><b>Compute</b> - We've just wrapped up our computation engine at the back. UI 
                                     will be introduced soon! This beast can compute any mathematical formula you can think of!</li>
                                     <li><b>Backend</b> - Optimisation works on how we poll RESTful endpoints; We're handling 429 errors gracefully now :)</li>
+                                    <li><b>Backend</b> - Email confirmation no longer requires a re-login to reflect in your profile</li>
                                 </ul>
                             </div>
                         </div>
