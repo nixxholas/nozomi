@@ -31,6 +31,7 @@ namespace Nozomi.Auth.Controllers.Payment
         private readonly IOptions<StripeOptions> _stripeOptions;
         private readonly UserManager<User> _userManager;
         private readonly IUserService _userService;
+        private readonly IUserEvent _userEvent;
         private readonly IBootstripeService _bootstripeService;
         private readonly ISubscriptionsHandlingService _subscriptionsHandlingService;
         private readonly IBootstripeEvent _bootstripeEvent;
@@ -39,12 +40,13 @@ namespace Nozomi.Auth.Controllers.Payment
             IOptions<StripeOptions> stripeOptions, UserManager<User> userManager,
             IBootstripeService bootstripeService, IBootstripeEvent bootstripeEvent,
             ISubscriptionsHandlingService subscriptionsHandlingService,
-            IUserService userService) 
+            IUserService userService, IUserEvent userEvent) 
             : base(logger, webHostEnvironment)
         {
             _stripeOptions = stripeOptions;
             _userManager = userManager;
             _userService = userService;
+            _userEvent = userEvent;
             _bootstripeService = bootstripeService;
             _bootstripeEvent = bootstripeEvent;
             _subscriptionsHandlingService = subscriptionsHandlingService;
@@ -164,29 +166,30 @@ namespace Nozomi.Auth.Controllers.Payment
             var user = await _userManager.FindByIdAsync(((ClaimsIdentity) User.Identity)
                 .Claims.FirstOrDefault(c => c.Type.Equals(JwtClaimTypes.Subject)
                                             || c.Type.Equals(ClaimTypes.NameIdentifier))?.Value);
+
+            if (user == null || vm == null)
+                return BadRequest("Invalid card token!");
             
-            // Ensure stripe binding
-            if (user != null && vm != null)
-            {
-                var stripeUserClaim = (await _userManager.GetClaimsAsync(user))
-                    .FirstOrDefault(c => c.Type.Equals(NozomiJwtClaimTypes.StripeCustomerId));
+            var stripeUserClaim = (await _userManager.GetClaimsAsync(user))
+                .FirstOrDefault(c => c.Type.Equals(NozomiJwtClaimTypes.StripeCustomerId));
 
-                if (stripeUserClaim == null)
-                    return BadRequest("Please bootstripe first!");
-                
-                // Process card addition
-                if (!string.IsNullOrEmpty(vm.PaymentMethodId)
-                    && !await _bootstripeEvent.PaymentMethodBelongsToUser(user, vm.PaymentMethodId))
-                {
-                    await _bootstripeService.AddPaymentMethod(vm.PaymentMethodId, user);
-                
-                    // Return
-                    _logger.LogInformation($"AddCard: card of ID {vm.PaymentMethodId} added to {user.Id}");
-                    return Ok("Card successfully added!");
-                }
-            }
+            if (stripeUserClaim == null)
+                return BadRequest("Please bootstripe first!");
 
-            return BadRequest("Invalid card token!");
+            if (string.IsNullOrEmpty(vm.PaymentMethodId))
+                return BadRequest("Invalid card token!");
+
+            if (_userEvent.HasPaymentMethod(user.Id, vm.PaymentMethodId))
+                return BadRequest("Payment method already added");
+
+            if (!await _bootstripeEvent.PaymentMethodBelongsToUser(user, vm.PaymentMethodId))
+                return BadRequest("Payment Method does not belong to user");
+            
+            await _bootstripeService.AddPaymentMethod(vm.PaymentMethodId, user);
+            
+            // Return
+            _logger.LogInformation($"AddCard: card of ID {vm.PaymentMethodId} added to {user.Id}");
+            return Ok("Card successfully added!");
         }
         
         [Authorize(AuthenticationSchemes = "Bearer")]
