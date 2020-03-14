@@ -169,12 +169,9 @@ namespace Nozomi.Auth.Controllers.Payment
 
             if (user == null || vm == null)
                 return BadRequest("Invalid card token!");
-            
-            var stripeUserClaim = (await _userManager.GetClaimsAsync(user))
-                .FirstOrDefault(c => c.Type.Equals(NozomiJwtClaimTypes.StripeCustomerId));
 
-            if (stripeUserClaim == null)
-                return BadRequest("Please bootstripe first!");
+            if (!_userEvent.HasStripe(user.Id))
+                return BadRequest("User does not have stripe enabled");
 
             if (string.IsNullOrEmpty(vm.PaymentMethodId))
                 return BadRequest("Invalid card token!");
@@ -182,8 +179,8 @@ namespace Nozomi.Auth.Controllers.Payment
             if (_userEvent.HasPaymentMethod(user.Id, vm.PaymentMethodId))
                 return BadRequest("Payment method already added");
 
-            if (!await _bootstripeEvent.PaymentMethodBelongsToUser(user, vm.PaymentMethodId))
-                return BadRequest("Payment Method does not belong to user");
+            if (!await _bootstripeEvent.PaymentMethodExists(vm.PaymentMethodId))
+                return BadRequest("Payment method does not exist!");
             
             await _bootstripeService.AddPaymentMethod(vm.PaymentMethodId, user);
             
