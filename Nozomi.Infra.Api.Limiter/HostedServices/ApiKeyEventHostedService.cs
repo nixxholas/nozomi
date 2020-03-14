@@ -56,7 +56,8 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
                             // Obtain the user's quota
                             var userQuota = authDbContext.UserClaims
                                 .AsTracking() // Ensure we track to modify directly
-                                .SingleOrDefault(uc => uc.ClaimType.Equals(NozomiJwtClaimTypes.UserQuota));
+                                .SingleOrDefault(uc => 
+                                    uc.ClaimType.Equals(NozomiJwtClaimTypes.UserQuota));
 
                             if (userQuota != null && long.TryParse(userQuota.ClaimValue, out var quotaCount))
                             {
@@ -70,6 +71,11 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
                                     _logger.LogInformation($"{_hostedServiceName} ExecuteAsync: User " +
                                                            $"{userQuota.UserId} with quota count updated to " +
                                                            $"{userQuota.ClaimValue}");
+                                }
+                                else // Quota is bad
+                                {
+                                    _logger.LogWarning($"{_hostedServiceName} ExecuteAsync: Erroneous quota " +
+                                                       $"count detected for user {userQuota.UserId}");
                                 }
                             }
                         }
