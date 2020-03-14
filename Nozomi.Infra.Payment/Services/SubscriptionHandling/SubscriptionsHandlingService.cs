@@ -107,8 +107,8 @@ namespace Nozomi.Infra.Payment.Services.SubscriptionHandling
             if (!subscription.CustomerId.Equals(stripeCustomerId))
                 throw new InvalidOperationException($"{_serviceName} {methodName}: Subscription {activeSubscriptionId} does not belong to customer {stripeCustomerId}");
 
-            if (!subscription.Plan.Id.Equals(planId))
-                throw new InvalidOperationException($"{_serviceName} {methodName}: No need to update subscription plan");
+            if (subscription.Plan.Id.Equals(planId))
+                throw new InvalidOperationException($"{_serviceName} {methodName}: New Plan the same as the currently subscribed plan");
 
             var subscriptionChangeOptions = new SubscriptionUpdateOptions {
                 Items = new List<SubscriptionItemOptions> {
