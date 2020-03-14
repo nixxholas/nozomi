@@ -1,7 +1,10 @@
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Nozomi.Base.Auth.Global;
 using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.Auth.Data;
@@ -41,14 +44,34 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
                         .Keys((int) RedisDatabases.ApiKeyEvents))
                     {
                         var database = connectionMultiplexer.GetDatabase((int) RedisDatabases.ApiKeyEvents);
+                        // Pop the elements from the left
                         var oldestWeight = database.ListLeftPop(key);
 
                         // If it is a valid value
-                        if (oldestWeight.HasValue && oldestWeight.IsInteger)
+                        if (oldestWeight.HasValue && oldestWeight.IsInteger && long.TryParse(oldestWeight, 
+                            out var weight) && weight > 0)
                         {
                             var authDbContext = scope.ServiceProvider.GetRequiredService<AuthDbContext>();
-                            // TODO: Poof the quota
+                            
+                            // Obtain the user's quota
+                            var userQuota = authDbContext.UserClaims
+                                .AsTracking() // Ensure we track to modify directly
+                                .SingleOrDefault(uc => uc.ClaimType.Equals(NozomiJwtClaimTypes.UserQuota));
+
+                            if (userQuota != null && long.TryParse(userQuota.ClaimValue, out var quotaCount))
+                            {
+                                // Quota is around
+                                if (quotaCount > 0)
+                                {
+                                    userQuota.ClaimValue = (quotaCount + weight).ToString(); // Update it
+                                    _logger.LogInformation($"{_hostedServiceName} ExecuteAsync: User " +
+                                                           $"{userQuota.UserId} with quota count updated to " +
+                                                           $"{userQuota.ClaimValue}");
+                                }
+                            }
                         }
+                        
+                        
                     }
                 }
 
