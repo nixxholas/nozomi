@@ -57,6 +57,7 @@
     // import {Carousel, Slide} from 'vue-carousel';
 
     export default {
+        name: "aggregate-component",
         computed: {
             ...mapGetters('oidcStore', [
                 'oidcIsAuthenticated'

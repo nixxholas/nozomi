@@ -19,6 +19,7 @@
     import CurrencyTable from '@/components/tables/currencies-table';
 
     export default {
+        name: "currencies-component",
         components: {
             CurrencyModel,
             CurrencyTable

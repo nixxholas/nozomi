@@ -3,6 +3,7 @@
 
 
 using System;
+using Microsoft.Extensions.Hosting;
 
 namespace Nozomi.Auth.Controllers.Account
 {
@@ -12,7 +13,18 @@ namespace Nozomi.Auth.Controllers.Account
         public static bool AllowRememberLogin = true;
         public static TimeSpan RememberMeLoginDuration = TimeSpan.FromDays(30);
 
-        public static bool ShowLogoutPrompt = true;
+        public static string[] AllowedRedirectDomains =
+            Environments.Development == Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")
+                ? new[]
+                {
+                    "https://localhost:5001"
+                }
+                : new[]
+                {
+                    "https://nozomi.one"
+                };
+
+    public static bool ShowLogoutPrompt = true;
         public static bool AutomaticRedirectAfterSignOut = false;
 
         // specify the Windows authentication scheme being used
