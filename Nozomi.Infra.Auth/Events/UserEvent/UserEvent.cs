@@ -39,14 +39,14 @@ namespace Nozomi.Infra.Auth.Events.UserEvent
         public bool HasDefaultPaymentMethod(string userId)
         {
             const string methodName = "HasDefaultPaymentMethod";
+            const string claimType = NozomiJwtClaimTypes.StripeCustomerDefaultPaymentId;
+            
             if(string.IsNullOrEmpty(userId))
                 throw new ArgumentNullException($"{_eventName} {methodName}: Invalid userId.");
-            
-            return _context.Users.AsNoTracking()
-                .Where(u => u.Id.Equals(userId))
-                .Include(u => u.UserClaims)
-                .Any(u => u.UserClaims != null && u.UserClaims.Count > 0
-                                               && u.UserClaims.Any(uc => uc.ClaimType.Equals(NozomiJwtClaimTypes.StripeCustomerDefaultPaymentId)));
+
+            var defaultPaymentIdClaim = GetUserClaim(userId, claimType);
+
+            return defaultPaymentIdClaim != null;
         }
 
         public bool HasPaymentMethod(string userId, string paymentMethodId)
