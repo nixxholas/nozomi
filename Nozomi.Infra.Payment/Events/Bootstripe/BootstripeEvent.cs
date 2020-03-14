@@ -170,7 +170,7 @@ namespace Nozomi.Infra.Payment.Events.Bootstripe
             return paymentMethods.Data;
         }
 
-        public async Task<bool> PaymentMethodExistsUnderUser(User user, string paymentMethodId)
+        public async Task<bool> PaymentMethodBelongsToUser(User user, string paymentMethodId)
         {
             const string methodName = "PaymentMethodExists";
             PerformUserPrecheck(user, methodName);
