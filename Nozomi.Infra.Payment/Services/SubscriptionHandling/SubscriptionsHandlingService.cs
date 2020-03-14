@@ -96,7 +96,7 @@ namespace Nozomi.Infra.Payment.Services.SubscriptionHandling
             if(activeSubscriptionId == null)
                 throw new InvalidOperationException($"{_serviceName} {methodName}: Active subscription Id does not exist");
 
-            var subscription = await _subscriptionService.GetAsync(planId);
+            var subscription = await _subscriptionService.GetAsync(activeSubscriptionId);
             
             if(subscription == null)
                 throw new StripeException($"{_serviceName} {methodName}: Could not retrieve subscription by id {activeSubscriptionId}");
