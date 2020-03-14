@@ -59,9 +59,9 @@ namespace Nozomi.Infra.Auth.Events.UserEvent
             if(string.IsNullOrEmpty(paymentMethodId))
                 throw new ArgumentNullException($"{_eventName} {methodName}: Invalid paymentMethodId");
             
-            var userClaim = GetUserClaims(userId, claimType).SingleOrDefault(uc => uc.ClaimValue.Equals(paymentMethodId));
+            var paymentMethodClaim = GetUserClaims(userId, claimType).SingleOrDefault(uc => uc.ClaimValue.Equals(paymentMethodId));
 
-            return userClaim != null;
+            return paymentMethodClaim != null;
         }
 
         public string GetStripeCustomerId(string userId)
