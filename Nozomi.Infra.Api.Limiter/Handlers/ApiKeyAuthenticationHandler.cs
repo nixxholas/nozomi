@@ -12,6 +12,12 @@ using Nozomi.Preprocessing.Options;
 
 namespace Nozomi.Infra.Api.Limiter.Handlers
 {
+    /// <summary>
+    /// An Auth handler to handle authentication for a .NET Core project via Api keys.
+    ///
+    /// This helps to resolve dependency issues when utilises a non-conventional method.
+    /// https://stackoverflow.com/questions/47324129/no-authenticationscheme-was-specified-and-there-was-no-defaultchallengescheme-f
+    /// </summary>
     public class ApiKeyAuthenticationHandler : AuthenticationHandler<ApiKeyAuthenticationOptions>
     {
         private readonly IServiceProvider _serviceProvider;
