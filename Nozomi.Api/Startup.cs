@@ -140,7 +140,7 @@ namespace Nozomi.Api
                     {
                         Implicit = new OpenApiOAuthFlow
                         {
-                            AuthorizationUrl = new Uri("/auth-server/connect/authorize", UriKind.Relative),
+                            AuthorizationUrl = new Uri("/api/connect/validate", UriKind.Relative),
                             Scopes = new Dictionary<string, string>
                             {
                                 { "readAccess", "Access read operations" },
