@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.ViewModels.Request;
@@ -26,6 +27,9 @@ namespace Nozomi.Api.Controllers.Request
         [TokenBucket(Name = "Request/Get", Weight = 5)]
         [HttpGet]
         [Produces("application/json")]
+        [ProducesResponseType(typeof(IEnumerable<RequestViewModel>), 200)]
+        [ProducesResponseType(typeof(string), 400)]
+        [ProducesResponseType(typeof(string), 500)]
         public IActionResult All(int index = 0)
         {
             if (index >= 0) return BadRequest("Invalid index.");
@@ -45,6 +49,9 @@ namespace Nozomi.Api.Controllers.Request
         [TokenBucket(Name = "Request/Get", Weight = 1)]
         [HttpGet("{guid}")]
         [Produces("application/json")]
+        [ProducesResponseType(typeof(RequestViewModel), 200)]
+        [ProducesResponseType(typeof(string), 400)]
+        [ProducesResponseType(typeof(string), 500)]
         public IActionResult Get(string guid)
         {
             if (Guid.TryParse(guid, out var parsedGuid))
