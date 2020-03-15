@@ -109,13 +109,20 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
                                         // Iterate the user's api keys and populate the cache if needed
                                         foreach (var userApiKey in userApiKeys)
                                         {
-                                            if (redisEvent.Exists(userApiKey.ClaimValue)) continue;
-                                            // Add it into the cache
-                                            redisService.Add(RedisDatabases.ApiKeyUser, userApiKey.ClaimValue, 
-                                                user.Id);
-                                            _logger.LogInformation($"{_hostedServiceName} ExecuteAsync: " +
-                                                                   $" Api Key {userApiKey.ClaimValue} added with " +
-                                                                   $"symlink to user {user.Id}");
+                                            if (!redisEvent.Exists(userApiKey.ClaimValue))
+                                            {
+                                                // Add it into the cache
+                                                redisService.Add(RedisDatabases.ApiKeyUser, userApiKey.ClaimValue, 
+                                                    user.Id);
+                                                _logger.LogInformation($"{_hostedServiceName} ExecuteAsync: " +
+                                                                       $" Api Key {userApiKey.ClaimValue} added with " +
+                                                                       $"symlink to user {user.Id}");
+                                            }
+                                            else
+                                            {
+                                                _logger.LogInformation($"{_hostedServiceName} ExecuteAsync: " +
+                                                                       $" Api Key {userApiKey.ClaimType} already added");
+                                            }
                                         }
                                     }
                                 }
