@@ -131,6 +131,24 @@ namespace Nozomi.Api
                     Title = "Nozomi API", 
                     Version = GlobalApiVariables.CURRENT_API_REVISION.ToString()
                 });
+                
+                // Define the Api Key scheme that's in use (i.e. Implicit Flow)
+                config.AddSecurityDefinition("apikey", new OpenApiSecurityScheme
+                {
+                    Type = SecuritySchemeType.ApiKey,
+                    Flows = new OpenApiOAuthFlows
+                    {
+                        Implicit = new OpenApiOAuthFlow
+                        {
+                            AuthorizationUrl = new Uri("/auth-server/connect/authorize", UriKind.Relative),
+                            Scopes = new Dictionary<string, string>
+                            {
+                                { "readAccess", "Access read operations" },
+                                { "writeAccess", "Access write operations" }
+                            }
+                        }
+                    }
+                });
             });
 
             services.AddTransient<INozomiRedisEvent, NozomiRedisEvent>();
