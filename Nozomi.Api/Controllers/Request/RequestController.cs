@@ -24,6 +24,14 @@ namespace Nozomi.Api.Controllers.Request
             _requestEvent = requestEvent;
         }
 
+        /// <summary>
+        /// Retrieves all requests owned by the stated user with a pagination of 100 items.
+        /// </summary>
+        /// <param name="index">The 'page' of the request list you're viewing</param>
+        /// <returns>Requests</returns>
+        /// <response code="200">All requests obtained</response>
+        /// <response code="400">Your request is either unauthorised or has exceeded the index limits</response>
+        /// <response code="500">Not sure how you got here, but no.</response>
         [TokenBucket(Name = "Request/Get", Weight = 5)]
         [HttpGet]
         [Produces("application/json")]
@@ -46,6 +54,14 @@ namespace Nozomi.Api.Controllers.Request
             return new InternalServerErrorObjectResult("Not sure how you got here, but no.");
         }
 
+        /// <summary>
+        /// Retrieves the request with the mentioned guid.
+        /// </summary>
+        /// <param name="guid">Guid of the request</param>
+        /// <returns>Request</returns>
+        /// <response code="200">Request obtained</response>
+        /// <response code="400">Can't really find the request you're trying to obtain...</response>
+        /// <response code="500">Not sure how you got here, but no.</response>
         [TokenBucket(Name = "Request/Get", Weight = 1)]
         [HttpGet("{guid}")]
         [Produces("application/json")]
