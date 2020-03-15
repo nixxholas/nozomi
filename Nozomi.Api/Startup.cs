@@ -115,6 +115,8 @@ namespace Nozomi.Api
                 });
             }
 
+            services.AddMemoryCache(); // Required for API Throttling
+
             services.AddResponseCompression();
             services.AddControllers();
 
