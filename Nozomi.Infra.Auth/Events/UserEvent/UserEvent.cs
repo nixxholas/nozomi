@@ -48,6 +48,15 @@ namespace Nozomi.Infra.Auth.Events.UserEvent
                                                && u.UserClaims.Any(uc => uc.ClaimType.Equals(NozomiJwtClaimTypes.StripeCustomerDefaultPaymentId)));
         }
 
+        public bool IsInRoles(string userId, ICollection<string> roleNames)
+        {
+            return _context.UserRoles.AsNoTracking()
+                .Where(ur => ur.UserId.Equals(userId))
+                .Include(ur => ur.Role)
+                .AsEnumerable()
+                .Any(ur => roleNames.Contains(ur.Role.Name));
+        }
+
         public string GetStripeCustomerId(string userId)
         {
             const string methodName = "GetStripeCustomerId";
