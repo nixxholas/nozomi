@@ -12,6 +12,8 @@ namespace Nozomi.Service.Events.Interfaces
 {
     public interface IRequestEvent
     {
+        IEnumerable<Request> All(int index = 0, string createdBy = null);
+        
         bool Exists(long requestId, bool ignoreDeletedOrDisabled = false, string userId = null);
 
         bool Exists(string requestGuid, bool ignoreDeletedOrDisabled = false, string userId = null);

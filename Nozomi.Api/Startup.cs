@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -17,13 +19,16 @@ using Microsoft.OpenApi.Models;
 using Nozomi.Api.Extensions;
 using Nozomi.Infra.Api.Limiter.Events;
 using Nozomi.Infra.Api.Limiter.Events.Interfaces;
+using Nozomi.Infra.Api.Limiter.Handlers;
 using Nozomi.Infra.Api.Limiter.Services;
 using Nozomi.Infra.Api.Limiter.Services.Interfaces;
 using Nozomi.Preprocessing;
+using Nozomi.Preprocessing.Options;
 using Nozomi.Repo.Auth.Data;
 using Nozomi.Repo.Data;
 using Nozomi.Service.Events;
 using Nozomi.Service.Events.Interfaces;
+using Swashbuckle.AspNetCore.Filters;
 using VaultSharp;
 using VaultSharp.V1.AuthMethods.Token;
 
@@ -115,6 +120,8 @@ namespace Nozomi.Api
                 });
             }
 
+            services.AddMemoryCache(); // Required for API Throttling
+
             services.AddResponseCompression();
             services.AddControllers();
 
@@ -125,11 +132,66 @@ namespace Nozomi.Api
                 options.RedirectStatusCode = StatusCodes.Status307TemporaryRedirect;
             });
 
+            services.AddAuthentication(options =>
+            {
+                options.DefaultScheme = ApiKeyAuthenticationOptions.DefaultScheme;
+                options.DefaultAuthenticateScheme = ApiKeyAuthenticationOptions.DefaultScheme;
+            })
+                .AddScheme<ApiKeyAuthenticationOptions, ApiKeyAuthenticationHandler>(
+                    ApiKeyAuthenticationOptions.DefaultScheme, o => { });
+
+            services.AddAuthorization(options =>
+            {
+                var defaultAuthorizationPolicyBuilder = new AuthorizationPolicyBuilder(
+                    ApiKeyAuthenticationOptions.DefaultScheme);
+
+                defaultAuthorizationPolicyBuilder = 
+                    defaultAuthorizationPolicyBuilder.RequireAuthenticatedUser();
+
+                options.DefaultPolicy = defaultAuthorizationPolicyBuilder.Build();
+            });
+
             services.AddSwaggerGen(config =>
             {
                 config.SwaggerDoc(GlobalApiVariables.CURRENT_API_VERSION, new OpenApiInfo {
                     Title = "Nozomi API", 
                     Version = GlobalApiVariables.CURRENT_API_REVISION.ToString()
+                });
+                
+                // Define the Api Key scheme that's in use (i.e. Implicit Flow)
+                config.AddSecurityDefinition(ApiKeyAuthenticationOptions.DefaultScheme, new OpenApiSecurityScheme
+                {
+                    Description = "Nozomi's custom authorization header using the Api Key scheme. Example: \"{token}\"",
+                    In = ParameterLocation.Header,
+                    Name = ApiKeyAuthenticationOptions.HeaderKey,
+                    Type = SecuritySchemeType.ApiKey,
+                    Flows = new OpenApiOAuthFlows
+                    {
+                        Implicit = new OpenApiOAuthFlow
+                        {
+                            AuthorizationUrl = new Uri("/api/connect/validate", UriKind.Relative),
+                            Scopes = new Dictionary<string, string>
+                            {
+                                { "readAccess", "Access read operations" },
+                                { "writeAccess", "Access write operations" }
+                            }
+                        }
+                    }
+                });
+                
+                config.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme, 
+                                Id = ApiKeyAuthenticationOptions.DefaultScheme
+                            }
+                        },
+                        new[] { "readAccess", "writeAccess" }
+                    }
                 });
             });
 
@@ -175,6 +237,7 @@ namespace Nozomi.Api
                 c.RoutePrefix = "";
                 c.SwaggerEndpoint($"/{GlobalApiVariables.CURRENT_API_VERSION}/swagger.json", 
                     $"Nozomi API rev. {GlobalApiVariables.CURRENT_API_REVISION}");
+                c.OAuthClientSecret(ApiKeyAuthenticationOptions.HeaderKey);
             });
         }
     }

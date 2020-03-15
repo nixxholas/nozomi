@@ -22,6 +22,26 @@ namespace Nozomi.Service.Events
         {
         }
 
+        public IEnumerable<Request> All(int index = 0, string createdBy = null)
+        {
+            var query = _context.Requests
+                .AsNoTracking();
+
+            // Filtering before ordering
+            if (!string.IsNullOrEmpty(createdBy))
+                query = query.Where(r => r.CreatedById.Equals(createdBy));
+            
+            // Ordering before taking
+            query = query.OrderBy(r => r.CreatedAt); // Always order by date
+            
+            if (index < 0)
+                throw new IndexOutOfRangeException("Invalid index.");
+
+            query = query.Skip(index * 100).Take(100);
+
+            return query;
+        }
+
         public bool Exists(long requestId, bool ignoreDeletedOrDisabled = false, string userId = null)
         {
             if (requestId > 0)

@@ -11,6 +11,8 @@ namespace Nozomi.Infra.Auth.Events.UserEvent
 
         bool HasDefaultPaymentMethod(string userId);
 
+        bool IsInRoles(string userId, ICollection<string> roleNames);
+
         string GetStripeCustomerId(string userId);
 
         string GetUserActiveSubscriptionId(string userId);

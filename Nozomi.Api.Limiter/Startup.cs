@@ -12,11 +12,13 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Nozomi.Api.Limiter.Extensions;
+using Nozomi.Base.Auth.Models;
 using Nozomi.Infra.Api.Limiter.Events;
 using Nozomi.Infra.Api.Limiter.Events.Interfaces;
 using Nozomi.Infra.Api.Limiter.HostedServices;
 using Nozomi.Infra.Api.Limiter.Services;
 using Nozomi.Infra.Api.Limiter.Services.Interfaces;
+using Nozomi.Infra.Auth.Events.UserEvent;
 using Nozomi.Repo.Auth.Data;
 using StackExchange.Redis;
 using VaultSharp;
@@ -88,9 +90,13 @@ namespace Nozomi.Api.Limiter
             
             services.AddControllers();
 
+            services.AddIdentity<User, Role>()
+                .AddEntityFrameworkStores<AuthDbContext>();
+
             // Service layer injections
             services.AddTransient<IApiKeyUserRedisEvent, ApiKeyUserRedisEvent>();
             services.AddTransient<INozomiRedisEvent, NozomiRedisEvent>();
+            services.AddTransient<IUserEvent, UserEvent>();
 
             services.AddTransient<IApiKeyEventsService, ApiKeyEventsService>();
             services.AddTransient<INozomiRedisService, NozomiRedisService>();

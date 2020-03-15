@@ -1,13 +1,18 @@
+using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using IdentityModel;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Nozomi.Base.Auth.Global;
 using Nozomi.Infra.Api.Limiter.Events.Interfaces;
 using Nozomi.Infra.Api.Limiter.Services.Interfaces;
+using Nozomi.Infra.Auth.Events.UserEvent;
 using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Abstracts;
+using Nozomi.Preprocessing.Statics;
 using Nozomi.Repo.Auth.Data;
 
 namespace Nozomi.Infra.Api.Limiter.HostedServices
@@ -36,47 +41,152 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
                 using (var scope = _scopeFactory.CreateScope())
                 {
                     var authDbContext = scope.ServiceProvider.GetRequiredService<AuthDbContext>();
-                    var redisEvent = scope.ServiceProvider.GetRequiredService<INozomiRedisEvent>();
-                    
-                    // Obtain all users with their API keys, quota limit and quota usage.
-                    
-                    // Add the new key entries first
-                    
-                    // Update keys with exceeded quotas
-                    
-                    // DONE!
 
-                    // // Obtain all banned users
-                    // var bannedUsers = redisEvent
-                    //     .AllKeys(RedisDatabases.BlockedUserApiKeys)
-                    //     .DefaultIfEmpty()
-                    //     .ToList();
-                    //
-                    // if (bannedUsers.Any())
-                    // {
-                    //     var redisService = scope.ServiceProvider.GetRequiredService<INozomiRedisService>();
-                    //     
-                    //     // Iterate every banned user
-                    //     foreach (var bannedUser in bannedUsers)
-                    //     {
-                    //         // Remove the token if it exists
-                    //         redisService.Remove(RedisDatabases.ApiKeyUser, bannedUser);
-                    //     }
-                    // }
-                    //
-                    // // Obtain all currently active user tokens
-                    // var userTokens = authDbContext.UserClaims
-                    //     .Where(uc => !bannedUsers.Contains(uc.UserId) // Ensure the user is not banned
-                    //                  && uc.ClaimType.Equals(NozomiJwtClaimTypes.ApiKeys)); // Obtain only API Keys
-                    //
-                    // // Iterate every token
-                    // foreach (var userToken in userTokens)
-                    // {
-                    //     // Add the token if it doesn't exist
-                    // }
+                    // Obtain all users who have API keys
+                    var users = authDbContext.Users
+                        .AsNoTracking()
+                        .Include(u => u.UserClaims)
+                        .Where(u => u.UserClaims
+                            .Any(uc => uc.ClaimType.Equals(NozomiJwtClaimTypes.ApiKeys)));
+
+                    // Ensure that there's any users before iterating
+                    if (users.Any())
+                    {
+                        // Iterate every user
+                        foreach (var user in users)
+                        {
+                            // Obtain the user's quota and usage
+                            var requiredUserClaims = authDbContext.UserClaims
+                                .AsNoTracking()
+                                .Where(uc => uc.UserId.Equals(user.Id)
+                                             && (uc.ClaimType.Equals(NozomiJwtClaimTypes.UserQuota)
+                                                 || uc.ClaimType.Equals(NozomiJwtClaimTypes.UserUsage)));
+
+                            // Quota
+                            var quotaClaim = requiredUserClaims.SingleOrDefault(uc =>
+                                uc.ClaimType.Equals(NozomiJwtClaimTypes.UserQuota));
+
+                            // Usage
+                            var usageClaim = requiredUserClaims.SingleOrDefault(uc =>
+                                uc.ClaimType.Equals(NozomiJwtClaimTypes.UserUsage));
+                            
+                            // Is user a staff member?
+                            var userEvent = scope.ServiceProvider.GetRequiredService<IUserEvent>();
+                            var userIsStaff = userEvent.IsInRoles(user.Id,
+                                NozomiPermissions.AllowAllStaffRoles.Split(", "));
+                            
+                            // Safety net, has valid quota and usage
+                            if (quotaClaim != null && usageClaim != null && long.TryParse(quotaClaim.ClaimValue,
+                                out var quota) && long.TryParse(usageClaim.ClaimValue, out var usage)
+                                && !userIsStaff)
+                            {
+                                // Obtain the Api Keys first
+                                var userApiKeys = authDbContext.UserClaims
+                                    .AsNoTracking()
+                                    .Where(uc => uc.ClaimType.Equals(NozomiJwtClaimTypes.ApiKeys));
+
+                                if (userApiKeys.Any()) // Any API keys?
+                                {
+                                    // Check if quota and usage has exceeded the limits
+                                    if (usage > quota) // Limit reached, bar user from usage.
+                                    {
+                                        // =========================== REMOVAL LOGIC FIRST =========================== //
+
+                                        _logger.LogInformation($"{_hostedServiceName} ExecuteAsync: User {user.Id}" +
+                                                               $" has exceeded his usage by {usage - quota}. Ban time!");
+
+                                        var nozomiRedisService =
+                                            scope.ServiceProvider.GetRequiredService<INozomiRedisService>();
+                                        foreach (var userApiKey in userApiKeys) // BAN!!
+                                        {
+                                            nozomiRedisService.Remove(RedisDatabases.ApiKeyUser, userApiKey.ClaimValue);
+                                            _logger.LogInformation($"{_hostedServiceName} ExecuteAsync: " +
+                                                                   $" API Key {userApiKey.ClaimValue} removed for " +
+                                                                   $"user {user.Id} in Redis.");
+                                        }
+                                    }
+                                    else // Limit not reached, ensure API keys exist
+                                    {
+                                        // =========================== ADDITION LOGIC =========================== //
+
+                                        var redisEvent = scope.ServiceProvider.GetRequiredService<INozomiRedisEvent>();
+                                        var redisService =
+                                            scope.ServiceProvider.GetRequiredService<INozomiRedisService>();
+
+                                        // Iterate the user's api keys and populate the cache if needed
+                                        foreach (var userApiKey in userApiKeys)
+                                        {
+                                            // TODO: FIXX!!
+                                            if (!redisEvent.Exists(userApiKey.ClaimValue))
+                                            {
+                                                // Add it into the cache
+                                                redisService.Add(RedisDatabases.ApiKeyUser, userApiKey.ClaimValue, 
+                                                    user.Id);
+                                                _logger.LogInformation($"{_hostedServiceName} ExecuteAsync: " +
+                                                                       $" Api Key {userApiKey.ClaimValue} added with " +
+                                                                       $"symlink to user {user.Id}");
+                                            }
+                                            else
+                                            {
+                                                _logger.LogInformation($"{_hostedServiceName} ExecuteAsync: " +
+                                                                       $" Api Key {userApiKey.ClaimType} already added");
+                                            }
+                                        }
+                                    }
+                                }
+                                else // Nope, warn!!!
+                                {
+                                    _logger.LogWarning($"{_hostedServiceName} ExecuteAsync: wait, " +
+                                                       $"peculiar event, user {user.Id} has no API keys but has " +
+                                                       $"hit his limit of {quota}..");
+                                }
+                            }
+                            else
+                            {
+                                if (userIsStaff) // User is a staff..
+                                {
+                                    // Just let him in.
+                                    var redisEvent = scope.ServiceProvider.GetRequiredService<INozomiRedisEvent>();
+                                    var redisService =
+                                        scope.ServiceProvider.GetRequiredService<INozomiRedisService>();
+                                    // Obtain the Api Keys first
+                                    var userApiKeys = authDbContext.UserClaims
+                                        .AsNoTracking()
+                                        .Where(uc => uc.ClaimType.Equals(NozomiJwtClaimTypes.ApiKeys));
+
+                                    // Iterate the user's api keys and populate the cache if needed
+                                    foreach (var userApiKey in userApiKeys)
+                                    {
+                                        if (!redisEvent.Exists(userApiKey.ClaimValue, 
+                                            RedisDatabases.ApiKeyUser))
+                                        {
+                                            // Add it into the cache
+                                            redisService.Add(RedisDatabases.ApiKeyUser, userApiKey.ClaimValue, 
+                                                user.Id);
+                                            _logger.LogInformation($"{_hostedServiceName} ExecuteAsync: " +
+                                                                   $" Api Key {userApiKey.ClaimValue} added with " +
+                                                                   $"symlink to user {user.Id}");
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    _logger.LogInformation($"{_hostedServiceName} ExecuteAsync: No usage and/or " +
+                                                           $"quota found for user {user.Id}.");   
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        _logger.LogInformation($"{_hostedServiceName} ExecuteAsync: Apparently, no users " +
+                                               "with Api keys to check!");
+                    }
                 }
+
+                await Task.Delay(100, stoppingToken);
             }
-            
+
             _logger.LogWarning($"{_hostedServiceName} has broken out of its loop.");
         }
     }
