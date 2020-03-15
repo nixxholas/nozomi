@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
 using Nozomi.Base.Auth.Global;
 using Nozomi.Base.Auth.Models;
@@ -21,6 +22,11 @@ namespace Nozomi.Infra.Auth.Events.UserEvent
             : base(logger, authDbContext)
         {
             _userManager = userManager;
+        }
+
+        public bool Exists(string userId)
+        {
+            return _context.Users.AsNoTracking().Any(u => u.Id.Equals(userId));
         }
 
         public bool HasStripe(string userId)

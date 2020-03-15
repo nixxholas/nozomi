@@ -7,6 +7,8 @@ namespace Nozomi.Infra.Auth.Events.UserEvent
 {
     public interface IUserEvent
     {
+        bool Exists(string userId);
+        
         bool HasStripe(string userId);
 
         bool HasDefaultPaymentMethod(string userId);
