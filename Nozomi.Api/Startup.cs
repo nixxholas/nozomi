@@ -19,6 +19,7 @@ using Microsoft.OpenApi.Models;
 using Nozomi.Api.Extensions;
 using Nozomi.Infra.Api.Limiter.Events;
 using Nozomi.Infra.Api.Limiter.Events.Interfaces;
+using Nozomi.Infra.Api.Limiter.Handlers;
 using Nozomi.Infra.Api.Limiter.Services;
 using Nozomi.Infra.Api.Limiter.Services.Interfaces;
 using Nozomi.Preprocessing;
@@ -130,6 +131,14 @@ namespace Nozomi.Api
             {
                 options.RedirectStatusCode = StatusCodes.Status307TemporaryRedirect;
             });
+
+            services.AddAuthentication(options =>
+            {
+                options.DefaultScheme = ApiKeyAuthenticationOptions.DefaultScheme;
+                options.DefaultAuthenticateScheme = ApiKeyAuthenticationOptions.DefaultScheme;
+            })
+                .AddScheme<ApiKeyAuthenticationOptions, ApiKeyAuthenticationHandler>(
+                    ApiKeyAuthenticationOptions.DefaultScheme, o => { });
 
             services.AddAuthorization(options =>
             {
