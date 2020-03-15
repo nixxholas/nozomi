@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -20,10 +22,12 @@ using Nozomi.Infra.Api.Limiter.Events.Interfaces;
 using Nozomi.Infra.Api.Limiter.Services;
 using Nozomi.Infra.Api.Limiter.Services.Interfaces;
 using Nozomi.Preprocessing;
+using Nozomi.Preprocessing.Options;
 using Nozomi.Repo.Auth.Data;
 using Nozomi.Repo.Data;
 using Nozomi.Service.Events;
 using Nozomi.Service.Events.Interfaces;
+using Swashbuckle.AspNetCore.Filters;
 using VaultSharp;
 using VaultSharp.V1.AuthMethods.Token;
 
@@ -127,6 +131,17 @@ namespace Nozomi.Api
                 options.RedirectStatusCode = StatusCodes.Status307TemporaryRedirect;
             });
 
+            services.AddAuthorization(options =>
+            {
+                var defaultAuthorizationPolicyBuilder = new AuthorizationPolicyBuilder(
+                    ApiKeyAuthenticationOptions.DefaultScheme);
+
+                defaultAuthorizationPolicyBuilder = 
+                    defaultAuthorizationPolicyBuilder.RequireAuthenticatedUser();
+
+                options.DefaultPolicy = defaultAuthorizationPolicyBuilder.Build();
+            });
+
             services.AddSwaggerGen(config =>
             {
                 config.SwaggerDoc(GlobalApiVariables.CURRENT_API_VERSION, new OpenApiInfo {
@@ -135,8 +150,11 @@ namespace Nozomi.Api
                 });
                 
                 // Define the Api Key scheme that's in use (i.e. Implicit Flow)
-                config.AddSecurityDefinition("apikey", new OpenApiSecurityScheme
+                config.AddSecurityDefinition("API Key", new OpenApiSecurityScheme
                 {
+                    Description = "Nozomi's custom authorization header using the Api Key scheme. Example: \"{token}\"",
+                    In = ParameterLocation.Header,
+                    Name = "Authorization",
                     Type = SecuritySchemeType.ApiKey,
                     Flows = new OpenApiOAuthFlows
                     {
@@ -151,6 +169,8 @@ namespace Nozomi.Api
                         }
                     }
                 });
+
+                config.OperationFilter<SecurityRequirementsOperationFilter>();
             });
 
             services.AddTransient<INozomiRedisEvent, NozomiRedisEvent>();
