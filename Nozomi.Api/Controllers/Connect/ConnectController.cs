@@ -1,9 +1,11 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Infra.Api.Limiter.Events.Interfaces;
 using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Preprocessing.Attributes;
+using Swashbuckle.AspNetCore.Filters;
 
 namespace Nozomi.Api.Controllers.Connect
 {
@@ -16,8 +18,12 @@ namespace Nozomi.Api.Controllers.Connect
             _nozomiRedisEvent = nozomiRedisEvent;
         }
 
+        [Authorize]
         [Throttle(Name = "Connect/Validate", Milliseconds = 2500)]
         [HttpHead]
+        [ProducesResponseType(typeof(ObjectResult), 200)]
+        [ProducesResponseType(typeof(ObjectResult), 400)]
+        [ProducesResponseType(typeof(ObjectResult), 500)]
         public IActionResult Validate()
         {
             if (HttpContext.Request.Headers.TryGetValue("Authorization", out var apiKey))
