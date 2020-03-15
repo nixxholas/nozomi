@@ -1,6 +1,8 @@
+using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using IdentityModel;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -9,6 +11,7 @@ using Nozomi.Infra.Api.Limiter.Events.Interfaces;
 using Nozomi.Infra.Api.Limiter.Services.Interfaces;
 using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Abstracts;
+using Nozomi.Preprocessing.Statics;
 using Nozomi.Repo.Auth.Data;
 
 namespace Nozomi.Infra.Api.Limiter.HostedServices
@@ -125,8 +128,42 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
                             }
                             else
                             {
-                                _logger.LogInformation($"{_hostedServiceName} ExecuteAsync: No usage and/or " +
-                                                       $"quota found for user {user.Id}.");
+                                var userIsStaff = authDbContext.UserRoles
+                                    .AsNoTracking()
+                                    .Where(ur => ur.UserId.Equals(user.Id))
+                                    .Include(ur => ur.Role)
+                                    .AsEnumerable()
+                                    .Any(uc => NozomiPermissions.AllowAllStaffRoles
+                                        .Contains(uc.Role.Name, StringComparison.InvariantCultureIgnoreCase));
+
+                                if (userIsStaff) // User is a staff..
+                                {
+                                    // Just let him in.
+                                    var redisEvent = scope.ServiceProvider.GetRequiredService<INozomiRedisEvent>();
+                                    var redisService =
+                                        scope.ServiceProvider.GetRequiredService<INozomiRedisService>();
+                                    // Obtain the Api Keys first
+                                    var userApiKeys = authDbContext.UserClaims
+                                        .AsNoTracking()
+                                        .Where(uc => uc.ClaimType.Equals(NozomiJwtClaimTypes.ApiKeys));
+
+                                    // Iterate the user's api keys and populate the cache if needed
+                                    foreach (var userApiKey in userApiKeys)
+                                    {
+                                        if (redisEvent.Exists(userApiKey.ClaimValue)) continue;
+                                        // Add it into the cache
+                                        redisService.Add(RedisDatabases.ApiKeyUser, userApiKey.ClaimValue, 
+                                            user.Id);
+                                        _logger.LogInformation($"{_hostedServiceName} ExecuteAsync: " +
+                                                               $" Api Key {userApiKey.ClaimValue} added with " +
+                                                               $"symlink to user {user.Id}");
+                                    }
+                                }
+                                else
+                                {
+                                    _logger.LogInformation($"{_hostedServiceName} ExecuteAsync: No usage and/or " +
+                                                           $"quota found for user {user.Id}.");   
+                                }
                             }
                         }
                     }
