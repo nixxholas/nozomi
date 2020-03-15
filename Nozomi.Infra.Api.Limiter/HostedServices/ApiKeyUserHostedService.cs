@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using Nozomi.Base.Auth.Global;
 using Nozomi.Infra.Api.Limiter.Events.Interfaces;
 using Nozomi.Infra.Api.Limiter.Services.Interfaces;
+using Nozomi.Infra.Auth.Events.UserEvent;
 using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Preprocessing.Statics;
@@ -68,10 +69,16 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
                             // Usage
                             var usageClaim = requiredUserClaims.SingleOrDefault(uc =>
                                 uc.ClaimType.Equals(NozomiJwtClaimTypes.UserUsage));
-
-                            // Safetynet
+                            
+                            // Is user a staff member?
+                            var userEvent = scope.ServiceProvider.GetRequiredService<IUserEvent>();
+                            var userIsStaff = userEvent.IsInRoles(user.Id,
+                                NozomiPermissions.AllowAllStaffRoles.Split(", "));
+                            
+                            // Safety net, has valid quota and usage
                             if (quotaClaim != null && usageClaim != null && long.TryParse(quotaClaim.ClaimValue,
-                                out var quota) && long.TryParse(usageClaim.ClaimValue, out var usage))
+                                out var quota) && long.TryParse(usageClaim.ClaimValue, out var usage)
+                                && !userIsStaff)
                             {
                                 // Obtain the Api Keys first
                                 var userApiKeys = authDbContext.UserClaims
@@ -109,6 +116,7 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
                                         // Iterate the user's api keys and populate the cache if needed
                                         foreach (var userApiKey in userApiKeys)
                                         {
+                                            // TODO: FIXX!!
                                             if (!redisEvent.Exists(userApiKey.ClaimValue))
                                             {
                                                 // Add it into the cache
@@ -135,14 +143,6 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
                             }
                             else
                             {
-                                var userIsStaff = authDbContext.UserRoles
-                                    .AsNoTracking()
-                                    .Where(ur => ur.UserId.Equals(user.Id))
-                                    .Include(ur => ur.Role)
-                                    .AsEnumerable()
-                                    .Any(uc => NozomiPermissions.AllowAllStaffRoles
-                                        .Contains(uc.Role.Name, StringComparison.InvariantCultureIgnoreCase));
-
                                 if (userIsStaff) // User is a staff..
                                 {
                                     // Just let him in.
@@ -157,13 +157,16 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
                                     // Iterate the user's api keys and populate the cache if needed
                                     foreach (var userApiKey in userApiKeys)
                                     {
-                                        if (redisEvent.Exists(userApiKey.ClaimValue)) continue;
-                                        // Add it into the cache
-                                        redisService.Add(RedisDatabases.ApiKeyUser, userApiKey.ClaimValue, 
-                                            user.Id);
-                                        _logger.LogInformation($"{_hostedServiceName} ExecuteAsync: " +
-                                                               $" Api Key {userApiKey.ClaimValue} added with " +
-                                                               $"symlink to user {user.Id}");
+                                        if (!redisEvent.Exists(userApiKey.ClaimValue, 
+                                            RedisDatabases.ApiKeyUser))
+                                        {
+                                            // Add it into the cache
+                                            redisService.Add(RedisDatabases.ApiKeyUser, userApiKey.ClaimValue, 
+                                                user.Id);
+                                            _logger.LogInformation($"{_hostedServiceName} ExecuteAsync: " +
+                                                                   $" Api Key {userApiKey.ClaimValue} added with " +
+                                                                   $"symlink to user {user.Id}");
+                                        }
                                     }
                                 }
                                 else
@@ -176,8 +179,8 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
                     }
                     else
                     {
-                        _logger.LogInformation($"{_hostedServiceName} ExecuteAsync: Apparently, no users to " +
-                                               "check!");
+                        _logger.LogInformation($"{_hostedServiceName} ExecuteAsync: Apparently, no users " +
+                                               "with Api keys to check!");
                     }
                 }
 
