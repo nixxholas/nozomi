@@ -25,7 +25,7 @@ namespace Nozomi.Infra.Api.Limiter.Handlers
 
         protected override Task<AuthenticateResult> HandleAuthenticateAsync() 
         {
-            var token = Request.Headers["Authorization"];
+            var token = Request.Headers[ApiKeyAuthenticationOptions.HeaderKey];
 
             if (string.IsNullOrEmpty(token)) {
                 return Task.FromResult (AuthenticateResult.Fail ("Token is null"));

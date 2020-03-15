@@ -11,6 +11,7 @@ using Nozomi.Data.Models.Web;
 using Nozomi.Infra.Api.Limiter.Events.Interfaces;
 using Nozomi.Infra.Api.Limiter.Services.Interfaces;
 using Nozomi.Preprocessing;
+using Nozomi.Preprocessing.Options;
 
 namespace Nozomi.Infra.Api.Limiter.Attributes
 {
@@ -46,7 +47,8 @@ namespace Nozomi.Infra.Api.Limiter.Attributes
 
         public override void OnActionExecuting(ActionExecutingContext c)
         {
-            if (c.HttpContext.Request.Headers.TryGetValue("Authorization", out var apiKey))
+            if (c.HttpContext.Request.Headers.TryGetValue(ApiKeyAuthenticationOptions.HeaderKey, 
+                out var apiKey))
             {
                 var redisEvent = c.HttpContext.RequestServices.GetRequiredService<INozomiRedisEvent>();
                 

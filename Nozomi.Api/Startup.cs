@@ -163,7 +163,7 @@ namespace Nozomi.Api
                 {
                     Description = "Nozomi's custom authorization header using the Api Key scheme. Example: \"{token}\"",
                     In = ParameterLocation.Header,
-                    Name = "Authorization",
+                    Name = ApiKeyAuthenticationOptions.HeaderKey,
                     Type = SecuritySchemeType.ApiKey,
                     Flows = new OpenApiOAuthFlows
                     {
@@ -237,7 +237,7 @@ namespace Nozomi.Api
                 c.RoutePrefix = "";
                 c.SwaggerEndpoint($"/{GlobalApiVariables.CURRENT_API_VERSION}/swagger.json", 
                     $"Nozomi API rev. {GlobalApiVariables.CURRENT_API_REVISION}");
-                c.OAuthClientSecret("Authorization");
+                c.OAuthClientSecret(ApiKeyAuthenticationOptions.HeaderKey);
             });
         }
     }

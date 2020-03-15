@@ -8,6 +8,7 @@ using Nozomi.Infra.Api.Limiter.Events.Interfaces;
 using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Preprocessing.ActionResults;
+using Nozomi.Preprocessing.Options;
 using Nozomi.Service.Events.Interfaces;
 
 namespace Nozomi.Api.Controllers.Request
@@ -42,7 +43,8 @@ namespace Nozomi.Api.Controllers.Request
         {
             if (index >= 0) return BadRequest("Invalid index.");
             
-            if (HttpContext.Request.Headers.TryGetValue("Authorization", out var apiKey))
+            if (HttpContext.Request.Headers.TryGetValue(ApiKeyAuthenticationOptions.HeaderKey, 
+                out var apiKey))
             {
                 var userId = _nozomiRedisEvent.GetValue(apiKey, RedisDatabases.ApiKeyUser);
                     
@@ -72,7 +74,7 @@ namespace Nozomi.Api.Controllers.Request
         {
             if (Guid.TryParse(guid, out var parsedGuid))
             {
-                if (HttpContext.Request.Headers.TryGetValue("Authorization", out var apiKey))
+                if (HttpContext.Request.Headers.TryGetValue(ApiKeyAuthenticationOptions.HeaderKey, out var apiKey))
                     return Ok(_requestEvent.GetByGuid(parsedGuid, 
                         _nozomiRedisEvent.GetValue(apiKey).ToString()));
 

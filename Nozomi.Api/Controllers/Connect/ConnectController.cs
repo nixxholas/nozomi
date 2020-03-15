@@ -5,6 +5,7 @@ using Nozomi.Infra.Api.Limiter.Events.Interfaces;
 using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Preprocessing.Attributes;
+using Nozomi.Preprocessing.Options;
 using Swashbuckle.AspNetCore.Filters;
 
 namespace Nozomi.Api.Controllers.Connect
@@ -26,7 +27,8 @@ namespace Nozomi.Api.Controllers.Connect
         [ProducesResponseType(typeof(ObjectResult), 500)]
         public IActionResult Validate()
         {
-            if (HttpContext.Request.Headers.TryGetValue("Authorization", out var apiKey))
+            if (HttpContext.Request.Headers.TryGetValue(ApiKeyAuthenticationOptions.HeaderKey, 
+                out var apiKey))
             {
                 var userId = _nozomiRedisEvent.GetValue(apiKey, RedisDatabases.ApiKeyUser);
 
