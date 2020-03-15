@@ -136,6 +136,8 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
                                                "check!");
                     }
                 }
+
+                await Task.Delay(100, stoppingToken);
             }
 
             _logger.LogWarning($"{_hostedServiceName} has broken out of its loop.");
