@@ -170,7 +170,7 @@ namespace Nozomi.Infra.Payment.Events.Bootstripe
             return paymentMethods.Data;
         }
 
-        public async Task<bool> PaymentMethodExistsUnderUser(User user, string paymentMethodId)
+        public async Task<bool> PaymentMethodBelongsToUser(User user, string paymentMethodId)
         {
             const string methodName = "PaymentMethodExists";
             PerformUserPrecheck(user, methodName);
@@ -184,6 +184,19 @@ namespace Nozomi.Infra.Payment.Events.Bootstripe
             var paymentMethod = await paymentMethodService.GetAsync(paymentMethodId);
 
             return paymentMethod != null && paymentMethod.CustomerId.Equals(customerId);
+        }
+
+        public async Task<bool> PaymentMethodExists(string paymentMethodId)
+        {
+            const string methodName = "PaymentMethodExists";
+            
+            if (paymentMethodId.IsNullOrEmpty())
+                throw new ArgumentNullException($"{_eventName} {methodName}: Invalid payment method id");
+
+            var paymentMethodService = new PaymentMethodService();
+            var paymentMethod = await paymentMethodService.GetAsync(paymentMethodId);
+
+            return paymentMethod != null;
         }
 
         private void PerformUserPrecheck(User user, string methodName)

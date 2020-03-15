@@ -9,6 +9,7 @@ using Nozomi.Base.Auth.Global;
 using Nozomi.Base.Auth.Models;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.Auth.Data;
+using Polly.Retry;
 
 namespace Nozomi.Infra.Auth.Events.UserEvent
 {
@@ -38,14 +39,29 @@ namespace Nozomi.Infra.Auth.Events.UserEvent
         public bool HasDefaultPaymentMethod(string userId)
         {
             const string methodName = "HasDefaultPaymentMethod";
+            const string claimType = NozomiJwtClaimTypes.StripeCustomerDefaultPaymentId;
+            
             if(string.IsNullOrEmpty(userId))
                 throw new ArgumentNullException($"{_eventName} {methodName}: Invalid userId.");
+
+            var defaultPaymentIdClaim = GetUserClaim(userId, claimType);
+
+            return defaultPaymentIdClaim != null;
+        }
+
+        public bool HasPaymentMethod(string userId, string paymentMethodId)
+        {
+            const string methodName = "HasDefaultPaymentMethod";
+            const string claimType = NozomiJwtClaimTypes.StripeCustomerPaymentMethodId;
             
-            return _context.Users.AsNoTracking()
-                .Where(u => u.Id.Equals(userId))
-                .Include(u => u.UserClaims)
-                .Any(u => u.UserClaims != null && u.UserClaims.Count > 0
-                                               && u.UserClaims.Any(uc => uc.ClaimType.Equals(NozomiJwtClaimTypes.StripeCustomerDefaultPaymentId)));
+            if(string.IsNullOrEmpty(userId))
+                throw new ArgumentNullException($"{_eventName} {methodName}: Invalid userId.");
+            if(string.IsNullOrEmpty(paymentMethodId))
+                throw new ArgumentNullException($"{_eventName} {methodName}: Invalid paymentMethodId");
+            
+            var paymentMethodClaim = GetUserClaims(userId, claimType).SingleOrDefault(uc => uc.ClaimValue.Equals(paymentMethodId));
+
+            return paymentMethodClaim != null;
         }
 
         public bool IsInRoles(string userId, ICollection<string> roleNames)
@@ -104,8 +120,11 @@ namespace Nozomi.Infra.Auth.Events.UserEvent
 
             var users = await _userManager.GetUsersForClaimAsync(customerIdClaim.ToClaim());
 
-            if (users.Count > 1 || users.Count < 1)
-                throw new InvalidOperationException($"{_eventName} GetUserByCustomerId: More than one user binded to the same stripe customer id.");
+            if (users.Count > 1)
+                throw new InvalidOperationException($"{_eventName} GetUserByCustomerId: More than one user is" +
+                                                    $"binded to the same stripe customer id.");
+            else if (!users.Any())
+                throw new InvalidOperationException($"{_eventName} GetUserByCustomerId: No user found.");
 
             return users.First();
         }
