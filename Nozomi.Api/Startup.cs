@@ -159,7 +159,7 @@ namespace Nozomi.Api
                 });
                 
                 // Define the Api Key scheme that's in use (i.e. Implicit Flow)
-                config.AddSecurityDefinition("API Key", new OpenApiSecurityScheme
+                config.AddSecurityDefinition(ApiKeyAuthenticationOptions.DefaultScheme, new OpenApiSecurityScheme
                 {
                     Description = "Nozomi's custom authorization header using the Api Key scheme. Example: \"{token}\"",
                     In = ParameterLocation.Header,
@@ -178,8 +178,21 @@ namespace Nozomi.Api
                         }
                     }
                 });
-
-                config.OperationFilter<SecurityRequirementsOperationFilter>();
+                
+                config.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme, 
+                                Id = ApiKeyAuthenticationOptions.DefaultScheme
+                            }
+                        },
+                        new[] { "readAccess", "writeAccess" }
+                    }
+                });
             });
 
             services.AddTransient<INozomiRedisEvent, NozomiRedisEvent>();
@@ -224,6 +237,7 @@ namespace Nozomi.Api
                 c.RoutePrefix = "";
                 c.SwaggerEndpoint($"/{GlobalApiVariables.CURRENT_API_VERSION}/swagger.json", 
                     $"Nozomi API rev. {GlobalApiVariables.CURRENT_API_REVISION}");
+                c.OAuthClientSecret("Authorization");
             });
         }
     }
