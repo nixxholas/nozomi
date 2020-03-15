@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualBasic.CompilerServices;
@@ -77,8 +78,6 @@ namespace Nozomi.Infra.Payment.Services.Bootstripe
             if(!_userService.HasStripe(user.Id))
                 throw new InvalidOperationException($"{_serviceName} {methodName}: User is not registered for stripe.");
 
-            CheckPaymentMethodOwnership(user.Id, paymentMethodId, methodName);
-
             var stripeCustomerId = _userEvent.GetStripeCustomerId(user.Id);
 
             var options = new PaymentMethodAttachOptions
@@ -120,14 +119,15 @@ namespace Nozomi.Infra.Payment.Services.Bootstripe
 
             if (!_userService.HasStripe(user.Id))
                 throw new InvalidOperationException($"{_serviceName} {methodName}: User is not registered for stripe.");
-
-            CheckPaymentMethodOwnership(user.Id, paymentMethodId, methodName);
-
+            
             var stripeCustomerId = _userEvent.GetStripeCustomerId(user.Id);
+            
+            CheckPaymentMethodOwnership(user.Id, paymentMethodId, methodName);
 
             var paymentMethodOptions = new PaymentMethodListOptions
             {
-                Customer = stripeCustomerId
+                Customer = stripeCustomerId,
+                Type = "card"
             };
 
             var paymentMethodService = new PaymentMethodService();
@@ -151,14 +151,13 @@ namespace Nozomi.Infra.Payment.Services.Bootstripe
             _logger.LogInformation($"{_serviceName} RemovePaymentMethod: {user.Id} successfully " +
                                $"removed a payment method that was tokenized as {paymentMethodId}");
 
-            var customerService = new CustomerService();
-            var customer = await customerService.GetAsync(stripeCustomerId);
+            paymentMethods = paymentMethodService.List(paymentMethodOptions);
+            var newDefaultPaymentMethod = paymentMethods.ToList<PaymentMethod>().FirstOrDefault();
 
-            if(customer == null)
-                throw new StripeException($"{_serviceName} {methodName}: An error occured while trying to retrieve stripe customer {stripeCustomerId}");
+            if (newDefaultPaymentMethod == null)
+                throw new NullReferenceException($"{_serviceName} {methodName}: User has no payment methods, unable to set new default");
 
-            _userService.SetDefaultPaymentMethod(user.Id, customer.InvoiceSettings.DefaultPaymentMethodId);
-
+            await SetDefaultPaymentMethod(newDefaultPaymentMethod.Id, user);
             return;
         }
 
@@ -225,6 +224,15 @@ namespace Nozomi.Infra.Payment.Services.Bootstripe
                 throw new FormatException($"{_serviceName} {methodName}: Failed to parse plan quota to int");
             
             return quotaValue;
+        }
+
+        private CustomerGetOptions CustomerExpandableGetOptions()
+        {
+            var options = new CustomerGetOptions();
+            options.AddExpand("default_source");
+            options.AddExpand("invoice_settings.default_payment_method");
+
+            return options;
         }
     }
 }
