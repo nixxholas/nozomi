@@ -21,14 +21,21 @@ namespace Nozomi.Api.Controllers.Connect
         {
             _nozomiRedisEvent = nozomiRedisEvent;
         }
-
+        
+        #region Validate
+        /// <summary>
+        /// Allows the client to validate his API key.
+        /// </summary>
+        /// <returns>Result of the validation</returns>
         [Authorize]
         [Throttle(Name = "Connect/Validate", Milliseconds = 2500)]
         [HttpHead]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(string))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(string))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(string))]
         [SwaggerResponseExample((int)HttpStatusCode.OK, typeof(ValidateOkExample))]
-        // [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest)]
-        [ProducesResponseType(typeof(string), (int)HttpStatusCode.InternalServerError)]
+        [SwaggerResponseExample((int)HttpStatusCode.BadRequest, typeof(ValidateBadRequestExample))]
+        [SwaggerResponseExample((int)HttpStatusCode.InternalServerError, typeof(ValidateInternalServerExample))]
         public IActionResult Validate()
         {
             if (HttpContext.Request.Headers.TryGetValue(ApiKeyAuthenticationOptions.HeaderKey, 
@@ -74,5 +81,6 @@ namespace Nozomi.Api.Controllers.Connect
                 return Result;
             }
         }
+        #endregion
     }
 }
