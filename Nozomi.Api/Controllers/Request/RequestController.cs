@@ -39,14 +39,10 @@ namespace Nozomi.Api.Controllers.Request
         /// <response code="500">Not sure how you got here, but no.</response>
         [TokenBucket(Name = "Request/Get", Weight = 5)]
         [HttpGet]
-        [Produces("application/json")]
-        [ProducesResponseType(typeof(IEnumerable<RequestViewModel>), 200)]
-        [ProducesResponseType(typeof(string), 400)]
-        [ProducesResponseType(typeof(string), 500)]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(string))]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(IEnumerable<RequestViewModel>))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(string))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(string))]
-        [SwaggerResponseExample((int)HttpStatusCode.OK, typeof(IEnumerable<RequestViewModelExample>))]
+        [SwaggerResponseExample((int)HttpStatusCode.OK, typeof(AllExample))]
         [SwaggerResponseExample((int)HttpStatusCode.BadRequest, typeof(AllBadRequestExample))]
         [SwaggerResponseExample((int)HttpStatusCode.InternalServerError, typeof(AllInternalServerExample))]
         public IActionResult All(int index = 0)
@@ -58,7 +54,7 @@ namespace Nozomi.Api.Controllers.Request
             {
                 var userId = _nozomiRedisEvent.GetValue(apiKey, RedisDatabases.ApiKeyUser);
                     
-                return Ok(_requestEvent.All(index, userId));
+                return Ok(_requestEvent.ViewAll(index, userId));
             }
 
             _logger.LogWarning($"{_controllerName} All: User managed to bypass the token bucket " +

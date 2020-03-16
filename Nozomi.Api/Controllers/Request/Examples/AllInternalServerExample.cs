@@ -4,7 +4,7 @@ namespace Nozomi.Api.Controllers.Request.Examples
 {
     public class AllInternalServerExample : IExamplesProvider<string>
     {
-        public const string Result = "Not sure how you got here, but no.";
+        public const string Result = "You might want to beep us via api@nozomi.one to follow up with this issue!";
         
         public string GetExamples()
         {
