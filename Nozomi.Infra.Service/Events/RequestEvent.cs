@@ -152,6 +152,9 @@ namespace Nozomi.Service.Events
         public IQueryable<RequestViewModel> ViewAll(int index = 0, string createdBy = null, bool enabledOnly = true, 
             bool track = false)
         {
+            if (index < 0)
+                throw new ArgumentOutOfRangeException("Invalid index.");
+            
             var query = _context.Requests.AsNoTracking()
                 .Include(r => r.Currency)
                 .Include(r => r.CurrencyPair)
