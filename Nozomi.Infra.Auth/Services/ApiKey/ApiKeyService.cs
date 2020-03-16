@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using Microsoft.AspNetCore.Http;
@@ -50,7 +51,14 @@ namespace Nozomi.Infra.Auth.Services.ApiKey
                     ClaimValue = newKey,
                     UserId = userId
                 });
+                _context.SaveChanges();
+                _logger.LogInformation($"{_serviceName} GenerateApiKey: Api key {newKey} generated for user" +
+                                       $" {userId}");
+                return;
             }
+            
+            _logger.LogWarning($"{_serviceName} GenerateApiKey: Invalid user {userId}.");
+            throw new KeyNotFoundException("User not found.");
         }
 
         public void RevokeApiKey(string apiKey, string userId = null)
