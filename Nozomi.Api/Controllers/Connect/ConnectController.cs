@@ -1,11 +1,14 @@
+using System.Net;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Infra.Api.Limiter.Events.Interfaces;
 using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Abstracts;
+using Nozomi.Preprocessing.ActionResults;
 using Nozomi.Preprocessing.Attributes;
 using Nozomi.Preprocessing.Options;
+using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.Filters;
 
 namespace Nozomi.Api.Controllers.Connect
@@ -22,9 +25,10 @@ namespace Nozomi.Api.Controllers.Connect
         [Authorize]
         [Throttle(Name = "Connect/Validate", Milliseconds = 2500)]
         [HttpHead]
-        [ProducesResponseType(typeof(ObjectResult), 200)]
-        [ProducesResponseType(typeof(ObjectResult), 400)]
-        [ProducesResponseType(typeof(ObjectResult), 500)]
+        [SwaggerResponseExample((int)HttpStatusCode.OK, typeof(ValidateOkExample))]
+        // [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.InternalServerError)]
         public IActionResult Validate()
         {
             if (HttpContext.Request.Headers.TryGetValue(ApiKeyAuthenticationOptions.HeaderKey, 
@@ -33,12 +37,42 @@ namespace Nozomi.Api.Controllers.Connect
                 var userId = _nozomiRedisEvent.GetValue(apiKey, RedisDatabases.ApiKeyUser);
 
                 if (userId.HasValue)
-                    return Ok();
+                    return Ok(ValidateOkExample.Result);
                 else
-                    return BadRequest("Invalid API Key.");
+                    return BadRequest(ValidateBadRequestExample.Result);
             }
 
-            return BadRequest("Please inject the API key in the authorization header.");
+            return BadRequest(ValidateInternalServerExample.Result);
+        }
+        
+        protected class ValidateOkExample : IExamplesProvider<string>
+        {
+            public const string Result = "Hey you're legit!";
+            
+            public string GetExamples()
+            {
+                return Result;
+            }
+        }
+
+        protected class ValidateBadRequestExample : IExamplesProvider<string>
+        {
+            public const string Result = "Invalid API Key.";
+            
+            public string GetExamples()
+            {
+                return Result;
+            }
+        }
+
+        protected class ValidateInternalServerExample : IExamplesProvider<string>
+        {
+            public const string Result = "Where's your API Key mate?";
+
+            public string GetExamples()
+            {
+                return Result;
+            }
         }
     }
 }
