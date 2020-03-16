@@ -37,7 +37,7 @@ namespace Nozomi.Api.Controllers.Request
         /// <response code="200">All requests obtained</response>
         /// <response code="400">Your request is either unauthorised or has exceeded the index limits</response>
         /// <response code="500">Not sure how you got here, but no.</response>
-        [TokenBucket(Name = "Request/Get", Weight = 5)]
+        [TokenBucket(Name = "Request/All", Weight = 5)]
         [HttpGet]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(IEnumerable<RequestViewModel>))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(string))]
