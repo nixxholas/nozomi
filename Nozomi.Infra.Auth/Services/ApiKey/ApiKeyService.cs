@@ -1,4 +1,8 @@
+using System;
+using System.Data;
+using System.Linq;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nozomi.Base.Auth.Global;
 using Nozomi.Base.Auth.Models;
@@ -47,6 +51,35 @@ namespace Nozomi.Infra.Auth.Services.ApiKey
                     UserId = userId
                 });
             }
+        }
+
+        public void RevokeApiKey(string apiKey, string userId = null)
+        {
+            if (!string.IsNullOrEmpty(apiKey))
+            {
+                var revokingKey = _context.UserClaims.AsTracking()
+                    .SingleOrDefault(uc => uc.ClaimType.Equals(NozomiJwtClaimTypes.ApiKeys)
+                                           && uc.ClaimValue.Equals(apiKey));
+
+                if (revokingKey != null)
+                {
+                    // If we're filtering via userId and if the userId doesn't match
+                    if (!string.IsNullOrEmpty(userId) && !revokingKey.UserId.Equals(userId))
+                        throw new InvalidConstraintException("Invalid user for this api key.");
+                    
+                    // Else all is good, revoke it
+                    _context.UserClaims.Remove(revokingKey);
+                    _context.SaveChanges();
+                    
+                    _logger.LogInformation($"{_serviceName} RevokeApiKey: Api key {apiKey} revoked " +
+                                           "successfully.");
+                    return;
+                }
+                
+                _logger.LogWarning($"{_serviceName} RevokeApiKey: Api key {apiKey} is not found..");
+            }
+            
+            throw new InvalidOperationException("Invalid api key.");
         }
     }
 }
