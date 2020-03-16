@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Nozomi.Api.Controllers.Request.Examples;
 using Nozomi.Data.ViewModels.Request;
 using Nozomi.Infra.Api.Limiter.Attributes;
 using Nozomi.Infra.Api.Limiter.Events.Interfaces;
@@ -10,6 +12,8 @@ using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Preprocessing.ActionResults;
 using Nozomi.Preprocessing.Options;
 using Nozomi.Service.Events.Interfaces;
+using Swashbuckle.AspNetCore.Annotations;
+using Swashbuckle.AspNetCore.Filters;
 
 namespace Nozomi.Api.Controllers.Request
 {
@@ -39,9 +43,15 @@ namespace Nozomi.Api.Controllers.Request
         [ProducesResponseType(typeof(IEnumerable<RequestViewModel>), 200)]
         [ProducesResponseType(typeof(string), 400)]
         [ProducesResponseType(typeof(string), 500)]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(string))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(string))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(string))]
+        [SwaggerResponseExample((int)HttpStatusCode.OK, typeof(IEnumerable<RequestViewModelExample>))]
+        [SwaggerResponseExample((int)HttpStatusCode.BadRequest, typeof(AllBadRequestExample))]
+        [SwaggerResponseExample((int)HttpStatusCode.InternalServerError, typeof(AllInternalServerExample))]
         public IActionResult All(int index = 0)
         {
-            if (index >= 0) return BadRequest("Invalid index.");
+            if (index >= 0) return BadRequest(AllBadRequestExample.Result);
             
             if (HttpContext.Request.Headers.TryGetValue(ApiKeyAuthenticationOptions.HeaderKey, 
                 out var apiKey))
@@ -53,7 +63,7 @@ namespace Nozomi.Api.Controllers.Request
 
             _logger.LogWarning($"{_controllerName} All: User managed to bypass the token bucket " +
                                "attribute without an API key!");
-            return new InternalServerErrorObjectResult("Not sure how you got here, but no.");
+            return new InternalServerErrorObjectResult(AllInternalServerExample.Result);
         }
 
         /// <summary>
