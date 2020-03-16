@@ -460,5 +460,21 @@ namespace Nozomi.Service.Events.Analysis
                 .AsTracking()
                 .SingleOrDefault(ac => ac.DeletedAt == null && ac.Guid.Equals(guid));
         }
+
+        public IQueryable<AnalysedComponent> ViewAll(int index = 0, string userId = null)
+        {
+            if (index < 0)
+                throw new IndexOutOfRangeException("Invalid index.");
+
+            var query = _context.AnalysedComponents
+                .OrderByDescending(ac => ac.ModifiedAt)
+                .AsNoTracking();
+
+            if (!string.IsNullOrEmpty(userId))
+                query = query.Where(ac => ac.CreatedById.Equals(userId));
+
+            return query.Skip(index * NozomiServiceConstants.AnalysedComponentTakeoutLimit)
+                .Take(NozomiServiceConstants.AnalysedComponentTakeoutLimit);
+        }
     }
 }

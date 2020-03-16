@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web.Analytical;
@@ -55,5 +56,7 @@ namespace Nozomi.Service.Events.Analysis.Interfaces
         string GetCurrencyAbbreviation(AnalysedComponent analysedComponent);
 
         AnalysedComponent Pop(Guid guid);
+
+        IQueryable<AnalysedComponent> ViewAll(int index = 0, string userId = null);
     }
 }
