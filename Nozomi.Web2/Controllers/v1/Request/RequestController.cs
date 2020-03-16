@@ -64,7 +64,7 @@ namespace Nozomi.Web2.Controllers.v1.Request
         [Authorize]
         [HttpGet]
         [Throttle(Name = "Request/GetAll", Milliseconds = 1000)]
-        public IActionResult GetAll()
+        public IActionResult GetAll([FromQuery]int index = 0)
         {
             var identity = (ClaimsIdentity) User.Identity;
 
@@ -80,7 +80,7 @@ namespace Nozomi.Web2.Controllers.v1.Request
                     return Ok(_requestEvent.ViewAll());
                 }
                 
-                return Ok(_requestEvent.ViewAll(identity.Claims
+                return Ok(_requestEvent.ViewAll(index, identity.Claims
                     .SingleOrDefault(c => c.Type.Equals(JwtClaimTypes.Subject))?.Value));
             }
 
