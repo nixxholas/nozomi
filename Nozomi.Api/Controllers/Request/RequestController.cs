@@ -72,10 +72,12 @@ namespace Nozomi.Api.Controllers.Request
         /// <response code="500">Not sure how you got here, but no.</response>
         [TokenBucket(Name = "Request/Get", Weight = 1)]
         [HttpGet("{guid}")]
-        [Produces("application/json")]
-        [ProducesResponseType(typeof(RequestViewModel), 200)]
-        [ProducesResponseType(typeof(string), 400)]
-        [ProducesResponseType(typeof(string), 500)]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(RequestViewModel))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(string))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(string))]
+        [SwaggerResponseExample((int)HttpStatusCode.OK, typeof(GetByGuidOkExample))]
+        [SwaggerResponseExample((int)HttpStatusCode.BadRequest, typeof(GetByGuidBadRequestExample))]
+        [SwaggerResponseExample((int)HttpStatusCode.InternalServerError, typeof(GetByGuidInternalServerExample))]
         public IActionResult Get(string guid)
         {
             if (Guid.TryParse(guid, out var parsedGuid))
@@ -86,10 +88,10 @@ namespace Nozomi.Api.Controllers.Request
 
                 _logger.LogWarning($"{_controllerName} Get: User managed to bypass the token bucket " +
                                    "attribute without an API key!");
-                return new InternalServerErrorObjectResult("Not sure how you got here, but no.");
+                return new InternalServerErrorObjectResult(GetByGuidInternalServerExample.Result);
             }
 
-            return BadRequest("Invalid Guid.");
+            return BadRequest(GetByGuidBadRequestExample.Result);
         }
     }
 }
