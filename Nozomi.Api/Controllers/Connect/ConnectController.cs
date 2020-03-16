@@ -2,6 +2,7 @@ using System.Net;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Nozomi.Api.Controllers.Connect.Examples;
 using Nozomi.Infra.Api.Limiter.Events.Interfaces;
 using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Abstracts;
@@ -22,7 +23,6 @@ namespace Nozomi.Api.Controllers.Connect
             _nozomiRedisEvent = nozomiRedisEvent;
         }
         
-        #region Validate
         /// <summary>
         /// Allows the client to validate his API key.
         /// </summary>
@@ -51,36 +51,5 @@ namespace Nozomi.Api.Controllers.Connect
 
             return BadRequest(ValidateInternalServerExample.Result);
         }
-        
-        protected class ValidateOkExample : IExamplesProvider<string>
-        {
-            public const string Result = "Hey you're legit!";
-            
-            public string GetExamples()
-            {
-                return Result;
-            }
-        }
-
-        protected class ValidateBadRequestExample : IExamplesProvider<string>
-        {
-            public const string Result = "Invalid API Key.";
-            
-            public string GetExamples()
-            {
-                return Result;
-            }
-        }
-
-        protected class ValidateInternalServerExample : IExamplesProvider<string>
-        {
-            public const string Result = "Where's your API Key mate?";
-
-            public string GetExamples()
-            {
-                return Result;
-            }
-        }
-        #endregion
     }
 }
