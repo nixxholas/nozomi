@@ -38,6 +38,7 @@ namespace Nozomi.Data.ViewModels.Request
 
         public enum RequestParentType
         {
+            None = -1,
             Currency = 0,
             CurrencyPair = 1,
             CurrencyType = 2
