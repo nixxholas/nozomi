@@ -10,7 +10,7 @@ using Swashbuckle.AspNetCore.Filters;
 
 namespace Nozomi.Api.Controllers.Request.Examples
 {
-    public class AllExample : IExamplesProvider<IEnumerable<RequestViewModel>>
+    public class AllOkExample : IExamplesProvider<IEnumerable<RequestViewModel>>
     {
         public IEnumerable<RequestViewModel> GetExamples()
         {

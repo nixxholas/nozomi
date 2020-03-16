@@ -42,7 +42,7 @@ namespace Nozomi.Api.Controllers.Request
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(IEnumerable<RequestViewModel>))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(string))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(string))]
-        [SwaggerResponseExample((int)HttpStatusCode.OK, typeof(AllExample))]
+        [SwaggerResponseExample((int)HttpStatusCode.OK, typeof(AllOkExample))]
         [SwaggerResponseExample((int)HttpStatusCode.BadRequest, typeof(AllBadRequestExample))]
         [SwaggerResponseExample((int)HttpStatusCode.InternalServerError, typeof(AllInternalServerExample))]
         public IActionResult All(int index = 0)
