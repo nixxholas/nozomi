@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Base.Auth.Models;
+using Nozomi.Infra.Auth.Events.ApiKey;
 using Nozomi.Infra.Auth.Services.ApiKey;
 
 namespace Nozomi.Auth.Controllers.ApiKey
@@ -16,24 +17,32 @@ namespace Nozomi.Auth.Controllers.ApiKey
     public class ApiKeyController : BaseController<ApiKeyController>, IApiKeyController
     {
         private readonly UserManager<User> _userManager;
+        private readonly IApiKeyEvent _apiKeyEvent;
         private readonly IApiKeyService _apiKeyService;
         
         public ApiKeyController(ILogger<ApiKeyController> logger, IWebHostEnvironment webHostEnvironment,
-            UserManager<User> userManager, IApiKeyService apiKeyService) 
+            UserManager<User> userManager, IApiKeyEvent apiKeyEvent, IApiKeyService apiKeyService) 
             : base(logger, webHostEnvironment)
         {
             _userManager = userManager;
+            _apiKeyEvent = apiKeyEvent;
             _apiKeyService = apiKeyService;
         }
 
-        public Task<IActionResult> All()
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        [HttpGet]
+        public async Task<IActionResult> All()
         {
-            throw new System.NotImplementedException();
-        }
+            // Validate
+            var user = await _userManager.FindByIdAsync(((ClaimsIdentity) User.Identity)
+                .Claims.FirstOrDefault(c => c.Type.Equals(JwtClaimTypes.Subject)
+                                            || c.Type.Equals(ClaimTypes.NameIdentifier))?.Value);
+            
+            // Safetynet
+            if (user == null)
+                return BadRequest("Please reauthenticate again!");
 
-        public Task<IActionResult> Get(string apiKey)
-        {
-            throw new System.NotImplementedException();
+            return Ok(_apiKeyEvent.ViewAll(user.Id)); // OK!
         }
 
         [Authorize(AuthenticationSchemes = "Bearer")]
