@@ -96,6 +96,11 @@
             currencySlug: String,
             currencyPairGuid: String,
             currencyTypeShortForm: String,
+            componentTypes: {
+                type: Array,
+                required: false,
+                default: []
+            }
         },
         methods: {
             ...mapActions('oidcStore', ['authenticateOidc', 'signOutOidc']),
@@ -192,25 +197,6 @@
                 }
             }
         },
-        beforeCreate: function () {
-            let self = this;
-
-            // Synchronously call for data
-            self.componentTypesIsLoading = true;
-            AnalysedComponentService.getTypes()
-                .then(function (response) {
-                    self.componentTypes = response;
-                })
-                .catch(function (error) {
-                    //console.dir(error);
-                    // handle error
-                    self.authenticateOidc(window.location.href);
-                })
-                .finally(function () {
-                    // always executed
-                    self.componentTypesIsLoading = false;
-                });
-        },
         beforeMount: function() {
             let self = this;
             
@@ -249,9 +235,7 @@
                     currencyTypeShortForm: this.currencyTypeShortForm,
                     // Update properties
                     isEnabled: false,
-                },
-                componentTypes: [],
-                componentTypesIsLoading: false
+                }
             }
         }
     }
