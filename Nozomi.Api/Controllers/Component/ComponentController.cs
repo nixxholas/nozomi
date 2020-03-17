@@ -29,7 +29,7 @@ namespace Nozomi.Api.Controllers.Component
             _nozomiRedisEvent = nozomiRedisEvent;
         }
 
-        [TokenBucket(Name = "Request/Get", Weight = 1)]
+        [TokenBucket(Name = "Component/All", Weight = 5)]
         [HttpGet("{requestGuid}")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ICollection<ComponentViewModel>))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(string))]
