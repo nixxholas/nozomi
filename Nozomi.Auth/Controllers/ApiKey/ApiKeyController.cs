@@ -45,9 +45,23 @@ namespace Nozomi.Auth.Controllers.ApiKey
             return Ok("API Key successfully created!"); // OK!
         }
 
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        [HttpDelete("{apiKey}")]
         public async Task<IActionResult> Revoke(string apiKey)
         {
-            throw new System.NotImplementedException();
+            // Validate
+            var user = await _userManager.FindByIdAsync(((ClaimsIdentity) User.Identity)
+                .Claims.FirstOrDefault(c => c.Type.Equals(JwtClaimTypes.Subject)
+                                            || c.Type.Equals(ClaimTypes.NameIdentifier))?.Value);
+            
+            // Safetynet
+            if (user == null)
+                return BadRequest("Please reauthenticate again!");
+            
+            // Generate the API Key
+            _apiKeyService.RevokeApiKey(apiKey, user.Id);
+            
+            return Ok("API Key successfully revoked."); // OK!
         }
     }
 }
