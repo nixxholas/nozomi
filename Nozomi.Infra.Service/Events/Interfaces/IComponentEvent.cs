@@ -16,7 +16,8 @@ namespace Nozomi.Service.Events.Interfaces
         IEnumerable<ComponentViewModel> All(long requestId, int index = 0, int itemsPerIndex = 50,
             bool includeNested = false, string userId = null);
         
-        IEnumerable<ComponentViewModel> All(int index = 0, int itemsPerIndex = 50, bool includeNested = false);
+        IEnumerable<ComponentViewModel> All(int index = 0, int itemsPerIndex = 50, bool includeNested = false,
+            string userId = null);
         
         ICollection<Component> All(int index = 0, bool includeNested = false);
 

@@ -169,36 +169,34 @@ namespace Nozomi.Service.Events
                 });
         }
 
-        public IEnumerable<ComponentViewModel> All(int index = 0, int itemsPerIndex = 50, bool includeNested = false)
+        public IEnumerable<ComponentViewModel> All(int index = 0, 
+            int itemsPerIndex = NozomiServiceConstants.RequestComponentTakeoutLimit, bool includeNested = false,
+            string userId = null)
         {
             if (index < 0 || itemsPerIndex <= 0 || itemsPerIndex > NozomiServiceConstants.RequestComponentTakeoutLimit)
                 throw new ArgumentOutOfRangeException("Invalid index or itemsPerIndex.");
-            
-            if (includeNested)
-                return _context.Components.AsNoTracking()
-                    .Where(c => c.DeletedAt == null && c.IsEnabled)
-                    .Include(c => c.RcdHistoricItems)
-                    .Select(c => new ComponentViewModel
-                    {
-                        Guid = c.Guid,
-                        Type = c.ComponentTypeId,
-                        IsDenominated = c.IsDenominated,
-                        History = c.RcdHistoricItems
-                            .Where(rcdhi => rcdhi.DeletedAt == null && rcdhi.IsEnabled)
-                            .Select(rcdhi => new ComponentHistoricItemViewModel
-                            {
-                                Timestamp = rcdhi.HistoricDateTime,
-                                Value = rcdhi.Value
-                            })
-                    });
 
-            return _context.Components.AsNoTracking()
-                .Where(c => c.DeletedAt == null && c.IsEnabled)
+            var query = _context.Components.AsNoTracking()
+                .Where(c => c.DeletedAt == null && c.IsEnabled);
+
+            if (includeNested)
+                query = query.Include(c => c.RcdHistoricItems);
+
+            return query
+                .Skip(index * itemsPerIndex)
+                .Take(itemsPerIndex)
                 .Select(c => new ComponentViewModel
                 {
                     Guid = c.Guid,
                     Type = c.ComponentTypeId,
-                    IsDenominated = c.IsDenominated
+                    IsDenominated = c.IsDenominated,
+                    History = c.RcdHistoricItems
+                        .Where(rcdhi => rcdhi.DeletedAt == null && rcdhi.IsEnabled)
+                        .Select(rcdhi => new ComponentHistoricItemViewModel
+                        {
+                            Timestamp = rcdhi.HistoricDateTime,
+                            Value = rcdhi.Value
+                        })
                 });
         }
 
