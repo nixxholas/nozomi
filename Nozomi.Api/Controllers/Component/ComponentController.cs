@@ -54,9 +54,29 @@ namespace Nozomi.Api.Controllers.Component
             return new InternalServerErrorObjectResult(AllInternalServerExample.Result);
         }
 
+        [TokenBucket(Name = "Component/Get", Weight = 5)]
+        [HttpGet("{guid}")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ICollection<ComponentViewModel>))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(string))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(string))]
+        [SwaggerResponseExample((int)HttpStatusCode.OK, typeof(GetOkExample))]
+        [SwaggerResponseExample((int)HttpStatusCode.BadRequest, typeof(GetBadRequestExample))]
+        [SwaggerResponseExample((int)HttpStatusCode.InternalServerError, typeof(GetInternalServerExample))]
         public IActionResult Get(string guid, int index = 0)
         {
-            throw new System.NotImplementedException();
+            if (index < 0) return BadRequest(AllBadRequestExample.Result);
+            
+            if (HttpContext.Request.Headers.TryGetValue(ApiKeyAuthenticationOptions.HeaderKey, 
+                out var apiKey))
+            {
+                var userId = _nozomiRedisEvent.GetValue(apiKey, RedisDatabases.ApiKeyUser);
+                    
+                return Ok(_componentEvent.View(guid, index, userId));
+            }
+
+            _logger.LogWarning($"{_controllerName} Get: User managed to bypass the token bucket " +
+                               "attribute without an API key!");
+            return new InternalServerErrorObjectResult(AllInternalServerExample.Result);
         }
     }
 }
