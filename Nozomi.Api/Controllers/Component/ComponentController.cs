@@ -56,7 +56,7 @@ namespace Nozomi.Api.Controllers.Component
 
         [TokenBucket(Name = "Component/Get", Weight = 5)]
         [HttpGet("{guid}")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ICollection<ComponentViewModel>))]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ComponentViewModel))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(string))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(string))]
         [SwaggerResponseExample((int)HttpStatusCode.OK, typeof(GetOkExample))]
