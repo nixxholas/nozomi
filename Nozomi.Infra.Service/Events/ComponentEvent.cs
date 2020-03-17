@@ -447,11 +447,16 @@ namespace Nozomi.Service.Events
                 .SingleOrDefault(rc => rc.Id.Equals(id) && rc.DeletedAt == null && rc.IsEnabled));
         }
 
-        public ComponentViewModel View(string guid, int index = 0)
+        public ComponentViewModel View(string guid, int index = 0, string userId = null)
         {
             if (Guid.TryParse(guid, out var parsedGuid) && index >= 0)
             {
-                return _context.Components.AsNoTracking()
+                var query = _context.Components.AsNoTracking();
+
+                if (!string.IsNullOrEmpty(userId))
+                    query = query.Where(c => c.CreatedById.Equals(userId));
+                
+                return query
                     .Where(c => c.Guid.Equals(parsedGuid) && c.DeletedAt == null && c.IsEnabled)
                     .Include(c => c.RcdHistoricItems)
                     .Select(c => new ComponentViewModel
