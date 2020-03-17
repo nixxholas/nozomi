@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http.Headers;
+using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -27,6 +28,8 @@ using Nozomi.Preprocessing.Options;
 using Nozomi.Repo.Auth.Data;
 using Nozomi.Repo.Data;
 using Nozomi.Service.Events;
+using Nozomi.Service.Events.Analysis;
+using Nozomi.Service.Events.Analysis.Interfaces;
 using Nozomi.Service.Events.Interfaces;
 using Swashbuckle.AspNetCore.Filters;
 using VaultSharp;
@@ -179,6 +182,20 @@ namespace Nozomi.Api
                     }
                 });
                 
+                // [SwaggerRequestExample] & [SwaggerResponseExample]
+                // version < 3.0 like this: c.OperationFilter<ExamplesOperationFilter>(); 
+                // version 3.0 like this: c.AddSwaggerExamples(services.BuildServiceProvider());
+                // version > 4.0 like this:
+                config.ExampleFilters();
+                config.OperationFilter<AddResponseHeadersFilter>(); // [SwaggerResponseHeader]
+
+                // Adds "(Auth)" to the summary so that you can see which endpoints have Authorization
+                config.OperationFilter<AppendAuthorizeToSummaryOperationFilter>();
+                // or use the generic method, e.g. c.OperationFilter<AppendAuthorizeToSummaryOperationFilter<MyCustomAttribute>>();
+                
+                // add Security information to each operation for OAuth2
+                config.OperationFilter<SecurityRequirementsOperationFilter>();
+
                 config.AddSecurityRequirement(new OpenApiSecurityRequirement
                 {
                     {
@@ -194,7 +211,9 @@ namespace Nozomi.Api
                     }
                 });
             });
+            services.AddSwaggerExamplesFromAssemblies(Assembly.GetEntryAssembly());
 
+            services.AddTransient<IAnalysedComponentEvent, AnalysedComponentEvent>();
             services.AddTransient<INozomiRedisEvent, NozomiRedisEvent>();
             services.AddTransient<IRequestEvent, RequestEvent>();
 

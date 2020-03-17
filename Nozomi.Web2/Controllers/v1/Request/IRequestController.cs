@@ -10,7 +10,7 @@ namespace Nozomi.Web2.Controllers.v1.Request
 
         IActionResult Create(CreateRequestViewModel vm);
         
-        IActionResult GetAll();
+        IActionResult GetAll(int index = 0);
 
         IActionResult Update(UpdateRequestViewModel vm);
 

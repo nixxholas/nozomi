@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Nozomi.Base.Auth.Models;
 using Nozomi.Data.Models.Web;
 using Nozomi.Infra.Api.Limiter.Events.Interfaces;
+using Nozomi.Infra.Api.Limiter.Services;
 using Nozomi.Infra.Api.Limiter.Services.Interfaces;
 using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Options;
@@ -50,15 +51,15 @@ namespace Nozomi.Infra.Api.Limiter.Attributes
             if (c.HttpContext.Request.Headers.TryGetValue(ApiKeyAuthenticationOptions.HeaderKey, 
                 out var apiKey))
             {
-                var redisEvent = c.HttpContext.RequestServices.GetRequiredService<INozomiRedisEvent>();
+                var serviceProvider = c.HttpContext.RequestServices;
+                var redisEvent = serviceProvider.GetService<INozomiRedisEvent>();
                 
                 // Filtration checks
                 if (redisEvent.Exists(apiKey, RedisDatabases.ApiKeyUser) // Ensure key exists in mapping 
                     // And if the ApiKeyUser list does contain this key and it has a value
                     && redisEvent.ContainsValue(apiKey, RedisDatabases.ApiKeyUser))
                 {
-                    var apiKeyRedisActionService =
-                        c.HttpContext.RequestServices.GetRequiredService<IApiKeyEventsService>();
+                    var apiKeyRedisActionService = serviceProvider.GetService<IApiKeyEventsService>();
                     
                     // Push the usage and move on
                     apiKeyRedisActionService.Fill(apiKey, Weight);
@@ -73,6 +74,8 @@ namespace Nozomi.Infra.Api.Limiter.Attributes
                 // Return 404 always.
                 c.HttpContext.Response.StatusCode = (int) HttpStatusCode.NotFound;
             }
+            
+            base.OnActionExecuting(c);
         }
     }
 }

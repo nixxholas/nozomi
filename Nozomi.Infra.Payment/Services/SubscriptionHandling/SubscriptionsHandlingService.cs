@@ -55,7 +55,7 @@ namespace Nozomi.Infra.Payment.Services.SubscriptionHandling
                 throw new StripeException($"{_serviceName} {methodName}: Plan does not exist");
             
             var quotaValue = 0;
-            var quotaString = plan.Metadata["Quota"];
+            var quotaString = plan.Metadata[NozomiPaymentConstants.StripeQuotaMetadataKey];
             if (!int.TryParse(quotaString, out quotaValue))
                 throw new FormatException($"{_serviceName} {methodName}: Failed to parse plan quota to int");
 
@@ -134,7 +134,7 @@ namespace Nozomi.Infra.Payment.Services.SubscriptionHandling
                                    "successfully changed to new plan {subscription.Plan.Id}");
             
             var quotaValue = 0;
-            var quotaString = plan.Metadata["Quota"];
+            var quotaString = plan.Metadata[NozomiPaymentConstants.StripeQuotaMetadataKey];
             if (!int.TryParse(quotaString, out quotaValue))
                 throw new FormatException($"{_serviceName} {methodName}: Failed to parse plan quota to int");
             

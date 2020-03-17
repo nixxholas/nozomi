@@ -216,7 +216,7 @@ namespace Nozomi.Infra.Payment.Services.Bootstripe
             if (stripePlan == null)
                 throw new StripeException($"{_serviceName} {methodName}: Unable to find plan based on ID");
 
-            var quotaString = stripePlan.Metadata["Quota"];
+            var quotaString = stripePlan.Metadata[NozomiPaymentConstants.StripeQuotaMetadataKey];
 
             var quotaValue = 0;
             

@@ -9,6 +9,7 @@ using Nozomi.Data.Models.Web;
 using Nozomi.Data.ViewModels.Component;
 using Nozomi.Data.ViewModels.Request;
 using Nozomi.Data.ViewModels.RequestProperty;
+using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.Data;
 using Nozomi.Service.Events.Interfaces;
@@ -148,16 +149,20 @@ namespace Nozomi.Service.Events
                 .SingleOrDefault(r => r.Id.Equals(id) && r.DeletedAt == null);
         }
 
-        public IQueryable<RequestViewModel> ViewAll(string userId = null, bool enabledOnly = true, bool track = false)
+        public IQueryable<RequestViewModel> ViewAll(int index = 0, string createdBy = null, bool enabledOnly = true, 
+            bool track = false)
         {
+            if (index < 0)
+                throw new ArgumentOutOfRangeException("Invalid index.");
+            
             var query = _context.Requests.AsNoTracking()
                 .Include(r => r.Currency)
                 .Include(r => r.CurrencyPair)
                 .Include(r => r.CurrencyType)
                 .Where(r => r.DeletedAt == null);
 
-            if (!string.IsNullOrWhiteSpace(userId) && !string.IsNullOrEmpty(userId))
-                query = query.Where(r => r.CreatedById.Equals(userId));
+            if (!string.IsNullOrWhiteSpace(createdBy) && !string.IsNullOrEmpty(createdBy))
+                query = query.Where(r => r.CreatedById.Equals(createdBy));
             
             if (enabledOnly)
                 query = query.Where(r => r.IsEnabled);
@@ -167,6 +172,8 @@ namespace Nozomi.Service.Events
                     .Include(r => r.RequestComponents)
                     .Include(r => r.RequestProperties)
                     .Include(r => r.RequestType)
+                    .Skip(index * 100)
+                    .Take(100)
                     .Select(r => new RequestViewModel(r.Guid, r.RequestType, r.ResponseType, r.DataPath, 
                         r.Delay, r.FailureDelay, r.IsEnabled, r.CurrencyId > 0 ? r.Currency.Slug : null, 
                         r.CurrencyPairId > 0 ? r.CurrencyPair.Guid.ToString() : null, 
@@ -181,6 +188,8 @@ namespace Nozomi.Service.Events
                             rp.RequestPropertyType, rp.Key, rp.Value)).ToList()));
             
             return query
+                .Skip(index  * 100)
+                .Take(100)
                 .Select(r => new RequestViewModel(r.Guid, r.RequestType, r.ResponseType, r.DataPath, r.Delay,
                     r.FailureDelay, r.IsEnabled, r.CurrencyId > 0 ? r.Currency.Slug : null, 
                     r.CurrencyPairId > 0 ? r.CurrencyPair.Guid.ToString() : null, 
