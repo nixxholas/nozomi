@@ -81,7 +81,7 @@
         mounted() {
             // Attempts to renew id_token to remove notification when user
             // verified their email
-            if (!this.oidcUser.email_verified) {
+            if (this.oidcUser && !this.oidcUser.email_verified) {
                 this.authenticateOidcSilent();
             }
         }
