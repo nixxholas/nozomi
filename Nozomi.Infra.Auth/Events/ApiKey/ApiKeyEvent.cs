@@ -19,5 +19,15 @@ namespace Nozomi.Infra.Auth.Events.ApiKey
                 .Any(uc => uc.ClaimType.Equals(NozomiJwtClaimTypes.ApiKeys)
                              && uc.ClaimValue.SequenceEqual(apiKey));
         }
+
+        public string View(string apiKey, string userId = null)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public IQueryable<string> ViewAll(string userId)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }
