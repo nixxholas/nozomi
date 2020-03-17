@@ -6,8 +6,8 @@ namespace Nozomi.Api.Controllers.AnalysedComponent
     {
         IActionResult All(int index = 0);
 
-        IActionResult AllByIdentifier(string currencySlug, string currencyPairGuid, string currencyTypeShortForm,
-            int index = 0, int itemsPerPage = 200);
+        IActionResult AllByIdentifier(string currencySlug = null, string tickerPair = null, 
+            string currencyTypeShortForm = null, int index = 0);
         
         IActionResult Get(string guid);
     }

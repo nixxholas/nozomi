@@ -29,7 +29,7 @@ namespace Nozomi.Api.Controllers.AnalysedComponent
             _nozomiRedisEvent = nozomiRedisEvent;
         }
 
-        [TokenBucket(Name = "AnalysedComponent/Get", Weight = 5)]
+        [TokenBucket(Name = "AnalysedComponent/All", Weight = 5)]
         [HttpGet]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(IEnumerable<AnalysedComponentViewModel>))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(string))]
@@ -54,11 +54,31 @@ namespace Nozomi.Api.Controllers.AnalysedComponent
             return new InternalServerErrorObjectResult(AllInternalServerExample.Result);
         }
 
+        [TokenBucket(Name = "AnalysedComponent/AllByIdentifier", Weight = 7)]
         [HttpGet]
-        public IActionResult AllByIdentifier(string currencySlug, string currencyPairGuid, 
-            string currencyTypeShortForm, int index = 0, int itemsPerPage = 200)
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(IEnumerable<AnalysedComponentViewModel>))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(string))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(string))]
+        [SwaggerResponseExample((int)HttpStatusCode.OK, typeof(AllOkExample))]
+        [SwaggerResponseExample((int)HttpStatusCode.BadRequest, typeof(AllBadRequestExample))]
+        [SwaggerResponseExample((int)HttpStatusCode.InternalServerError, typeof(AllInternalServerExample))]
+        public IActionResult AllByIdentifier(string currencySlug = null, string tickerPair = null, 
+            string currencyTypeShortForm = null, int index = 0)
         {
-            throw new System.NotImplementedException();
+            if (index >= 0) return BadRequest(AllBadRequestExample.Result);
+            
+            if (HttpContext.Request.Headers.TryGetValue(ApiKeyAuthenticationOptions.HeaderKey, 
+                out var apiKey))
+            {
+                var userId = _nozomiRedisEvent.GetValue(apiKey, RedisDatabases.ApiKeyUser);
+                    
+                return Ok(_analysedComponentEvent.ViewAllByIdentifier(currencySlug, tickerPair, currencyTypeShortForm, 
+                    index,userId));
+            }
+
+            _logger.LogWarning($"{_controllerName} All: User managed to bypass the token bucket " +
+                               "attribute without an API key!");
+            return new InternalServerErrorObjectResult(AllInternalServerExample.Result);
         }
 
         [HttpGet]
