@@ -1,7 +1,7 @@
 <template>
     <div>
         <div ref="table" class="pricing-table" v-if="!isLoading && plans && plans.length > 0 && !viewMode">
-            <div v-for="plan in plans" class="pricing-plan">
+            <div v-for="plan in getNumeralFormattedPlans" class="pricing-plan">
                 <div class="plan-header">{{ plan.nickname }}</div>
                 <div class="plan-price">
                     <span class="plan-price-amount">
@@ -54,6 +54,7 @@
     import PaymentService from "@/services/auth/PaymentService";
     import {mapActions, mapGetters} from "vuex";
     import {NotificationProgrammatic as Notification} from 'buefy';
+    import Numeral from 'numeral';
 
     export default {
         name: 'plans',
@@ -84,6 +85,32 @@
                 'oidcIdToken',
                 'oidcIdTokenExp',
             ]),
+            getNumeralFormattedPlans() {
+                const formattedPlans = [];
+                
+                this.plans.forEach(plan => {
+                    const formattedMetadata = {};
+                    for (const metaDataKey in plan.metadata) {
+                        const sentence = plan.metadata[metaDataKey];
+                        const words = sentence.split(" ");
+                        
+                        words.forEach((word, index) => {
+                            if (!isNaN(word)) {
+                                words[index] = Numeral(word).format('(0[.]0a)');
+                            }
+                        });
+
+                        formattedMetadata[metaDataKey] = words.join(" ");
+                    }
+
+                    formattedPlans.push({
+                        ...plan,
+                        metadata: formattedMetadata
+                    });
+                });
+
+                return formattedPlans;
+            },
         },
         beforeCreate() {
             let self = this;
