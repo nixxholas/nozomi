@@ -58,5 +58,8 @@ namespace Nozomi.Service.Events.Analysis.Interfaces
         AnalysedComponent Pop(Guid guid);
 
         IQueryable<AnalysedComponent> ViewAll(int index = 0, string userId = null);
+
+        IQueryable<AnalysedComponentViewModel> ViewAllByIdentifier(string currencySlug = null, string tickerPair = null, 
+            string currencyTypeAbbreviation = null, int index = 0, string userId = null);
     }
 }

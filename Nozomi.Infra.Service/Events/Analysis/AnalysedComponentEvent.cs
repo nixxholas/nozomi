@@ -4,9 +4,11 @@ using System.Linq;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Nozomi.Base.BCL.Extensions;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Data.ViewModels.AnalysedComponent;
+using Nozomi.Data.ViewModels.AnalysedHistoricItem;
 using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.Data;
@@ -475,6 +477,110 @@ namespace Nozomi.Service.Events.Analysis
 
             return query.Skip(index * NozomiServiceConstants.AnalysedComponentTakeoutLimit)
                 .Take(NozomiServiceConstants.AnalysedComponentTakeoutLimit);
+        }
+
+        public IQueryable<AnalysedComponentViewModel> ViewAllByIdentifier(string currencySlug = null, string tickerPair = null,
+            string currencyTypeAbbreviation = null, int index = 0, string userId = null)
+        {
+            if (!string.IsNullOrEmpty(currencySlug))
+            {
+                return _context.AnalysedComponents.AsNoTracking()
+                    .Where(ac => ac.DeletedAt == null && ac.IsEnabled)
+                    .Include(ac => ac.Currency)
+                    .Where(ac => ac.Currency.Slug.Equals(currencySlug))
+                    .OrderBy(ac => ac.CurrencyId)
+                    .Include(ac => ac.AnalysedHistoricItems)
+                    .Skip(index * NozomiServiceConstants.AnalysedComponentTakeoutLimit)
+                    .Take(NozomiServiceConstants.AnalysedComponentTakeoutLimit)
+                    .Select(ac => new AnalysedComponentViewModel
+                    {
+                        Guid = ac.Guid,
+                        Type = ac.ComponentType,
+                        Delay = ac.Delay,
+                        IsDenominated = ac.IsDenominated,
+                        StoreHistoricals = ac.StoreHistoricals,
+                        CurrencySlug = currencySlug,
+                        UiFormatting = ac.UIFormatting,
+                        Value = ac.Value,
+                        IsEnabled = true,
+                        History = ac.AnalysedHistoricItems
+                            .Where(ahi => ahi.DeletedAt == null && ahi.IsEnabled)
+                            .Skip(index * NozomiServiceConstants.AnalysedHistoricItemTakeoutLimit)
+                            .Take(NozomiServiceConstants.AnalysedHistoricItemTakeoutLimit)
+                            .Select(ahi => new AnalysedHistoricItemViewModel
+                            {
+                                Timestamp = ahi.HistoricDateTime,
+                                Value = ahi.Value
+                            })
+                    });
+            } else if (!string.IsNullOrEmpty(tickerPair))
+            {
+                return _context.AnalysedComponents.AsNoTracking()
+                    .Where(ac => ac.DeletedAt == null && ac.IsEnabled)
+                    .Include(ac => ac.CurrencyPair)
+                    .Where(ac => ac.CurrencyPairId != null)
+                    .OrderBy(ac => ac.CurrencyPairId)
+                    .Where(ac => (ac.CurrencyPair.MainTicker + ac.CurrencyPair.CounterTicker)
+                        == tickerPair)
+                    .Include(ac => ac.AnalysedHistoricItems)
+                    .Skip(index * NozomiServiceConstants.AnalysedComponentTakeoutLimit)
+                    .Take(NozomiServiceConstants.AnalysedComponentTakeoutLimit)
+                    .Select(ac => new AnalysedComponentViewModel
+                    {
+                        Guid = ac.Guid,
+                        Type = ac.ComponentType,
+                        Delay = ac.Delay,
+                        IsDenominated = ac.IsDenominated,
+                        StoreHistoricals = ac.StoreHistoricals,
+                        CurrencyPairGuid = ac.CurrencyPair.Guid.ToString(),
+                        UiFormatting = ac.UIFormatting,
+                        Value = ac.Value,
+                        IsEnabled = true,
+                        History = ac.AnalysedHistoricItems
+                            .Where(ahi => ahi.DeletedAt == null && ahi.IsEnabled)
+                            .Skip(index * NozomiServiceConstants.AnalysedHistoricItemTakeoutLimit)
+                            .Take(NozomiServiceConstants.AnalysedHistoricItemTakeoutLimit)
+                            .Select(ahi => new AnalysedHistoricItemViewModel
+                            {
+                                Timestamp = ahi.HistoricDateTime,
+                                Value = ahi.Value
+                            })
+                    });
+            } else if (!string.IsNullOrEmpty(currencyTypeAbbreviation))
+            {
+                return _context.AnalysedComponents.AsNoTracking()
+                    .Where(ac => ac.DeletedAt == null && ac.IsEnabled)
+                    .Include(ac => ac.CurrencyType)
+                    .Where(ac => ac.CurrencyTypeId != null 
+                                 && ac.CurrencyType.TypeShortForm == currencyTypeAbbreviation)
+                    .OrderBy(ac => ac.ModifiedAt)
+                    .Include(ac => ac.AnalysedHistoricItems)
+                    .Skip(index * NozomiServiceConstants.AnalysedComponentTakeoutLimit)
+                    .Take(NozomiServiceConstants.AnalysedComponentTakeoutLimit)
+                    .Select(ac => new AnalysedComponentViewModel
+                    {
+                        Guid = ac.Guid,
+                        Type = ac.ComponentType,
+                        Delay = ac.Delay,
+                        IsDenominated = ac.IsDenominated,
+                        StoreHistoricals = ac.StoreHistoricals,
+                        CurrencyTypeShortForm = currencyTypeAbbreviation,
+                        UiFormatting = ac.UIFormatting,
+                        Value = ac.Value,
+                        IsEnabled = true,
+                        History = ac.AnalysedHistoricItems
+                            .Where(ahi => ahi.DeletedAt == null && ahi.IsEnabled)
+                            .Skip(index * NozomiServiceConstants.AnalysedHistoricItemTakeoutLimit)
+                            .Take(NozomiServiceConstants.AnalysedHistoricItemTakeoutLimit)
+                            .Select(ahi => new AnalysedHistoricItemViewModel
+                            {
+                                Timestamp = ahi.HistoricDateTime,
+                                Value = ahi.Value
+                            })
+                    });
+            }
+
+            throw new ArgumentNullException("Invalid constraints in parameter.");
         }
     }
 }
