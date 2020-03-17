@@ -30,7 +30,9 @@
                                             <div class="tile is-child" v-if="oidcIsAuthenticated">
                                                 <p class="heading">Have a component to add?
                                                 <p class="is-4">
-                                                    <CreateAcComponentModal :currency-slug="data.slug" />
+                                                    <CreateAcComponentModal :currency-slug="data.slug"
+                                                                            :component-types="typeData"
+                                                    />
                                                 </p>
                                             </div>
                                             
