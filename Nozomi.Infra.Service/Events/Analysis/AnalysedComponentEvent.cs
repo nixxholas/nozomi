@@ -463,6 +463,48 @@ namespace Nozomi.Service.Events.Analysis
                 .SingleOrDefault(ac => ac.DeletedAt == null && ac.Guid.Equals(guid));
         }
 
+        public AnalysedComponentViewModel View(Guid guid, int index = 0, string userId = null)
+        {
+            if (index < 0) throw new ArgumentOutOfRangeException("Index for historicals is out of range.");
+
+            var query = _context.AnalysedComponents.AsNoTracking()
+                .Where(ac => ac.Guid.Equals(guid) && ac.DeletedAt == null && ac.IsEnabled);
+
+            if (!string.IsNullOrEmpty(userId))
+                query = query.Where(ac => ac.CreatedById.Equals(userId));
+
+            return query
+                .Include(ac => ac.Currency)
+                .Include(ac => ac.CurrencyPair)
+                .Include(ac => ac.CurrencyType)
+                .Include(ac => ac.AnalysedHistoricItems)
+                .Select(ac => new AnalysedComponentViewModel
+                {
+                    Guid = ac.Guid,
+                    Type = ac.ComponentType,
+                    Delay = ac.Delay,
+                    IsDenominated = ac.IsDenominated,
+                    StoreHistoricals = ac.StoreHistoricals,
+                    UiFormatting = ac.UIFormatting,
+                    Value = ac.Value,
+                    IsEnabled = ac.IsEnabled,
+                    CurrencySlug = ac.Currency != null ? ac.Currency.Slug : string.Empty,
+                    CurrencyPairGuid = ac.CurrencyPair != null ? ac.CurrencyPair.Guid.ToString() : string.Empty,
+                    CurrencyTypeShortForm = ac.CurrencyType != null ? ac.CurrencyType.TypeShortForm : string.Empty,
+                    History = ac.AnalysedHistoricItems
+                        .Where(ahi => ahi.DeletedAt == null && ahi.IsEnabled)
+                        .OrderByDescending(ahi => ahi.HistoricDateTime)
+                        .Skip(index * NozomiServiceConstants.AnalysedHistoricItemTakeoutLimit)
+                        .Take(NozomiServiceConstants.AnalysedHistoricItemTakeoutLimit)
+                        .Select(ahi => new AnalysedHistoricItemViewModel
+                        {
+                            Timestamp = ahi.HistoricDateTime,
+                            Value = ahi.Value
+                        })
+                })
+                .SingleOrDefault();
+        }
+
         public IQueryable<AnalysedComponent> ViewAll(int index = 0, string userId = null)
         {
             if (index < 0)
