@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -20,14 +21,17 @@ namespace Nozomi.Infra.Auth.Events.ApiKey
                              && uc.ClaimValue.SequenceEqual(apiKey));
         }
 
-        public string View(string apiKey, string userId = null)
-        {
-            throw new System.NotImplementedException();
-        }
-
         public IQueryable<string> ViewAll(string userId)
         {
-            throw new System.NotImplementedException();
+            if (!string.IsNullOrEmpty(userId))
+            {
+                return _context.UserClaims.AsNoTracking()
+                    .Where(uc => uc.ClaimType.Equals(NozomiJwtClaimTypes.ApiKeys) 
+                                 && uc.UserId.Equals(userId))
+                    .Select(uc => uc.ClaimValue);
+            }
+            
+            throw new KeyNotFoundException("Invalid user ID.");
         }
     }
 }
