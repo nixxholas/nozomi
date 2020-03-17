@@ -23,6 +23,7 @@ using Nozomi.Base.BCL.Configurations;
 using Nozomi.Infra.Auth.Events.UserEvent;
 using Nozomi.Infra.Auth.Events.EmailSender;
 using Nozomi.Infra.Auth.Services.Address;
+using Nozomi.Infra.Auth.Services.ApiKey;
 using Nozomi.Infra.Auth.Services.QuotaClaims;
 using Nozomi.Infra.Auth.Services.User;
 using Nozomi.Infra.Blockchain.Auth.Events;
@@ -289,13 +290,14 @@ namespace Nozomi.Auth
 
             services.AddTransient<IEmailSender, EmailSender>();
             
-            //Infra.Auth Services & Events
+            // Infra.Auth Services & Events
             services.AddTransient<IUserEvent, UserEvent>();
             services.AddTransient<IAuthEmailSender, AuthEmailSender>();
             services.AddScoped<IAddressService, AddressService>();
+            services.AddScoped<IApiKeyService, ApiKeyService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IQuotaClaimsService, QuotaClaimsService>();
-            
+
             //Infra.Payment Services & Events
             services.AddTransient<IBootstripeEvent, BootstripeEvent>();
             services.AddScoped<IBootstripeService, BootstripeService>();
