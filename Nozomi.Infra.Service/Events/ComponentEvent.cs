@@ -179,9 +179,12 @@ namespace Nozomi.Service.Events
             var query = _context.Components.AsNoTracking()
                 .Where(c => c.DeletedAt == null && c.IsEnabled);
 
-            if (includeNested)
-                query = query.Include(c => c.RcdHistoricItems);
+            if (!string.IsNullOrEmpty(userId)) // Filter by the user
+                query = query.Where(c => c.CreatedById.Equals(userId));
 
+            if (includeNested) // Deep-end inclusion
+                query = query.Include(c => c.RcdHistoricItems);
+            
             return query
                 .Skip(index * itemsPerIndex)
                 .Take(itemsPerIndex)
