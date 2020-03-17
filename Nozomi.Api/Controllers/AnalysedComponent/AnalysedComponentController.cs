@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Net;
 using Microsoft.AspNetCore.Mvc;
@@ -81,10 +82,30 @@ namespace Nozomi.Api.Controllers.AnalysedComponent
             return new InternalServerErrorObjectResult(AllInternalServerExample.Result);
         }
 
-        [HttpGet]
-        public IActionResult Get(string guid)
+        [TokenBucket(Name = "AnalysedComponent/Get", Weight = 7)]
+        [HttpGet("{guid}")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(AnalysedComponentViewModel))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(string))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(string))]
+        [SwaggerResponseExample((int)HttpStatusCode.OK, typeof(GetOkExample))]
+        [SwaggerResponseExample((int)HttpStatusCode.BadRequest, typeof(GetBadRequestExample))]
+        [SwaggerResponseExample((int)HttpStatusCode.InternalServerError, typeof(GetInternalServerExample))]
+        public IActionResult Get(string guid, int index = 0)
         {
-            throw new System.NotImplementedException();
+            if (Guid.TryParse(guid, out var parsedGuid) && index >= 0)
+            {
+                if (!HttpContext.Request.Headers.TryGetValue(ApiKeyAuthenticationOptions.HeaderKey,
+                    out var apiKey))
+                    return new InternalServerErrorObjectResult(GetInternalServerExample.Result);
+                
+                var userId = _nozomiRedisEvent.GetValue(apiKey, RedisDatabases.ApiKeyUser);
+                if (string.IsNullOrEmpty(userId))
+                    return new InternalServerErrorObjectResult(GetInternalServerExample.Result);
+                
+                return Ok(_analysedComponentEvent.View(parsedGuid, index, userId));
+            }
+
+            return BadRequest(GetBadRequestExample.Result);
         }
     }
 }
