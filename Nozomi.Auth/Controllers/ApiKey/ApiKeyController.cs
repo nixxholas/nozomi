@@ -26,6 +26,16 @@ namespace Nozomi.Auth.Controllers.ApiKey
             _apiKeyService = apiKeyService;
         }
 
+        public Task<IActionResult> All()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public Task<IActionResult> Get(string apiKey)
+        {
+            throw new System.NotImplementedException();
+        }
+
         [Authorize(AuthenticationSchemes = "Bearer")]
         [HttpPost]
         public async Task<IActionResult> Create()
