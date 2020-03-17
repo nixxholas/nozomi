@@ -14,23 +14,22 @@ using StackExchange.Redis;
 
 namespace Nozomi.Infra.Api.Limiter.Services
 {
-    public class ApiKeyEventsService : BaseService<ApiKeyEventsService, AuthDbContext>, 
-        IApiKeyEventsService
+    public class ApiKeyEventsService : BaseService<ApiKeyEventsService>, IApiKeyEventsService
     {
         private readonly IConnectionMultiplexer _connectionMultiplexer;
         private readonly INozomiRedisEvent _nozomiRedisEvent;
         
-        public ApiKeyEventsService(ILogger<ApiKeyEventsService> logger, AuthDbContext context,
-            INozomiRedisEvent nozomiRedisEvent, IConnectionMultiplexer connectionMultiplexer) 
-            : base(logger, context)
+        public ApiKeyEventsService(ILogger<ApiKeyEventsService> logger, INozomiRedisEvent nozomiRedisEvent, 
+            IConnectionMultiplexer connectionMultiplexer) 
+            : base(logger)
         {
             _connectionMultiplexer = connectionMultiplexer;
             _nozomiRedisEvent = nozomiRedisEvent;
         }
 
         public ApiKeyEventsService(IHttpContextAccessor contextAccessor, ILogger<ApiKeyEventsService> logger, 
-            AuthDbContext context, INozomiRedisEvent nozomiRedisEvent, IConnectionMultiplexer connectionMultiplexer) 
-            : base(contextAccessor, logger, context)
+            INozomiRedisEvent nozomiRedisEvent, IConnectionMultiplexer connectionMultiplexer) 
+            : base(contextAccessor, logger)
         {
             _connectionMultiplexer = connectionMultiplexer;
             _nozomiRedisEvent = nozomiRedisEvent;
