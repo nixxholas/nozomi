@@ -28,6 +28,8 @@ using Nozomi.Preprocessing.Options;
 using Nozomi.Repo.Auth.Data;
 using Nozomi.Repo.Data;
 using Nozomi.Service.Events;
+using Nozomi.Service.Events.Analysis;
+using Nozomi.Service.Events.Analysis.Interfaces;
 using Nozomi.Service.Events.Interfaces;
 using Swashbuckle.AspNetCore.Filters;
 using VaultSharp;
@@ -211,6 +213,7 @@ namespace Nozomi.Api
             });
             services.AddSwaggerExamplesFromAssemblies(Assembly.GetEntryAssembly());
 
+            services.AddTransient<IAnalysedComponentEvent, AnalysedComponentEvent>();
             services.AddTransient<INozomiRedisEvent, NozomiRedisEvent>();
             services.AddTransient<IRequestEvent, RequestEvent>();
 
