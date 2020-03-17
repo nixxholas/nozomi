@@ -446,5 +446,36 @@ namespace Nozomi.Service.Events
             return new NozomiResult<Component>(_context.Components
                 .SingleOrDefault(rc => rc.Id.Equals(id) && rc.DeletedAt == null && rc.IsEnabled));
         }
+
+        public ComponentViewModel View(string guid, int index = 0)
+        {
+            if (Guid.TryParse(guid, out var parsedGuid) && index >= 0)
+            {
+                return _context.Components.AsNoTracking()
+                    .Where(c => c.Guid.Equals(parsedGuid) && c.DeletedAt == null && c.IsEnabled)
+                    .Include(c => c.RcdHistoricItems)
+                    .Select(c => new ComponentViewModel
+                    {
+                        Guid = parsedGuid,
+                        Type = c.ComponentTypeId,
+                        IsDenominated = c.IsDenominated,
+                        Value = c.RcdHistoricItems
+                            .Where(rcdhi => rcdhi.DeletedAt == null && rcdhi.IsEnabled)
+                            .OrderByDescending(rcdhi => rcdhi.HistoricDateTime)
+                            .FirstOrDefault().Value,
+                        History = c.RcdHistoricItems
+                            .Where(rcdhi => rcdhi.DeletedAt == null && rcdhi.IsEnabled)
+                            .OrderByDescending(rcdhi => rcdhi.HistoricDateTime)
+                            .Select(rcdhi => new ComponentHistoricItemViewModel
+                            {
+                                Timestamp = rcdhi.HistoricDateTime,
+                                Value = rcdhi.Value
+                            })
+                    })
+                    .SingleOrDefault();
+            }
+
+            throw new ArgumentException("Invalid guid or index.");
+        }
     }
 }

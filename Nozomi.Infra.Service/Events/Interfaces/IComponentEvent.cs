@@ -54,5 +54,7 @@ namespace Nozomi.Service.Events.Interfaces
             ICollection<ComponentType> componentTypes);
         
         NozomiResult<Component> Get(long id, bool includeNested = false);
+
+        ComponentViewModel View(string guid, int index = 0);
     }
 }
