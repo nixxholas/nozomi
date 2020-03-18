@@ -7,7 +7,7 @@
         <!--    </b-message>-->
         <nav-menu params="route: route"/>
 
-        <div class="container is-fullhd" style="flex: 1; width: 100%">
+        <div style="flex: 1; width: 100%">
             <router-view/>
         </div>
 
