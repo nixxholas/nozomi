@@ -10,6 +10,8 @@ namespace Nozomi.Base.BCL.Helpers.Native.Numerals
         /// <summary>
         /// Returns an Int32 with a random value across the entire range of
         /// possible values.
+        ///
+        /// https://stackoverflow.com/questions/609501/generating-a-random-decimal-in-c-sharp
         /// </summary>
         public static int GenerateInt32(this Random rng)
         {
