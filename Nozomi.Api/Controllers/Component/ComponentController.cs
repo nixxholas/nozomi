@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Net;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Api.Controllers.Component.Examples;
@@ -29,6 +30,7 @@ namespace Nozomi.Api.Controllers.Component
             _nozomiRedisEvent = nozomiRedisEvent;
         }
 
+        [Authorize]
         [TokenBucket(Name = "Component/All", Weight = 5)]
         [HttpGet("{requestGuid}")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ICollection<ComponentViewModel>))]
@@ -54,6 +56,7 @@ namespace Nozomi.Api.Controllers.Component
             return new InternalServerErrorObjectResult(AllInternalServerExample.Result);
         }
 
+        [Authorize]
         [TokenBucket(Name = "Component/Get", Weight = 5)]
         [HttpGet("{guid}")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ComponentViewModel))]
