@@ -41,5 +41,7 @@ namespace Nozomi.Service.Events.Interfaces
         
         IEnumerable<WebsocketCommandViewModel> ViewAllByRequest(string requestGuid, 
             bool ensureNotDisabledOrDeleted = true, string userId = null, bool track = false);
+
+        IEnumerable<WebsocketCommandViewModel> ViewAll(int index = 0, string requestGuid = null, string userId = null);
     }
 }

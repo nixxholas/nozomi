@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Nozomi.Data.Models.Web.Websocket;
 using Nozomi.Data.ViewModels.WebsocketCommand;
 using Nozomi.Data.ViewModels.WebsocketCommandProperty;
+using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.Data;
 using Nozomi.Service.Events.Interfaces;
@@ -283,6 +284,32 @@ namespace Nozomi.Service.Events
                         new WebsocketCommandPropertyViewModel(p.Guid.ToString(), p.CommandPropertyType, 
                             p.Key, p.Value, p.IsEnabled, c.Guid.ToString()))
                     .ToList()));
+        }
+
+        public IEnumerable<WebsocketCommandViewModel> ViewAll(int index = 0, string requestGuid = null, string userId = null)
+        {
+            if (index < 0) throw new ArgumentOutOfRangeException("Invalid index.");
+
+            var query = _context.WebsocketCommands.AsNoTracking()
+                .Include(wsc => wsc.WebsocketCommandProperties)
+                .Where(wsc => wsc.DeletedAt == null && wsc.IsEnabled);
+
+            if (Guid.TryParse(requestGuid, out var parsedRequestGuid))
+                query = query.Include(wsc => wsc.Request)
+                    .Where(wsc => wsc.Request.Guid.Equals(parsedRequestGuid));
+
+            if (!string.IsNullOrEmpty(userId))
+                query = query.Where(wsc => wsc.CreatedById.Equals(userId));
+
+            return query
+                .Skip(index * NozomiServiceConstants.WebsocketCommandTakeoutLimit)
+                .Take(NozomiServiceConstants.WebsocketCommandTakeoutLimit)
+                .Select(wsc => new WebsocketCommandViewModel(wsc.Guid.ToString(), wsc.CommandType,
+                    wsc.Name, wsc.Delay, wsc.IsEnabled, wsc.WebsocketCommandProperties
+                        .Select(wscp => 
+                            new WebsocketCommandPropertyViewModel(wscp.Guid.ToString(), wscp.CommandPropertyType, 
+                                wscp.Key, wscp.Value, wscp.IsEnabled, wsc.Guid.ToString()))
+                        .ToList()));
         }
     }
 }
