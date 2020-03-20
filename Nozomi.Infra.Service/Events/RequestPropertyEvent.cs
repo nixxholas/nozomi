@@ -77,6 +77,28 @@ namespace Nozomi.Service.Events
             throw new NullReferenceException($"{_eventName} GetByRequest: Invalid Request GUID.");
         }
 
+        public IEnumerable<RequestPropertyViewModel> ViewAll(int index = 0, string userId = null)
+        {
+            if (index >= 0)
+            {
+                var query = _context.RequestProperties.AsNoTracking()
+                    .Where(rp => rp.DeletedAt == null && rp.IsEnabled);
+
+                if (!string.IsNullOrEmpty(userId))
+                    query = query.Include(rp => rp.Request)
+                        .Where(rp => rp.CreatedById.Equals(userId) 
+                                     || rp.Request.CreatedById.Equals(userId));
+
+                return query
+                    .Skip(index * NozomiServiceConstants.RequestPropertyTakeoutLimit)
+                    .Take(NozomiServiceConstants.RequestPropertyTakeoutLimit)
+                    .Select(rp => new RequestPropertyViewModel(rp.Guid, rp.RequestPropertyType,
+                    rp.Key, rp.Value));
+            }
+            
+            throw new ArgumentOutOfRangeException("Invalid index.");
+        }
+
         public IEnumerable<RequestPropertyViewModel> ViewByRequest(string requestGuid, int index = 0, string userId = null)
         {
             if (Guid.TryParse(requestGuid, out var parsedGuid) && index >= 0)
