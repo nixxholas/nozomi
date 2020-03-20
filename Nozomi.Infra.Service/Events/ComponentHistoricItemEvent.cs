@@ -54,7 +54,8 @@ namespace Nozomi.Service.Events
                 .FirstOrDefault(e => e.Component.Guid.Equals(guid));
         }
 
-        public IEnumerable<ComponentHistoricItemViewModel> ViewAll(int index = 0, string componentGuid = null)
+        public IEnumerable<ComponentHistoricItemViewModel> ViewAll(int index = 0, string componentGuid = null, 
+            string userId = null)
         {
             if (index < 0) throw new IndexOutOfRangeException("Invalid index.");
 
@@ -65,6 +66,11 @@ namespace Nozomi.Service.Events
                 query = query
                     .Include(chi => chi.Component)
                     .Where(chi => chi.Component.Guid.Equals(parsedGuid));
+
+            if (!string.IsNullOrEmpty(userId))
+                query = query
+                    .Include(chi => chi.Component)
+                    .Where(chi => chi.Component.CreatedById.Equals(userId));
 
             return query
                 .OrderByDescending(chi => chi.HistoricDateTime)

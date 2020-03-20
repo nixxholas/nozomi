@@ -13,6 +13,7 @@ namespace Nozomi.Service.Events.Interfaces
         
         ComponentHistoricItem GetLastItem(Guid guid);
 
-        IEnumerable<ComponentHistoricItemViewModel> ViewAll(int index = 0, string componentGuid = null);
+        IEnumerable<ComponentHistoricItemViewModel> ViewAll(int index = 0, string componentGuid = null, 
+            string userId = null);
     }
 }
