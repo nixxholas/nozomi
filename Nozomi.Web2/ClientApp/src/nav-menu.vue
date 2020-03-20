@@ -17,7 +17,7 @@
       </div>
     </b-notification>
     
-    <b-navbar type="is-light is-marginless" :transparent="true" style="padding: .5em; margin-bottom: .5em;">
+    <b-navbar type="container" :transparent="true" style="padding: .5em; margin-bottom: .5em;">
       <template slot="brand">
         <b-navbar-item tag="router-link" to="/">
           <img
