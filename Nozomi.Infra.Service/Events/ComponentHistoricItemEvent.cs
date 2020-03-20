@@ -1,8 +1,12 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Nozomi.Base.BCL.Extensions;
 using Nozomi.Data.Models.Web;
+using Nozomi.Data.ViewModels.ComponentHistoricItem;
+using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.Data;
 using Nozomi.Service.Events.Interfaces;
@@ -48,6 +52,35 @@ namespace Nozomi.Service.Events
                 .OrderByDescending(e => e.CreatedAt)
                 .Include(e => e.Component)
                 .FirstOrDefault(e => e.Component.Guid.Equals(guid));
+        }
+
+        public IEnumerable<ComponentHistoricItemViewModel> ViewAll(int index = 0, string componentGuid = null, 
+            string userId = null)
+        {
+            if (index < 0) throw new IndexOutOfRangeException("Invalid index.");
+
+            var query = _context.ComponentHistoricItems.AsNoTracking()
+                .Where(chi => chi.DeletedAt == null && chi.IsEnabled);
+
+            if (!string.IsNullOrEmpty(componentGuid) && Guid.TryParse(componentGuid, out var parsedGuid))
+                query = query
+                    .Include(chi => chi.Component)
+                    .Where(chi => chi.Component.Guid.Equals(parsedGuid));
+
+            if (!string.IsNullOrEmpty(userId))
+                query = query
+                    .Include(chi => chi.Component)
+                    .Where(chi => chi.Component.CreatedById.Equals(userId));
+
+            return query
+                .OrderByDescending(chi => chi.HistoricDateTime)
+                .Skip(index * NozomiServiceConstants.RcdHistoricItemTakeoutLimit)
+                .Take(NozomiServiceConstants.RcdHistoricItemTakeoutLimit)
+                .Select(chi => new ComponentHistoricItemViewModel
+                {
+                    Timestamp = chi.HistoricDateTime,
+                    Value = chi.Value
+                });
         }
     }
 }

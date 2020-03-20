@@ -5,6 +5,8 @@ namespace Nozomi.Data.ViewModels.RequestProperty
 {
     public class RequestPropertyViewModel : CreateRequestPropertyInputModel
     {
+        public RequestPropertyViewModel() {}
+        
         public RequestPropertyViewModel(Guid guid, RequestPropertyType type, string key, string value)
         {
             Guid = guid.ToString();
