@@ -30,15 +30,39 @@ namespace Nozomi.Api.Controllers.RequestProperties
             _requestPropertyEvent = requestPropertyEvent;
         }
 
+        [Authorize]
+        [TokenBucket(Name = "RequestProperty/All", Weight = 7)]
+        [HttpGet]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ICollection<RequestPropertyViewModel>))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(string))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(string))]
+        [SwaggerResponseExample((int)HttpStatusCode.OK, typeof(AllOkExample))]
+        [SwaggerResponseExample((int)HttpStatusCode.BadRequest, typeof(AllBadRequestExample))]
+        [SwaggerResponseExample((int)HttpStatusCode.InternalServerError, typeof(AllInternalServerExample))]
         public IActionResult All(int index = 0)
         {
-            throw new System.NotImplementedException();
+            if (index >= 0) return BadRequest(AllByRequestBadRequestExample.InvalidIndexResult);
+            
+            if (HttpContext.Request.Headers.TryGetValue(ApiKeyAuthenticationOptions.HeaderKey, 
+                out var apiKey))
+            {
+                var userId = _nozomiRedisEvent.GetValue(apiKey, RedisDatabases.ApiKeyUser);
+                
+                if (!Guid.TryParse(userId, out var parsedGuid)) return new InternalServerErrorObjectResult(
+                    AllByRequestInternalServerExample.InvalidUserResult);
+                    
+                return Ok(_requestPropertyEvent.ViewAll(index, userId));
+            }
+
+            _logger.LogWarning($"{_controllerName} All: User managed to bypass the token bucket " +
+                               "attribute without an API key!");
+            return new InternalServerErrorObjectResult(AllByRequestInternalServerExample.ImpossibleInvalidUserResult);
         }
 
         [Authorize]
         [TokenBucket(Name = "RequestProperty/AllByRequest", Weight = 5)]
         [HttpGet]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(IEnumerable<RequestPropertyViewModel>))]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ICollection<RequestPropertyViewModel>))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(string))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(string))]
         [SwaggerResponseExample((int)HttpStatusCode.OK, typeof(AllByRequestOkExample))]
