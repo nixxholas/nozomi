@@ -55,7 +55,10 @@ namespace Nozomi.Api.Controllers.Request
                 out var apiKey))
             {
                 var userId = _nozomiRedisEvent.GetValue(apiKey, RedisDatabases.ApiKeyUser);
-                    
+                
+                if (!Guid.TryParse(userId, out var parsedGuid)) return new InternalServerErrorObjectResult(
+                    AllInternalServerExample.InvalidUserResult);
+                
                 return Ok(_requestEvent.ViewAll(index, userId));
             }
 
