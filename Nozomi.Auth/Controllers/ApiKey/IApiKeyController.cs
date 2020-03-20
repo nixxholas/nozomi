@@ -7,7 +7,7 @@ namespace Nozomi.Auth.Controllers.ApiKey
     {
         Task<IActionResult> All();
 
-        Task<IActionResult> Create();
+        Task<IActionResult> Create(string label = null);
 
         Task<IActionResult> Revoke(string apiKey);
     }
