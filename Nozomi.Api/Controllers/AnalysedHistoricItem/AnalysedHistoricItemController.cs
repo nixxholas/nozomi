@@ -49,7 +49,7 @@ namespace Nozomi.Api.Controllers.AnalysedHistoricItem
         [SwaggerResponseExample((int)HttpStatusCode.InternalServerError, typeof(AllInternalServerExample))]
         public IActionResult All(string acGuid = null, [FromQuery]int index = 0)
         {
-            if (index >= 0) return BadRequest(AllBadRequestExample.Result);
+            if (index < 0) return BadRequest(AllBadRequestExample.Result);
             
             if (HttpContext.Request.Headers.TryGetValue(ApiKeyAuthenticationOptions.HeaderKey, 
                 out var apiKey))
