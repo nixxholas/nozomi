@@ -47,6 +47,6 @@ namespace Nozomi.Base.Auth.Global
         /// <summary>
         /// Label for the specified API Key
         /// </summary>
-        public const string ApiKeyLabels = "api_key_labels";
+        public const string ApiKeyLabels = "api_key_labels-";
     }
 }

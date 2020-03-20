@@ -19,7 +19,7 @@ namespace Nozomi.Infra.Auth.Services.ApiKey
     {
         private readonly IApiKeyEvent _apiKeyEvent;
         private readonly IUserEvent _userEvent;
-        
+
         public ApiKeyService(ILogger<ApiKeyService> logger, AuthDbContext context,
             IApiKeyEvent apiKeyEvent, IUserEvent userEvent) : base(logger, context)
         {
@@ -27,15 +27,15 @@ namespace Nozomi.Infra.Auth.Services.ApiKey
             _userEvent = userEvent;
         }
 
-        public ApiKeyService(IHttpContextAccessor contextAccessor, ILogger<ApiKeyService> logger, 
-            AuthDbContext context, IApiKeyEvent apiKeyEvent, IUserEvent userEvent) 
+        public ApiKeyService(IHttpContextAccessor contextAccessor, ILogger<ApiKeyService> logger,
+            AuthDbContext context, IApiKeyEvent apiKeyEvent, IUserEvent userEvent)
             : base(contextAccessor, logger, context)
         {
             _apiKeyEvent = apiKeyEvent;
             _userEvent = userEvent;
         }
 
-        public void GenerateApiKey(string userId)
+        public void GenerateApiKey(string userId, string label = null)
         {
             var newKey = Randomizer.GenerateRandomCryptographicKey(64);
             while (_apiKeyEvent.Exists(newKey)) // Ensure truly random
@@ -46,17 +46,27 @@ namespace Nozomi.Infra.Auth.Services.ApiKey
             if (_userEvent.Exists(userId))
             {
                 _context.UserClaims.Add(new UserClaim
-                {
-                    ClaimType = NozomiJwtClaimTypes.ApiKeys,
-                    ClaimValue = newKey,
-                    UserId = userId
-                });
+                    {
+                        ClaimType = NozomiJwtClaimTypes.ApiKeys,
+                        ClaimValue = newKey,
+                        UserId = userId
+                    });
+
+                if (!string.IsNullOrEmpty(label)) // Add label if any
+                    _context.UserClaims.Add(
+                        new UserClaim
+                        {
+                            ClaimType = string.Concat(NozomiJwtClaimTypes.ApiKeyLabels, newKey),
+                            ClaimValue = label,
+                            UserId = userId
+                        });
+                
                 _context.SaveChanges();
                 _logger.LogInformation($"{_serviceName} GenerateApiKey: Api key {newKey} generated for user" +
                                        $" {userId}");
                 return;
             }
-            
+
             _logger.LogWarning($"{_serviceName} GenerateApiKey: Invalid user {userId}.");
             throw new KeyNotFoundException("User not found.");
         }
@@ -74,19 +84,19 @@ namespace Nozomi.Infra.Auth.Services.ApiKey
                     // If we're filtering via userId and if the userId doesn't match
                     if (!string.IsNullOrEmpty(userId) && !revokingKey.UserId.Equals(userId))
                         throw new InvalidConstraintException("Invalid user for this api key.");
-                    
+
                     // Else all is good, revoke it
                     _context.UserClaims.Remove(revokingKey);
                     _context.SaveChanges();
-                    
+
                     _logger.LogInformation($"{_serviceName} RevokeApiKey: Api key {apiKey} revoked " +
                                            "successfully.");
                     return;
                 }
-                
+
                 _logger.LogWarning($"{_serviceName} RevokeApiKey: Api key {apiKey} is not found..");
             }
-            
+
             throw new InvalidOperationException("Invalid api key.");
         }
     }
