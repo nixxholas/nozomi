@@ -61,9 +61,33 @@ namespace Nozomi.Api.Controllers.WebsocketCommandProperty
             return new InternalServerErrorObjectResult(AllInternalServerExample.ImpossibleInvalidUserResult);
         }
 
+        [Authorize]
+        [TokenBucket(Name = "WebsocketCommandProperty/AllByCommand", Weight = 3)]
+        [HttpGet]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ICollection<WebsocketCommandPropertyViewModel>))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(string))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(string))]
+        [SwaggerResponseExample((int)HttpStatusCode.OK, typeof(AllByCommandOkExample))]
+        [SwaggerResponseExample((int)HttpStatusCode.BadRequest, typeof(AllByCommandBadRequestExample))]
+        [SwaggerResponseExample((int)HttpStatusCode.InternalServerError, typeof(AllByCommandInternalServerExample))]
         public IActionResult AllByCommand(string commandGuid, int index = 0)
         {
-            throw new System.NotImplementedException();
+            if (index >= 0) return BadRequest(AllByCommandBadRequestExample.Result);
+            
+            if (HttpContext.Request.Headers.TryGetValue(ApiKeyAuthenticationOptions.HeaderKey, 
+                out var apiKey))
+            {
+                var userId = _nozomiRedisEvent.GetValue(apiKey, RedisDatabases.ApiKeyUser);
+                
+                if (!Guid.TryParse(userId, out var parsedGuid)) return new InternalServerErrorObjectResult(
+                    AllByCommandInternalServerExample.InvalidUserResult);
+                    
+                return Ok(_websocketCommandPropertyEvent.ViewAll(index, commandGuid, userId));
+            }
+
+            _logger.LogWarning($"{_controllerName} All: User managed to bypass the token bucket " +
+                               "attribute without an API key!");
+            return new InternalServerErrorObjectResult(AllByCommandInternalServerExample.ImpossibleInvalidUserResult);
         }
     }
 }
