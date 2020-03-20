@@ -220,6 +220,8 @@ namespace Nozomi.Api
             services.AddTransient<INozomiRedisEvent, NozomiRedisEvent>();
             services.AddTransient<IRequestEvent, RequestEvent>();
             services.AddTransient<IRequestPropertyEvent, RequestPropertyEvent>();
+            services.AddTransient<IWebsocketCommandEvent, WebsocketCommandEvent>();
+            services.AddTransient<IWebsocketCommandPropertyEvent, WebsocketCommandPropertyEvent>();
 
             services.AddTransient<IApiKeyEventsService, ApiKeyEventsService>();
         }
