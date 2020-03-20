@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Api.Controllers.AnalysedHistoricItem.Examples;
+using Nozomi.Data.ViewModels.AnalysedHistoricItem;
 using Nozomi.Data.ViewModels.Component;
 using Nozomi.Infra.Api.Limiter.Attributes;
 using Nozomi.Infra.Api.Limiter.Events.Interfaces;
@@ -34,7 +35,7 @@ namespace Nozomi.Api.Controllers.AnalysedHistoricItem
         [Authorize]
         [TokenBucket(Name = "AnalysedHistoricItem/All", Weight = 5)]
         [HttpGet("{acGuid}")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ICollection<ComponentViewModel>))]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ICollection<AnalysedHistoricItemViewModel>))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(string))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(string))]
         [SwaggerResponseExample((int)HttpStatusCode.OK, typeof(AllOkExample))]
