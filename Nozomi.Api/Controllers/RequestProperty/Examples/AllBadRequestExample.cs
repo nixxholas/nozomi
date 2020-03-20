@@ -1,8 +1,8 @@
 using Swashbuckle.AspNetCore.Filters;
 
-namespace Nozomi.Api.Controllers.RequestProperties.Examples
+namespace Nozomi.Api.Controllers.RequestProperty.Examples
 {
-    public class AllByRequestBadRequestExample : IExamplesProvider<string>
+    public class AllBadRequestExample : IExamplesProvider<string>
     {
         public const string InvalidIndexResult = "Invalid index.";
 

@@ -1,11 +1,10 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using Nozomi.Data.Models.Web;
 using Nozomi.Data.ViewModels.RequestProperty;
 using Swashbuckle.AspNetCore.Filters;
 
-namespace Nozomi.Api.Controllers.RequestProperties.Examples
+namespace Nozomi.Api.Controllers.RequestProperty.Examples
 {
     public class AllByRequestOkExample : IExamplesProvider<ICollection<RequestPropertyViewModel>>
     {

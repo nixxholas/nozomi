@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace Nozomi.Api.Controllers.RequestProperties
+namespace Nozomi.Api.Controllers.RequestProperty
 {
     public interface IRequestPropertyController
     {

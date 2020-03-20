@@ -4,7 +4,7 @@ using System.Net;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Nozomi.Api.Controllers.RequestProperties.Examples;
+using Nozomi.Api.Controllers.RequestProperty.Examples;
 using Nozomi.Data.ViewModels.RequestProperty;
 using Nozomi.Infra.Api.Limiter.Attributes;
 using Nozomi.Infra.Api.Limiter.Events.Interfaces;
@@ -16,7 +16,7 @@ using Nozomi.Service.Events.Interfaces;
 using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.Filters;
 
-namespace Nozomi.Api.Controllers.RequestProperties
+namespace Nozomi.Api.Controllers.RequestProperty
 {
     public class RequestPropertyController : BaseApiController<RequestPropertyController>, IRequestPropertyController
     {
