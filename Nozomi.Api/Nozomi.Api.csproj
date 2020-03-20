@@ -4,6 +4,14 @@
         <TargetFramework>netcoreapp3.1</TargetFramework>
     </PropertyGroup>
 
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+      <DocumentationFile>bin\Debug\Nozomi.Api.xml</DocumentationFile>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+      <DocumentationFile>bin\Release\Nozomi.Api.xml</DocumentationFile>
+    </PropertyGroup>
+
     <ItemGroup>
       <ProjectReference Include="..\Nozomi.Infra.Api.Limiter\Nozomi.Infra.Api.Limiter.csproj" />
       <ProjectReference Include="..\Nozomi.Infra.Service\Nozomi.Infra.Service.csproj" />
