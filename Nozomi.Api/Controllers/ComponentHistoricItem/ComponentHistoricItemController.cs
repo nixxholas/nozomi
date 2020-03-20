@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Net;
 using Microsoft.AspNetCore.Authorization;
@@ -48,6 +49,8 @@ namespace Nozomi.Api.Controllers.ComponentHistoricItem
                 out var apiKey))
             {
                 var userId = _nozomiRedisEvent.GetValue(apiKey, RedisDatabases.ApiKeyUser);
+
+                if (!Guid.TryParse(userId, out var parsedGuid)) return BadRequest();
                 
                 return Ok(_componentHistoricItemEvent.ViewAll(index, componentGuid, userId));
             }
