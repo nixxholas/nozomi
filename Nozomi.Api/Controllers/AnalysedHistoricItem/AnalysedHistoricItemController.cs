@@ -32,6 +32,12 @@ namespace Nozomi.Api.Controllers.AnalysedHistoricItem
             _nozomiRedisEvent = nozomiRedisEvent;
         }
 
+        /// <summary>
+        /// Allows the client to retrieve all historical values of the mentioned analysed component.
+        /// </summary>
+        /// <param name="acGuid">The time this value was generated.</param>
+        /// <param name="index">The value of the analysed component at the said timestamp.</param>
+        /// <returns>Returns the collection of historic values of the aforementioned Analysed component.</returns>
         [Authorize]
         [TokenBucket(Name = "AnalysedHistoricItem/All", Weight = 5)]
         [HttpGet("{acGuid}")]
