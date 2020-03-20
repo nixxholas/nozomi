@@ -46,8 +46,8 @@ namespace Nozomi.Auth.Controllers.ApiKey
         }
 
         [Authorize(AuthenticationSchemes = "Bearer")]
-        [HttpPost]
-        public async Task<IActionResult> Create()
+        [HttpPost("{label}")]
+        public async Task<IActionResult> Create(string label = null)
         {
             // Validate
             var user = await _userManager.FindByIdAsync(((ClaimsIdentity) User.Identity)
@@ -59,7 +59,7 @@ namespace Nozomi.Auth.Controllers.ApiKey
                 return BadRequest("Please reauthenticate again!");
             
             // Generate the API Key
-            _apiKeyService.GenerateApiKey(user.Id);
+            _apiKeyService.GenerateApiKey(user.Id, label);
             
             return Ok("API Key successfully created!"); // OK!
         }

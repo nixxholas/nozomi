@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Net;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Api.Controllers.AnalysedComponent.Examples;
@@ -30,6 +31,7 @@ namespace Nozomi.Api.Controllers.AnalysedComponent
             _nozomiRedisEvent = nozomiRedisEvent;
         }
 
+        [Authorize]
         [TokenBucket(Name = "AnalysedComponent/All", Weight = 5)]
         [HttpGet]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(IEnumerable<AnalysedComponentViewModel>))]
@@ -55,6 +57,7 @@ namespace Nozomi.Api.Controllers.AnalysedComponent
             return new InternalServerErrorObjectResult(AllInternalServerExample.Result);
         }
 
+        [Authorize]
         [TokenBucket(Name = "AnalysedComponent/AllByIdentifier", Weight = 7)]
         [HttpGet]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(IEnumerable<AnalysedComponentViewModel>))]
@@ -82,6 +85,7 @@ namespace Nozomi.Api.Controllers.AnalysedComponent
             return new InternalServerErrorObjectResult(AllInternalServerExample.Result);
         }
 
+        [Authorize]
         [TokenBucket(Name = "AnalysedComponent/Get", Weight = 7)]
         [HttpGet("{guid}")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(AnalysedComponentViewModel))]
