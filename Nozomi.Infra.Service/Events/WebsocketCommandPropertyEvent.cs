@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.Models.Web.Websocket;
 using Nozomi.Data.ViewModels.WebsocketCommandProperty;
+using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.Data;
 using Nozomi.Service.Events.Interfaces;
@@ -236,6 +237,30 @@ namespace Nozomi.Service.Events
             return command.Select(c => new WebsocketCommandPropertyViewModel(c.Guid.ToString(), 
                     c.CommandPropertyType, c.Key, c.Value, c.IsEnabled, c.WebsocketCommand.Guid.ToString()))
                 .SingleOrDefault();
+        }
+        
+        public IEnumerable<WebsocketCommandPropertyViewModel> ViewAll(int index = 0, string commandGuid = null, 
+            string userId = null)
+        {
+            if (index < 0) throw new IndexOutOfRangeException("Invalid index.");
+
+            var query = _context.WebsocketCommandProperties.AsNoTracking()
+                .Where(wcp => wcp.DeletedAt == null && wcp.IsEnabled);
+
+            if (!string.IsNullOrEmpty(commandGuid) && Guid.TryParse(commandGuid, out var parsedCommandGuid))
+                query = query.Include(wcp => wcp.WebsocketCommand)
+                    .Where(wcp => wcp.WebsocketCommand.Guid.Equals(parsedCommandGuid));
+
+            if (!string.IsNullOrEmpty(userId))
+                query = query.Where(wcp => wcp.CreatedById.Equals(userId)
+                                           || (wcp.WebsocketCommand != null 
+                                               && wcp.WebsocketCommand.CreatedById.Equals(userId)));
+            
+            return query
+                .Skip(index * NozomiServiceConstants.WebsocketCommandPropertyTakeoutLimit)
+                .Take(NozomiServiceConstants.WebsocketCommandPropertyTakeoutLimit)
+                .Select(p => new WebsocketCommandPropertyViewModel(p.Id, 
+                p.CommandPropertyType, p.Key, p.Value, p.IsEnabled, p.WebsocketCommand.Guid.ToString()));
         }
 
         public IEnumerable<WebsocketCommandPropertyViewModel> ViewAllByCommand(long commandId, 
