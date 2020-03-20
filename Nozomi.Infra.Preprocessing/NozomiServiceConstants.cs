@@ -64,5 +64,7 @@ namespace Nozomi.Preprocessing
         public const int RcdHistoricItemTakeoutLimit = 1000;
 
         public const int WebsocketCommandTakeoutLimit = 100;
+
+        public const int WebsocketCommandPropertyTakeoutLimit = 1000;
     }
 }
