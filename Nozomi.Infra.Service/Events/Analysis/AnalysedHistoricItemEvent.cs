@@ -85,6 +85,7 @@ namespace Nozomi.Service.Events.Analysis
                 .Where(ahi => ahi.DeletedAt == null && ahi.IsEnabled)
                 .Include(ahi => ahi.AnalysedComponent)
                 .Where(ahi => ahi.AnalysedComponent.Guid.Equals(guid))
+                .OrderByDescending(ahi => ahi.HistoricDateTime)
                 .Skip(page * itemsPerPage)
                 .Take(itemsPerPage)
                 .Select(ahi => new AnalysedHistoricItemViewModel
