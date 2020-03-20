@@ -214,8 +214,12 @@ namespace Nozomi.Api
             services.AddSwaggerExamplesFromAssemblies(Assembly.GetEntryAssembly());
 
             services.AddTransient<IAnalysedComponentEvent, AnalysedComponentEvent>();
+            services.AddTransient<IAnalysedHistoricItemEvent, AnalysedHistoricItemEvent>();
+            services.AddTransient<IComponentEvent, ComponentEvent>();
+            services.AddTransient<IComponentHistoricItemEvent, ComponentHistoricItemEvent>();
             services.AddTransient<INozomiRedisEvent, NozomiRedisEvent>();
             services.AddTransient<IRequestEvent, RequestEvent>();
+            services.AddTransient<IRequestPropertyEvent, RequestPropertyEvent>();
 
             services.AddTransient<IApiKeyEventsService, ApiKeyEventsService>();
         }
