@@ -11,5 +11,7 @@ namespace Nozomi.Service.Events.Interfaces
         
         IEnumerable<RequestPropertyViewModel> GetByRequest(string requestGuid, string validatingUserId = null, 
             bool ensureNotDisabledOrDeleted = true);
+
+        IEnumerable<RequestPropertyViewModel> ViewByRequest(string requestGuid, int index = 0, string userId = null);
     }
 }

@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.Models.Web;
 using Nozomi.Data.ViewModels.RequestProperty;
+using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.Data;
 using Nozomi.Service.Events.Interfaces;
@@ -74,6 +75,28 @@ namespace Nozomi.Service.Events
             }
             
             throw new NullReferenceException($"{_eventName} GetByRequest: Invalid Request GUID.");
+        }
+
+        public IEnumerable<RequestPropertyViewModel> ViewByRequest(string requestGuid, int index = 0, string userId = null)
+        {
+            if (Guid.TryParse(requestGuid, out var parsedGuid) && index >= 0)
+            {
+                var query = _context.RequestProperties.AsNoTracking()
+                    .Include(rp => rp.Request)
+                    .Where(rp => rp.Request.Guid.Equals(parsedGuid));
+
+                if (!string.IsNullOrEmpty(userId))
+                    query = query.Where(rp => rp.CreatedById.Equals(userId) ||
+                                              rp.Request.CreatedById.Equals(userId));
+
+                return query
+                    .Skip(index * NozomiServiceConstants.RequestPropertyTakeoutLimit)
+                    .Take(NozomiServiceConstants.RequestPropertyTakeoutLimit)
+                    .Select(rp => new RequestPropertyViewModel(rp.Guid, rp.RequestPropertyType, 
+                    rp.Key, rp.Value));
+            }
+            
+            throw new ArgumentException("Invalid parameter/s.");
         }
     }
 }
