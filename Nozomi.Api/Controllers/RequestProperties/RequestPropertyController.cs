@@ -41,7 +41,7 @@ namespace Nozomi.Api.Controllers.RequestProperties
         [SwaggerResponseExample((int)HttpStatusCode.InternalServerError, typeof(AllInternalServerExample))]
         public IActionResult All(int index = 0)
         {
-            if (index >= 0) return BadRequest(AllByRequestBadRequestExample.InvalidIndexResult);
+            if (index >= 0) return BadRequest(AllBadRequestExample.InvalidIndexResult);
             
             if (HttpContext.Request.Headers.TryGetValue(ApiKeyAuthenticationOptions.HeaderKey, 
                 out var apiKey))
@@ -49,14 +49,14 @@ namespace Nozomi.Api.Controllers.RequestProperties
                 var userId = _nozomiRedisEvent.GetValue(apiKey, RedisDatabases.ApiKeyUser);
                 
                 if (!Guid.TryParse(userId, out var parsedGuid)) return new InternalServerErrorObjectResult(
-                    AllByRequestInternalServerExample.InvalidUserResult);
+                    AllInternalServerExample.InvalidUserResult);
                     
                 return Ok(_requestPropertyEvent.ViewAll(index, userId));
             }
 
             _logger.LogWarning($"{_controllerName} All: User managed to bypass the token bucket " +
                                "attribute without an API key!");
-            return new InternalServerErrorObjectResult(AllByRequestInternalServerExample.ImpossibleInvalidUserResult);
+            return new InternalServerErrorObjectResult(AllInternalServerExample.ImpossibleInvalidUserResult);
         }
 
         [Authorize]
