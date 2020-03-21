@@ -4,11 +4,13 @@ using IdentityModel;
 using IdentityServer4;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Nozomi.Base.Auth.Global;
+using Nozomi.Base.Auth.Models;
 
 namespace Nozomi.Web2.Extensions
 {
@@ -17,7 +19,7 @@ namespace Nozomi.Web2.Extensions
         public static void ConfigureNozomiAuth(this IServiceCollection services)
         {
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
-            var authority = Startup.Environment.IsProduction() ? "https://auth.nozomi.one" : "https://localhost:6001/";
+            var authority = Startup.Environment.IsProduction() ? "https://auth.nozomi.one" : "https://localhost:6001";
             // IdentityModelEventSource.ShowPII =
             //     !Startup.Environment.IsProduction(); //To show detail of error and see the problem
 

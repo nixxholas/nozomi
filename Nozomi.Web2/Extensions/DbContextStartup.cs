@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Nozomi.Repo.Auth.Data;
 using Nozomi.Repo.Data;
 using VaultSharp;
 using VaultSharp.Core;
@@ -23,6 +24,8 @@ namespace Nozomi.Web2.Extensions
 
                 // Postgres DB Setup
                 var str = Startup.Configuration.GetConnectionString("Local:" + @Environment.MachineName);
+                var authStr = Startup.Configuration.GetConnectionString("LocalAuth:" +
+                                                                        @Environment.MachineName);
 
                 services
                     // This causes memory size errors
@@ -31,6 +34,14 @@ namespace Nozomi.Web2.Extensions
                     .AddDbContextPool<NozomiDbContext>(options =>
                     {
                         options.UseNpgsql(str);
+                        options.EnableSensitiveDataLogging();
+                        options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+                    });
+
+                services
+                    .AddDbContextPool<AuthDbContext>(options =>
+                    {
+                        options.UseNpgsql(authStr);
                         options.EnableSensitiveDataLogging();
                         options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
                     });
@@ -61,6 +72,17 @@ namespace Nozomi.Web2.Extensions
 //                            });
                             }
                         );
+                        options.EnableSensitiveDataLogging(false);
+                        options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+                    });
+
+                var authDb = (string) nozomiVault["auth"];
+                if (string.IsNullOrEmpty(mainDb))
+                    throw new SystemException("Invalid auth database configuration");
+                services
+                    .AddDbContextPool<AuthDbContext>(options =>
+                    {
+                        options.UseNpgsql(authDb);
                         options.EnableSensitiveDataLogging(false);
                         options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
                     });

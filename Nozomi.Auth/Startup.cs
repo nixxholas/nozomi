@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Nozomi.Base.Auth.Models;
@@ -86,6 +87,7 @@ namespace Nozomi.Auth
                     options.PublishableKey = Configuration["Stripe:PublishableKey"];
                     options.SecretKey = Configuration["Stripe:SecretKey"];
                 });
+                IdentityModelEventSource.ShowPII = true;
             }
             else
             {
@@ -252,7 +254,7 @@ namespace Nozomi.Auth
                 var vaultClient = new VaultClient(vaultClientSettings);
 
                 var nozomiVault =
-                    vaultClient.V1.Secrets.Cubbyhole.ReadSecretAsync("nozomi")
+                    vaultClient.V1.Secrets.Cubbyhole.ReadSecretAsync("auth")
                         .GetAwaiter()
                         .GetResult().Data;
 

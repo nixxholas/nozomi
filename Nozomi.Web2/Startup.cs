@@ -116,18 +116,50 @@ namespace Nozomi.Web2
                     opt.MaxAge = TimeSpan.FromDays(60);
                 });
 
+                // Trello Options DI
                 services.Configure<TrelloOptions>(option =>
                 {
                     option.ApiKey = (string) nozomiVault["Trello:ApiKey"];
                     option.AuthToken = (string) nozomiVault["Trello:AuthToken"];
                 });
+                
+                // Stripe Options DI
+                var stripeDefaultPlanId = (string) nozomiVault["StripeDefaultPlanId"];
+                var stripeProductId = (string) nozomiVault["StripeProductId"];
+                var stripePublishableKey = (string) nozomiVault["StripePublishableKey"];
+                var stripeSecretKey = (string) nozomiVault["StripeSecretKey"];
+                services.Configure<StripeOptions>(options =>
+                {
+                    if (string.IsNullOrEmpty(stripeDefaultPlanId))
+                        throw new KeyNotFoundException("StripeOptions: Invalid Stripe Default Plan Id!");
+                    options.DefaultPlanId = stripeDefaultPlanId;
+                    if (string.IsNullOrEmpty(stripeProductId))
+                        throw new KeyNotFoundException("StripeOptions: Invalid Stripe target Product Id!");
+                    options.ProductId = stripeProductId;
+                    if (string.IsNullOrEmpty(stripePublishableKey))
+                        throw new KeyNotFoundException("StripeOptions: Invalid Stripe Publishable Key!");
+                    options.PublishableKey = stripePublishableKey;
+                    if (string.IsNullOrEmpty(stripeSecretKey))
+                        throw new KeyNotFoundException("StripeOptions: Invalid Stripe Secret!");
+                    options.SecretKey = stripeSecretKey;
+                });
             }
             else
             {
+                // Trello Options Local DI
                 services.Configure<TrelloOptions>(option =>
                 {
                     option.ApiKey = Configuration["TrelloToken:ApiKey"];
                     option.AuthToken = Configuration["TrelloToken:AuthToken"];
+                });
+                
+                // Stripe Options Local DI
+                services.Configure<StripeOptions>(options =>
+                {
+                    options.DefaultPlanId = Configuration["Stripe:DefaultPlanId"];
+                    options.ProductId = Configuration["Stripe:ProductId"];
+                    options.PublishableKey = Configuration["Stripe:PublishableKey"];
+                    options.SecretKey = Configuration["Stripe:SecretKey"];
                 });
             }
 
