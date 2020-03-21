@@ -45,7 +45,8 @@ namespace Nozomi.Preprocessing.Filters
             {
                 var json = new JsonErrorResponse
                 {
-                    Messages = new[] { "An error occured .Try it again." }
+                    Message = context.Exception != null && !string.IsNullOrEmpty(context.Exception.Message) 
+                        ? context.Exception.Message : "An error occured. Try it again."
                 };
 
                 if (env.IsDevelopment())
@@ -63,7 +64,7 @@ namespace Nozomi.Preprocessing.Filters
 
         private class JsonErrorResponse
         {
-            public string[] Messages { get; set; }
+            public string Message { get; set; }
 
             public object DeveloperMessage { get; set; }
         }

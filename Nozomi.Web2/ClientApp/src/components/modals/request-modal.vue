@@ -196,7 +196,7 @@
                             //console.log(error);
                             Notification.open({
                                 duration: 2500,
-                                message: `Please make sure your entries are correctly filled!`,
+                                message: error.response.data.message,
                                 position: 'is-bottom-right',
                                 type: 'is-warning',
                                 hasIcon: true
@@ -240,10 +240,9 @@
                             }
                         })
                         .catch(function (error) {
-                            //console.log(error);
                             Notification.open({
                                 duration: 2500,
-                                message: `Please make sure your entry is correctly filled!`,
+                                message: error.response.data.message,
                                 position: 'is-bottom-right',
                                 type: 'is-warning',
                                 hasIcon: true

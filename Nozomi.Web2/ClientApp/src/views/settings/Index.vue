@@ -63,7 +63,7 @@
                         <CardsComponent :raw-id="model.userClaims.stripe_cust_id" @created="updateUser" />
                     </b-tab-item>
                     <b-tab-item label="API Keys" icon="key">
-                        
+                        <ApiKeyDisplayComponent />
                     </b-tab-item>
                 </b-tabs>
             </div>
@@ -76,6 +76,7 @@
     import NozomiAuthService from "@/services/NozomiAuthService";
     import PaymentService from "@/services/auth/PaymentService";
     import CardsComponent from '@/components/stripe/cards';
+    import ApiKeyDisplayComponent from './components/ApiKeyDisplay';
     import {NotificationProgrammatic as Notification} from 'buefy';
     import Plans from "@/components/stripe/plans";
 
@@ -83,7 +84,8 @@
         name: 'settings-index',
         components: {
             Plans,
-            CardsComponent
+            CardsComponent,
+            ApiKeyDisplayComponent
         },
         computed: {
             ...mapGetters('oidcStore', [

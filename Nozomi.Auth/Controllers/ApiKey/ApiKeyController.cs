@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Base.Auth.Models;
+using Nozomi.Base.Auth.ViewModels.ApiKey;
 using Nozomi.Infra.Auth.Events.ApiKey;
 using Nozomi.Infra.Auth.Services.ApiKey;
 
@@ -65,8 +66,8 @@ namespace Nozomi.Auth.Controllers.ApiKey
         }
 
         [Authorize(AuthenticationSchemes = "Bearer")]
-        [HttpDelete("{apiKey}")]
-        public async Task<IActionResult> Revoke(string apiKey)
+        [HttpDelete]
+        public async Task<IActionResult> Revoke([FromBody] RevokeInputViewModel vm)
         {
             // Validate
             var user = await _userManager.FindByIdAsync(((ClaimsIdentity) User.Identity)
@@ -78,7 +79,7 @@ namespace Nozomi.Auth.Controllers.ApiKey
                 return BadRequest("Please reauthenticate again!");
             
             // Generate the API Key
-            _apiKeyService.RevokeApiKey(apiKey, user.Id);
+            _apiKeyService.RevokeApiKey(vm.ApiKey, user.Id);
             
             return Ok("API Key successfully revoked."); // OK!
         }

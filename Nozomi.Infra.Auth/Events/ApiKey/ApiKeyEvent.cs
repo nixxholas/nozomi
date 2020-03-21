@@ -19,21 +19,22 @@ namespace Nozomi.Infra.Auth.Events.ApiKey
         {
             return _context.UserClaims.AsNoTracking()
                 .Any(uc => uc.ClaimType.Equals(NozomiJwtClaimTypes.ApiKeys)
-                             && uc.ClaimValue.SequenceEqual(apiKey));
+                             && uc.ClaimValue.Equals(apiKey));
         }
 
         public IEnumerable<ApiKeyViewModel> ViewAll(string userId)
         {
             if (!string.IsNullOrEmpty(userId))
             {
+                // TODO: Optimize for Nicholas, .AsEnumerable() causes error, temp fix .ToList()
                 var query = _context.UserClaims.AsNoTracking()
                     .Where(uc => (uc.ClaimType.Equals(NozomiJwtClaimTypes.ApiKeys) 
                                   || uc.ClaimType.StartsWith(NozomiJwtClaimTypes.ApiKeyLabels)) 
-                                 && uc.UserId.Equals(userId));
+                                 && uc.UserId.Equals(userId))
+                    .ToList();
 
                 var result = new List<ApiKeyViewModel>();
-                foreach (var apiKey in query.Where(q =>
-                    q.ClaimType.Equals(NozomiJwtClaimTypes.ApiKeys)))
+                foreach (var apiKey in query)
                 {
                     var label = query.SingleOrDefault(l => l.ClaimType
                         .Equals(string.Concat(NozomiJwtClaimTypes.ApiKeyLabels, apiKey.ClaimValue)));
