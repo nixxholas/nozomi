@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Nozomi.Base.BCL.Helpers.Enumerable;
 using Nozomi.Data.AreaModels.v1.Requests;
 using Nozomi.Data.Models.Web;
 using Nozomi.Data.ViewModels.Component;
@@ -41,6 +42,19 @@ namespace Nozomi.Service.Events
             query = query.Skip(index * 100).Take(100);
 
             return query;
+        }
+
+        public long Count(string userId)
+        {
+            if (!string.IsNullOrEmpty(userId))
+            {
+                return _context.Requests.AsNoTracking()
+                    .Where(r => r.CreatedById.Equals(userId)) // Ensure the user owns it
+                    .GroupBy(r => r.DataPath) // And that the datapath is unique so that we aren't 'cheating' $
+                    .LongCount();
+            }
+
+            throw new ArgumentException("Invalid user ID.");
         }
 
         public bool Exists(long requestId, bool ignoreDeletedOrDisabled = false, string userId = null)
