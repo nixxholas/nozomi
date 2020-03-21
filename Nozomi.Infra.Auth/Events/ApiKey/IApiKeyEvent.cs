@@ -1,4 +1,5 @@
-using System.Linq;
+using System.Collections.Generic;
+using Nozomi.Data.ViewModels.ApiKey;
 
 namespace Nozomi.Infra.Auth.Events.ApiKey
 {
@@ -6,6 +7,6 @@ namespace Nozomi.Infra.Auth.Events.ApiKey
     {
         bool Exists(string apiKey);
 
-        IQueryable<string> ViewAll(string userId);
+        IEnumerable<ApiKeyViewModel> ViewAll(string userId);
     }
 }

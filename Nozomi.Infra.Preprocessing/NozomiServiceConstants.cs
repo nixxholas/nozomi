@@ -58,7 +58,13 @@ namespace Nozomi.Preprocessing
         public const int CurrencyPropertyTakeoutLimit = 100;
         
         public const int RequestComponentTakeoutLimit = 100;
+
+        public const int RequestPropertyTakeoutLimit = 100;
         
         public const int RcdHistoricItemTakeoutLimit = 1000;
+
+        public const int WebsocketCommandTakeoutLimit = 100;
+
+        public const int WebsocketCommandPropertyTakeoutLimit = 1000;
     }
 }

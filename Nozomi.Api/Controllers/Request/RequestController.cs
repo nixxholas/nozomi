@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Net;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Api.Controllers.Request.Examples;
@@ -37,6 +38,7 @@ namespace Nozomi.Api.Controllers.Request
         /// <response code="200">All requests obtained</response>
         /// <response code="400">Your request is either unauthorised or has exceeded the index limits</response>
         /// <response code="500">Not sure how you got here, but no.</response>
+        [Authorize]
         [TokenBucket(Name = "Request/All", Weight = 5)]
         [HttpGet]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(IEnumerable<RequestViewModel>))]
@@ -53,7 +55,10 @@ namespace Nozomi.Api.Controllers.Request
                 out var apiKey))
             {
                 var userId = _nozomiRedisEvent.GetValue(apiKey, RedisDatabases.ApiKeyUser);
-                    
+                
+                if (!Guid.TryParse(userId, out var parsedGuid)) return new InternalServerErrorObjectResult(
+                    AllInternalServerExample.InvalidUserResult);
+                
                 return Ok(_requestEvent.ViewAll(index, userId));
             }
 
@@ -70,6 +75,7 @@ namespace Nozomi.Api.Controllers.Request
         /// <response code="200">Request obtained</response>
         /// <response code="400">Can't really find the request you're trying to obtain...</response>
         /// <response code="500">Not sure how you got here, but no.</response>
+        [Authorize]
         [TokenBucket(Name = "Request/Get", Weight = 1)]
         [HttpGet("{guid}")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(RequestViewModel))]
