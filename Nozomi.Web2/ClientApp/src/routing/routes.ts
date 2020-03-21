@@ -1,5 +1,5 @@
 // @ts-ignore
-import HomePage from '../views/Home';
+import HomePage from '../views/home';
 // @ts-ignore
 import About from '../views/About';
 // @ts-ignore
