@@ -19,7 +19,7 @@ namespace Nozomi.Infra.Auth.Events.ApiKey
         {
             return _context.UserClaims.AsNoTracking()
                 .Any(uc => uc.ClaimType.Equals(NozomiJwtClaimTypes.ApiKeys)
-                             && uc.ClaimValue.SequenceEqual(apiKey));
+                             && uc.ClaimValue.Equals(apiKey));
         }
 
         public IEnumerable<ApiKeyViewModel> ViewAll(string userId)
