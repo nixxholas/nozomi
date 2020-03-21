@@ -16,12 +16,9 @@ namespace Nozomi.Infra.Auth.Events.UserEvent
 {
     public class UserEvent : BaseEvent<UserEvent, AuthDbContext>, IUserEvent
     {
-        private readonly UserManager<Base.Auth.Models.User> _userManager;
-        public UserEvent(ILogger<UserEvent> logger, UserManager<Base.Auth.Models.User> userManager,
-            AuthDbContext authDbContext) 
+        public UserEvent(ILogger<UserEvent> logger, AuthDbContext authDbContext) 
             : base(logger, authDbContext)
         {
-            _userManager = userManager;
         }
 
         public bool Exists(string userId)
@@ -118,21 +115,19 @@ namespace Nozomi.Infra.Auth.Events.UserEvent
             if (string.IsNullOrEmpty(id))
                 throw new NullReferenceException($"{_eventName} GetUserByCustomerId: Customer Id is null.");
 
-            var customerIdClaim = new UserClaim
-            {
-                ClaimType = NozomiJwtClaimTypes.StripeCustomerId,
-                ClaimValue = id
-            };
+            var users = _context.UserClaims.AsNoTracking()
+                .Include(uc => uc.User)
+                .Where(uc => uc.ClaimType.Equals(NozomiJwtClaimTypes.StripeCustomerId)
+                             && uc.ClaimValue.Equals(id))
+                .Select(uc => uc.User);
 
-            var users = await _userManager.GetUsersForClaimAsync(customerIdClaim.ToClaim());
-
-            if (users.Count > 1)
+            if (users.LongCount() > 1)
                 throw new InvalidOperationException($"{_eventName} GetUserByCustomerId: More than one user is" +
                                                     $"binded to the same stripe customer id.");
             else if (!users.Any())
                 throw new InvalidOperationException($"{_eventName} GetUserByCustomerId: No user found.");
 
-            return users.First();
+            return users.FirstOrDefault();
         }
 
         private UserClaim GetUserClaim(string userId, string claimType)

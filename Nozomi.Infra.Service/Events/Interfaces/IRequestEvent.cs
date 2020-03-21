@@ -13,6 +13,8 @@ namespace Nozomi.Service.Events.Interfaces
     public interface IRequestEvent
     {
         IEnumerable<Request> All(int index = 0, string createdBy = null);
+
+        long Count(string userId);
         
         bool Exists(long requestId, bool ignoreDeletedOrDisabled = false, string userId = null);
 

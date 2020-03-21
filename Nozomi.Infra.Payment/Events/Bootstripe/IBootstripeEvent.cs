@@ -11,6 +11,8 @@ namespace Nozomi.Infra.Payment.Events.Bootstripe
 
         Task<string> GetUserCurrentPlanIdAsync(string userId);
         
+        Task<string> GetPlanMetadataValue(string planId, string metadataKey);
+        
         Task<IEnumerable<Plan>> GetPlans(bool activeOnly = true);
 
         Plan GetPlan(string planId);

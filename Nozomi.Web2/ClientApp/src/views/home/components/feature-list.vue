@@ -67,7 +67,7 @@
                         subtitle: `
                             Gathered some social and financial data? <br/>
                             Mix them to compute and discover new
-                            <strong class="has-text-primary is-underlined">possibilities</strong>
+                            <strong class="has-text-primary is-underlined">possibilities</strong>.
                         `,
                         callToAction: null,
                     },

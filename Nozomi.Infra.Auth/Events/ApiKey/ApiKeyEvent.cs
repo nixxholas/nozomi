@@ -39,14 +39,13 @@ namespace Nozomi.Infra.Auth.Events.ApiKey
                     var label = query.SingleOrDefault(l => l.ClaimType
                         .Equals(string.Concat(NozomiJwtClaimTypes.ApiKeyLabels, apiKey.ClaimValue)));
 
-                    if (!apiKey.ClaimType.StartsWith(NozomiJwtClaimTypes.ApiKeyLabels))
+                    var threeQuarterStringCount = apiKey.ClaimValue.Length * 0.75;
+                    result.Add(new ApiKeyViewModel
                     {
-                        result.Add(new ApiKeyViewModel
-                        {
-                            Label = label == null ? string.Empty : label.ClaimValue,
-                            ApiKeyMasked = apiKey.ClaimValue // TODO: MASK
-                        });   
-                    }
+                        Label = label == null ? string.Empty : label.ClaimValue,
+                        ApiKeyMasked = string.Concat("".PadLeft(apiKey.ClaimValue.Length, '*'), 
+                            apiKey.ClaimValue.Substring(apiKey.ClaimValue.Length - (int)threeQuarterStringCount))
+                    });
                 }
 
                 return result;
