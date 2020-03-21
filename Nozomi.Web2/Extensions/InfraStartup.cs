@@ -1,6 +1,8 @@
 using Microsoft.Extensions.DependencyInjection;
+using Nozomi.Infra.Auth.Events.UserEvent;
 using Nozomi.Infra.Blockchain.Auth.Events;
 using Nozomi.Infra.Blockchain.Auth.Events.Interfaces;
+using Nozomi.Infra.Payment.Events.Bootstripe;
 using Nozomi.Preprocessing.Events;
 using Nozomi.Preprocessing.Events.Interfaces;
 using Nozomi.Service.Events;
@@ -28,6 +30,7 @@ namespace Nozomi.Web2.Extensions
             services.AddTransient<IAnalysedComponentEvent, AnalysedComponentEvent>();
             services.AddTransient<IAnalysedComponentTypeEvent, AnalysedComponentTypeEvent>();
             services.AddTransient<IAnalysedHistoricItemEvent, AnalysedHistoricItemEvent>();
+            services.AddTransient<IBootstripeEvent, BootstripeEvent>();
             services.AddTransient<IComponentEvent, ComponentEvent>();
             services.AddTransient<IComponentTypeEvent, ComponentTypeEvent>();
             services.AddTransient<ICurrencyEvent, CurrencyEvent>();
@@ -44,6 +47,7 @@ namespace Nozomi.Web2.Extensions
             services.AddTransient<IWebsocketCommandEvent, WebsocketCommandEvent>();
             services.AddTransient<IWebsocketCommandPropertyEvent, WebsocketCommandPropertyEvent>();
             services.AddTransient<ITrelloEvent, TrelloEvent>();
+            services.AddTransient<IUserEvent, UserEvent>();
 
             // Services
             services.AddScoped<IAnalysedComponentService, AnalysedComponentService>();
