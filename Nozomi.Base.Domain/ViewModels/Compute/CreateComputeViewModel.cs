@@ -11,7 +11,7 @@ namespace Nozomi.Data.ViewModels.Compute
         
         public bool IsValid()
         {
-            var validator = new CreateComputeViewModelValidator();();
+            var validator = new CreateComputeViewModelValidator();
             return validator.Validate(this).IsValid;
         }
         
