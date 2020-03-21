@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Nozomi.Base.Auth.ViewModels.ApiKey;
 
 namespace Nozomi.Auth.Controllers.ApiKey
 {
@@ -9,6 +10,6 @@ namespace Nozomi.Auth.Controllers.ApiKey
 
         Task<IActionResult> Create(string label = null);
 
-        Task<IActionResult> Revoke(string apiKey);
+        Task<IActionResult> Revoke(RevokeInputViewModel apiKey);
     }
 }
