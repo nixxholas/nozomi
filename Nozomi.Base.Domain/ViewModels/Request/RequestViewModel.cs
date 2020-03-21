@@ -45,12 +45,24 @@ namespace Nozomi.Data.ViewModels.Request
             CurrencyTypeGuid = currencyTypeGuid;
         }
         
+        /// <summary>
+        /// The unique identifier of the request.
+        /// </summary>
         public Guid Guid { get; set; }
         
+        /// <summary>
+        /// Enabled?
+        /// </summary>
         public bool IsEnabled { get; set; }
         
+        /// <summary>
+        /// The components that are linked to this request.
+        /// </summary>
         public ICollection<ComponentViewModel> Components { get; set; }
         
+        /// <summary>
+        /// The request properties that are linked to this request.
+        /// </summary>
         public ICollection<RequestPropertyViewModel> Properties { get; set; }
     }
 }

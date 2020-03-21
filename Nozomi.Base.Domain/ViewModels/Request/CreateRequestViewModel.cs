@@ -6,27 +6,27 @@ namespace Nozomi.Data.ViewModels.Request
     public class CreateRequestViewModel
     {
         /// <summary>
-        /// Request Type. GET? PUT?
+        /// The protocol type of this request.
         /// </summary>
         public RequestType RequestType { get; set; }
 
         /// <summary>
-        /// JSON? XML?
+        /// The response type (or the payload type) of this request.
         /// </summary>
         public ResponseType ResponseType { get; set; }
 
         /// <summary>
-        /// URL to the endpoint
+        /// The URL to the endpoint
         /// </summary>
         public string DataPath { get; set; }
 
         /// <summary>
-        /// The delay between each poll.
+        /// The delay between each request, in milliseconds.
         /// </summary>
         public int Delay { get; set; }
 
         /// <summary>
-        /// The delay after a failed poll attempt
+        /// The delay after a failed request attempt, in milliseconds.
         /// </summary>
         public long FailureDelay { get; set; }
 
@@ -45,17 +45,17 @@ namespace Nozomi.Data.ViewModels.Request
         }
 
         /// <summary>
-        /// The unique abbreviation of a currency.
+        /// The unique slug identifier of the currency linked to this request.
         /// </summary>
         public string CurrencySlug { get; set; }
 
         /// <summary>
-        /// The distinct guid of the currency pair selected.
+        /// The unique GUID identifier of the currency pair linked to this request.
         /// </summary>
         public string CurrencyPairGuid { get; set; }
 
         /// <summary>
-        /// The Guid of the Currency Type selected.
+        /// The unique GUID identifier of the Currency Type linked to this request.
         /// </summary>
         public string CurrencyTypeGuid { get; set; }
 
