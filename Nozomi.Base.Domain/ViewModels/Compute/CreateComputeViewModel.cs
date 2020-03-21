@@ -21,7 +21,7 @@ namespace Nozomi.Data.ViewModels.Compute
             {
                 RuleFor(e => e.Key).NotNull();
                 RuleFor(e => e.Formula).NotNull().NotEmpty();
-                RuleFor(e => e.Delay).NotNull().NotEmpty();
+                RuleFor(e => e.Delay).GreaterThanOrEqualTo(0);
             }
         }
     }
