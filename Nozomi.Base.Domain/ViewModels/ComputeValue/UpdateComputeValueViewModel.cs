@@ -7,10 +7,6 @@ namespace Nozomi.Data.ViewModels.ComputeValue
     {
         public new bool? IsEnabled { get; set; }
 
-        public new Guid? ComputeGuid { get; set; }
-        
-        public new string Value { get; set; }
-
         protected class UpdateComputeValueViewModelValidator : AbstractValidator<UpdateComputeValueViewModel>
         {
             public UpdateComputeValueViewModelValidator()

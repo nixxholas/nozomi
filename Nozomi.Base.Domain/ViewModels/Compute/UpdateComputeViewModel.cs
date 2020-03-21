@@ -8,9 +8,6 @@ namespace Nozomi.Data.ViewModels.Compute
     public class UpdateComputeViewModel : ComputeViewModel
     {
         public new bool? IsEnabled { get; set; }
-        public new string Key { get; set; }
-        public new string Formula { get; set; }
-        public new int? Delay { get; set; }
 
         public new bool IsValid()
         {
