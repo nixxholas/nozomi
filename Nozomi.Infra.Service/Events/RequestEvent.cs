@@ -50,7 +50,8 @@ namespace Nozomi.Service.Events
             {
                 return _context.Requests.AsNoTracking()
                     .Where(r => r.CreatedById.Equals(userId)) // Ensure the user owns it
-                    .GroupBy(r => r.DataPath) // And that the datapath is unique so that we aren't 'cheating' $
+                    .Select(r => r.DataPath)
+                    .GroupBy(r => r)
                     .LongCount();
             }
 
