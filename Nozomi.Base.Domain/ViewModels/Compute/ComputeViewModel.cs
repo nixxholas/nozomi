@@ -21,8 +21,8 @@ namespace Nozomi.Data.ViewModels.Compute
         }
 
         public ComputeViewModel(Guid guid, string key, string formula, int delay, bool isEnabled,
-            ICollection<Models.Web.ComputeExpression> expressions, ICollection<SubCompute> childComputes,
-            ICollection<SubCompute> parentComputes, ICollection<Models.Web.ComputeValue> values)
+            ICollection<Models.Web.ComputeExpression> expressions, ICollection<Models.Web.SubCompute> childComputes,
+            ICollection<Models.Web.SubCompute> parentComputes, ICollection<Models.Web.ComputeValue> values)
         {
             Guid = guid;
             Key = key;
@@ -43,10 +43,10 @@ namespace Nozomi.Data.ViewModels.Compute
         
         public ICollection<Models.Web.ComputeExpression> Expressions { get; set; }
         
-        public ICollection<SubCompute> ChildComputes { get; set; }
+        public ICollection<Models.Web.SubCompute> ChildComputes { get; set; }
         
 
-        public ICollection<SubCompute> ParentComputes { get; set; }
+        public ICollection<Models.Web.SubCompute> ParentComputes { get; set; }
         
         public ICollection<Models.Web.ComputeValue> Values { get; set; }
     }
