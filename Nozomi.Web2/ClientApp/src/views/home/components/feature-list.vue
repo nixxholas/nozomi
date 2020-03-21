@@ -77,7 +77,20 @@
                         title: "Aggregate anywhere.",
                         subtitle: `
                             Values can be cross referenced to allow you to create
-                            custom algorithms and definitions.
+                            <strong class="has-text-primary is-underlined">custom</strong>
+                            algorithms and definitions.
+                        `,
+                        callToAction: null,
+                    },
+                    {
+                        reversed: true,
+                        image: "/assets/svg/undraw/undraw_server_cluster_jwwq.svg",
+                        title: "Plug it anywhere.",
+                        subtitle: `
+                            We provide intuitive and optimized RESTful APIs
+                            to allow you to 
+                            <strong class="has-text-primary is-underlined">seamlessly integrate</strong> 
+                            our services.
                         `,
                         callToAction: null,
                     }
