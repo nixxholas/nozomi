@@ -66,7 +66,6 @@ namespace Nozomi.Auth.Controllers.ApiKey
         }
 
         [Authorize(AuthenticationSchemes = "Bearer")]
-        // [HttpDelete("{apiKey}")]
         [HttpDelete]
         public async Task<IActionResult> Revoke([FromBody] RevokeInputViewModel vm)
         {
