@@ -41,7 +41,7 @@
                         <br>
                     </div>
                     <div class="column">
-                        <b-tag type="is-info" class="mb-1">15 Mar 2020 Beta</b-tag>
+                        <b-tag type="is-info" class="mb-1">BETA 21 Mar 2020</b-tag>
                         <br>
                     </div>
                 </div>
