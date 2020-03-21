@@ -14,7 +14,7 @@ namespace Nozomi.Data.ViewModels.ComputeExpression
             {
                 RuleFor(e => e.Guid).NotNull().NotEmpty();
 
-                RuleFor(e => e.Type).NotNull();
+                RuleFor(e => e.Type).IsInEnum();
                 RuleFor(e => e.Expression).NotNull().NotEmpty();
                 RuleFor(e => e.Value).NotNull().NotEmpty();
                 RuleFor(e => e.ComputeGuid).NotNull().NotEmpty();

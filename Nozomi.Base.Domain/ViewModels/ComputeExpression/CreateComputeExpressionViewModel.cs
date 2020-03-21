@@ -24,7 +24,7 @@ namespace Nozomi.Data.ViewModels.ComputeExpression
         protected class CreateComputeExpressioNViewModelValidator : AbstractValidator<CreateComputeExpressionViewModel> {
             public CreateComputeExpressioNViewModelValidator()
             {
-                RuleFor(e => e.Type).NotNull();
+                RuleFor(e => e.Type).IsInEnum();
                 RuleFor(e => e.Expression).NotNull().NotEmpty();
                 RuleFor(e => e.Value).NotNull().NotEmpty();
                 RuleFor(e => e.ComputeGuid).NotNull().NotEmpty();
