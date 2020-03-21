@@ -26,23 +26,27 @@ namespace Nozomi.Infra.Auth.Events.ApiKey
         {
             if (!string.IsNullOrEmpty(userId))
             {
+                // TODO: Optimize for Nicholas, .AsEnumerable() causes error, temp fix .ToList()
                 var query = _context.UserClaims.AsNoTracking()
                     .Where(uc => (uc.ClaimType.Equals(NozomiJwtClaimTypes.ApiKeys) 
                                   || uc.ClaimType.StartsWith(NozomiJwtClaimTypes.ApiKeyLabels)) 
-                                 && uc.UserId.Equals(userId));
+                                 && uc.UserId.Equals(userId))
+                    .ToList();
 
                 var result = new List<ApiKeyViewModel>();
-                foreach (var apiKey in query.Where(q =>
-                    q.ClaimType.Equals(NozomiJwtClaimTypes.ApiKeys)))
+                foreach (var apiKey in query)
                 {
                     var label = query.SingleOrDefault(l => l.ClaimType
                         .Equals(string.Concat(NozomiJwtClaimTypes.ApiKeyLabels, apiKey.ClaimValue)));
-                    
-                    result.Add(new ApiKeyViewModel
+
+                    if (!apiKey.ClaimType.StartsWith(NozomiJwtClaimTypes.ApiKeyLabels))
                     {
-                        Label = label == null ? string.Empty : label.ClaimValue,
-                        ApiKeyMasked = apiKey.ClaimValue // TODO: MASK
-                    });
+                        result.Add(new ApiKeyViewModel
+                        {
+                            Label = label == null ? string.Empty : label.ClaimValue,
+                            ApiKeyMasked = apiKey.ClaimValue // TODO: MASK
+                        });   
+                    }
                 }
 
                 return result;
