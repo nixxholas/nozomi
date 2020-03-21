@@ -27,6 +27,13 @@ namespace Nozomi.Api.Controllers.ComponentHistoricItem
         private readonly IComponentHistoricItemEvent _componentHistoricItemEvent;
         private readonly INozomiRedisEvent _nozomiRedisEvent;
         
+        /// <summary>
+        /// Constructor with DI elements.
+        /// </summary>
+        /// <param name="logger">ILogger object.</param>
+        /// <param name="componentHistoricItemEvent">Where we usually call functions to perform ComponentHistoricItem
+        /// actions.</param>
+        /// <param name="nozomiRedisEvent">Redis cache read access events.</param>
         public ComponentHistoricItemController(ILogger<ComponentHistoricItemController> logger,
             IComponentHistoricItemEvent componentHistoricItemEvent, INozomiRedisEvent nozomiRedisEvent) 
             : base(logger)
