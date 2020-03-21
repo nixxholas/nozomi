@@ -7,6 +7,10 @@ namespace Nozomi.Data.ViewModels.Compute
 {
     public class ComputeViewModel : CreateComputeViewModel
     {
+        public ComputeViewModel()
+        {
+        }
+
         public ComputeViewModel(Guid guid, string key, string formula, int delay, bool isEnabled )
         {
             Guid = guid;
