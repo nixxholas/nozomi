@@ -18,12 +18,19 @@ using Swashbuckle.AspNetCore.Filters;
 
 namespace Nozomi.Api.Controllers.WebsocketCommand
 {
+    /// <summary>
+    /// Websocket Command APIs
+    /// </summary>
     public class WebsocketCommandController : BaseApiController<WebsocketCommandController>, 
         IWebsocketCommandController
     {
         private readonly INozomiRedisEvent _nozomiRedisEvent;
         private readonly IWebsocketCommandEvent _websocketCommandEvent;
 
+        /// <summary></summary>
+        /// <param name="logger">Logger DI</param>
+        /// <param name="nozomiRedisEvent">Redis Cache Events DI</param>
+        /// <param name="websocketCommandEvent">Websocket Command Events DI</param>
         public WebsocketCommandController(ILogger<WebsocketCommandController> logger, 
             INozomiRedisEvent nozomiRedisEvent, IWebsocketCommandEvent websocketCommandEvent) : base(logger)
         {
@@ -31,6 +38,11 @@ namespace Nozomi.Api.Controllers.WebsocketCommand
             _websocketCommandEvent = websocketCommandEvent;
         }
 
+        /// <summary>
+        /// Obtain all websocket commands you have created/own.
+        /// </summary>
+        /// <param name="index">The 'page' of the list of results in 100s.</param>
+        /// <returns>The collection of websocket commands.</returns>
         [Authorize]
         [TokenBucket(Name = "WebsocketCommand/All", Weight = 7)]
         [HttpGet]
@@ -60,6 +72,12 @@ namespace Nozomi.Api.Controllers.WebsocketCommand
             return new InternalServerErrorObjectResult(AllInternalServerExample.ImpossibleInvalidUserResult);
         }
 
+        /// <summary>
+        /// Obtain all of the websocket commands created, relative to the request.
+        /// </summary>
+        /// <param name="requestGuid">The unique identifier of the request.</param>
+        /// <param name="index">The 'page' of the list of results in 100s.</param>
+        /// <returns>The collection of websocket commands.</returns>
         [Authorize]
         [TokenBucket(Name = "WebsocketCommand/AllByRequest", Weight = 5)]
         [HttpGet]
