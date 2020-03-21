@@ -18,11 +18,18 @@ using Swashbuckle.AspNetCore.Filters;
 
 namespace Nozomi.Api.Controllers.RequestProperty
 {
+    /// <summary>
+    /// Request Property APIs
+    /// </summary>
     public class RequestPropertyController : BaseApiController<RequestPropertyController>, IRequestPropertyController
     {
         private readonly INozomiRedisEvent _nozomiRedisEvent;
         private readonly IRequestPropertyEvent _requestPropertyEvent;
         
+        /// <summary></summary>
+        /// <param name="logger">Logger DI</param>
+        /// <param name="nozomiRedisEvent"></param>
+        /// <param name="requestPropertyEvent"></param>
         public RequestPropertyController(ILogger<RequestPropertyController> logger,
             INozomiRedisEvent nozomiRedisEvent, IRequestPropertyEvent requestPropertyEvent) : base(logger)
         {
@@ -30,6 +37,11 @@ namespace Nozomi.Api.Controllers.RequestProperty
             _requestPropertyEvent = requestPropertyEvent;
         }
 
+        /// <summary>
+        /// Obtain all request properties you have created/own.
+        /// </summary>
+        /// <param name="index">The 'page' of the list of results in 100s.</param>
+        /// <returns>The collection of request properties.</returns>
         [Authorize]
         [TokenBucket(Name = "RequestProperty/All", Weight = 7)]
         [HttpGet]
@@ -59,6 +71,12 @@ namespace Nozomi.Api.Controllers.RequestProperty
             return new InternalServerErrorObjectResult(AllInternalServerExample.ImpossibleInvalidUserResult);
         }
 
+        /// <summary>
+        /// Obtain all analysed components you have created, relative to that specific request.
+        /// </summary>
+        /// <param name="requestGuid">The request guid you are referring to.</param>
+        /// <param name="index">The 'page' of the list of results in 100s.</param>
+        /// <returns>The collection of request properties.</returns>
         [Authorize]
         [TokenBucket(Name = "RequestProperty/AllByRequest", Weight = 5)]
         [HttpGet]
