@@ -7,7 +7,7 @@
         <!--    </b-message>-->
         <nav-menu params="route: route"/>
 
-        <div class="container is-fullhd" style="flex: 1; width: 100%">
+        <div style="flex: 1; width: 100%">
             <router-view/>
         </div>
 
@@ -41,7 +41,7 @@
                         <br>
                     </div>
                     <div class="column">
-                        <b-tag type="is-info" class="mb-1">15 Mar 2020 Beta</b-tag>
+                        <b-tag type="is-info" class="mb-1">BETA 21 Mar 2020</b-tag>
                         <br>
                     </div>
                 </div>

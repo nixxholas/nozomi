@@ -17,7 +17,7 @@
       </div>
     </b-notification>
     
-    <b-navbar type="is-light" :transparent="true" style="padding: .5em; margin-bottom: .5em;">
+    <b-navbar type="container" :transparent="true" style="padding: .5em; margin-bottom: .5em;">
       <template slot="brand">
         <b-navbar-item tag="router-link" to="/">
           <img
@@ -29,6 +29,12 @@
       </template>
 
       <template slot="start">
+        <b-navbar-item>
+          <b-tag type="is-warning">EAP 21 March 2020</b-tag>
+        </b-navbar-item>
+      </template>
+
+      <template slot="end">
         <b-navbar-item tag="router-link"
                        :to="route.path"
                        v-for="(route, index) in routes"
@@ -39,17 +45,14 @@
                   class="mr-half-em"/>
           <span>{{ route.display }}</span>
         </b-navbar-item>
-      </template>
-
-      <template slot="end">
+        
         <b-navbar-item tag="div" v-if="!oidcIsAuthenticated">
           <b-button type="is-primary"
+                    outlined
                     v-if="hasWeb3"
-                    icon-pack="fab"
-                    icon-right="ethereum"
                     @click="authenticateOidc(currentRoute)"
                     :loading="loginLoading">
-            Sign in with
+            Login
           </b-button>
           <b-button type="is-warning" v-else @click="authenticateOidc(currentRoute)" :loading="loginLoading">Login</b-button>
         </b-navbar-item>
