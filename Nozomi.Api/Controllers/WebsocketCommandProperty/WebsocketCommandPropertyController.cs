@@ -18,12 +18,19 @@ using Swashbuckle.AspNetCore.Filters;
 
 namespace Nozomi.Api.Controllers.WebsocketCommandProperty
 {
+    /// <summary>
+    /// Websocket command property APIs
+    /// </summary>
     public class WebsocketCommandPropertyController : BaseApiController<WebsocketCommandPropertyController>,
         IWebsocketCommandPropertyController
     {
         private readonly INozomiRedisEvent _nozomiRedisEvent;
         private readonly IWebsocketCommandPropertyEvent _websocketCommandPropertyEvent;
         
+        /// <summary></summary>
+        /// <param name="logger">Logger DI.</param>
+        /// <param name="nozomiRedisEvent">Redis Cache Event DI.</param>
+        /// <param name="websocketCommandPropertyEvent">Websocket Command Property Event DI.</param>
         public WebsocketCommandPropertyController(ILogger<WebsocketCommandPropertyController> logger,
             INozomiRedisEvent nozomiRedisEvent, IWebsocketCommandPropertyEvent websocketCommandPropertyEvent) 
             : base(logger)
@@ -32,6 +39,12 @@ namespace Nozomi.Api.Controllers.WebsocketCommandProperty
             _websocketCommandPropertyEvent = websocketCommandPropertyEvent;
         }
 
+        /// <summary>
+        /// Retrieves all websocket command properties owned by the stated user with a pagination of
+        /// 1000 items.
+        /// </summary>
+        /// <param name="index">The 'page' of the list you are viewing, in 1000s.</param>
+        /// <returns>The collection of websocket command properties.</returns>
         [Authorize]
         [TokenBucket(Name = "WebsocketCommandProperty/All", Weight = 5)]
         [HttpGet]
@@ -61,6 +74,12 @@ namespace Nozomi.Api.Controllers.WebsocketCommandProperty
             return new InternalServerErrorObjectResult(AllInternalServerExample.ImpossibleInvalidUserResult);
         }
 
+        /// <summary>
+        /// Retrieves all websocket command properties relevant to its parent command.
+        /// </summary>
+        /// <param name="commandGuid">The unique identifier of the command.</param>
+        /// <param name="index">The 'page' of the list you are viewing, in 1000s.</param>
+        /// <returns>The collection of websocket command properties.</returns>
         [Authorize]
         [TokenBucket(Name = "WebsocketCommandProperty/AllByCommand", Weight = 3)]
         [HttpGet]

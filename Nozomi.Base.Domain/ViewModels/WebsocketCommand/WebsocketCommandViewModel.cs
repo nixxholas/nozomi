@@ -31,10 +31,20 @@ namespace Nozomi.Data.ViewModels.WebsocketCommand
             Properties = properties;
         }
         
+        /// <summary>
+        /// The obsolete identifier of the websocket command.
+        /// </summary>
+        [Obsolete]
         public long Id { get; set; }
         
+        /// <summary>
+        /// The unique GUID identifier of the websocket command.
+        /// </summary>
         public string Guid { get; set; }
         
+        /// <summary>
+        /// The collection of properties linked to this websocket command.
+        /// </summary>
         public new IEnumerable<WebsocketCommandPropertyViewModel> Properties { get; set; }
     }
 }

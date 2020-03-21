@@ -8,16 +8,35 @@ namespace Nozomi.Data.ViewModels.WebsocketCommand
 {
     public class CreateWebsocketCommandInputModel
     {
+        /// <summary>
+        /// The type of the command.
+        /// </summary>
         public CommandType Type { get; set; }
         
+        /// <summary>
+        /// Name of the command
+        /// </summary>
         public string Name { get; set; }
         
+        /// <summary>
+        /// The delay of the command in milliseconds. Can be greater or equal to -1; Where -1 equals
+        /// to a self-repeating command.
+        /// </summary>
         public long Delay { get; set; }
         
+        /// <summary>
+        /// The unique identifier of the request this command is linked to.
+        /// </summary>
         public string RequestGuid { get; set; }
 
+        /// <summary>
+        /// Is this enabled?
+        /// </summary>
         public bool IsEnabled { get; set; }
         
+        /// <summary>
+        /// The properties of the command.
+        /// </summary>
         public List<CreateWebsocketCommandPropertyInputModel> Properties { get; set; }
 
         public bool IsValid()

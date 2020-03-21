@@ -30,6 +30,12 @@ namespace Nozomi.Api.Controllers.Component
             _nozomiRedisEvent = nozomiRedisEvent;
         }
 
+        /// <summary>
+        /// Obtain all components you have created.
+        /// </summary>
+        /// <param name="index">The 'page' of the list of results in 100s</param>
+        /// <param name="requestGuid">The unique identifier of the request that contains this component.</param>
+        /// <returns>The collection of components.</returns>
         [Authorize]
         [TokenBucket(Name = "Component/All", Weight = 5)]
         [HttpGet("{requestGuid}")]
@@ -56,6 +62,12 @@ namespace Nozomi.Api.Controllers.Component
             return new InternalServerErrorObjectResult(AllInternalServerExample.Result);
         }
 
+        /// <summary>
+        /// Obtain the component and its historical values.
+        /// </summary>
+        /// <param name="guid">The unique identifier of the component.</param>
+        /// <param name="index">The 'page' of the list of historical values in 100s</param>
+        /// <returns>The component.</returns>
         [Authorize]
         [TokenBucket(Name = "Component/Get", Weight = 5)]
         [HttpGet("{guid}")]

@@ -18,12 +18,22 @@ using Swashbuckle.AspNetCore.Filters;
 
 namespace Nozomi.Api.Controllers.ComponentHistoricItem
 {
+    /// <summary>
+    /// ComponentHistoricItem APIs.
+    /// </summary>
     public class ComponentHistoricItemController : BaseApiController<ComponentHistoricItemController>, 
         IComponentHistoricItemController
     {
         private readonly IComponentHistoricItemEvent _componentHistoricItemEvent;
         private readonly INozomiRedisEvent _nozomiRedisEvent;
         
+        /// <summary>
+        /// Constructor with DI elements.
+        /// </summary>
+        /// <param name="logger">ILogger object.</param>
+        /// <param name="componentHistoricItemEvent">Where we usually call functions to perform ComponentHistoricItem
+        /// actions.</param>
+        /// <param name="nozomiRedisEvent">Redis cache read access events.</param>
         public ComponentHistoricItemController(ILogger<ComponentHistoricItemController> logger,
             IComponentHistoricItemEvent componentHistoricItemEvent, INozomiRedisEvent nozomiRedisEvent) 
             : base(logger)
@@ -32,6 +42,12 @@ namespace Nozomi.Api.Controllers.ComponentHistoricItem
             _nozomiRedisEvent = nozomiRedisEvent;
         }
 
+        /// <summary>
+        /// Obtain all the component historical values created 
+        /// </summary>
+        /// <param name="index">The 'page' of the list of results in 100s.</param>
+        /// <param name="componentGuid">The unique identifier of the component.</param>
+        /// <returns>The collection of historical values.</returns>
         [Authorize]
         [TokenBucket(Name = "ComponentHistoricItem/All", Weight = 5)]
         [HttpGet("{componentGuid}")]

@@ -6,16 +6,34 @@ namespace Nozomi.Data.ViewModels.WebsocketCommandProperty
 {
     public class CreateWebsocketCommandPropertyInputModel
     {
+        /// <summary>
+        /// The type of the command property.
+        /// </summary>
         public CommandPropertyType Type { get; set; }
         
+        /// <summary>
+        /// The key of where the property's value should be.
+        /// </summary>
         public string Key { get; set; }
         
+        /// <summary>
+        /// The value of the command property.
+        /// </summary>
         public string Value { get; set; }
 
+        /// <summary>
+        /// Enabled for use?
+        /// </summary>
         public bool IsEnabled { get; set; }
 
+        /// <summary>
+        /// The unique GUID identifier of the command this property is linked to..
+        /// </summary>
         public string CommandGuid { get; set; }
 
+        /// <summary>
+        /// The unique identifier of the command this property is linked to..
+        /// </summary>
         public long CommandId { get; set; }
         
         public bool IsValid()

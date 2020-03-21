@@ -471,6 +471,8 @@ namespace Nozomi.Service.Events
                         History = c.RcdHistoricItems
                             .Where(rcdhi => rcdhi.DeletedAt == null && rcdhi.IsEnabled)
                             .OrderByDescending(rcdhi => rcdhi.HistoricDateTime)
+                            .Skip(index * NozomiServiceConstants.RequestComponentTakeoutLimit)
+                            .Take(NozomiServiceConstants.RequestComponentTakeoutLimit)
                             .Select(rcdhi => new ComponentHistoricItemViewModel
                             {
                                 Timestamp = rcdhi.HistoricDateTime,

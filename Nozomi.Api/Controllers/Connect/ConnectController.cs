@@ -14,6 +14,9 @@ using Swashbuckle.AspNetCore.Filters;
 
 namespace Nozomi.Api.Controllers.Connect
 {
+    /// <summary>
+    /// The Connect APIs, to enable/provide certain numerous functions for users.
+    /// </summary>
     public class ConnectController : BaseApiController<ConnectController>, IConnectController
     {
         private readonly INozomiRedisEvent _nozomiRedisEvent;

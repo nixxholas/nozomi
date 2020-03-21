@@ -51,8 +51,14 @@ namespace Nozomi.Data.ViewModels.WebsocketCommandProperty
             CommandId = commandId;
         }
         
+        /// <summary>
+        /// The unique identifier of the websocket command property.
+        /// </summary>
         public long Id { get; set; }
         
+        /// <summary>
+        /// The unique GUID identifier of the websocket command property.
+        /// </summary>
         public string Guid { get; set; }
     }
 }

@@ -6,20 +6,44 @@ namespace Nozomi.Data.ViewModels.AnalysedComponent
 {
     public class CreateAnalysedComponentViewModel
     {
+        /// <summary>
+        /// The type of this analysed component.
+        /// </summary>
         public AnalysedComponentType Type { get; set; }
-        
+
+        /// <summary>
+        /// Delay for every value update attempt in milliseconds.
+        /// </summary>
         public int Delay { get; set; }
         
+        /// <summary>
+        /// The UI formatting for the value via numeral.js' syntax.
+        /// </summary>
         public string UiFormatting { get; set; }
         
+        /// <summary>
+        /// Denotes if there's denomination for its value.
+        /// </summary>
         public bool IsDenominated { get; set; }
         
+        /// <summary>
+        /// Store the historical data for this?
+        /// </summary>
         public bool StoreHistoricals { get; set; }
         
+        /// <summary>
+        /// The symlinking currency you are referring to; through its slug.
+        /// </summary>
         public string CurrencySlug { get; set; }
         
+        /// <summary>
+        /// The symlinking currency pair you are referring to; through its guid.
+        /// </summary>
         public string CurrencyPairGuid { get; set; }
         
+        /// <summary>
+        /// The symlinking currency type youa re referring to; through its short form.
+        /// </summary>
         public string CurrencyTypeShortForm { get; set; }
 
         public bool IsValid()

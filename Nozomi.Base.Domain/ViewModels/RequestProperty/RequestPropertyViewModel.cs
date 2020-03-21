@@ -15,6 +15,9 @@ namespace Nozomi.Data.ViewModels.RequestProperty
             Value = value;
         }
         
+        /// <summary>
+        /// The unique identifier of the request property.
+        /// </summary>
         public string Guid { get; set; }
     }
 }
