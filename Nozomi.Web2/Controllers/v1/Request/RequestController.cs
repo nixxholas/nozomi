@@ -1,5 +1,6 @@
 using System.Linq;
 using System.Security.Claims;
+using System.Threading.Tasks;
 using IdentityModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +9,8 @@ using Nozomi.Base.Auth.Models;
 using Nozomi.Base.BCL.Helpers.Enumerator;
 using Nozomi.Data;
 using Nozomi.Data.ViewModels.Request;
+using Nozomi.Infra.Payment;
+using Nozomi.Infra.Payment.Events.Bootstripe;
 using Nozomi.Preprocessing.Attributes;
 using Nozomi.Preprocessing.Statics;
 using Nozomi.Service.Events.Interfaces;
@@ -18,12 +21,14 @@ namespace Nozomi.Web2.Controllers.v1.Request
     [ApiController]
     public class RequestController : BaseApiController<RequestController>, IRequestController
     {
+        private readonly IBootstripeEvent _bootstripeEvent;
         private readonly IRequestEvent _requestEvent;
         private readonly IRequestService _requestService;
 
-        public RequestController(ILogger<RequestController> logger,
+        public RequestController(ILogger<RequestController> logger, IBootstripeEvent bootstripeEvent,
             IRequestEvent requestEvent, IRequestService requestService) : base(logger)
         {
+            _bootstripeEvent = bootstripeEvent;
             _requestEvent = requestEvent;
             _requestService = requestService;
         }
@@ -46,16 +51,30 @@ namespace Nozomi.Web2.Controllers.v1.Request
         [Authorize]
         [HttpPost]
         [Throttle(Name = "Request/Create", Milliseconds = 2500)]
-        public IActionResult Create([FromBody]CreateRequestViewModel vm)
+        public async Task<IActionResult> Create([FromBody]CreateRequestViewModel vm)
         {
             var sub = ((ClaimsIdentity) User.Identity)
                 .Claims.SingleOrDefault(c => c.Type.Equals(JwtClaimTypes.Subject))?.Value;
 
             if (!string.IsNullOrWhiteSpace(sub))
             {
-                _requestService.Create(vm, sub);
+                // Obtain the current user's plan
+                var userPlan = await _bootstripeEvent.GetUserCurrentPlanIdAsync(sub);
+                if (string.IsNullOrEmpty(userPlan)) return BadRequest("Please subscribe before attempting to " +
+                                                                      "create a request!");
+                
+                // Get the user's quota for requests
+                var usersPlanQuotaStr = await _bootstripeEvent.GetPlanMetadataValue(userPlan,
+                    NozomiPaymentConstants.StripeRequestQuotaMetadataKey);
+                var userRequestCount = _requestEvent.Count(sub);
+                if (!long.TryParse(usersPlanQuotaStr, out var usersPlanQuota) // If the quota is parseable 
+                    || usersPlanQuota <= userRequestCount) // Or if the quota is less than or equal to the count of
+                    // requests
+                    return BadRequest("Quota hit."); // Good try buddy ;) 
 
-                return Ok();
+                _requestService.Create(vm, sub); // Else let him through!
+
+                return Ok("Request successfully created!");
             }
 
             return BadRequest("Please login again. Your session may have expired!");
