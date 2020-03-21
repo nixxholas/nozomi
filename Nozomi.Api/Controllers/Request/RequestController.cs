@@ -18,11 +18,18 @@ using Swashbuckle.AspNetCore.Filters;
 
 namespace Nozomi.Api.Controllers.Request
 {
+    /// <summary>
+    /// Requests APIs
+    /// </summary>
     public class RequestController : BaseApiController<RequestController>, IRequestController
     {
         private readonly INozomiRedisEvent _nozomiRedisEvent;
         private readonly IRequestEvent _requestEvent;
 
+        /// <summary></summary>
+        /// <param name="logger">ILogger DI</param>
+        /// <param name="nozomiRedisEvent">Redis Cache Events DI</param>
+        /// <param name="requestEvent">Request Events DI</param>
         public RequestController(ILogger<RequestController> logger,
             INozomiRedisEvent nozomiRedisEvent, IRequestEvent requestEvent) : base(logger)
         {
