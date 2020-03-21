@@ -66,4 +66,12 @@
     .is-lineheight-one-half {
         line-height: 1.5em;
     }
+
+    /* Mobile responsiveness */
+    @media (max-width: 768px) {
+        .is-column-reverse-mobile {
+            display: flex;
+            flex-direction: column-reverse;
+        }
+    }
 </style>
