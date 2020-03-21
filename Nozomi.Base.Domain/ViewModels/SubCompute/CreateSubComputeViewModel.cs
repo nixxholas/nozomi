@@ -6,7 +6,7 @@ namespace Nozomi.Data.ViewModels.SubCompute
     public class CreateSubComputeViewModel
     {
         public Guid ParentComputeGuid { get; set; }
-        public Guid ChildComputeGuid { get; set; }
+        public Guid? ChildComputeGuid { get; set; }
 
         public bool IsValid()
         {
