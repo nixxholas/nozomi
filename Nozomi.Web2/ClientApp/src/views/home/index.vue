@@ -11,8 +11,7 @@
                                     Stash. Compute.
                                 </h1>
                                 <p class="subtitle is-lineheight-one-half">
-                                    Nozomi is the optimal API-based workflow for backend teams comprising of
-                                    API polling, data storage, and aggregating results.
+                                    The API suite for data polling, storage, and aggregation - built for teams and enthusiasts
                                 </p>
                                 <button class="button is-primary is-large"
                                         @click="authenticateOidc(currentRoute)">
