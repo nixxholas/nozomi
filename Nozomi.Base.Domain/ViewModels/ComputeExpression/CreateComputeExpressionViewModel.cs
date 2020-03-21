@@ -25,6 +25,7 @@ namespace Nozomi.Data.ViewModels.ComputeExpression
             public CreateComputeExpressioNViewModelValidator()
             {
                 RuleFor(e => e.Type).NotNull();
+                RuleFor(e => e.Expression).NotNull().NotEmpty();
                 RuleFor(e => e.Value).NotNull().NotEmpty();
                 RuleFor(e => e.ComputeGuid).NotNull().NotEmpty();
             }
