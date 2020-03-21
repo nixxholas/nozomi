@@ -255,6 +255,18 @@
                         <header class="timeline-header">
                             <span class="tag is-primary">Release Candidate</span>
                         </header>
+                        <div class="timeline-item is-warning">
+                            <div class="timeline-marker is-warning"></div>
+                            <div class="timeline-content">
+                                <p class="heading">15 March 2020 - <b>beta 13</b></p>
+                                <ul>
+                                    <li><b>Web</b> - New home page?</li>
+                                    <li><b>Auth</b> - API Key generation support</li>
+                                    <li><b>API</b> - All GET APIs are up!</li>
+                                    <li><b>API</b> - Documentations are slowly being pushed as we speak :)</li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -4,7 +4,7 @@
             <div class="container">
                 <h1 class="title">Nozomi API Terms of Service</h1>
                 <h2 class="subtitle">
-                    <strong>Last Updated: Jan 12, 2019</strong>
+                    <strong>Last Updated: Mar 21, 2020</strong>
                 </h2>
 
                 <p>
@@ -54,7 +54,7 @@
                                     your API
                                     Keys with any third party without our prior consent. In addition, we may revoke your
                                     API
-                                    Keys any time without our consent.
+                                    Keys any time without your consent.
                                 </li>
                                 <li>
                                     <strong>Use of the Nozomi API.</strong> Subject to your compliance with the terms
