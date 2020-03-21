@@ -31,6 +31,11 @@ namespace Nozomi.Api.Controllers.AnalysedComponent
             _nozomiRedisEvent = nozomiRedisEvent;
         }
 
+        /// <summary>
+        /// Obtain all analysed components you have created. 
+        /// </summary>
+        /// <param name="index">the 'page' of the list of results in 100s.</param>
+        /// <returns>The collection of analysed components.</returns>
         [Authorize]
         [TokenBucket(Name = "AnalysedComponent/All", Weight = 5)]
         [HttpGet]
@@ -57,6 +62,15 @@ namespace Nozomi.Api.Controllers.AnalysedComponent
             return new InternalServerErrorObjectResult(AllInternalServerExample.Result);
         }
 
+        /// <summary>
+        /// Obtain all of the analysed components created, related to that specific entity (if any).
+        /// </summary>
+        /// <param name="currencySlug">The currency slug you are referring to.</param>
+        /// <param name="tickerPair">The ticker pair you are referring to.</param>
+        /// <param name="currencyTypeShortForm">The currency type's short form you are referring to.</param>
+        /// <param name="index">The 'page' of the list of results in 100s.</param>
+        /// <returns>The collection of analysed components.</returns>
+        [Obsolete]
         [Authorize]
         [TokenBucket(Name = "AnalysedComponent/AllByIdentifier", Weight = 7)]
         [HttpGet]
@@ -85,6 +99,12 @@ namespace Nozomi.Api.Controllers.AnalysedComponent
             return new InternalServerErrorObjectResult(AllInternalServerExample.Result);
         }
 
+        /// <summary>
+        /// Obtain the analysed component and its historical values.
+        /// </summary>
+        /// <param name="guid">The unique identifier of the analysed component.</param>
+        /// <param name="index">The 'page' of the list of historical values in 500s.</param>
+        /// <returns>The analysed component.</returns>
         [Authorize]
         [TokenBucket(Name = "AnalysedComponent/Get", Weight = 7)]
         [HttpGet("{guid}")]
