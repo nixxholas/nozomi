@@ -71,6 +71,21 @@ namespace Nozomi.Infra.Payment.Events.Bootstripe
             return string.Empty;
         }
 
+        public async Task<string> GetPlanMetadataValue(string planId, string metadataKey)
+        {
+            if (!string.IsNullOrEmpty(metadataKey))
+            {
+                var planService = new PlanService();
+
+                var plan = await planService.GetAsync(planId);
+
+                if (plan != null)
+                    return plan.Metadata[metadataKey];
+            }
+
+            throw new InvalidOperationException("Invalid metadata key.");
+        }
+
         public async Task<IEnumerable<Plan>> GetPlans(bool activeOnly = true)
         {
             if (_stripeOptions == null || string.IsNullOrEmpty(_stripeOptions.Value.ProductId))
