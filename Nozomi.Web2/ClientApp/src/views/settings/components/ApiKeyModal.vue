@@ -1,8 +1,7 @@
 <template>
     <section>
-        <b-button class="is-medium is-primary mt-5"
+        <b-button class="is-medium is-primary mt-5 mb-10"
                   @click="isModalActive = true"
-                  outlined
         >
             Generate API key
         </b-button>
