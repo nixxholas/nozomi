@@ -46,9 +46,12 @@ export default {
     remove(apiKey) {
         return new Promise(async (resolve, reject) => {
             try {
-                const response = await axios.delete(`${oidcSettings.authority}/ApiKey/Revoke/${apiKey}`, {
+                const response = await axios.delete(`${oidcSettings.authority}/ApiKey/Revoke`, {
                     headers: {
                         Authorization: `Bearer ${store.state.oidcStore.access_token}`
+                    },
+                    data: {
+                        apiKey
                     }
                 });
 
