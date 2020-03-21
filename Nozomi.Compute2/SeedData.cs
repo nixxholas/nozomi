@@ -89,6 +89,10 @@ namespace Nozomi.Compute2
                             dbContext.SaveChanges();
                         }
                     }
+                    else
+                    {
+                        dbContext.Database.Migrate();
+                    }
                 }
             }
         }
