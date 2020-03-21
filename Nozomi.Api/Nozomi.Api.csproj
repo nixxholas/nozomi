@@ -8,7 +8,7 @@
       <DocumentationFile>bin\Debug\Nozomi.Api.xml</DocumentationFile>
     </PropertyGroup>
 
-    <PropertyGroup Condition=" '$(Configuration)' != 'Debug' ">
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
       <DocumentationFile>bin\Release\Nozomi.Api.xml</DocumentationFile>
     </PropertyGroup>
 
