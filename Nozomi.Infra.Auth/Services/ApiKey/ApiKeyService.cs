@@ -48,6 +48,7 @@ namespace Nozomi.Infra.Auth.Services.ApiKey
                 _context.ApiKeys.Add(new Base.Auth.Models.ApiKey
                     {
                         Label = label,
+                        CreatedAt = DateTime.UtcNow,
                         Value = newKey,
                         UserId = userId
                     });
