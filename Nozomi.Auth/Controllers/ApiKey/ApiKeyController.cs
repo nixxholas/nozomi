@@ -79,7 +79,7 @@ namespace Nozomi.Auth.Controllers.ApiKey
                 return BadRequest("Please reauthenticate again!");
             
             // Generate the API Key
-            _apiKeyService.RevokeApiKey(vm.ApiKey, user.Id);
+            _apiKeyService.RevokeApiKey(vm.ApiKeyGuid, user.Id);
             
             return Ok("API Key successfully revoked."); // OK!
         }

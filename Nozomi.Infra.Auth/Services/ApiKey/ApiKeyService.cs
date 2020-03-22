@@ -63,12 +63,12 @@ namespace Nozomi.Infra.Auth.Services.ApiKey
             throw new KeyNotFoundException("User not found.");
         }
 
-        public void RevokeApiKey(string apiKey, string userId = null)
+        public void RevokeApiKey(string apiKeyGuid, string userId = null)
         {
-            if (!string.IsNullOrEmpty(apiKey))
+            if (Guid.TryParse(apiKeyGuid, out var parsedGuid))
             {
                 var revokingKey = _context.ApiKeys.AsTracking()
-                    .SingleOrDefault(e => e.Value.Equals(apiKey));
+                    .SingleOrDefault(e => e.Guid.Equals(parsedGuid));
 
                 if (revokingKey != null)
                 {
@@ -80,12 +80,12 @@ namespace Nozomi.Infra.Auth.Services.ApiKey
                     _context.ApiKeys.Remove(revokingKey);
                     _context.SaveChanges();
 
-                    _logger.LogInformation($"{_serviceName} RevokeApiKey: Api key {apiKey} revoked " +
+                    _logger.LogInformation($"{_serviceName} RevokeApiKey: Api key {parsedGuid} revoked " +
                                            "successfully.");
                     return;
                 }
 
-                _logger.LogWarning($"{_serviceName} RevokeApiKey: Api key {apiKey} is not found..");
+                _logger.LogWarning($"{_serviceName} RevokeApiKey: Api key {parsedGuid} is not found..");
             }
 
             throw new InvalidOperationException("Invalid api key.");

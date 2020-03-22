@@ -3,7 +3,7 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nozomi.Base.Auth.Global;
-using Nozomi.Data.ViewModels.ApiKey;
+using Nozomi.Base.Auth.ViewModels.ApiKey;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.Auth.Data;
 
@@ -29,6 +29,7 @@ namespace Nozomi.Infra.Auth.Events.ApiKey
                     .Where(e => e.UserId.Equals(userId))
                     .Select(e => new ApiKeyViewModel
                     {
+                        Guid = e.Guid,
                         Label = e.Label,
                         ApiKeyMasked = string.Concat("Ending with ", e.Value.Substring(e.Value.Length - 8))
                     });
