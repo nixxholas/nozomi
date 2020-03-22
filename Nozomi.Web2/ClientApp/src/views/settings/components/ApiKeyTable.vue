@@ -29,7 +29,7 @@
                 </b-table-column>
 
                 <b-table-column>
-                    <button class="button is-danger" @click="onRevokePressed(props.row.guid)">
+                    <button class="button is-danger" @click="onRevokePressed(props.row.guid, props.row.label)">
                         Revoke
                     </button>
                 </b-table-column>
@@ -56,8 +56,15 @@
             }
         },
         methods: {
-            onRevokePressed(apiKeyGuid) {
-                this.$emit('onRevoked', { apiKeyGuid });
+            onRevokePressed(apiKeyGuid, apiKeyLabel) {
+                this.$buefy.dialog.confirm({
+                    title: 'Revoking API key',
+                    message: `Are you sure you want to revoke <strong>${apiKeyLabel}</strong>? This action cannot be undone.`,
+                    confirmText: 'Revoke',
+                    type: 'is-danger',
+                    hasIcon: true,
+                    onConfirm: () => this.$emit('onRevoked', { apiKeyGuid })
+                });
             }
         }
     }
