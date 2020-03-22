@@ -21,7 +21,7 @@ namespace Nozomi.Repo.Auth.Migrations
                 .HasAnnotation("ProductVersion", "3.1.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            modelBuilder.Entity("Nozomi.Base.Auth.Models.ApiKey", b =>
+            modelBuilder.Entity("Nozomi.Base.Auth.Models.ApiKeyGuid", b =>
                 {
                     b.Property<Guid>("Guid")
                         .ValueGeneratedOnAdd()
@@ -283,7 +283,7 @@ namespace Nozomi.Repo.Auth.Migrations
                     b.ToTable("Addresses");
                 });
 
-            modelBuilder.Entity("Nozomi.Base.Auth.Models.ApiKey", b =>
+            modelBuilder.Entity("Nozomi.Base.Auth.Models.ApiKeyGuid", b =>
                 {
                     b.HasOne("Nozomi.Base.Auth.Models.User", "User")
                         .WithMany("ApiKeys")
