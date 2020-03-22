@@ -13,6 +13,7 @@ namespace Nozomi.Repo.Auth.Data.Mappings
             entityTypeBuilder.HasAlternateKey(e => e.Value);
 
             entityTypeBuilder.Property(e => e.Label).IsRequired(false);
+            // now() - https://www.postgresql.org/docs/9.1/functions-datetime.html
             entityTypeBuilder.Property(e => e.CreatedAt).HasDefaultValueSql("now()");
 
             entityTypeBuilder.HasOne(e => e.User)
