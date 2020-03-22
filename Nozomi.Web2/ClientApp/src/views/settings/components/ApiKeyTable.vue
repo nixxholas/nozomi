@@ -29,7 +29,7 @@
                 </b-table-column>
 
                 <b-table-column>
-                    <button class="button is-danger" @click="onRevokePressed(props.row.apiKeyMasked)">
+                    <button class="button is-danger" @click="onRevokePressed(props.row.guid)">
                         Revoke
                     </button>
                 </b-table-column>
@@ -56,8 +56,8 @@
             }
         },
         methods: {
-            onRevokePressed(apiKey) {
-                this.$emit('onRevoked', { apiKey });
+            onRevokePressed(apiKeyGuid) {
+                this.$emit('onRevoked', { apiKeyGuid });
             }
         }
     }
