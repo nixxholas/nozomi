@@ -37,29 +37,20 @@ namespace Nozomi.Infra.Auth.Services.ApiKey
 
         public void GenerateApiKey(string userId, string label = null)
         {
-            var newKey = Randomizer.GenerateRandomCryptographicKey(64);
+            var newKey = Randomizer.GenerateRandomCryptographicKey(32);
             while (_apiKeyEvent.Exists(newKey)) // Ensure truly random
             {
-                newKey = Randomizer.GenerateRandomCryptographicKey(64);
+                newKey = Randomizer.GenerateRandomCryptographicKey(32);
             }
 
             if (_userEvent.Exists(userId))
             {
-                _context.UserClaims.Add(new UserClaim
+                _context.ApiKeys.Add(new Base.Auth.Models.ApiKey
                     {
-                        ClaimType = NozomiJwtClaimTypes.ApiKeys,
-                        ClaimValue = newKey,
+                        Label = label,
+                        Value = newKey,
                         UserId = userId
                     });
-
-                if (!string.IsNullOrEmpty(label)) // Add label if any
-                    _context.UserClaims.Add(
-                        new UserClaim
-                        {
-                            ClaimType = string.Concat(NozomiJwtClaimTypes.ApiKeyLabels, newKey),
-                            ClaimValue = label,
-                            UserId = userId
-                        });
                 
                 _context.SaveChanges();
                 _logger.LogInformation($"{_serviceName} GenerateApiKey: Api key {newKey} generated for user" +
@@ -75,9 +66,8 @@ namespace Nozomi.Infra.Auth.Services.ApiKey
         {
             if (!string.IsNullOrEmpty(apiKey))
             {
-                var revokingKey = _context.UserClaims.AsTracking()
-                    .SingleOrDefault(uc => uc.ClaimType.Equals(NozomiJwtClaimTypes.ApiKeys)
-                                           && uc.ClaimValue.Equals(apiKey));
+                var revokingKey = _context.ApiKeys.AsTracking()
+                    .SingleOrDefault(e => e.Value.Equals(apiKey));
 
                 if (revokingKey != null)
                 {
@@ -86,7 +76,7 @@ namespace Nozomi.Infra.Auth.Services.ApiKey
                         throw new InvalidConstraintException("Invalid user for this api key.");
 
                     // Else all is good, revoke it
-                    _context.UserClaims.Remove(revokingKey);
+                    _context.ApiKeys.Remove(revokingKey);
                     _context.SaveChanges();
 
                     _logger.LogInformation($"{_serviceName} RevokeApiKey: Api key {apiKey} revoked " +

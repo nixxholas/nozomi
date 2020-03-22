@@ -148,8 +148,6 @@ namespace Nozomi.Auth
                             new Claim(JwtClaimTypes.Address,
                                 @"{ 'street_address': 'One Hacker Way', 'locality': 'Heidelberg', 'postal_code': 69118, 'country': 'Germany' }",
                                 IdentityServer4.IdentityServerConstants.ClaimValueTypes.Json),
-                            new Claim(NozomiJwtClaimTypes.ApiKeys, 
-                                Randomizer.GenerateRandomCryptographicKey(64)),
                             new Claim(NozomiJwtClaimTypes.StripeCustomerId, "cus_GiPXYNorAJsVIL"), 
                             new Claim(NozomiJwtClaimTypes.StripeCustomerDefaultPaymentId, "pm_1GAyifBrK0ZsVPPfIAwyWRdB"),
                             new Claim(NozomiJwtClaimTypes.StripeCustomerPaymentMethodId, "pm_1GAyifBrK0ZsVPPfIAwyWRdB"),
@@ -158,6 +156,14 @@ namespace Nozomi.Auth
                         {
                             throw new Exception(result.Errors.First().Description);
                         }
+
+                        context.ApiKeys.Add(new ApiKey
+                        {
+                            Label = "First Dev Key",
+                            Value = Randomizer.GenerateRandomCryptographicKey(32),
+                            UserId = alice.Id
+                        });
+                        context.SaveChanges();
 
                         Console.WriteLine("alice created");
 

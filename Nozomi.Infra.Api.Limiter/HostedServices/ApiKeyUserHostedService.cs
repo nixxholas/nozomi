@@ -43,11 +43,9 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
                     var authDbContext = scope.ServiceProvider.GetRequiredService<AuthDbContext>();
 
                     // Obtain all users who have API keys
-                    var users = authDbContext.Users
-                        .AsNoTracking()
-                        .Include(u => u.UserClaims)
-                        .Where(u => u.UserClaims
-                            .Any(uc => uc.ClaimType.Equals(NozomiJwtClaimTypes.ApiKeys)));
+                    var users = authDbContext.Users.AsNoTracking()
+                        .Include(u => u.ApiKeys)
+                        .Where(u => u.ApiKeys.Any());
 
                     // Ensure that there's any users before iterating
                     if (users.Any())
@@ -81,9 +79,8 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
                                 && !userIsStaff)
                             {
                                 // Obtain the Api Keys first
-                                var userApiKeys = authDbContext.UserClaims
-                                    .AsNoTracking()
-                                    .Where(uc => uc.ClaimType.Equals(NozomiJwtClaimTypes.ApiKeys));
+                                var userApiKeys = authDbContext.ApiKeys.AsNoTracking()
+                                    .Where(e => e.UserId.Equals(user.Id));
 
                                 if (userApiKeys.Any()) // Any API keys?
                                 {
@@ -99,9 +96,9 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
                                             scope.ServiceProvider.GetRequiredService<INozomiRedisService>();
                                         foreach (var userApiKey in userApiKeys) // BAN!!
                                         {
-                                            nozomiRedisService.Remove(RedisDatabases.ApiKeyUser, userApiKey.ClaimValue);
+                                            nozomiRedisService.Remove(RedisDatabases.ApiKeyUser, userApiKey.Value);
                                             _logger.LogInformation($"{_hostedServiceName} ExecuteAsync: " +
-                                                                   $" API Key {userApiKey.ClaimValue} removed for " +
+                                                                   $" API Key {userApiKey.Value} removed for " +
                                                                    $"user {user.Id} in Redis.");
                                         }
                                     }
@@ -117,19 +114,19 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
                                         foreach (var userApiKey in userApiKeys)
                                         {
                                             // TODO: FIXX!!
-                                            if (!redisEvent.Exists(userApiKey.ClaimValue))
+                                            if (!redisEvent.Exists(userApiKey.Value))
                                             {
                                                 // Add it into the cache
-                                                redisService.Add(RedisDatabases.ApiKeyUser, userApiKey.ClaimValue, 
+                                                redisService.Add(RedisDatabases.ApiKeyUser, userApiKey.Value, 
                                                     user.Id);
                                                 _logger.LogInformation($"{_hostedServiceName} ExecuteAsync: " +
-                                                                       $" Api Key {userApiKey.ClaimValue} added with " +
+                                                                       $" Api Key {userApiKey.Value} added with " +
                                                                        $"symlink to user {user.Id}");
                                             }
                                             else
                                             {
                                                 _logger.LogInformation($"{_hostedServiceName} ExecuteAsync: " +
-                                                                       $" Api Key {userApiKey.ClaimType} already added");
+                                                                       $" Api Key {userApiKey.Value} already added");
                                             }
                                         }
                                     }
@@ -150,21 +147,21 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
                                     var redisService =
                                         scope.ServiceProvider.GetRequiredService<INozomiRedisService>();
                                     // Obtain the Api Keys first
-                                    var userApiKeys = authDbContext.UserClaims
+                                    var userApiKeys = authDbContext.ApiKeys
                                         .AsNoTracking()
-                                        .Where(uc => uc.ClaimType.Equals(NozomiJwtClaimTypes.ApiKeys));
+                                        .Where(e => e.UserId.Equals(user.Id));
 
                                     // Iterate the user's api keys and populate the cache if needed
                                     foreach (var userApiKey in userApiKeys)
                                     {
-                                        if (!redisEvent.Exists(userApiKey.ClaimValue, 
+                                        if (!redisEvent.Exists(userApiKey.Value, 
                                             RedisDatabases.ApiKeyUser))
                                         {
                                             // Add it into the cache
-                                            redisService.Add(RedisDatabases.ApiKeyUser, userApiKey.ClaimValue, 
+                                            redisService.Add(RedisDatabases.ApiKeyUser, userApiKey.Value, 
                                                 user.Id);
                                             _logger.LogInformation($"{_hostedServiceName} ExecuteAsync: " +
-                                                                   $" Api Key {userApiKey.ClaimValue} added with " +
+                                                                   $" Api Key {userApiKey.Value} added with " +
                                                                    $"symlink to user {user.Id}");
                                         }
                                     }

@@ -28,7 +28,7 @@ namespace Nozomi.Api.Controllers.WebsocketCommandProperty.Examples
                     Guid = Guid.NewGuid().ToString(), 
                     Type = CommandPropertyType.Default, 
                     Key = "api-key",
-                    Value = Randomizer.GenerateRandomCryptographicKey(64), 
+                    Value = Randomizer.GenerateRandomCryptographicKey(32), 
                     IsEnabled = true,
                     CommandGuid = commandGuid.ToString()
                 }
