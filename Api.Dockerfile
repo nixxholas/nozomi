@@ -16,6 +16,7 @@ FROM mcr.microsoft.com/dotnet/core/aspnet:3.1
 WORKDIR /app
 COPY --from=build-env /app/out .
 RUN ls
-COPY nozomi.pfx Nozomi.Api.xml .
+COPY nozomi.pfx .
+# COPY nozomi.pfx Nozomi.Api.xml .
 
 ENTRYPOINT ["dotnet", "Nozomi.Api.dll"]
