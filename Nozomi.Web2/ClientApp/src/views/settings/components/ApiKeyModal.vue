@@ -29,6 +29,7 @@
                     <div class="modal-card-foot">
                         <button class="button is-primary"
                                 type="submit"
+                                :class="{'is-loading': isLoading}"
                         >
                             Generate
                         </button>
@@ -54,19 +55,25 @@
         },
         data() {
             return {
+                isLoading: false,
                 isModalActive: false,
                 label: ""
             };
         },
         methods: {
             create() {
+                this.isLoading = true;
+                
                 this.onCreate(this.label)
                     .then(() => {
                         this.label = "";
                         this.isModalActive = false;
+                        this.isLoading = false;
                         this.$emit('keyCreated', true);
                     })
                     .catch((error) => {
+                        this.isLoading = false;
+                        
                         Notification.open({
                             duration: 2500,
                             type: 'is-danger',

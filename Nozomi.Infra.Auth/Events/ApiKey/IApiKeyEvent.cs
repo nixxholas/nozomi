@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Nozomi.Data.ViewModels.ApiKey;
+using Nozomi.Base.Auth.ViewModels.ApiKey;
 
 namespace Nozomi.Infra.Auth.Events.ApiKey
 {

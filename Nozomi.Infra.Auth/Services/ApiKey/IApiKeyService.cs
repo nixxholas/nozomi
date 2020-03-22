@@ -4,6 +4,6 @@ namespace Nozomi.Infra.Auth.Services.ApiKey
     {
         void GenerateApiKey(string userId, string label = null);
 
-        void RevokeApiKey(string apiKey, string userId = null);
+        void RevokeApiKey(string apiKeyGuid, string userId = null);
     }
 }

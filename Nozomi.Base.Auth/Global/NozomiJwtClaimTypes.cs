@@ -38,15 +38,5 @@ namespace Nozomi.Base.Auth.Global
         /// The user's current usage
         /// </summary>
         public const string UserUsage = "user_usage";
-        
-        /// <summary>
-        /// The API Keys of the user
-        /// </summary>
-        public const string ApiKeys = "api_keys";
-
-        /// <summary>
-        /// Label for the specified API Key
-        /// </summary>
-        public const string ApiKeyLabels = "api_key_labels-";
     }
 }
