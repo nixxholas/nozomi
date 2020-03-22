@@ -9,6 +9,8 @@ namespace Nozomi.Data.ViewModels.Trello
 
         public string Name { get; set; }
 
-        public IEnumerable<CardViewModel> Cards { get;set; }
+        public IEnumerable<CardViewModel> Cards { get; set; }
+
+        public int CardCount { get; set; }
     }
 }
