@@ -10,9 +10,9 @@ namespace Nozomi.Repo.Auth.Data.Mappings
         public ApiKeyMap(EntityTypeBuilder<ApiKey> entityTypeBuilder) : base(entityTypeBuilder)
         {
             entityTypeBuilder.HasKey(e => e.Guid);
-            
             entityTypeBuilder.HasAlternateKey(e => e.Value);
 
+            entityTypeBuilder.Property(e => e.Label).IsRequired(false);
             entityTypeBuilder.Property(e => e.CreatedAt).ValueGeneratedOnAdd()
                 .HasDefaultValueSql("getdate()");;
 

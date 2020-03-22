@@ -6,6 +6,8 @@ namespace Nozomi.Base.Auth.Models
     {
         public Guid Guid { get; set; }
         
+        public string Label { get; set; }
+        
         public string Value { get; set; }
         
         public DateTime CreatedAt { get; set; }
