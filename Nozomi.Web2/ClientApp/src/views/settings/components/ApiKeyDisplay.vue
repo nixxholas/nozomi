@@ -57,9 +57,9 @@
             onKeyGenerated() {
                 this.getGeneratedKeys({forceRefetch: true});
             },
-            async onKeyRevoked({ apiKey }) {
+            async onKeyRevoked({ apiKeyGuid }) {
                 try {
-                    await ApiKeyService.remove(apiKey);
+                    await ApiKeyService.remove(apiKeyGuid);
                     this.getGeneratedKeys({forceRefetch: true});   
                 }
                 catch(e) {
