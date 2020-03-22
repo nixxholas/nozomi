@@ -12,6 +12,7 @@ namespace Nozomi.Repo.Auth.Data
         UserToken>
     {
         public DbSet<Address> Addresses { get; set; }
+        public DbSet<ApiKey> ApiKeys { get; set; }
         
         public AuthDbContext(DbContextOptions<AuthDbContext> options)
             : base(options)
@@ -26,6 +27,7 @@ namespace Nozomi.Repo.Auth.Data
             // Add your customizations after calling base.OnModelCreating(builder);
 
             var addressMap = new AddressMap(builder.Entity<Address>());
+            var apiKeyMap = new ApiKeyMap(builder.Entity<ApiKey>());
             var roleClaimMap = new RoleClaimMap(builder.Entity<RoleClaim>());
             var roleMap = new RoleMap(builder.Entity<Role>());
             var userClaimMap = new UserClaimMap(builder.Entity<UserClaim>());
