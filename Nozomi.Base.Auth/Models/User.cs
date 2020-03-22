@@ -9,6 +9,8 @@ namespace Nozomi.Base.Auth.Models
     {
         public ICollection<Address> Addresses { get; set; }
         
+        public ICollection<ApiKey> ApiKeys { get; set; }
+        
         public virtual ICollection<UserClaim> UserClaims { get; set; }
 
         public virtual ICollection<UserLogin> UserLogins { get; set; }
