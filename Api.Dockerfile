@@ -14,7 +14,6 @@ RUN dotnet publish Nozomi.Api/Nozomi.Api.csproj -c Release -o out
 # Build runtime image
 FROM mcr.microsoft.com/dotnet/core/aspnet:3.1
 WORKDIR /app
-RUN ls /app/out
 COPY --from=build-env /app/out .
 RUN ls
 COPY nozomi.pfx Nozomi.Api.xml .
