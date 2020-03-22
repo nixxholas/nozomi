@@ -119,7 +119,7 @@ namespace Nozomi.Web2
                 // Trello Options DI
                 services.Configure<TrelloOptions>(option =>
                 {
-                    option.ApiKey = (string) nozomiVault["Trello:ApiKey"];
+                    option.ApiKey = (string) nozomiVault["Trello:ApiKeyGuid"];
                     option.AuthToken = (string) nozomiVault["Trello:AuthToken"];
                 });
                 
@@ -149,7 +149,7 @@ namespace Nozomi.Web2
                 // Trello Options Local DI
                 services.Configure<TrelloOptions>(option =>
                 {
-                    option.ApiKey = Configuration["TrelloToken:ApiKey"];
+                    option.ApiKey = Configuration["TrelloToken:ApiKeyGuid"];
                     option.AuthToken = Configuration["TrelloToken:AuthToken"];
                 });
                 
