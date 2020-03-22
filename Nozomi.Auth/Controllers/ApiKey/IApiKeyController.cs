@@ -10,6 +10,8 @@ namespace Nozomi.Auth.Controllers.ApiKey
 
         Task<IActionResult> Create(string label = null);
 
+        Task<IActionResult> Reveal();
+
         Task<IActionResult> Revoke(RevokeInputViewModel apiKey);
     }
 }

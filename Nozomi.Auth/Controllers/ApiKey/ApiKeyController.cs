@@ -66,6 +66,23 @@ namespace Nozomi.Auth.Controllers.ApiKey
         }
 
         [Authorize(AuthenticationSchemes = "Bearer")]
+        [HttpGet]
+        public async Task<IActionResult> Reveal()
+        {
+            // Validate
+            var user = await _userManager.FindByIdAsync(((ClaimsIdentity) User.Identity)
+                .Claims.FirstOrDefault(c => c.Type.Equals(JwtClaimTypes.Subject)
+                                            || c.Type.Equals(ClaimTypes.NameIdentifier))?.Value);
+            
+            // Safetynet
+            if (user == null)
+                return BadRequest("Please reauthenticate again!");
+            
+            // Reveal the API Key
+            return Ok(_apiKeyEvent.Reveal(user.Id));
+        }
+
+        [Authorize(AuthenticationSchemes = "Bearer")]
         [HttpDelete]
         public async Task<IActionResult> Revoke([FromBody] RevokeInputViewModel vm)
         {
