@@ -203,6 +203,8 @@ namespace Nozomi.Auth
 
             services.AddRazorPages();
 
+            services.AddMemoryCache(); // Required for API Throttling
+
             services
                 .AddEntityFrameworkNpgsql()
                 .AddIdentity<User, Role>(options =>
