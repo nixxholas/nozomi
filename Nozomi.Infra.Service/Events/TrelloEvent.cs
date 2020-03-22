@@ -75,11 +75,28 @@ namespace Nozomi.Service.Events
             if (string.IsNullOrWhiteSpace(boardId))
                 throw new ArgumentNullException("Parameter 'boardId' is supposesd to contain a valid string.");
         
-            HttpResponseMessage response = await _httpClient.GetAsync($"/1/boards/{boardId}/lists?key={_publicApiKey}&token={_authToken}");
+            // Check out link for more information to limit result fields
+            // https://developers.trello.com/reference#listsidcards
+            string trelloCardFilter = "cards=all&card_fields=id";
+            
+            HttpResponseMessage response = await _httpClient
+                .GetAsync($"/1/boards/{boardId}/lists?" +
+                          $"key={_publicApiKey}&token={_authToken}&{trelloCardFilter}");
             response.EnsureSuccessStatusCode();
         
             string resultString = await response.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<List<ListViewModel>>(resultString);
+            List<ListViewModel> trelloLists = JsonConvert.DeserializeObject<List<ListViewModel>>(resultString);
+
+            foreach (ListViewModel trelloList in trelloLists)
+            {
+                trelloList.CardCount = trelloList.Cards.Count();
+                
+                // Saving out-going bandwidth when Lists is loaded, main objective is to retrieve
+                // card count from Trello board
+                trelloList.Cards = null;
+            }
+            
+            return trelloLists;
         }
 
         private async Task<List<CardViewModel>> GetCardsAsync(string listId)

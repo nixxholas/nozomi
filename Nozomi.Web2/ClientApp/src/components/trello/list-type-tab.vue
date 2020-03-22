@@ -12,7 +12,11 @@
             expanded>
 
             <template v-for="(item, index) in trelloListItems">
-                <b-tab-item :key="item.id" :label="item.name">
+                <b-tab-item :key="item.id">
+                    
+                    <template slot="header">
+                        <span> {{item.name}} <b-tag rounded>{{item.cardCount}}</b-tag></span>
+                    </template>
                     
                     <CardListBox 
                         :isActive="index===activeTab" 
