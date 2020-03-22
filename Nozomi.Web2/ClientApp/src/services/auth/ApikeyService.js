@@ -43,7 +43,7 @@ export default {
         });
     },
 
-    remove(apiKey) {
+    remove(ApiKeyGuid) {
         return new Promise(async (resolve, reject) => {
             try {
                 const response = await axios.delete(`${oidcSettings.authority}/ApiKey/Revoke`, {
@@ -51,7 +51,7 @@ export default {
                         Authorization: `Bearer ${store.state.oidcStore.access_token}`
                     },
                     data: {
-                        apiKey
+                        ApiKeyGuid
                     }
                 });
 
