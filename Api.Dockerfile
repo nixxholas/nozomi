@@ -15,8 +15,7 @@ RUN dotnet publish Nozomi.Api/Nozomi.Api.csproj -c Release -o out
 FROM mcr.microsoft.com/dotnet/core/aspnet:3.1
 WORKDIR /app
 COPY --from=build-env /app/out .
-RUN ls
 COPY nozomi.pfx .
-ADD Nozomi.Api.xml Nozomi.Api.xml
+RUN copy Nozomi.Api.xml .
 
 ENTRYPOINT ["dotnet", "Nozomi.Api.dll"]
