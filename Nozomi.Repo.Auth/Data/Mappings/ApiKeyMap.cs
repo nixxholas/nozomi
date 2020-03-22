@@ -13,8 +13,7 @@ namespace Nozomi.Repo.Auth.Data.Mappings
             entityTypeBuilder.HasAlternateKey(e => e.Value);
 
             entityTypeBuilder.Property(e => e.Label).IsRequired(false);
-            entityTypeBuilder.Property(e => e.CreatedAt).ValueGeneratedOnAdd()
-                .HasDefaultValueSql("getdate()");;
+            entityTypeBuilder.Property(e => e.CreatedAt).ValueGeneratedOnAdd();
 
             entityTypeBuilder.HasOne(e => e.User)
                 .WithMany(u => u.ApiKeys)
