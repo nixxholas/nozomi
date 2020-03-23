@@ -44,32 +44,52 @@
                     this.isLoading = true;
                     this.apiKeys = await ApiKeyService.get();
                 } catch (e) {
-                    Notification.open({
-                        duration: 2500,
-                        type: 'is-danger',
-                        position: 'is-bottom-right',
-                        message: e.response.data.message ? e.response.data.message : e.message
-                    });
+                    this.showErrorNotification(e.response.data.message ? e.response.data.message : e.message);
                 } finally {
                     this.isLoading = false;
                 }
             },
             onKeyGenerated() {
                 this.getGeneratedKeys({forceRefetch: true});
+
+                ApiKeyService.revealApiKey()
+                    .then(data => {
+                        this.$buefy.dialog.alert({
+                            title: 'API Key created',
+                            message: `
+                                <div class="container has-text-centered">
+                                    Please copy this key and save it somewhere safe. <br />
+                                    <span class="has-text-danger">
+                                        For security reasons, we cannot show it to you again.
+                                    </span> <br /><br />
+                                    <code class="has-text-grey is-size-8 p-3">
+                                        ${data}
+                                    </code>
+                                </div>
+                            `,
+                            confirmText: 'Done',
+                            canCancel: false
+                        });
+                    })
+                    .catch(e => {
+                        this.showErrorNotification(e.response.data.message ? e.response.data.message : e.message);
+                    });
             },
-            async onKeyRevoked({ apiKeyGuid }) {
+            async onKeyRevoked({apiKeyGuid}) {
                 try {
                     await ApiKeyService.remove(apiKeyGuid);
-                    this.getGeneratedKeys({forceRefetch: true});   
+                    this.getGeneratedKeys({forceRefetch: true});
+                } catch (e) {
+                    this.showErrorNotification(e.response.data.message ? e.response.data.message : e.message);
                 }
-                catch(e) {
-                    Notification.open({
-                        duration: 2500,
-                        type: 'is-danger',
-                        position: 'is-bottom-right',
-                        message: e.response.data.message ? e.response.data.message : e.message
-                    });
-                }
+            },
+            showErrorNotification(message) {
+                Notification.open({
+                    message,
+                    duration: 2500,
+                    type: 'is-danger',
+                    position: 'is-bottom-right'
+                });
             }
         },
         mounted() {
