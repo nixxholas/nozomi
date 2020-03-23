@@ -14,6 +14,8 @@ namespace Nozomi.Data.ViewModels.ComponentType
         
         public string Description { get; set; }
         
-        public ICollection<ComponentViewModel> Components { get; set; }
+        public bool IsEnabled { get; set; }
+        
+        public IEnumerable<ComponentViewModel> Components { get; set; }
     }
 }
