@@ -185,7 +185,9 @@ namespace Nozomi.Service.Events
             if (id <= 0)
                 throw new ArgumentOutOfRangeException(null, "Invalid command ID!");
             
-            var command = _context.WebsocketCommands.Include(c => c.WebsocketCommandProperties)
+            var command = _context.WebsocketCommands
+                .Include(c => c.WebsocketCommandProperties)
+                .Include(c => c.Request)
                 .Where(c => c.Id.Equals(id));
 
             if (!string.IsNullOrEmpty(userId))
@@ -202,7 +204,7 @@ namespace Nozomi.Service.Events
                     .Select(p => 
                         new WebsocketCommandPropertyViewModel(p.Guid.ToString(), p.CommandPropertyType, 
                             p.Key, p.Value, p.IsEnabled, c.Guid.ToString()))
-                    .ToList()))
+                    .ToList(), c.Request.Guid.ToString()))
                 .SingleOrDefault();
         }
 
@@ -212,7 +214,9 @@ namespace Nozomi.Service.Events
             if (!Guid.TryParse(guid, out var parsedGuid))
                 throw new ArgumentException("Invalid guid!");
             
-            var command = _context.WebsocketCommands.Include(c => c.WebsocketCommandProperties)
+            var command = _context.WebsocketCommands
+                .Include(c => c.WebsocketCommandProperties)
+                .Include(c => c.Request)
                 .Where(c => c.Guid.Equals(parsedGuid));
 
             if (!string.IsNullOrEmpty(userId))
@@ -229,7 +233,7 @@ namespace Nozomi.Service.Events
                         .Select(p => 
                             new WebsocketCommandPropertyViewModel(p.Guid.ToString(), p.CommandPropertyType, 
                                 p.Key, p.Value, p.IsEnabled, c.Guid.ToString()))
-                        .ToList()))
+                        .ToList(), c.Request.Guid.ToString()))
                 .SingleOrDefault();
         }
 
@@ -239,7 +243,9 @@ namespace Nozomi.Service.Events
             if (requestId <= 0)
                 throw new ArgumentException("Invalid request ID!");
             
-            var command = _context.WebsocketCommands.Include(c => c.WebsocketCommandProperties)
+            var command = _context.WebsocketCommands
+                .Include(c => c.WebsocketCommandProperties)
+                .Include(c => c.Request)
                 .Where(c => c.RequestId.Equals(requestId));
 
             if (!string.IsNullOrEmpty(userId))
@@ -256,7 +262,7 @@ namespace Nozomi.Service.Events
                         .Select(p => 
                             new WebsocketCommandPropertyViewModel(p.Guid.ToString(), p.CommandPropertyType, 
                                 p.Key, p.Value, p.IsEnabled, c.Guid.ToString()))
-                        .ToList()));
+                        .ToList(), c.Request.Guid.ToString()));
         }
 
         public IEnumerable<WebsocketCommandViewModel> ViewAllByRequest(string requestGuid, 
@@ -265,7 +271,8 @@ namespace Nozomi.Service.Events
             if (!Guid.TryParse(requestGuid, out var parsedGuid))
                 throw new ArgumentException("Invalid request GUID!");
             
-            var command = _context.WebsocketCommands.Include(c => c.Request)
+            var command = _context.WebsocketCommands
+                .Include(c => c.Request)
                 .Include(c => c.WebsocketCommandProperties)
                 .Where(c => c.Request.Guid.Equals(parsedGuid));
 
@@ -283,7 +290,7 @@ namespace Nozomi.Service.Events
                     .Select(p => 
                         new WebsocketCommandPropertyViewModel(p.Guid.ToString(), p.CommandPropertyType, 
                             p.Key, p.Value, p.IsEnabled, c.Guid.ToString()))
-                    .ToList()));
+                    .ToList(), c.Request.Guid.ToString()));
         }
 
         public IEnumerable<WebsocketCommandViewModel> ViewAll(int index = 0, string requestGuid = null, string userId = null)
@@ -292,6 +299,7 @@ namespace Nozomi.Service.Events
 
             var query = _context.WebsocketCommands.AsNoTracking()
                 .Include(wsc => wsc.WebsocketCommandProperties)
+                .Include(wsc => wsc.Request)
                 .Where(wsc => wsc.DeletedAt == null && wsc.IsEnabled);
 
             if (Guid.TryParse(requestGuid, out var parsedRequestGuid))
@@ -309,7 +317,7 @@ namespace Nozomi.Service.Events
                         .Select(wscp => 
                             new WebsocketCommandPropertyViewModel(wscp.Guid.ToString(), wscp.CommandPropertyType, 
                                 wscp.Key, wscp.Value, wscp.IsEnabled, wsc.Guid.ToString()))
-                        .ToList()));
+                        .ToList(), wsc.Request.Guid.ToString()));
         }
     }
 }

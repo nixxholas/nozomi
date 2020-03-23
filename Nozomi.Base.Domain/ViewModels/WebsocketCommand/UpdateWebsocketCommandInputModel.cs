@@ -7,7 +7,7 @@ namespace Nozomi.Data.ViewModels.WebsocketCommand
 {
     public class UpdateWebsocketCommandInputModel : WebsocketCommandViewModel
     {
-        public new IEnumerable<UpdateWebsocketCommandPropertyInputModel> Properties { get; set; }
+        public new ICollection<UpdateWebsocketCommandPropertyInputModel> Properties { get; set; }
         
         protected class UpdateWebsocketCommandValidator : AbstractValidator<UpdateWebsocketCommandInputModel>
         {
