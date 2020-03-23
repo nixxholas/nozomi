@@ -5,7 +5,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Controllers" />
+      <ProjectReference Include="..\Nozomi.Infra.Service\Nozomi.Infra.Service.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.AspNetCore.SignalR.Protocols.MessagePack" Version="3.1.2" />
     </ItemGroup>
 
 
