@@ -223,6 +223,7 @@ namespace Nozomi.Api
             services.AddTransient<IAnalysedHistoricItemEvent, AnalysedHistoricItemEvent>();
             services.AddTransient<IComponentEvent, ComponentEvent>();
             services.AddTransient<IComponentHistoricItemEvent, ComponentHistoricItemEvent>();
+            services.AddTransient<IComponentTypeEvent, ComponentTypeEvent>();
             services.AddTransient<INozomiRedisEvent, NozomiRedisEvent>();
             services.AddTransient<IRequestEvent, RequestEvent>();
             services.AddTransient<IRequestPropertyEvent, RequestPropertyEvent>();
