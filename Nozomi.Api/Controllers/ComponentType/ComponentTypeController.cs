@@ -7,7 +7,12 @@ using Microsoft.Extensions.Logging;
 using Nozomi.Api.Controllers.ComponentType.Examples;
 using Nozomi.Data.ViewModels.ComponentType;
 using Nozomi.Infra.Api.Limiter.Attributes;
+using Nozomi.Infra.Api.Limiter.Events.Interfaces;
+using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Abstracts;
+using Nozomi.Preprocessing.ActionResults;
+using Nozomi.Preprocessing.Options;
+using Nozomi.Service.Events.Interfaces;
 using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.Filters;
 
@@ -18,12 +23,20 @@ namespace Nozomi.Api.Controllers.ComponentType
     /// </summary>
     public class ComponentTypeController : BaseApiController<ComponentTypeController>, IComponentTypeController
     {
+        private readonly IComponentTypeEvent _componentTypeEvent;
+        private readonly INozomiRedisEvent _nozomiRedisEvent;
+
         /// <summary>
         /// Default Constructor..
         /// </summary>
         /// <param name="logger">Logger DI</param>
-        public ComponentTypeController(ILogger<ComponentTypeController> logger) : base(logger)
+        /// <param name="componentTypeEvent">Component Type Event DI</param>
+        /// <param name="nozomiRedisEvent">Nozomi Redis Event DI</param>
+        public ComponentTypeController(ILogger<ComponentTypeController> logger,
+            IComponentTypeEvent componentTypeEvent, INozomiRedisEvent nozomiRedisEvent) : base(logger)
         {
+            _componentTypeEvent = componentTypeEvent;
+            _nozomiRedisEvent = nozomiRedisEvent;
         }
 
         /// <summary>
@@ -40,9 +53,21 @@ namespace Nozomi.Api.Controllers.ComponentType
         [SwaggerResponseExample((int)HttpStatusCode.OK, typeof(AllOkExample))]
         [SwaggerResponseExample((int)HttpStatusCode.BadRequest, typeof(AllBadRequestExample))]
         [SwaggerResponseExample((int)HttpStatusCode.InternalServerError, typeof(AllInternalServerExample))]
-        public Task<IActionResult> All(int index = 0)
+        public async Task<IActionResult> All([FromQuery]int index = 0)
         {
-            throw new System.NotImplementedException();
+            if (index >= 0) return BadRequest(AllBadRequestExample.Result);
+            
+            if (HttpContext.Request.Headers.TryGetValue(ApiKeyAuthenticationOptions.HeaderKey, 
+                out var apiKey))
+            {
+                var userId = _nozomiRedisEvent.GetValue(apiKey, RedisDatabases.ApiKeyUser);
+                    
+                return Ok(_componentTypeEvent.ViewAll(userId, index));
+            }
+
+            _logger.LogWarning($"{_controllerName} All: User managed to bypass the token bucket " +
+                               "attribute without an API key!");
+            return new InternalServerErrorObjectResult(AllInternalServerExample.Result);
         }
     }
 }
