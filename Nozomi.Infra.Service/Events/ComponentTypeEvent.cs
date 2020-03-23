@@ -52,6 +52,8 @@ namespace Nozomi.Service.Events
                 query = query.Where(e => e.CreatedById == null);
             
             return query
+                .Skip(index * NozomiServiceConstants.ComponentTypeTakeoutLimit)
+                .Take(NozomiServiceConstants.ComponentTypeTakeoutLimit)
                 .Select(ct => new ComponentTypeViewModel
                 {
                     Id = ct.Id,
@@ -60,7 +62,6 @@ namespace Nozomi.Service.Events
                     Description = ct.Description,
                     IsEnabled = ct.IsEnabled,
                     Components = ct.Components
-                        .Skip(index * NozomiServiceConstants.RequestComponentTakeoutLimit)
                         .Take(NozomiServiceConstants.RequestComponentTakeoutLimit)
                         .Select(c => new ComponentViewModel
                         {

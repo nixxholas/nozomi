@@ -51,6 +51,8 @@ namespace Nozomi.Preprocessing
         
         public const int AnalysedHistoricItemTakeoutLimit = 500;
 
+        public const int ComponentTypeTakeoutLimit = 50;
+
         public const int CurrencyPairTakeoutLimit = 100;
 
         public const int CurrencyTypeTakeoutLimit = 20;
