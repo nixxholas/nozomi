@@ -6,7 +6,7 @@ namespace Nozomi.Data.ViewModels.Component
 {
     public class CreateComponentViewModel
     {
-        public ComponentType Type { get; set; }
+        public Models.Web.ComponentType Type { get; set; }
     
         public string Identifier { get; set; }
         
