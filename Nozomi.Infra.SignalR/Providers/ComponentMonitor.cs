@@ -1,19 +1,24 @@
 using System;
 using System.Collections.Generic;
 using Nozomi.Data.Models.Web;
+using Nozomi.Data.ViewModels.Component;
+using Nozomi.Infra.SignalR.Providers.Interfaces;
 
 namespace Nozomi.Infra.SignalR.Providers
 {
-    public class ComponentMonitor : IObservable<Component>
+    /// <summary>
+    /// The Component Entity Data Provider for SignalR.
+    /// </summary>
+    public class ComponentMonitor : IObservable<ComponentViewModel>, IComponentMonitor
     {
-        private ICollection<IObserver<Component>> _observers;
+        private ICollection<IObserver<ComponentViewModel>> _observers;
 
         public ComponentMonitor()
         {
-            _observers = new List<IObserver<Component>>();
+            _observers = new List<IObserver<ComponentViewModel>>();
         }
         
-        public IDisposable Subscribe(IObserver<Component> observer)
+        public IDisposable Subscribe(IObserver<ComponentViewModel> observer)
         {
             if (!_observers.Contains(observer))
                 _observers.Add(observer);
@@ -26,10 +31,11 @@ namespace Nozomi.Infra.SignalR.Providers
         /// </summary>
         private class Unsubscriber : IDisposable
         {
-            private ICollection<IObserver<Component>> _observers;
-            private IObserver<Component> _observer;
+            private ICollection<IObserver<ComponentViewModel>> _observers;
+            private IObserver<ComponentViewModel> _observer;
 
-            public Unsubscriber(ICollection<IObserver<Component>> observers, IObserver<Component> observer)
+            public Unsubscriber(ICollection<IObserver<ComponentViewModel>> observers, 
+                IObserver<ComponentViewModel> observer)
             {
                 _observers = observers;
                 _observer = observer;
@@ -39,6 +45,11 @@ namespace Nozomi.Infra.SignalR.Providers
             {
                 if (_observer != null) _observers.Remove(_observer);
             }
+        }
+
+        public ICollection<ComponentViewModel> GetComponents()
+        {
+            throw new NotImplementedException();
         }
     }
 }

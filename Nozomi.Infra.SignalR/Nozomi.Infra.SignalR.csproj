@@ -10,7 +10,6 @@
 
     <ItemGroup>
       <Folder Include="Observers" />
-      <Folder Include="Providers\Interfaces" />
     </ItemGroup>
 
 </Project>
