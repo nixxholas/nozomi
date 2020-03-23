@@ -102,7 +102,7 @@
                                     <li><b>UI</b> - General hotfixes and improvements</li>
                                     <li><b>Cabin</b> - Currency type management</li>
                                     <li><b>Cabin</b> - Source type and Currency type tables now have a self-update functionality</li>
-                                    <li><b class="has-text-danger">Known Issue</b> - Some creation forms send a UI console error after the creation of an entity is complete</li>
+                                    <del><li><b class="has-text-danger">Known Issue</b> - Some creation forms send a UI console error after the creation of an entity is complete</li></del>
                                 </ul>
                             </div>
                         </div>
@@ -253,17 +253,28 @@
                             </div>
                         </div>
                         <header class="timeline-header">
-                            <span class="tag is-primary">Release Candidate</span>
+                            <span class="tag is-primary">Early Access Production (EAP)</span>
                         </header>
                         <div class="timeline-item is-warning">
                             <div class="timeline-marker is-warning"></div>
                             <div class="timeline-content">
-                                <p class="heading">15 March 2020 - <b>beta 13</b></p>
+                                <p class="heading">21 March 2020 - <b>EAP 1</b></p>
                                 <ul>
                                     <li><b>Web</b> - New home page?</li>
                                     <li><b>Auth</b> - API Key generation support</li>
                                     <li><b>API</b> - All GET APIs are up!</li>
                                     <li><b>API</b> - Documentations are slowly being pushed as we speak :)</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="timeline-item is-warning">
+                            <div class="timeline-marker is-warning"></div>
+                            <div class="timeline-content">
+                                <p class="heading">23 March 2020 - <b>EAP 2</b></p>
+                                <ul>
+                                    <li><b>Web</b> - API Key management</li>
+                                    <li><b>Auth</b> - API Keys are now visually shortened</li>
+                                    <li><b class="has-text-danger">Known Issue</b> - Nozomi API is down for a complete documentation rewrite.</li>
                                 </ul>
                             </div>
                         </div>

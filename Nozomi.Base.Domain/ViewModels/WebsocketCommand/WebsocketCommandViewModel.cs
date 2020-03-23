@@ -5,23 +5,12 @@ using Nozomi.Data.ViewModels.WebsocketCommandProperty;
 
 namespace Nozomi.Data.ViewModels.WebsocketCommand
 {
-    public class WebsocketCommandViewModel : CreateWebsocketCommandInputModel
+    public class WebsocketCommandViewModel
     {
         public WebsocketCommandViewModel() {}
 
-        public WebsocketCommandViewModel(long id, CommandType type, string name, long delay,
-            bool isEnabled, ICollection<WebsocketCommandPropertyViewModel> properties)
-        {
-            Id = id;
-            Type = type;
-            Name = name;
-            Delay = delay;
-            IsEnabled = isEnabled;
-            Properties = properties;
-        }
-
         public WebsocketCommandViewModel(string guid, CommandType type, string name, long delay,
-            bool isEnabled, ICollection<WebsocketCommandPropertyViewModel> properties)
+            bool isEnabled, ICollection<WebsocketCommandPropertyViewModel> properties, string requestGuid)
         {
             Guid = guid;
             Type = type;
@@ -29,7 +18,34 @@ namespace Nozomi.Data.ViewModels.WebsocketCommand
             Delay = delay;
             IsEnabled = isEnabled;
             Properties = properties;
+            RequestGuid = requestGuid;
         }
+        
+        /// <summary>
+        /// The type of the command.
+        /// </summary>
+        public CommandType Type { get; set; }
+        
+        /// <summary>
+        /// Name of the command
+        /// </summary>
+        public string Name { get; set; }
+        
+        /// <summary>
+        /// The delay of the command in milliseconds. Can be greater or equal to -1; Where -1 equals
+        /// to a self-repeating command.
+        /// </summary>
+        public long Delay { get; set; }
+        
+        /// <summary>
+        /// The unique identifier of the request this command is linked to.
+        /// </summary>
+        public string RequestGuid { get; set; }
+
+        /// <summary>
+        /// Is this enabled?
+        /// </summary>
+        public bool IsEnabled { get; set; }
         
         /// <summary>
         /// The obsolete identifier of the websocket command.
@@ -38,13 +54,13 @@ namespace Nozomi.Data.ViewModels.WebsocketCommand
         public long Id { get; set; }
         
         /// <summary>
-        /// The unique GUID identifier of the websocket command.
+        /// The unique GUID identifier of he websocket command.
         /// </summary>
         public string Guid { get; set; }
         
         /// <summary>
         /// The collection of properties linked to this websocket command.
         /// </summary>
-        public new IEnumerable<WebsocketCommandPropertyViewModel> Properties { get; set; }
+        public ICollection<WebsocketCommandPropertyViewModel> Properties { get; set; }
     }
 }

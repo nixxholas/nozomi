@@ -10,6 +10,8 @@ namespace Nozomi.Base.Auth.Models
         
         public string Value { get; set; }
         
+        public bool Revealed { get; set; }
+        
         public DateTime CreatedAt { get; set; }
 
         public string UserId { get; set; }

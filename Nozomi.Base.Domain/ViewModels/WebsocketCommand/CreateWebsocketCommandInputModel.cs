@@ -37,7 +37,7 @@ namespace Nozomi.Data.ViewModels.WebsocketCommand
         /// <summary>
         /// The properties of the command.
         /// </summary>
-        public List<CreateWebsocketCommandPropertyInputModel> Properties { get; set; }
+        public ICollection<CreateWebsocketCommandPropertyInputModel> Properties { get; set; }
 
         public bool IsValid()
         {

@@ -7,6 +7,8 @@ namespace Nozomi.Infra.Auth.Events.ApiKey
     {
         bool Exists(string apiKey);
 
+        string Reveal(string userId);
+
         IEnumerable<ApiKeyViewModel> ViewAll(string userId);
     }
 }

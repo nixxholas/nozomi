@@ -12,6 +12,8 @@ namespace Nozomi.Api.Controllers.WebsocketCommand.Examples
     {
         public ICollection<WebsocketCommandViewModel> GetExamples()
         {
+            var exampleRequestGuid = Guid.NewGuid();
+            
             return new List<WebsocketCommandViewModel>
             {
                 new WebsocketCommandViewModel(Guid.NewGuid().ToString(), CommandType.Json, "Command", 5000, 
@@ -25,7 +27,7 @@ namespace Nozomi.Api.Controllers.WebsocketCommand.Examples
                             Value = "Ticker", 
                             IsEnabled = true 
                         }
-                    }),
+                    }, exampleRequestGuid.ToString()),
                 new WebsocketCommandViewModel(Guid.NewGuid().ToString(), CommandType.Json, "Auth", 5000, 
                     true, new List<WebsocketCommandPropertyViewModel>
                     {
@@ -37,7 +39,7 @@ namespace Nozomi.Api.Controllers.WebsocketCommand.Examples
                             Value = Randomizer.GenerateRandomCryptographicKey(32), 
                             IsEnabled = true 
                         }
-                    })
+                    }, exampleRequestGuid.ToString())
             };
         }
     }
