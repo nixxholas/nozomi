@@ -99,7 +99,7 @@ namespace Nozomi.Infra.Api.Limiter.Services
                 {
                     // Since it doesn't exist yet, create it
                     _connectionMultiplexer.GetDatabase((int) RedisDatabases.ApiKeyEvents)
-                        .StringSet(key, RedisValue.Null);
+                        .ListLeftPush(key, RedisValue.Null);
                     _logger.LogInformation($"{_serviceName} Create: Key {key} added to cache.");
 
                     return;
