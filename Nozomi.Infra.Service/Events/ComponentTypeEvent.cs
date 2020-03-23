@@ -13,24 +13,23 @@ namespace Nozomi.Service.Events
 {
     public class ComponentTypeEvent : BaseService<ComponentTypeEvent, NozomiDbContext>, IComponentTypeEvent
     {
-        // private readonly ICollection<KeyValuePair<string, int>> _componentTypeMap;
-
         public ComponentTypeEvent(ILogger<ComponentTypeEvent> logger,
             NozomiDbContext context) : base(logger, context)
         {
-            // _componentTypeMap = new List<KeyValuePair<string, int>>();
-            //
-            // foreach (var name in Enum.GetNames(typeof(ComponentType)))
-            // {
-            //     _componentTypeMap.Add(new KeyValuePair<string, int>(name,
-            //         (int) Enum.Parse(typeof(ComponentType), name)));
-            // }
         }
 
-        public IEnumerable<KeyValuePair<string, long>> All()
+        public IEnumerable<KeyValuePair<string, long>> All(string userId = null)
         {
-            return _context.ComponentTypes.AsNoTracking()
-                .Where(ct => ct.DeletedAt == null && ct.IsEnabled)
+            var query = _context.ComponentTypes.AsNoTracking()
+                .Where(ct => ct.DeletedAt == null && ct.IsEnabled);
+
+            if (!string.IsNullOrEmpty(userId))
+                query = query.Where(e => e.CreatedById.Equals(userId))
+                    .Where(e => e.CreatedById == null);
+            else
+                query = query.Where(e => e.CreatedById == null);
+            
+            return query
                 .Select(ct => new KeyValuePair<string, long>(ct.Name, ct.Id));
         }
     }
