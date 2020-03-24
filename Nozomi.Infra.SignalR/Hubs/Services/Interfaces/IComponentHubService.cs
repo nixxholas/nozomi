@@ -1,4 +1,4 @@
-namespace Nozomi.SignalR.Hubs.Services.Interfaces
+namespace Nozomi.Infra.SignalR.Hubs.Services.Interfaces
 {
     public interface IComponentHubService
     {

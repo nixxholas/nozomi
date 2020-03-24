@@ -1,8 +1,11 @@
 using Microsoft.AspNetCore.SignalR;
-using Nozomi.SignalR.Hubs.Services.Interfaces;
+using Nozomi.Infra.SignalR.Hubs.Services.Interfaces;
 
-namespace Nozomi.SignalR.Hubs.Services
+namespace Nozomi.Infra.SignalR.Hubs.Services
 {
+    /// <summary>
+    /// Component SignalR Egress
+    /// </summary>
     public class ComponentHubService : IComponentHubService
     {
         public ComponentHubService(IHubContext<ComponentHub> hub)
