@@ -9,7 +9,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Observers" />
+      <Folder Include="Observers\Interfaces" />
     </ItemGroup>
 
 </Project>
