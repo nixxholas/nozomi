@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.SignalR;
 using Nozomi.Infra.SignalR.Hubs.Services.Interfaces;
+using Nozomi.Service.Events.Interfaces;
 
 namespace Nozomi.Infra.SignalR.Hubs.Services
 {
@@ -8,9 +9,12 @@ namespace Nozomi.Infra.SignalR.Hubs.Services
     /// </summary>
     public class ComponentHubService : IComponentHubService
     {
-        public ComponentHubService(IHubContext<ComponentHub> hub)
+        private readonly IComponentEvent _componentEvent;
+        
+        public ComponentHubService(IHubContext<ComponentHub> hub, IComponentEvent componentEvent)
         {
             Hub = hub;
+            _componentEvent = componentEvent;
         }
 
         private IHubContext<ComponentHub> Hub { get; set; }
