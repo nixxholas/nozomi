@@ -21,9 +21,9 @@ namespace Nozomi.Infra.SignalR.Hubs
             _componentHubService = componentHubService;
         }
 
-        public IEnumerable<ComponentViewModel> GetAllComponents()
+        public IEnumerable<ComponentViewModel> All(int index = 0)
         {
-            return null;
+            return _componentEvent.ViewAll(index);
         }
     }
 }

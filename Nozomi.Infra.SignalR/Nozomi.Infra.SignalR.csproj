@@ -5,6 +5,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Nozomi.Infra.Api.Limiter\Nozomi.Infra.Api.Limiter.csproj" />
       <ProjectReference Include="..\Nozomi.Infra.Service\Nozomi.Infra.Service.csproj" />
     </ItemGroup>
 
