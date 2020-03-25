@@ -1,8 +1,10 @@
 using System;
 using System.Data;
+using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Web;
@@ -36,12 +38,13 @@ namespace Nozomi.Service.Events
                         
                         // FLUSH
                         httpClient.DefaultRequestHeaders.Clear();
+                        string body = string.Empty, customMediaType = string.Empty; // For POST/PUT
 
                         // Setup the url
                         var uri = new UriBuilder(dispatchInputModel.Endpoint);
                         var urlParams = HttpUtility.ParseQueryString(string.Empty);
 
-                        // Setup the request properties
+                        // Setup the request headers and miscellaneous properties
                         foreach (var reqProp in dispatchInputModel.Properties)
                         {
                             switch (reqProp.Type)
@@ -246,16 +249,21 @@ namespace Nozomi.Service.Events
                                     }
 
                                     break;
+                                // Declares the Http POST Body
+                                case RequestPropertyType.HttpBody:
+                                    body = reqProp.Value;
+                                    break;
+                                case RequestPropertyType.HttpHeader_MediaType:
+                                    customMediaType = reqProp.Value;
+                                    break;
                                 case RequestPropertyType.HttpHeader_Custom:
                                 case RequestPropertyType.HttpQuery:
                                     urlParams.Add(reqProp.Key, reqProp.Value);
                                     break;
-                                default:
-                                    // Do nothing for now
-                                    break;
                             }
                         }
 
+                        // Query parameters? idk
                         if (urlParams.Count > 0)
                         {
                             // Setup the url
@@ -263,7 +271,22 @@ namespace Nozomi.Service.Events
                         }
 
                         // Pull in the payload
-                        var payload = await httpClient.GetAsync(uri.ToString());
+                        HttpResponseMessage payload;
+
+                        switch (dispatchInputModel.Type)
+                        {
+                            case RequestType.HttpGet:
+                                payload = await httpClient.GetAsync(uri.ToString());
+                                break;
+                            case RequestType.HttpPost:
+                                payload = await httpClient.PostAsync(uri.ToString(),
+                                    new StringContent(body, Encoding.UTF8, 
+                                        string.IsNullOrEmpty(customMediaType) ? "application/json" 
+                                            : customMediaType));
+                                break;
+                            default:
+                                throw new InvalidExpressionException("Invalid request type.");
+                        }
 
                         switch (payload.StatusCode)
                         {
@@ -279,9 +302,9 @@ namespace Nozomi.Service.Events
                                                    $"{dispatchInputModel.Endpoint} Too many requests");
 
                                 throw new DataException("Too many requests.");
+                            default:
+                                throw new InvalidDataException("Invalid HTTP response.");
                         }
-                        
-                        break;
                     case RequestType.WebSocket:
                         break;
                     default:
