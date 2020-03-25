@@ -88,8 +88,9 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
                                     _logger.LogInformation($"{_hostedServiceName} ExecuteAsync: 0 value " +
                                                            $"quota created for user {userKey}");
                                 }
+                                
                                 // But if the user's quota exists and that the value is legit,
-                                else if (long.TryParse(userQuota.ClaimValue, out var quotaValue) && quotaValue > 0)
+                                if (long.TryParse(userQuota.ClaimValue, out var quotaValue) && quotaValue >= 0)
                                 {
                                     var userUsage = authDbContext.UserClaims
                                         .AsTracking() // Ensure we track to modify directly
@@ -108,27 +109,27 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
                                         authDbContext.SaveChanges();
                                     }
 
-                                    // Ensure that the quota is above the usage 
+                                    // Ensure that the usage is a number 
                                     if (long.TryParse(userUsage.ClaimValue, out var usageValue))
                                     {
                                         userUsage.ClaimValue = (usageValue + weight).ToString(); // Update it
                                         authDbContext.UserClaims.Update(userUsage);
                                         await authDbContext.SaveChangesAsync(stoppingToken);
                                         
-                                        if (usageValue < quotaValue)
+                                        if (usageValue < quotaValue) // Quota is below the usage
                                             _logger.LogWarning($"{_hostedServiceName} ExecuteAsync: Quota of " +
                                                                $" {quotaValue} has exceeded usage for user " +
-                                                               $"{userUsage.UserId}");
+                                                               $"{userUsage.UserId}"); // Bad boy, he gon get removed
 
                                         _logger.LogInformation($"{_hostedServiceName} ExecuteAsync: User " +
                                                                $"{userUsage.UserId} with quota count updated to " +
                                                                $"{userUsage.ClaimValue}");
                                     }
                                 }
-                                else // User quota not found, bad bad bad
+                                else // User quota is bad bad bad, might be below 0...
                                 {
                                     _logger.LogWarning($"{_hostedServiceName} ExecuteAsync: Quota for user " +
-                                                       $"{userKey} not found.");
+                                                       $"{userKey} is bad [VALUE: {userQuota.ClaimValue}].");
                                 }
                             }
                             else // API Key is not linked to a User, bad bad bad
