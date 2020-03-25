@@ -262,6 +262,20 @@ namespace Nozomi.Api
             // Response caching to match certain uses
             // Cloudflare - max-age of 1 week
             app.UseResponseCaching();
+            
+            app.Use(async (context, next) =>
+            {
+                context.Response.GetTypedHeaders().CacheControl = 
+                    new Microsoft.Net.Http.Headers.CacheControlHeaderValue()
+                    {
+                        Public = true,
+                        MaxAge = TimeSpan.FromDays(7) // Cloudflare's Certificate Transparency requirements.
+                    };
+                context.Response.Headers[Microsoft.Net.Http.Headers.HeaderNames.Vary] = 
+                    new [] { "Accept-Encoding" };
+
+                await next();
+            });
 
             app.UseAuthorization();
 
