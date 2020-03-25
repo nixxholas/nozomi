@@ -47,6 +47,7 @@ namespace Nozomi.Infra.Api.Limiter.Handlers
             var claims = new [] { new Claim ("token", token) };
             var identity = new ClaimsIdentity (claims, nameof (ApiKeyAuthenticationHandler));
             var ticket = new AuthenticationTicket (new ClaimsPrincipal (identity), Scheme.Name);
+            Logger.LogInformation($"ApiKeyAuthenticationHandler: token {token} is authorised.");
             return Task.FromResult (AuthenticateResult.Success (ticket));
         }
     }
