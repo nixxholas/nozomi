@@ -10,6 +10,7 @@
     <Title>Nozomi.Data</Title>
     <Copyright>Hayate Ltd</Copyright>
     <RootNamespace>Nozomi.Data</RootNamespace>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="CoreCLR-NCalc" Version="2.2.70" />
