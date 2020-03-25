@@ -78,12 +78,17 @@ namespace Nozomi.Api
                 if (string.IsNullOrEmpty(vaultToken))
                     throw new SystemException("Invalid vault token.");
 
+                // HSTS restrictions
                 services.AddHsts(opt =>
                 {
                     opt.Preload = true;
                     opt.IncludeSubDomains = true;
                     opt.MaxAge = TimeSpan.FromDays(60);
                 });
+                
+                // Response Caching
+                // Cloudflare - max-age of 1 week
+                services.AddResponseCaching();
 
                 var authMethod = new TokenAuthMethodInfo(vaultToken);
                 var vaultClientSettings = new VaultClientSettings(
@@ -253,6 +258,24 @@ namespace Nozomi.Api
             app.UseForwardedHeaders();
 
             app.UseRouting();
+            
+            // Response caching to match certain uses
+            // Cloudflare - max-age of 1 week
+            app.UseResponseCaching();
+            
+            app.Use(async (context, next) =>
+            {
+                context.Response.GetTypedHeaders().CacheControl = 
+                    new Microsoft.Net.Http.Headers.CacheControlHeaderValue()
+                    {
+                        Public = true,
+                        MaxAge = TimeSpan.FromDays(7) // Cloudflare's Certificate Transparency requirements.
+                    };
+                context.Response.Headers[Microsoft.Net.Http.Headers.HeaderNames.Vary] = 
+                    new [] { "Accept-Encoding" };
+
+                await next();
+            });
 
             app.UseAuthorization();
 
