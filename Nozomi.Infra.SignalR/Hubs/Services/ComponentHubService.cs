@@ -1,4 +1,7 @@
+using System;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.SignalR;
+using Nozomi.Data.ViewModels.Component;
 using Nozomi.Infra.SignalR.Hubs.Services.Interfaces;
 using Nozomi.Service.Events.Interfaces;
 
@@ -10,13 +13,17 @@ namespace Nozomi.Infra.SignalR.Hubs.Services
     public class ComponentHubService : IComponentHubService
     {
         private readonly IComponentEvent _componentEvent;
+        private IHubContext<ComponentHub> _hub;
         
         public ComponentHubService(IHubContext<ComponentHub> hub, IComponentEvent componentEvent)
         {
-            Hub = hub;
+            _hub = hub;
             _componentEvent = componentEvent;
         }
 
-        private IHubContext<ComponentHub> Hub { get; set; }
+        public IEnumerable<ComponentViewModel> All()
+        {
+            return _componentEvent.ViewAll();
+        }
     }
 }
