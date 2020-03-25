@@ -8,6 +8,8 @@ namespace Nozomi.Data.Models.Web
         HttpGet = 0,
         [Description("HttpPost")]
         HttpPost = 1,
+        [Description("HttpPut")]
+        HttpPut = 2,
         [Description("WebSocket")]
         WebSocket = 50
     }

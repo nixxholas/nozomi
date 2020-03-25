@@ -34,6 +34,7 @@ namespace Nozomi.Service.Events
                 {
                     case RequestType.HttpGet:
                     case RequestType.HttpPost:
+                    case RequestType.HttpPut:
                         var httpClient = new HttpClient();
                         
                         // FLUSH
@@ -249,7 +250,7 @@ namespace Nozomi.Service.Events
                                     }
 
                                     break;
-                                // Declares the Http POST Body
+                                // Declares the Http POST/PUT Body
                                 case RequestPropertyType.HttpBody:
                                     body = reqProp.Value;
                                     break;
@@ -280,6 +281,12 @@ namespace Nozomi.Service.Events
                                 break;
                             case RequestType.HttpPost:
                                 payload = await httpClient.PostAsync(uri.ToString(),
+                                    new StringContent(body, Encoding.UTF8, 
+                                        string.IsNullOrEmpty(customMediaType) ? "application/json" 
+                                            : customMediaType));
+                                break;
+                            case RequestType.HttpPut:
+                                payload = await httpClient.PutAsync(uri.ToString(),
                                     new StringContent(body, Encoding.UTF8, 
                                         string.IsNullOrEmpty(customMediaType) ? "application/json" 
                                             : customMediaType));
