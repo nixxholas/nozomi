@@ -22,6 +22,26 @@ export default {
             }
         });
     },
+    
+    revealApiKey() {
+      return new Promise(async (resolve, reject) => {
+          try {
+              const response = await axios.get(`${oidcSettings.authority}/ApiKey/Reveal`, {
+                  headers: {
+                      Authorization: `Bearer ${store.state.oidcStore.access_token}`
+                  }
+              });
+              
+              if (response.status === 200) {
+                  return resolve(response.data);
+              }
+              
+              reject({ message: "Unable to reveal API key" });
+          } catch (e) {
+            reject(e);  
+          }
+      });
+    },
 
     insert(label) {
         return new Promise(async (resolve, reject) => {
