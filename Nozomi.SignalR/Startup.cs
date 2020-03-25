@@ -11,6 +11,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Nozomi.Infra.Api.Limiter.Events;
+using Nozomi.Infra.Api.Limiter.Events.Interfaces;
 using Nozomi.Infra.Api.Limiter.Handlers;
 using Nozomi.Infra.SignalR.Hubs;
 using Nozomi.Preprocessing.Options;
@@ -113,6 +115,7 @@ namespace Nozomi.SignalR
                 });
 
             services.AddTransient<IComponentEvent, ComponentEvent>();
+            services.AddTransient<INozomiRedisEvent, NozomiRedisEvent>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
