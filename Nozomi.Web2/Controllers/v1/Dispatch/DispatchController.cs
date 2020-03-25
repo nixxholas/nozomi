@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.ViewModels.Dispatch;
 using Nozomi.Preprocessing.Attributes;
-using Nozomi.Preprocessing.Statics;
 using Nozomi.Service.Events.Interfaces;
 
 namespace Nozomi.Web2.Controllers.v1.Dispatch
@@ -21,7 +20,7 @@ namespace Nozomi.Web2.Controllers.v1.Dispatch
             _dispatchEvent = dispatchEvent;
         }
 
-        [Authorize(Roles = NozomiPermissions.AllowAllStaffRoles)]
+        [Authorize]
         [HttpPost]
         [Throttle(Name = "Dispatch/Index", Milliseconds = 5000)]
         public async Task<IActionResult> Fetch(DispatchInputModel vm)
