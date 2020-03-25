@@ -113,8 +113,9 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
                                         // Iterate the user's api keys and populate the cache if needed
                                         foreach (var userApiKey in userApiKeys)
                                         {
-                                            // TODO: FIXX!!
-                                            if (!redisEvent.Exists(userApiKey.Value))
+                                            // If the cache does not contain this api key,
+                                            if (!redisEvent.Exists(userApiKey.Value, 
+                                                RedisDatabases.ApiKeyUser))
                                             {
                                                 // Add it into the cache
                                                 redisService.Add(RedisDatabases.ApiKeyUser, userApiKey.Value, 
@@ -123,11 +124,12 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
                                                                        $" Api Key {userApiKey.Value} added with " +
                                                                        $"symlink to user {user.Id}");
                                             }
-                                            else
-                                            {
-                                                _logger.LogInformation($"{_hostedServiceName} ExecuteAsync: " +
-                                                                       $" Api Key {userApiKey.Value} already added");
-                                            }
+                                            // Don't refactor this, may need it.. not sure when
+                                            // else
+                                            // {
+                                            //     _logger.LogInformation($"{_hostedServiceName} ExecuteAsync: " +
+                                            //                            $" Api Key {userApiKey.Value} already added");
+                                            // }
                                         }
                                     }
                                 }
@@ -169,7 +171,7 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
                                 else
                                 {
                                     _logger.LogInformation($"{_hostedServiceName} ExecuteAsync: No usage and/or " +
-                                                           $"quota found for user {user.Id}.");   
+                                                           $"quota found for user {user.Id}.");
                                 }
                             }
                         }
