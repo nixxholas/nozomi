@@ -38,6 +38,7 @@ namespace Nozomi.Web2.Extensions
             services.AddTransient<ICurrencyPairTypeEvent, CurrencyPairTypeEvent>();
             services.AddTransient<ICurrencySourceEvent, CurrencySourceEvent>();
             services.AddTransient<ICurrencyTypeEvent, CurrencyTypeEvent>();
+            services.AddTransient<IDispatchEvent, DispatchEvent>();
             services.AddTransient<IRequestEvent, RequestEvent>();
             services.AddTransient<IRequestPropertyEvent, RequestPropertyEvent>();
             services.AddTransient<IRequestPropertyTypeEvent, RequestPropertyTypeEvent>();
