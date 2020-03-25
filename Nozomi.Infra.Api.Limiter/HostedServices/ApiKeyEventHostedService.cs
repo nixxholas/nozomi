@@ -53,7 +53,7 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
                         var oldestWeight = database.ListLeftPop(apiKey);
 
                         // If it is a valid value
-                        if (oldestWeight.HasValue && long.TryParse(oldestWeight, out var weight) && weight > 0)
+                        if (oldestWeight.HasValue && long.TryParse(oldestWeight, out var weight) && weight >= 0)
                         {
                             // First navigate to the user first
                             var nozomiRedisEvent = scope.ServiceProvider.GetRequiredService<INozomiRedisEvent>();
