@@ -484,5 +484,43 @@ namespace Nozomi.Service.Events
 
             throw new ArgumentException("Invalid guid or index.");
         }
+
+        public IEnumerable<ComponentViewModel> ViewAll(int index = 0, string userId = null)
+        {
+            if (index < 0) throw new ArgumentOutOfRangeException("Invalid index.");
+
+            var query = _context.Components.AsNoTracking()
+                .Where(c => c.DeletedAt == null && c.IsEnabled);
+
+            if (!string.IsNullOrEmpty(userId))
+                query = query.Where(e => e.CreatedById.Equals(userId));
+            else
+                query = query.Where(e => e.CreatedById == null);
+
+            return query
+                .Include(e => e.RcdHistoricItems)
+                .Skip(index * NozomiServiceConstants.RequestComponentTakeoutLimit)
+                .Take(NozomiServiceConstants.RequestComponentTakeoutLimit)
+                .Select(e => new ComponentViewModel
+                {
+                    Guid = e.Guid,
+                    Type = e.ComponentTypeId,
+                    IsDenominated = e.IsDenominated,
+                    Value = e.RcdHistoricItems
+                        .Where(rcdhi => rcdhi.DeletedAt == null && rcdhi.IsEnabled)
+                        .OrderByDescending(rcdhi => rcdhi.HistoricDateTime)
+                        .FirstOrDefault().Value,
+                    History = e.RcdHistoricItems
+                        .Where(rcdhi => rcdhi.DeletedAt == null && rcdhi.IsEnabled)
+                        .OrderByDescending(rcdhi => rcdhi.HistoricDateTime)
+                        .Skip(index * NozomiServiceConstants.RequestComponentTakeoutLimit)
+                        .Take(NozomiServiceConstants.RequestComponentTakeoutLimit)
+                        .Select(rcdhi => new ComponentHistoricItemViewModel
+                        {
+                            Timestamp = rcdhi.HistoricDateTime,
+                            Value = rcdhi.Value
+                        })
+                });
+        }
     }
 }

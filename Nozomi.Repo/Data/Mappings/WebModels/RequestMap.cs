@@ -29,13 +29,16 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
 
             entityTypeBuilder.HasMany(r => r.RequestComponents)
                 .WithOne(rc => rc.Request)
-                .HasForeignKey(rc => rc.RequestId).OnDelete(DeleteBehavior.Cascade);
+                .HasForeignKey(rc => rc.RequestId).OnDelete(DeleteBehavior.Cascade)
+                .IsRequired(false);
             entityTypeBuilder.HasMany(r => r.RequestProperties)
                 .WithOne(rp => rp.Request)
-                .HasForeignKey(rp => rp.RequestId).OnDelete(DeleteBehavior.Cascade);
+                .HasForeignKey(rp => rp.RequestId).OnDelete(DeleteBehavior.Cascade)
+                .IsRequired(false);
             entityTypeBuilder.HasMany(r => r.WebsocketCommands)
                 .WithOne(wsc => wsc.Request)
-                .HasForeignKey(wsc => wsc.RequestId).OnDelete(DeleteBehavior.Cascade);
+                .HasForeignKey(wsc => wsc.RequestId).OnDelete(DeleteBehavior.Cascade)
+                .IsRequired(false);
         }
     }
 }
