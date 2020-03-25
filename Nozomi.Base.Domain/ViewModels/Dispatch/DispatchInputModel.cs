@@ -36,6 +36,11 @@ namespace Nozomi.Data.ViewModels.Dispatch
         /// </summary>
         public ICollection<CreateWebsocketCommandInputModel> WebsocketCommands { get; set; }
 
+        public bool IsValid()
+        {
+            return new DispatchInputValidator().Validate(this).IsValid;
+        }
+
         public class DispatchInputValidator : AbstractValidator<DispatchInputModel>
         {
             public DispatchInputValidator()
