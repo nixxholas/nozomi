@@ -1,5 +1,5 @@
+using System.Net.Http;
 using System.Text.Json;
-using Microsoft.AspNetCore.Http;
 
 namespace Nozomi.Data.ViewModels.Dispatch
 {
@@ -8,11 +8,11 @@ namespace Nozomi.Data.ViewModels.Dispatch
         /// <summary>
         /// The granular details of the dispatch.
         /// </summary>
-        public HttpResponse Response { get; set; }
+        public HttpResponseMessage Response { get; set; }
         
         /// <summary>
         /// The raw payload of the object, in JSON.
         /// </summary>
-        public JsonDocument Payload { get; set; }
+        public string Payload { get; set; }
     }
 }
