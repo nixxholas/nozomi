@@ -1,6 +1,5 @@
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
-using Microsoft.OpenApi.Writers;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Nozomi.Api.Filters
@@ -16,6 +15,7 @@ namespace Nozomi.Api.Filters
                 swaggerDoc.Info.Extensions.Add("x-logo", new OpenApiObject
                     {
                         { "url", new OpenApiString("https://auth.nozomi.one/logo.png") },
+                        { "backgroundColor" , new OpenApiString("#FFFFFF") },
                         { "altText", new OpenApiString("Nozomi") }
                     });
             }
