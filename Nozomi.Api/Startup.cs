@@ -174,7 +174,8 @@ namespace Nozomi.Api
                     {
                         { "x-logo", new OpenApiObject
                             {
-                                { "url", new OpenApiString("/images/logo.png") },
+                                // TODO: Fix full routing
+                                { "url", new OpenApiString("images/logo.svg") },
                                 { "backgroundColor" , new OpenApiString("#FFFFFF") },
                                 { "altText", new OpenApiString("Nozomi") }
                             }
@@ -268,6 +269,8 @@ namespace Nozomi.Api
 
                 app.UseResponseCompression();
             }
+            
+            app.UseStaticFiles();
 
             app.UseHttpsRedirection();
 
