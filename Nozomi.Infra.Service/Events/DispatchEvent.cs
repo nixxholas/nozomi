@@ -35,6 +35,8 @@ namespace Nozomi.Service.Events
                     case RequestType.HttpGet:
                     case RequestType.HttpPost:
                     case RequestType.HttpPut:
+                    case RequestType.HttpPatch:
+                    case RequestType.HttpDelete:
                         var httpClient = new HttpClient();
                         
                         // FLUSH
