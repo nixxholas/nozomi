@@ -367,7 +367,10 @@ namespace Nozomi.Service.Events
                         };
                         
                         // Pull in the payload
-                        var incomingPayloads = new HttpResponseMessage();
+                        var outgoingPayload = new DispatchViewModel
+                        {
+                            Response = new HttpResponseMessage()
+                        };
                         
                         // Incoming processing
                         newSocket.OnMessage += async (sender, args) =>
@@ -404,8 +407,8 @@ namespace Nozomi.Service.Events
                         {
                             _logger.LogError($"{_eventName} Dispatch/OnError:" +
                                              $" {args.Message}");
-                            incomingPayloads.StatusCode = HttpStatusCode.ExpectationFailed;
-                            incomingPayloads.ReasonPhrase = !string.IsNullOrEmpty(args.Message) ? args.Message 
+                            outgoingPayload.Response.StatusCode = HttpStatusCode.ExpectationFailed;
+                            outgoingPayload.Response.ReasonPhrase = !string.IsNullOrEmpty(args.Message) ? args.Message 
                                 :  "The socket connection has been facing some unexpected problems that may require " +
                                    "your intervention to rectify.";
                                 GC.SuppressFinalize(this);
