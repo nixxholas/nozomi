@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using FluentValidation;
 using Nozomi.Data.Models.Web;
@@ -61,6 +62,10 @@ namespace Nozomi.Data.ViewModels.Dispatch
                 // Must be empty unless its a websocket dispatch
                 RuleFor(e => e.WebsocketCommands).Empty()
                     .Unless(e => !e.Type.Equals(RequestType.WebSocket));
+                // Hard code some limits for now
+                RuleFor(e => e.SocketKillSwitchDelay)
+                    .LessThan(TimeSpan.FromSeconds(20).Ticks);
+                RuleFor(e => e.SocketDataCount).LessThan(5);
             }
         }
     }
