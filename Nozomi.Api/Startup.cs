@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.IO;
 using System.Linq;
 using System.Net.Http.Headers;
@@ -15,10 +16,14 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.OpenApi.Any;
+using Microsoft.OpenApi.Interfaces;
 using Microsoft.OpenApi.Models;
 using Nozomi.Api.Extensions;
+using Nozomi.Api.Filters;
 using Nozomi.Infra.Api.Limiter.Events;
 using Nozomi.Infra.Api.Limiter.Events.Interfaces;
 using Nozomi.Infra.Api.Limiter.Handlers;
@@ -33,6 +38,7 @@ using Nozomi.Service.Events.Analysis;
 using Nozomi.Service.Events.Analysis.Interfaces;
 using Nozomi.Service.Events.Interfaces;
 using Swashbuckle.AspNetCore.Filters;
+using Swashbuckle.AspNetCore.ReDoc;
 using VaultSharp;
 using VaultSharp.V1.AuthMethods.Token;
 
@@ -78,12 +84,17 @@ namespace Nozomi.Api
                 if (string.IsNullOrEmpty(vaultToken))
                     throw new SystemException("Invalid vault token.");
 
+                // HSTS restrictions
                 services.AddHsts(opt =>
                 {
                     opt.Preload = true;
                     opt.IncludeSubDomains = true;
                     opt.MaxAge = TimeSpan.FromDays(60);
                 });
+                
+                // Response Caching
+                // Cloudflare - max-age of 1 week
+                services.AddResponseCaching();
 
                 var authMethod = new TokenAuthMethodInfo(vaultToken);
                 var vaultClientSettings = new VaultClientSettings(
@@ -159,29 +170,25 @@ namespace Nozomi.Api
             {
                 config.SwaggerDoc(GlobalApiVariables.CURRENT_API_VERSION, new OpenApiInfo {
                     Title = "Nozomi API", 
-                    Version = GlobalApiVariables.CURRENT_API_REVISION.ToString()
-                });
-                
-                // Define the Api Key scheme that's in use (i.e. Implicit Flow)
-                config.AddSecurityDefinition(ApiKeyAuthenticationOptions.DefaultScheme, new OpenApiSecurityScheme
-                {
-                    Description = "Nozomi's custom authorization header using the Api Key scheme. Example: \"{token}\"",
-                    In = ParameterLocation.Header,
-                    Name = ApiKeyAuthenticationOptions.HeaderKey,
-                    Type = SecuritySchemeType.ApiKey,
-                    Flows = new OpenApiOAuthFlows
+                    Version = GlobalApiVariables.CURRENT_API_REVISION.ToString(),
+                    Extensions = new Dictionary<string, IOpenApiExtension>
                     {
-                        Implicit = new OpenApiOAuthFlow
-                        {
-                            AuthorizationUrl = new Uri("/api/connect/validate", UriKind.Relative),
-                            Scopes = new Dictionary<string, string>
+                        { "x-logo", new OpenApiObject
                             {
-                                { "readAccess", "Access read operations" },
-                                { "writeAccess", "Access write operations" }
+                                // TODO: Fix full routing
+                                { "url", new OpenApiString("api-images/logo.svg") },
+                                { "backgroundColor" , new OpenApiString("#FFFFFF") },
+                                { "altText", new OpenApiString("Nozomi") }
                             }
                         }
                     }
                 });
+
+                config.EnableAnnotations(); // [SwaggerTag] support
+
+                // Adds "(Auth)" to the summary so that you can see which endpoints have Authorization
+                config.OperationFilter<AppendAuthorizeToSummaryOperationFilter>();
+                // or use the generic method, e.g. c.OperationFilter<AppendAuthorizeToSummaryOperationFilter<MyCustomAttribute>>();
                 
                 // [SwaggerRequestExample] & [SwaggerResponseExample]
                 // version < 3.0 like this: c.OperationFilter<ExamplesOperationFilter>(); 
@@ -194,11 +201,28 @@ namespace Nozomi.Api
                 var filePath = Path.Combine(AppContext.BaseDirectory, 
                     $"{Assembly.GetExecutingAssembly().GetName().Name}.xml");
                 config.IncludeXmlComments(filePath);
-
-                // Adds "(Auth)" to the summary so that you can see which endpoints have Authorization
-                config.OperationFilter<AppendAuthorizeToSummaryOperationFilter>();
-                // or use the generic method, e.g. c.OperationFilter<AppendAuthorizeToSummaryOperationFilter<MyCustomAttribute>>();
                 
+                // Define the Api Key scheme that's in use (i.e. Implicit Flow)
+                config.AddSecurityDefinition(ApiKeyAuthenticationOptions.DefaultScheme, new OpenApiSecurityScheme
+                {
+                    Description = "Nozomi's custom authorization header using the Api Key scheme. Example: \"{token}\"",
+                    In = ParameterLocation.Header,
+                    Name = ApiKeyAuthenticationOptions.HeaderKey,
+                    Type = SecuritySchemeType.ApiKey,
+                    Flows = new OpenApiOAuthFlows
+                    {
+                        Implicit = new OpenApiOAuthFlow
+                        {
+                            AuthorizationUrl = new Uri("/connect/validate", UriKind.Relative),
+                            Scopes = new Dictionary<string, string>
+                            {
+                                { "readAccess", "Access read operations" },
+                                { "writeAccess", "Access write operations" }
+                            }
+                        }
+                    }
+                });
+
                 // add Security information to each operation for OAuth2
                 config.OperationFilter<SecurityRequirementsOperationFilter>();
 
@@ -246,6 +270,15 @@ namespace Nozomi.Api
 
                 app.UseResponseCompression();
             }
+            
+            app.UseStaticFiles();
+            
+            app.UseStaticFiles(new StaticFileOptions()
+            {
+                FileProvider = new PhysicalFileProvider(
+                    Path.Combine(Directory.GetCurrentDirectory(), @"Images")),
+                RequestPath = new PathString("/api-images")
+            });
 
             app.UseHttpsRedirection();
 
@@ -253,6 +286,24 @@ namespace Nozomi.Api
             app.UseForwardedHeaders();
 
             app.UseRouting();
+            
+            // Response caching to match certain uses
+            // Cloudflare - max-age of 1 week
+            app.UseResponseCaching();
+            
+            app.Use(async (context, next) =>
+            {
+                context.Response.GetTypedHeaders().CacheControl = 
+                    new Microsoft.Net.Http.Headers.CacheControlHeaderValue()
+                    {
+                        Public = true,
+                        MaxAge = TimeSpan.FromDays(7) // Cloudflare's Certificate Transparency requirements.
+                    };
+                context.Response.Headers[Microsoft.Net.Http.Headers.HeaderNames.Vary] = 
+                    new [] { "Accept-Encoding" };
+
+                await next();
+            });
 
             app.UseAuthorization();
 
@@ -261,15 +312,29 @@ namespace Nozomi.Api
             app.UseSwagger(c =>
             {
                 c.RouteTemplate = "/{documentName}/swagger.json";
+                c.SerializeAsV2 = true;
             });
             
-            app.UseSwaggerUI(c =>
-            {
-                c.DocumentTitle = "Nozomi API Documentation";
+            // app.UseSwaggerUI(c =>
+            // {
+            //     c.DocumentTitle = "Nozomi API Documentation";
+            //     c.RoutePrefix = "";
+            //     c.SwaggerEndpoint($"/{GlobalApiVariables.CURRENT_API_VERSION}/swagger.json", 
+            //         $"Nozomi API rev. {GlobalApiVariables.CURRENT_API_REVISION}");
+            //     c.OAuthClientSecret(ApiKeyAuthenticationOptions.HeaderKey);
+            // });
+
+            app.UseReDoc(c => { 
+                c.DocumentTitle = "Nozomi API";
                 c.RoutePrefix = "";
-                c.SwaggerEndpoint($"/{GlobalApiVariables.CURRENT_API_VERSION}/swagger.json", 
-                    $"Nozomi API rev. {GlobalApiVariables.CURRENT_API_REVISION}");
-                c.OAuthClientSecret(ApiKeyAuthenticationOptions.HeaderKey);
+                c.SpecUrl($"/{GlobalApiVariables.CURRENT_API_VERSION}/swagger.json");
+                c.ConfigObject = new ConfigObject
+                {
+                    HideDownloadButton = true,
+                    HideLoading = true
+                };
+                c.NativeScrollbars();
+                // c.OAuthClientSecret(ApiKeyAuthenticationOptions.HeaderKey);
             });
         }
     }

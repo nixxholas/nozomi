@@ -53,7 +53,7 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
                         var oldestWeight = database.ListLeftPop(apiKey);
 
                         // If it is a valid value
-                        if (oldestWeight.HasValue && long.TryParse(oldestWeight, out var weight) && weight > 0)
+                        if (oldestWeight.HasValue && long.TryParse(oldestWeight, out var weight) && weight >= 0)
                         {
                             // First navigate to the user first
                             var nozomiRedisEvent = scope.ServiceProvider.GetRequiredService<INozomiRedisEvent>();
@@ -89,8 +89,8 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
                                                            $"quota created for user {userKey}");
                                 }
                                 
-                                // Ensure quota exists and that 
-                                else if (long.TryParse(userQuota.ClaimValue, out var quotaValue) && quotaValue > 0)
+                                // But if the user's quota exists and that the value is legit,
+                                if (long.TryParse(userQuota.ClaimValue, out var quotaValue) && quotaValue >= 0)
                                 {
                                     var userUsage = authDbContext.UserClaims
                                         .AsTracking() // Ensure we track to modify directly
@@ -109,28 +109,27 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
                                         authDbContext.SaveChanges();
                                     }
 
-                                    // Ensure that the quota is above the usage 
-                                    if (long.TryParse(userUsage.ClaimValue, out var usageValue) 
-                                        && usageValue < quotaValue)
+                                    // Ensure that the usage is a number 
+                                    if (long.TryParse(userUsage.ClaimValue, out var usageValue))
                                     {
                                         userUsage.ClaimValue = (usageValue + weight).ToString(); // Update it
                                         authDbContext.UserClaims.Update(userUsage);
                                         await authDbContext.SaveChangesAsync(stoppingToken);
+                                        
+                                        if (usageValue < quotaValue) // Quota is below the usage
+                                            _logger.LogWarning($"{_hostedServiceName} ExecuteAsync: Quota of " +
+                                                               $" {quotaValue} has exceeded usage for user " +
+                                                               $"{userUsage.UserId}"); // Bad boy, he gon get removed
 
                                         _logger.LogInformation($"{_hostedServiceName} ExecuteAsync: User " +
                                                                $"{userUsage.UserId} with quota count updated to " +
                                                                $"{userUsage.ClaimValue}");
                                     }
-                                    else // Usage is bad
-                                    {
-                                        _logger.LogWarning($"{_hostedServiceName} ExecuteAsync: Quota of " +
-                                                           $" {quotaValue} has exceeded usage for user {userUsage.UserId}");
-                                    }
                                 }
-                                else // User quota not found, bad bad bad
+                                else // User quota is bad bad bad, might be below 0...
                                 {
                                     _logger.LogWarning($"{_hostedServiceName} ExecuteAsync: Quota for user " +
-                                                       $"{userKey} not found.");
+                                                       $"{userKey} is bad [VALUE: {userQuota.ClaimValue}].");
                                 }
                             }
                             else // API Key is not linked to a User, bad bad bad
