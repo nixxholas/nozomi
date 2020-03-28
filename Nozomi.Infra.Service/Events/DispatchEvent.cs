@@ -368,7 +368,7 @@ namespace Nozomi.Service.Events
                         };
 
                         // Always ensure that the sockets move to receive data until closed
-                        while (newSocket != null && newSocket.IsAlive)
+                        do
                         {
                             // Initialise timer and datacounter here
                             var stopWatch = new Stopwatch();
@@ -394,7 +394,8 @@ namespace Nozomi.Service.Events
                                 }
                             };
 
-                            var concatPayload = new List<string>(); // Setup the JSON arr which we're going to churn out.
+                            var concatPayload =
+                                new List<string>(); // Setup the JSON arr which we're going to churn out.
 
                             // Incoming processing
                             newSocket.OnMessage += async (sender, args) =>
@@ -426,8 +427,10 @@ namespace Nozomi.Service.Events
                                         default:
                                             throw new InvalidEnumArgumentException($"{_eventName} Dispatch: " +
                                                                                    $"{dispatchInputModel.Endpoint} invalid" +
-                                                                                   $" response type." );
-                                    };
+                                                                                   $" response type.");
+                                    }
+
+                                    ;
                                 }
                                 else
                                 {
@@ -441,7 +444,7 @@ namespace Nozomi.Service.Events
 
                                 // Update the payload as well
                                 outgoingPayload.Payload = Utf8Json.JsonSerializer.ToJsonString(concatPayload);
-                                    
+
                                 await Task.Delay(50,
                                     CancellationToken.None); // Always delay by 1ms in case of spam
                             };
@@ -468,7 +471,7 @@ namespace Nozomi.Service.Events
                             };
 
                             newSocket.Connect();
-                        }
+                        } while (newSocket != null && newSocket.IsAlive);
                         
                         return outgoingPayload;
                     default:
