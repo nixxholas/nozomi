@@ -295,6 +295,15 @@ namespace Nozomi.Service.Events
                                         string.IsNullOrEmpty(customMediaType) ? "application/json" 
                                             : customMediaType));
                                 break;
+                            case RequestType.HttpDelete:
+                                payload = await httpClient.DeleteAsync(uri.ToString());
+                                break;
+                            case RequestType.HttpPatch:
+                                payload = await httpClient.PatchAsync(uri.ToString(),
+                                    new StringContent(body, Encoding.UTF8, 
+                                        string.IsNullOrEmpty(customMediaType) ? "application/json" 
+                                            : customMediaType));
+                                break;
                             default:
                                 throw new InvalidExpressionException("Invalid request type.");
                         }
