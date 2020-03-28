@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using System.Xml;
@@ -17,6 +18,7 @@ using Nozomi.Data.Models.Web;
 using Nozomi.Data.ViewModels.Dispatch;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Service.Events.Interfaces;
+using sta_websocket_sharp_core;
 
 namespace Nozomi.Service.Events
 {
@@ -38,7 +40,7 @@ namespace Nozomi.Service.Events
                     case RequestType.HttpPatch:
                     case RequestType.HttpDelete:
                         var httpClient = new HttpClient();
-                        
+
                         // FLUSH
                         httpClient.DefaultRequestHeaders.Clear();
                         string body = string.Empty, customMediaType = string.Empty; // For POST/PUT
@@ -257,7 +259,7 @@ namespace Nozomi.Service.Events
                                     if (dispatchInputModel.Type.Equals(RequestType.HttpGet))
                                         _logger.LogWarning($"{_eventName} Dispatch: Setting body in a GET " +
                                                            "request..");
-                                    
+
                                     body = reqProp.Value;
                                     break;
                                 case RequestPropertyType.HttpHeader_MediaType:
@@ -287,14 +289,16 @@ namespace Nozomi.Service.Events
                                 break;
                             case RequestType.HttpPost:
                                 payload = await httpClient.PostAsync(uri.ToString(),
-                                    new StringContent(body, Encoding.UTF8, 
-                                        string.IsNullOrEmpty(customMediaType) ? "application/json" 
+                                    new StringContent(body, Encoding.UTF8,
+                                        string.IsNullOrEmpty(customMediaType)
+                                            ? "application/json"
                                             : customMediaType));
                                 break;
                             case RequestType.HttpPut:
                                 payload = await httpClient.PutAsync(uri.ToString(),
-                                    new StringContent(body, Encoding.UTF8, 
-                                        string.IsNullOrEmpty(customMediaType) ? "application/json" 
+                                    new StringContent(body, Encoding.UTF8,
+                                        string.IsNullOrEmpty(customMediaType)
+                                            ? "application/json"
                                             : customMediaType));
                                 break;
                             case RequestType.HttpDelete:
@@ -302,8 +306,9 @@ namespace Nozomi.Service.Events
                                 break;
                             case RequestType.HttpPatch:
                                 payload = await httpClient.PatchAsync(uri.ToString(),
-                                    new StringContent(body, Encoding.UTF8, 
-                                        string.IsNullOrEmpty(customMediaType) ? "application/json" 
+                                    new StringContent(body, Encoding.UTF8,
+                                        string.IsNullOrEmpty(customMediaType)
+                                            ? "application/json"
                                             : customMediaType));
                                 break;
                             default:
@@ -328,6 +333,71 @@ namespace Nozomi.Service.Events
                                 throw new InvalidDataException("Invalid HTTP response.");
                         }
                     case RequestType.WebSocket:
+                        // Initialise the websocket first
+                        var newSocket = new WebSocketCore(dispatchInputModel.Endpoint)
+                        {
+                            Compression = CompressionMethod.Deflate,
+                            EmitOnPing = true,
+                            EnableRedirection = false,
+                        };
+
+                        // Pre-request processing
+                        newSocket.OnOpen += (sender, args) =>
+                        {
+                            foreach (var wsCommand in dispatchInputModel.WebsocketCommands)
+                            {
+                                if (wsCommand.Delay.Equals(0))
+                                {
+                                    // One-time command
+                                }
+                                else
+                                {
+                                    // Run a repeated task
+                                }
+                            }
+                        };
+
+                        // Incoming processing
+                        newSocket.OnMessage += async (sender, args) =>
+                        {
+                            if (args.IsPing)
+                            {
+                                newSocket.Ping();
+                            }
+                            else if (!string.IsNullOrEmpty(args.Data)) // Process the incoming data
+                            {
+                                
+                            }
+                            else
+                            {
+                                _logger.LogError($"{_eventName} Dispatch/OnMessage: Endpoint " +
+                                                 $"{dispatchInputModel.Endpoint} has an empty payload incoming.");
+                                newSocket.Close();
+                            }
+
+                            await Task.Delay(50,
+                                CancellationToken.None); // Always delay by 1ms in case of spam
+                        };
+
+                        // Error processing
+                        newSocket.OnError += async (sender, args) =>
+                        {
+                            _logger.LogError($"{_eventName} Dispatch/OnError:" +
+                                             $" {args.Message}");
+                            GC.SuppressFinalize(this);
+                        };
+
+                        newSocket.OnClose += (sender, args) =>
+                        {
+                            _logger.LogInformation($"{_eventName} Dispatch/onClose: " +
+                                                   $"Closing socket connection for {dispatchInputModel.Endpoint}");
+                            GC.SuppressFinalize(this);
+                        };
+
+                        newSocket.Connect();
+
+                        await Task.Delay(1000); // Bing, for websockets, should we allow the user to define how
+                        // long we have to wait to completely finish receiving the data he wants?
                         break;
                     default:
                         throw new InvalidOperationException("Invalid protocol type.");
