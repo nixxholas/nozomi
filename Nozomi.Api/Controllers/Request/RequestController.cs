@@ -56,7 +56,7 @@ namespace Nozomi.Api.Controllers.Request
         [SwaggerResponseExample((int)HttpStatusCode.InternalServerError, typeof(AllInternalServerExample))]
         public IActionResult All(int index = 0)
         {
-            if (index >= 0) return BadRequest(AllBadRequestExample.Result);
+            if (index < 0) return BadRequest(AllBadRequestExample.Result);
             
             if (HttpContext.Request.Headers.TryGetValue(ApiKeyAuthenticationOptions.HeaderKey, 
                 out var apiKey))
