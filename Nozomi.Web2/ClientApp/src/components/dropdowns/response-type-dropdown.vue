@@ -14,7 +14,7 @@
 </template>
 
 <script>
-    import store from '../../store/index';
+    import ResponseTypeService from "@/services/ResponseTypeService";
 
     export default {
         name: "response-type-dropdown",
@@ -38,22 +38,16 @@
 
             let self = this;
             // Synchronously call for data
-            this.$axios.get('/api/ResponseType/All', {
-                headers: {
-                    Authorization: "Bearer " + store.state.oidcStore.access_token
-                }
-            })
-                .then(function (response) {
-                    self.responseTypes = response.data.data.value;
-                })
-                .catch(function (error) {
-                    // handle error
-                    console.log(error);
-                })
-                .finally(function () {
-                    // always executed
-                    self.isLoading = false;
-                });
+            ResponseTypeService.all()
+              .then(function(response) {
+                self.responseTypes = response.data.value;
+              })
+              .catch(function(e) {
+                console.log(e);
+              })
+              .finally(function() {
+                self.isLoading = false;
+              });
         },
         data: function () {
             return {
