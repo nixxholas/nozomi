@@ -173,6 +173,8 @@ namespace Nozomi.Api
                     Version = GlobalApiVariables.CURRENT_API_REVISION.ToString(),
                     Extensions = new Dictionary<string, IOpenApiExtension>
                     {
+                        // Get the custom logo ready bitches
+                        // https://stackoverflow.com/questions/54335549/adding-x-logo-vendor-extension-using-swashbuckle-asp-net-core-for-redoc
                         { "x-logo", new OpenApiObject
                             {
                                 // TODO: Fix full routing
@@ -273,6 +275,8 @@ namespace Nozomi.Api
             
             app.UseStaticFiles();
             
+            // Treating this web app like a CDN lol
+            // https://www.tutorialsteacher.com/core/aspnet-core-static-file
             app.UseStaticFiles(new StaticFileOptions()
             {
                 FileProvider = new PhysicalFileProvider(
