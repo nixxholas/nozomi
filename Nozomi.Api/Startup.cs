@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Any;
@@ -175,7 +176,7 @@ namespace Nozomi.Api
                         { "x-logo", new OpenApiObject
                             {
                                 // TODO: Fix full routing
-                                { "url", new OpenApiString("images/logo.svg") },
+                                { "url", new OpenApiString("api-images/logo.svg") },
                                 { "backgroundColor" , new OpenApiString("#FFFFFF") },
                                 { "altText", new OpenApiString("Nozomi") }
                             }
@@ -271,6 +272,13 @@ namespace Nozomi.Api
             }
             
             app.UseStaticFiles();
+            
+            app.UseStaticFiles(new StaticFileOptions()
+            {
+                FileProvider = new PhysicalFileProvider(
+                    Path.Combine(Directory.GetCurrentDirectory(), @"Images")),
+                RequestPath = new PathString("/api-images")
+            });
 
             app.UseHttpsRedirection();
 
