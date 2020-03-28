@@ -252,6 +252,10 @@ namespace Nozomi.Service.Events
                                     break;
                                 // Declares the Http POST/PUT Body
                                 case RequestPropertyType.HttpBody:
+                                    if (dispatchInputModel.Type.Equals(RequestType.HttpGet))
+                                        _logger.LogWarning($"{_eventName} Dispatch: Setting body in a GET " +
+                                                           "request..");
+                                    
                                     body = reqProp.Value;
                                     break;
                                 case RequestPropertyType.HttpHeader_MediaType:
