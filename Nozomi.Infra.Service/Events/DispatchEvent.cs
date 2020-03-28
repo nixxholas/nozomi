@@ -341,92 +341,94 @@ namespace Nozomi.Service.Events
                             EmitOnPing = true,
                             EnableRedirection = false,
                         };
-                        
-                        // Initialise timer and datacounter here
-                        var stopWatch = new Stopwatch();
-                        var dataCounter = 0;
-                        
-                        // Pre-request processing
-                        newSocket.OnOpen += (sender, args) =>
-                        {
-                            // Start the timer if there actually is a killswitch timing
-                            if (dispatchInputModel.SocketKillSwitchDelay > 0 && !stopWatch.IsRunning)
-                                stopWatch.Start();
-                            
-                            foreach (var wsCommand in dispatchInputModel.WebsocketCommands)
-                            {
-                                if (wsCommand.Delay.Equals(0))
-                                {
-                                    // One-time command
-                                }
-                                else
-                                {
-                                    // Run a repeated task
-                                }
-                            }
-                        };
-                        
-                        // Pull in the payload
+
+                        // Setup the payload
                         var outgoingPayload = new DispatchViewModel
                         {
                             Response = new HttpResponseMessage()
                         };
-                        
-                        // Incoming processing
-                        newSocket.OnMessage += async (sender, args) =>
+
+                        // Always ensure that the sockets move to receive data until closed
+                        while (newSocket != null && newSocket.IsAlive)
                         {
-                            // If timer hits delay, activate kill switch. Or if the datacounter is beyond the 
-                            // SocketDataCount
-                            if (stopWatch.ElapsedMilliseconds >= dispatchInputModel.SocketKillSwitchDelay 
-                                || dataCounter > dispatchInputModel.SocketDataCount)
-                                newSocket.Close();// Close this since we hit the trigger
+                            // Initialise timer and datacounter here
+                            var stopWatch = new Stopwatch();
+                            var dataCounter = 0;
 
-                            if (args.IsPing) // Just in case the endpoint is a mother trucker
+                            // Pre-request processing
+                            newSocket.OnOpen += (sender, args) =>
                             {
-                                newSocket.Ping();
-                            }
-                            else if (!string.IsNullOrEmpty(args.Data)) // Process the incoming data
-                            {
-                                
-                            }
-                            else
-                            {
-                                _logger.LogError($"{_eventName} Dispatch/OnMessage: Endpoint " +
-                                                 $"{dispatchInputModel.Endpoint} has an empty payload incoming.");
-                                newSocket.Close();
-                            }
+                                // Start the timer if there actually is a killswitch timing
+                                if (dispatchInputModel.SocketKillSwitchDelay > 0 && !stopWatch.IsRunning)
+                                    stopWatch.Start();
 
-                            if (dispatchInputModel.SocketDataCount > 0)
-                                dataCounter++; // Bump data counter
-                            await Task.Delay(50,
-                                CancellationToken.None); // Always delay by 1ms in case of spam
-                        };
+                                foreach (var wsCommand in dispatchInputModel.WebsocketCommands)
+                                {
+                                    if (wsCommand.Delay.Equals(0))
+                                    {
+                                        // One-time command
+                                    }
+                                    else
+                                    {
+                                        // Run a repeated task
+                                    }
+                                }
+                            };
 
-                        // Error processing
-                        newSocket.OnError += async (sender, args) =>
-                        {
-                            _logger.LogError($"{_eventName} Dispatch/OnError:" +
-                                             $" {args.Message}");
-                            outgoingPayload.Response.StatusCode = HttpStatusCode.ExpectationFailed;
-                            outgoingPayload.Response.ReasonPhrase = !string.IsNullOrEmpty(args.Message) ? args.Message 
-                                :  "The socket connection has been facing some unexpected problems that may require " +
-                                   "your intervention to rectify.";
+                            // Incoming processing
+                            newSocket.OnMessage += async (sender, args) =>
+                            {
+                                // If timer hits delay, activate kill switch. Or if the datacounter is beyond the 
+                                // SocketDataCount
+                                if (stopWatch.ElapsedMilliseconds >= dispatchInputModel.SocketKillSwitchDelay
+                                    || dataCounter > dispatchInputModel.SocketDataCount)
+                                    newSocket.Close(); // Close this since we hit the trigger
+
+                                if (args.IsPing) // Just in case the endpoint is a mother trucker
+                                {
+                                    newSocket.Ping();
+                                }
+                                else if (!string.IsNullOrEmpty(args.Data)) // Process the incoming data
+                                {
+                                }
+                                else
+                                {
+                                    _logger.LogError($"{_eventName} Dispatch/OnMessage: Endpoint " +
+                                                     $"{dispatchInputModel.Endpoint} has an empty payload incoming.");
+                                    newSocket.Close();
+                                }
+
+                                if (dispatchInputModel.SocketDataCount > 0)
+                                    dataCounter++; // Bump data counter
+                                await Task.Delay(50,
+                                    CancellationToken.None); // Always delay by 1ms in case of spam
+                            };
+
+                            // Error processing
+                            newSocket.OnError += async (sender, args) =>
+                            {
+                                _logger.LogError($"{_eventName} Dispatch/OnError:" +
+                                                 $" {args.Message}");
+                                outgoingPayload.Response.StatusCode = HttpStatusCode.ExpectationFailed;
+                                outgoingPayload.Response.ReasonPhrase = !string.IsNullOrEmpty(args.Message)
+                                    ? args.Message
+                                    : "The socket connection has been facing some unexpected problems that may require " +
+                                      "your intervention to rectify.";
                                 GC.SuppressFinalize(this);
-                        };
+                            };
 
-                        newSocket.OnClose += (sender, args) =>
-                        {
-                            _logger.LogInformation($"{_eventName} Dispatch/onClose: " +
-                                                   $"Closing socket connection for {dispatchInputModel.Endpoint}");
-                            stopWatch.Stop();
-                            GC.SuppressFinalize(this);
-                        };
+                            newSocket.OnClose += (sender, args) =>
+                            {
+                                _logger.LogInformation($"{_eventName} Dispatch/onClose: " +
+                                                       $"Closing socket connection for {dispatchInputModel.Endpoint}");
+                                stopWatch.Stop();
+                                GC.SuppressFinalize(this);
+                            };
 
-                        newSocket.Connect();
+                            newSocket.Connect();
+                        }
 
-                        await Task.Delay(1000); // Bing, for websockets, should we allow the user to define how
-                        // long we have to wait to completely finish receiving the data he wants?
-                        break;
+                        return outgoingPayload;
                     default:
                         throw new InvalidOperationException("Invalid protocol type.");
                 }
