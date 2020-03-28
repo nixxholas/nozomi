@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Nozomi.Infra.Api.Limiter.Events.Interfaces;
 using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Abstracts;
+using Nozomi.Preprocessing.Options;
 using Nozomi.Repo.Auth.Data;
 using StackExchange.Redis;
 
@@ -11,27 +13,40 @@ namespace Nozomi.Infra.Api.Limiter.Events
 {
     public class NozomiRedisEvent : BaseEvent<NozomiRedisEvent>, INozomiRedisEvent
     {
-        private readonly IConnectionMultiplexer _connectionMultiplexer;
+        private readonly IConnectionMultiplexer _apiKeyEventsConnectionMultiplexer;
+        private readonly IConnectionMultiplexer _apiKeyUsersConnectionMultiplexer;
         
-        public NozomiRedisEvent(ILogger<NozomiRedisEvent> logger, IConnectionMultiplexer connectionMultiplexer) 
+        public NozomiRedisEvent(ILogger<NozomiRedisEvent> logger, IOptions<NozomiRedisCacheOptions> options) 
             : base(logger)
         {
-            _connectionMultiplexer = connectionMultiplexer;
+            _apiKeyEventsConnectionMultiplexer = ConnectionMultiplexer.Connect(options.Value.ApiKeyEventConnection);
+            _apiKeyUsersConnectionMultiplexer = ConnectionMultiplexer.Connect(options.Value.ApiKeyUserConnection);
         }
 
         public IEnumerable<RedisKey> AllKeys(RedisDatabases redisDatabase = RedisDatabases.Default)
         {
-            var endpoints = _connectionMultiplexer.GetEndPoints();
-            return _connectionMultiplexer.GetServer(endpoints[0]).Keys((int) redisDatabase);
+            switch (redisDatabase)
+            {
+                case RedisDatabases.ApiKeyEvents:
+                    var apiKeyEventEndPoints = _apiKeyEventsConnectionMultiplexer.GetEndPoints();
+                    return _apiKeyEventsConnectionMultiplexer.GetServer(apiKeyEventEndPoints[0]).Keys();
+                default:
+                    var apiKeyUserEventEndPoints = _apiKeyUsersConnectionMultiplexer.GetEndPoints();
+                    return _apiKeyUsersConnectionMultiplexer.GetServer(apiKeyUserEventEndPoints[0]).Keys();
+            }
         }
 
         public bool Exists(string key, RedisDatabases redisDatabase = RedisDatabases.Default)
         {
             if (!string.IsNullOrEmpty(key))
             {
-                var database = _connectionMultiplexer.GetDatabase((int) redisDatabase);
-
-                return database.KeyExists(key);
+                switch (redisDatabase)
+                {
+                    case RedisDatabases.ApiKeyEvents:
+                        return _apiKeyEventsConnectionMultiplexer.GetDatabase().KeyExists(key);
+                    default:
+                        return _apiKeyUsersConnectionMultiplexer.GetDatabase().KeyExists(key);
+                }
             }
 
             throw new NullReferenceException("Invalid key.");
@@ -41,7 +56,17 @@ namespace Nozomi.Infra.Api.Limiter.Events
         {
             if (!string.IsNullOrEmpty(key))
             {
-                var database = _connectionMultiplexer.GetDatabase((int) redisDatabase);
+                IDatabase database;
+
+                switch (redisDatabase)
+                {
+                    case RedisDatabases.ApiKeyEvents:
+                        database = _apiKeyEventsConnectionMultiplexer.GetDatabase();
+                        break;
+                    default:
+                        database = _apiKeyUsersConnectionMultiplexer.GetDatabase();
+                        break;
+                }
 
                 if (database.KeyExists(key))
                     return !database.StringGet(key).IsNullOrEmpty;
@@ -57,7 +82,17 @@ namespace Nozomi.Infra.Api.Limiter.Events
         {
             if (!string.IsNullOrEmpty(key))
             {
-                var database = _connectionMultiplexer.GetDatabase((int) redisDatabase);
+                IDatabase database;
+
+                switch (redisDatabase)
+                {
+                    case RedisDatabases.ApiKeyEvents:
+                        database = _apiKeyEventsConnectionMultiplexer.GetDatabase();
+                        break;
+                    default:
+                        database = _apiKeyUsersConnectionMultiplexer.GetDatabase();
+                        break;
+                }
 
                 if (database.KeyExists(key))
                 {

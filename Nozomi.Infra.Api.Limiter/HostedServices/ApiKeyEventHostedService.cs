@@ -5,11 +5,13 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Nozomi.Base.Auth.Global;
 using Nozomi.Base.Auth.Models;
 using Nozomi.Infra.Api.Limiter.Events.Interfaces;
 using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Abstracts;
+using Nozomi.Preprocessing.Options;
 using Nozomi.Repo.Auth.Data;
 using StackExchange.Redis;
 
@@ -27,8 +29,12 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
     /// </summary>
     public class ApiKeyEventHostedService : BaseHostedService<ApiKeyEventHostedService>
     {
-        public ApiKeyEventHostedService(IServiceScopeFactory scopeFactory) : base(scopeFactory)
+        private readonly IOptions<NozomiRedisCacheOptions> _options;
+        
+        public ApiKeyEventHostedService(IServiceScopeFactory scopeFactory, IOptions<NozomiRedisCacheOptions> options) 
+            : base(scopeFactory)
         {
+            _options = options;
         }
 
         private void ClearRedisCache(IConnectionMultiplexer connectionMultiplexer)
@@ -58,14 +64,13 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
                     using (var scope = _scopeFactory.CreateScope())
                     {
                         // Redis connect!
-                        var connectionMultiplexer = scope.ServiceProvider.GetRequiredService<IConnectionMultiplexer>();
+                        var connectionMultiplexer = ConnectionMultiplexer.Connect(_options.Value.ApiKeyEventConnection);
                         var endpoints = connectionMultiplexer.GetEndPoints();
 
                         // Iterate all keys
-                        foreach (var apiKey in connectionMultiplexer.GetServer(endpoints[0])
-                            .Keys((int) RedisDatabases.ApiKeyEvents))
+                        foreach (var apiKey in connectionMultiplexer.GetServer(endpoints[0]).Keys())
                         {
-                            var database = connectionMultiplexer.GetDatabase((int) RedisDatabases.ApiKeyEvents);
+                            var database = connectionMultiplexer.GetDatabase();
                             // Pop the elements from the left
                             var oldestWeight = database.ListLeftPop(apiKey);
 

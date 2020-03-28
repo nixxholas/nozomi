@@ -1,9 +1,11 @@
 using System;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Nozomi.Infra.Api.Limiter.Services.Interfaces;
 using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Abstracts;
+using Nozomi.Preprocessing.Options;
 using Nozomi.Repo.Auth.Data;
 using StackExchange.Redis;
 
@@ -12,20 +14,23 @@ namespace Nozomi.Infra.Api.Limiter.Services
     public class NozomiRedisService : BaseService<NozomiRedisService, AuthDbContext>, 
     INozomiRedisService
     {
-        private readonly IConnectionMultiplexer _connectionMultiplexer;
+        private readonly IConnectionMultiplexer _apiKeyEventConnectionMultiplexer;
+        private readonly IConnectionMultiplexer _apiKeyUserConnectionMultiplexer;
         
         public NozomiRedisService(ILogger<NozomiRedisService> logger, AuthDbContext context, 
-            IConnectionMultiplexer connectionMultiplexer) : base(logger, context)
+            IOptions<NozomiRedisCacheOptions> options) : base(logger, context)
         {
-            _connectionMultiplexer = connectionMultiplexer;
+            _apiKeyEventConnectionMultiplexer = ConnectionMultiplexer.Connect(options.Value.ApiKeyEventConnection);
+            _apiKeyUserConnectionMultiplexer = ConnectionMultiplexer.Connect(options.Value.ApiKeyUserConnection);
         }
 
         public NozomiRedisService(IHttpContextAccessor contextAccessor, 
             ILogger<NozomiRedisService> logger, AuthDbContext context, 
-            IConnectionMultiplexer connectionMultiplexer) 
+            IOptions<NozomiRedisCacheOptions> options) 
             : base(contextAccessor, logger, context)
         {
-            _connectionMultiplexer = connectionMultiplexer;
+            _apiKeyEventConnectionMultiplexer = ConnectionMultiplexer.Connect(options.Value.ApiKeyEventConnection);
+            _apiKeyUserConnectionMultiplexer = ConnectionMultiplexer.Connect(options.Value.ApiKeyUserConnection);
         }
 
         public void Add(RedisDatabases databasesEnum, string key, string value)
@@ -34,10 +39,21 @@ namespace Nozomi.Infra.Api.Limiter.Services
             {
                 // Dont' have to set expiry if its not going to expire
                 // https://github.com/StackExchange/StackExchange.Redis/issues/1095#issuecomment-473248185
-                _connectionMultiplexer.GetDatabase((int) databasesEnum).StringSet(key, value);
+                _apiKeyUserConnectionMultiplexer.GetDatabase((int) databasesEnum).StringSet(key, value);
+
+                switch (databasesEnum)
+                {
+                    case RedisDatabases.ApiKeyEvents:
+                        _apiKeyEventConnectionMultiplexer.GetDatabase().StringSet(key, value);
                 
-                _logger.LogInformation($"{_serviceName} Add: key {key} with value {value} successfully set.");
-                return;
+                        _logger.LogInformation($"{_serviceName} Add: key {key} with value {value} successfully set.");
+                        return;
+                    default:
+                        _apiKeyUserConnectionMultiplexer.GetDatabase().StringSet(key, value);
+                
+                        _logger.LogInformation($"{_serviceName} Add: key {key} with value {value} successfully set.");
+                        return;
+                }
             }
             
             throw new NullReferenceException("Invalid key or value parameter.");
@@ -47,10 +63,19 @@ namespace Nozomi.Infra.Api.Limiter.Services
         {
             if (!string.IsNullOrEmpty(key))
             {
-                _connectionMultiplexer.GetDatabase((int) databasesEnum).KeyDelete(key);
+                switch (databasesEnum)
+                {
+                    case RedisDatabases.ApiKeyEvents:
+                        _apiKeyEventConnectionMultiplexer.GetDatabase().KeyDelete(key);
                 
-                _logger.LogInformation($"{_serviceName} Remove: key {key} successfully deleted.");
-                return;
+                        _logger.LogInformation($"{_serviceName} Remove: key {key} successfully deleted.");
+                        return;
+                    default:
+                        _apiKeyUserConnectionMultiplexer.GetDatabase().KeyDelete(key);
+                
+                        _logger.LogInformation($"{_serviceName} Remove: key {key} successfully deleted.");
+                        return;
+                }
             }
             
             throw new NullReferenceException("Invalid key.");
