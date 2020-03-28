@@ -12,6 +12,16 @@ namespace Nozomi.Data.ViewModels.Dispatch
     public class DispatchInputModel
     {
         /// <summary>
+        /// A fixed duration on when the socket should be killed
+        /// </summary>
+        public long SocketKillSwitchDelay { get; set; }
+        
+        /// <summary>
+        /// Should you require multiple websocket data ingress,
+        /// </summary>
+        public int SocketDataCount { get; set; }
+        
+        /// <summary>
         /// The protocol of the request.
         /// </summary>
         public RequestType Type { get; set; }

@@ -1,5 +1,6 @@
 using System;
 using System.Data;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Net.Http;
@@ -340,10 +341,18 @@ namespace Nozomi.Service.Events
                             EmitOnPing = true,
                             EnableRedirection = false,
                         };
-
+                        
+                        // Initialise timer and datacounter here
+                        var stopWatch = new Stopwatch();
+                        var dataCounter = 0;
+                        
                         // Pre-request processing
                         newSocket.OnOpen += (sender, args) =>
                         {
+                            // Start the timer if there actually is a killswitch timing
+                            if (dispatchInputModel.SocketKillSwitchDelay > 0 && !stopWatch.IsRunning)
+                                stopWatch.Start();
+                            
                             foreach (var wsCommand in dispatchInputModel.WebsocketCommands)
                             {
                                 if (wsCommand.Delay.Equals(0))
@@ -356,17 +365,22 @@ namespace Nozomi.Service.Events
                                 }
                             }
                         };
-
+                        
                         // Incoming processing
                         newSocket.OnMessage += async (sender, args) =>
                         {
-                            if (args.IsPing)
+                            // If timer hits delay, activate kill switch. Or if the datacounter is beyond the 
+                            // SocketDataCount
+                            if (stopWatch.ElapsedMilliseconds >= dispatchInputModel.SocketKillSwitchDelay 
+                                || dataCounter > dispatchInputModel.SocketDataCount)
+                                newSocket.Close();// Close this since we hit the trigger
+
+                            if (args.IsPing) // Just in case the endpoint is a mother trucker
                             {
                                 newSocket.Ping();
                             }
                             else if (!string.IsNullOrEmpty(args.Data)) // Process the incoming data
                             {
-                                
                             }
                             else
                             {
@@ -375,6 +389,8 @@ namespace Nozomi.Service.Events
                                 newSocket.Close();
                             }
 
+                            if (dispatchInputModel.SocketDataCount > 0)
+                                dataCounter++; // Bump data counter
                             await Task.Delay(50,
                                 CancellationToken.None); // Always delay by 1ms in case of spam
                         };
@@ -391,6 +407,7 @@ namespace Nozomi.Service.Events
                         {
                             _logger.LogInformation($"{_eventName} Dispatch/onClose: " +
                                                    $"Closing socket connection for {dispatchInputModel.Endpoint}");
+                            stopWatch.Stop();
                             GC.SuppressFinalize(this);
                         };
 
