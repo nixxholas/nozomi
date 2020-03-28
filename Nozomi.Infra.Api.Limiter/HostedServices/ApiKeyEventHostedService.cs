@@ -2,6 +2,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Nozomi.Base.Auth.Global;
@@ -30,6 +31,20 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
         {
         }
 
+        private void ClearRedisCache(IConnectionMultiplexer connectionMultiplexer)
+        {
+            var endpoints = connectionMultiplexer.GetEndPoints();
+
+            if (endpoints.Any())
+            {
+                
+            }
+            else
+            {
+                _logger.LogWarning($"{_hostedServiceName} ClearRedisCache: No Redis database endpoints available..");
+            }
+        }
+
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             _logger.LogInformation($"{_hostedServiceName} is starting.");
@@ -38,115 +53,123 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
 
             while (!stoppingToken.IsCancellationRequested)
             {
-                using (var scope = _scopeFactory.CreateScope())
+                try
                 {
-                    // Redis connect!
-                    var connectionMultiplexer = scope.ServiceProvider.GetRequiredService<IConnectionMultiplexer>();
-                    var endpoints = connectionMultiplexer.GetEndPoints();
-
-                    // Iterate all keys
-                    foreach (var apiKey in connectionMultiplexer.GetServer(endpoints[0])
-                        .Keys((int) RedisDatabases.ApiKeyEvents))
+                    using (var scope = _scopeFactory.CreateScope())
                     {
-                        var database = connectionMultiplexer.GetDatabase((int) RedisDatabases.ApiKeyEvents);
-                        // Pop the elements from the left
-                        var oldestWeight = database.ListLeftPop(apiKey);
+                        // Redis connect!
+                        var connectionMultiplexer = scope.ServiceProvider.GetRequiredService<IConnectionMultiplexer>();
+                        var endpoints = connectionMultiplexer.GetEndPoints();
 
-                        // If it is a valid value
-                        if (oldestWeight.HasValue && long.TryParse(oldestWeight, out var weight) && weight >= 0)
+                        // Iterate all keys
+                        foreach (var apiKey in connectionMultiplexer.GetServer(endpoints[0])
+                            .Keys((int) RedisDatabases.ApiKeyEvents))
                         {
-                            // First navigate to the user first
-                            var nozomiRedisEvent = scope.ServiceProvider.GetRequiredService<INozomiRedisEvent>();
-                            var userKey = nozomiRedisEvent.GetValue(apiKey,
-                                RedisDatabases.ApiKeyUser);
+                            var database = connectionMultiplexer.GetDatabase((int) RedisDatabases.ApiKeyEvents);
+                            // Pop the elements from the left
+                            var oldestWeight = database.ListLeftPop(apiKey);
 
-                            // Since we got the user's key,
-                            if (!userKey.IsNullOrEmpty)
+                            // If it is a valid value
+                            if (oldestWeight.HasValue && long.TryParse(oldestWeight, out var weight) && weight >= 0)
                             {
-                                var authDbContext = scope.ServiceProvider.GetRequiredService<AuthDbContext>();
+                                // First navigate to the user first
+                                var nozomiRedisEvent = scope.ServiceProvider.GetRequiredService<INozomiRedisEvent>();
+                                var userKey = nozomiRedisEvent.GetValue(apiKey,
+                                    RedisDatabases.ApiKeyUser);
 
-                                // Obtain the user's quota
-                                var userQuota = authDbContext.UserClaims
-                                    .AsTracking()
-                                    .SingleOrDefault(uc => uc.UserId.Equals(userKey)
-                                                           && uc.ClaimType.Equals(NozomiJwtClaimTypes.UserQuota));
+                                // Since we got the user's key,
+                                if (!userKey.IsNullOrEmpty)
+                                {
+                                    var authDbContext = scope.ServiceProvider.GetRequiredService<AuthDbContext>();
 
-                                // Since quota does not exist for the current user,
-                                if (userQuota == null)
-                                {
-                                    // Create the quota claims for the current user
-                                    userQuota = new UserClaim
-                                    {
-                                        UserId = userKey,
-                                        ClaimType = NozomiJwtClaimTypes.UserQuota,
-                                        ClaimValue = "0"
-                                    };
-                                    authDbContext.UserClaims.Add(userQuota);
-                                    authDbContext.SaveChanges();
-                                    
-                                    // Let logs know as well
-                                    _logger.LogInformation($"{_hostedServiceName} ExecuteAsync: 0 value " +
-                                                           $"quota created for user {userKey}");
-                                }
-                                
-                                // But if the user's quota exists and that the value is legit,
-                                if (long.TryParse(userQuota.ClaimValue, out var quotaValue) && quotaValue >= 0)
-                                {
-                                    var userUsage = authDbContext.UserClaims
-                                        .AsTracking() // Ensure we track to modify directly
+                                    // Obtain the user's quota
+                                    var userQuota = authDbContext.UserClaims
+                                        .AsTracking()
                                         .SingleOrDefault(uc => uc.UserId.Equals(userKey)
-                                                               && uc.ClaimType.Equals(NozomiJwtClaimTypes.UserUsage));
+                                                               && uc.ClaimType.Equals(NozomiJwtClaimTypes.UserQuota));
 
-                                    if (userUsage == null) // Since it's null, we'll populate a new one for him
+                                    // Since quota does not exist for the current user,
+                                    if (userQuota == null)
                                     {
-                                        userUsage = new UserClaim
+                                        // Create the quota claims for the current user
+                                        userQuota = new UserClaim
                                         {
                                             UserId = userKey,
-                                            ClaimType = NozomiJwtClaimTypes.UserUsage,
+                                            ClaimType = NozomiJwtClaimTypes.UserQuota,
                                             ClaimValue = "0"
                                         };
-                                        authDbContext.UserClaims.Add(userUsage);
+                                        authDbContext.UserClaims.Add(userQuota);
                                         authDbContext.SaveChanges();
+
+                                        // Let logs know as well
+                                        _logger.LogInformation($"{_hostedServiceName} ExecuteAsync: 0 value " +
+                                                               $"quota created for user {userKey}");
                                     }
 
-                                    // Ensure that the usage is a number 
-                                    if (long.TryParse(userUsage.ClaimValue, out var usageValue))
+                                    // But if the user's quota exists and that the value is legit,
+                                    if (long.TryParse(userQuota.ClaimValue, out var quotaValue) && quotaValue >= 0)
                                     {
-                                        userUsage.ClaimValue = (usageValue + weight).ToString(); // Update it
-                                        authDbContext.UserClaims.Update(userUsage);
-                                        await authDbContext.SaveChangesAsync(stoppingToken);
-                                        
-                                        if (usageValue < quotaValue) // Quota is below the usage
-                                            _logger.LogWarning($"{_hostedServiceName} ExecuteAsync: Quota of " +
-                                                               $" {quotaValue} has exceeded usage for user " +
-                                                               $"{userUsage.UserId}"); // Bad boy, he gon get removed
+                                        var userUsage = authDbContext.UserClaims
+                                            .AsTracking() // Ensure we track to modify directly
+                                            .SingleOrDefault(uc => uc.UserId.Equals(userKey)
+                                                                   && uc.ClaimType.Equals(NozomiJwtClaimTypes
+                                                                       .UserUsage));
 
-                                        _logger.LogInformation($"{_hostedServiceName} ExecuteAsync: User " +
-                                                               $"{userUsage.UserId} with quota count updated to " +
-                                                               $"{userUsage.ClaimValue}");
+                                        if (userUsage == null) // Since it's null, we'll populate a new one for him
+                                        {
+                                            userUsage = new UserClaim
+                                            {
+                                                UserId = userKey,
+                                                ClaimType = NozomiJwtClaimTypes.UserUsage,
+                                                ClaimValue = "0"
+                                            };
+                                            authDbContext.UserClaims.Add(userUsage);
+                                            authDbContext.SaveChanges();
+                                        }
+
+                                        // Ensure that the usage is a number 
+                                        if (long.TryParse(userUsage.ClaimValue, out var usageValue))
+                                        {
+                                            userUsage.ClaimValue = (usageValue + weight).ToString(); // Update it
+                                            authDbContext.UserClaims.Update(userUsage);
+                                            await authDbContext.SaveChangesAsync(stoppingToken);
+
+                                            if (usageValue < quotaValue) // Quota is below the usage
+                                                _logger.LogWarning($"{_hostedServiceName} ExecuteAsync: Quota of " +
+                                                                   $" {quotaValue} has exceeded usage for user " +
+                                                                   $"{userUsage.UserId}"); // Bad boy, he gon get removed
+
+                                            _logger.LogInformation($"{_hostedServiceName} ExecuteAsync: User " +
+                                                                   $"{userUsage.UserId} with quota count updated to " +
+                                                                   $"{userUsage.ClaimValue}");
+                                        }
+                                    }
+                                    else // User quota is bad bad bad, might be below 0...
+                                    {
+                                        _logger.LogWarning($"{_hostedServiceName} ExecuteAsync: Quota for user " +
+                                                           $"{userKey} is bad [VALUE: {userQuota.ClaimValue}].");
                                     }
                                 }
-                                else // User quota is bad bad bad, might be below 0...
+                                else // API Key is not linked to a User, bad bad bad
                                 {
-                                    _logger.LogWarning($"{_hostedServiceName} ExecuteAsync: Quota for user " +
-                                                       $"{userKey} is bad [VALUE: {userQuota.ClaimValue}].");
+                                    _logger.LogWarning($"{_hostedServiceName}: ExecuteAsync: Invalid API Key.." +
+                                                       $" Key: {apiKey}");
                                 }
                             }
-                            else // API Key is not linked to a User, bad bad bad
+                            else // Weight is not a valid integer/long..
                             {
-                                _logger.LogWarning($"{_hostedServiceName}: ExecuteAsync: Invalid API Key.." +
-                                                   $" Key: {apiKey}");
+                                _logger.LogWarning($"{_hostedServiceName} ExecuteAsync: Invalid event weight " +
+                                                   $"for API Key {apiKey} with a weight of {oldestWeight}");
                             }
-                        }
-                        else // Weight is not a valid integer/long..
-                        {
-                            _logger.LogWarning($"{_hostedServiceName} ExecuteAsync: Invalid event weight " +
-                                               $"for API Key {apiKey} with a weight of {oldestWeight}");
                         }
                     }
-                }
 
-                await Task.Delay(250, stoppingToken);
+                    await Task.Delay(250, stoppingToken);
+                }
+                catch (RedisServerException rse)
+                {
+                    _logger.LogError($"{_hostedServiceName} ExecuteAsync (REDIS ERROR): {rse}");
+                }
             }
 
             _logger.LogCritical($"{_hostedServiceName} has broken out of its loop.");
