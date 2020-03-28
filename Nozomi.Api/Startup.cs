@@ -105,7 +105,8 @@ namespace Nozomi.Api
                     .GetAwaiter()
                     .GetResult().Data;
                 
-                services.ConfigureRedis((string) vault["redis-api-user"], (string) vault["redis-api-event"]);
+                services.ConfigureRedis((string) vault["redis-api-user"], 
+                    (string) vault["redis-api-event"]);
 
                 services.AddDbContextPool<NozomiDbContext>(options =>
                 {
@@ -121,7 +122,7 @@ namespace Nozomi.Api
                 Console.WriteLine(@"Welcome to the dev environment, your machine is named: " + Environment.MachineName);
                 
                 var redisStr = Configuration.GetConnectionString("LocalRedis:" + Environment.MachineName);
-                var redisEventsStr = Configuration.GetConnectionString("LocalEventsRedis:" 
+                var redisEventsStr = Configuration.GetConnectionString("EventsLocalRedis:" 
                                                                        + Environment.MachineName);
 
                 if (WebHostEnvironment.IsStaging())

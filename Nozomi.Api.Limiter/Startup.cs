@@ -75,7 +75,7 @@ namespace Nozomi.Api.Limiter
                 Console.WriteLine(@"Welcome to the dev environment, your machine is named: " + Environment.MachineName);
                 
                 var redisStr = Configuration.GetConnectionString("LocalRedis:" + Environment.MachineName);
-                var redisEventsStr = Configuration.GetConnectionString("LocalEventsRedis:" 
+                var redisEventsStr = Configuration.GetConnectionString("EventsLocalRedis:" 
                                                                        + Environment.MachineName);
 
                 if (WebHostEnvironment.IsStaging())
