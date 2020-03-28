@@ -9,6 +9,8 @@ RUN dotnet restore Nozomi.Api/Nozomi.Api.csproj
 
 # Copy everything else and build
 COPY . ./
+RUN ls
+ADD Nozomi.Api/Images .
 RUN dotnet publish Nozomi.Api/Nozomi.Api.csproj -c Release -o out
 
 # Build runtime image
@@ -17,7 +19,7 @@ WORKDIR /app
 COPY --from=build-env /app/out .
 COPY nozomi.pfx .
 RUN ls
-COPY Images .
+# COPY Images .
 # RUN cp Nozomi.Api.xml .
 
 ENTRYPOINT ["dotnet", "Nozomi.Api.dll"]
