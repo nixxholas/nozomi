@@ -14,6 +14,7 @@
       <DocumentationFile>bin\Release\Nozomi.Api.xml</DocumentationFile>
     </PropertyGroup>
 
+    <!--https://stackoverflow.com/questions/54762744/net-core-include-folder-in-publish-->
     <ItemGroup>
         <Content Include="Images\**">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
