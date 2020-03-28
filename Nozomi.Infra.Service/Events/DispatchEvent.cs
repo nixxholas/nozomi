@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.IO;
@@ -320,10 +322,27 @@ namespace Nozomi.Service.Events
                         {
                             case HttpStatusCode.OK:
                                 // Return the payload distinctively
-                                return new DispatchViewModel
+                                switch (dispatchInputModel.ResponseType)
                                 {
-                                    Payload = Utf8Json.JsonSerializer.ToJsonString(payload.Content),
-                                    Response = payload
+                                    case ResponseType.Json:
+                                        return new DispatchViewModel
+                                        {
+                                            Payload = Utf8Json.JsonSerializer.ToJsonString(payload.Content),
+                                            Response = payload
+                                        };
+                                    case ResponseType.XML:
+                                        // Old Newtonsoft code.
+                                        var xmlDoc = new XmlDocument();
+                                        xmlDoc.LoadXml(await payload.Content.ReadAsStringAsync());
+                                        return new DispatchViewModel
+                                        {
+                                            Payload = Utf8Json.JsonSerializer.ToJsonString(xmlDoc),
+                                            Response = payload
+                                        };
+                                    default:
+                                        throw new InvalidEnumArgumentException($"{_eventName} Dispatch: " +
+                                                                               $"{dispatchInputModel.Endpoint} invalid" +
+                                                                               $" response type." );
                                 };
                             case HttpStatusCode.TooManyRequests:
                                 _logger.LogWarning($"{_eventName} Dispatch: " +
@@ -375,6 +394,8 @@ namespace Nozomi.Service.Events
                                 }
                             };
 
+                            var concatPayload = new List<string>(); // Setup the JSON arr which we're going to churn out.
+
                             // Incoming processing
                             newSocket.OnMessage += async (sender, args) =>
                             {
@@ -390,6 +411,23 @@ namespace Nozomi.Service.Events
                                 }
                                 else if (!string.IsNullOrEmpty(args.Data)) // Process the incoming data
                                 {
+                                    switch (dispatchInputModel.ResponseType)
+                                    {
+                                        case ResponseType.Json:
+                                            // Push to the payload collection and move on.
+                                            concatPayload.Add(Utf8Json.JsonSerializer.ToJsonString(args.Data));
+                                            break;
+                                        case ResponseType.XML:
+                                            // Old Newtonsoft code.
+                                            var xmlDoc = new XmlDocument();
+                                            xmlDoc.LoadXml(args.Data);
+                                            concatPayload.Add(Utf8Json.JsonSerializer.ToJsonString(xmlDoc));
+                                            break;
+                                        default:
+                                            throw new InvalidEnumArgumentException($"{_eventName} Dispatch: " +
+                                                                                   $"{dispatchInputModel.Endpoint} invalid" +
+                                                                                   $" response type." );
+                                    };
                                 }
                                 else
                                 {
@@ -400,6 +438,10 @@ namespace Nozomi.Service.Events
 
                                 if (dispatchInputModel.SocketDataCount > 0)
                                     dataCounter++; // Bump data counter
+
+                                // Update the payload as well
+                                outgoingPayload.Payload = Utf8Json.JsonSerializer.ToJsonString(concatPayload);
+                                    
                                 await Task.Delay(50,
                                     CancellationToken.None); // Always delay by 1ms in case of spam
                             };
@@ -427,7 +469,7 @@ namespace Nozomi.Service.Events
 
                             newSocket.Connect();
                         }
-
+                        
                         return outgoingPayload;
                     default:
                         throw new InvalidOperationException("Invalid protocol type.");
