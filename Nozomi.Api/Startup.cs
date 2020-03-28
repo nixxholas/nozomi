@@ -285,7 +285,7 @@ namespace Nozomi.Api
                 // https://www.tutorialsteacher.com/core/aspnet-core-static-file
                 app.UseStaticFiles(new StaticFileOptions()
                 {
-                    FileProvider = new PhysicalFileProvider("/Images"),
+                    FileProvider = new PhysicalFileProvider("/app/Images"),
                     RequestPath = new PathString("/api-images")
                 });
             }
