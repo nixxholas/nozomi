@@ -2,11 +2,11 @@ import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import Vue from 'vue';
 import Buefy from 'buefy';
-import 'buefy/dist/buefy.css';
 import '@/assets/main.css';
-import 'bulma-extensions/dist/css/bulma-extensions.min.css'
-import 'bulma-extensions/dist/js/bulma-extensions.min.js';
+// import 'bulma-extensions/dist/css/bulma-extensions.min.css'
+// import 'bulma-extensions/dist/js/bulma-extensions.min.js';
 import './plugins/axios';
+import 'buefy/dist/buefy.css';
 // @ts-ignore
 import * as numeral from 'numeral';
 // @ts-ignore
