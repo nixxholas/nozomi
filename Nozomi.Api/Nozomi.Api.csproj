@@ -15,6 +15,12 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <Content Include="Images\**">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
+
+    <ItemGroup>
       <ProjectReference Include="..\Nozomi.Infra.Api.Limiter\Nozomi.Infra.Api.Limiter.csproj" />
       <ProjectReference Include="..\Nozomi.Infra.Service\Nozomi.Infra.Service.csproj" />
     </ItemGroup>
@@ -28,6 +34,4 @@
     <ItemGroup>
       <Folder Include="wwwroot" />
     </ItemGroup>
-
-
 </Project>
