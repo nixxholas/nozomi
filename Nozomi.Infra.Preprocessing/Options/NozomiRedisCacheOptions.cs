@@ -1,6 +1,6 @@
 namespace Nozomi.Preprocessing.Options
 {
-    public class RedisCacheOptions
+    public class NozomiRedisCacheOptions
     {
         public string ApiKeyEventConnection { get; set; }
         
