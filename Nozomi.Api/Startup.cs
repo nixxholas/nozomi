@@ -264,6 +264,15 @@ namespace Nozomi.Api
         {
             if (env.IsDevelopment())
             {
+                // Treating this web app like a CDN lol
+                // https://www.tutorialsteacher.com/core/aspnet-core-static-file
+                app.UseStaticFiles(new StaticFileOptions()
+                {
+                    FileProvider = new PhysicalFileProvider(
+                        Path.Combine(Directory.GetCurrentDirectory(), @"Images")),
+                    RequestPath = new PathString("/api-images")
+                });
+                
                 app.UseDeveloperExceptionPage();
             }
             else
@@ -271,18 +280,15 @@ namespace Nozomi.Api
                 app.UseHsts();
 
                 app.UseResponseCompression();
+
+                // Treating this web app like a CDN lol
+                // https://www.tutorialsteacher.com/core/aspnet-core-static-file
+                app.UseStaticFiles(new StaticFileOptions()
+                {
+                    FileProvider = new PhysicalFileProvider("/Images"),
+                    RequestPath = new PathString("/api-images")
+                });
             }
-            
-            app.UseStaticFiles();
-            
-            // Treating this web app like a CDN lol
-            // https://www.tutorialsteacher.com/core/aspnet-core-static-file
-            app.UseStaticFiles(new StaticFileOptions()
-            {
-                FileProvider = new PhysicalFileProvider(
-                    Path.Combine(Directory.GetCurrentDirectory(), @"Images")),
-                RequestPath = new PathString("/api-images")
-            });
 
             app.UseHttpsRedirection();
 
