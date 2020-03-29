@@ -139,13 +139,13 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
                                             authDbContext.UserClaims.Update(userUsage);
                                             await authDbContext.SaveChangesAsync(stoppingToken);
 
-                                            if (usageValue < quotaValue) // Quota is below the usage
+                                            if (usageValue > quotaValue) // Quota is below the usage
                                                 _logger.LogWarning($"{_hostedServiceName} ExecuteAsync: Quota of " +
                                                                    $" {quotaValue} has exceeded usage for user " +
                                                                    $"{userUsage.UserId}"); // Bad boy, he gon get removed
 
                                             _logger.LogInformation($"{_hostedServiceName} ExecuteAsync: User " +
-                                                                   $"{userUsage.UserId} with quota count updated to " +
+                                                                   $"{userUsage.UserId} with quota usage updated to " +
                                                                    $"{userUsage.ClaimValue}");
                                         }
                                     }
