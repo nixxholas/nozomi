@@ -1,3 +1,4 @@
+using System;
 using Microsoft.Extensions.Caching.StackExchangeRedis;
 using Microsoft.Extensions.DependencyInjection;
 using Nozomi.Preprocessing.Options;
@@ -8,6 +9,7 @@ namespace Nozomi.Preprocessing.Extensions
 {
     public static class StackExchangeRedisExtensions
     {
+        [Obsolete]
         public static void ConfigureRedis(this IServiceCollection services, string apiKeyUserCacheConnectionString,
             string apiKeyEventCacheConnectionString)
         {
