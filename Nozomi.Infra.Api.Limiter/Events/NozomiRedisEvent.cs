@@ -81,6 +81,17 @@ namespace Nozomi.Infra.Api.Limiter.Events
             throw new NullReferenceException("Invalid key.");
         }
 
+        public IDatabase GetDatabase(RedisDatabases redisDatabases = RedisDatabases.Default)
+        {
+            switch (redisDatabases)
+            {
+                case RedisDatabases.ApiKeyEvents:
+                    return _connectionMultiplexerManager.ApiKeyEventMultiplexer.GetDatabase();
+                default:
+                    return _connectionMultiplexerManager.ApiKeyUserMultiplexer.GetDatabase();
+            }
+        }
+
         public RedisValue GetValue(string key, RedisDatabases redisDatabase = RedisDatabases.Default)
         {
             if (!string.IsNullOrEmpty(key))
