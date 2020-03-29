@@ -105,7 +105,7 @@ namespace Nozomi.Api
                     .GetAwaiter()
                     .GetResult().Data;
                 
-                services.ConfigureRedis((string) vault["redis-api-user"], 
+                services.ConfigureRedisMultiplexers((string) vault["redis-api-user"], 
                     (string) vault["redis-api-event"]);
 
                 services.AddDbContextPool<NozomiDbContext>(options =>
@@ -131,7 +131,8 @@ namespace Nozomi.Api
                     redisEventsStr = Configuration.GetConnectionString("EventsStageRedis");
                 }
 
-                services.ConfigureRedis(redisStr, redisEventsStr);
+                services.ConfigureRedisMultiplexers(redisStr, 
+                    redisEventsStr);
 
                 services.AddDbContextPool<NozomiDbContext>(options =>
                 {
