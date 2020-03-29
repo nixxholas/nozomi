@@ -12,7 +12,9 @@ using Nozomi.Infra.Api.Limiter.Events.Interfaces;
 using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Preprocessing.Options;
+using Nozomi.Preprocessing.Singleton;
 using Nozomi.Repo.Auth.Data;
+using Npgsql;
 using StackExchange.Redis;
 
 namespace Nozomi.Infra.Api.Limiter.HostedServices
@@ -64,13 +66,14 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
                     using (var scope = _scopeFactory.CreateScope())
                     {
                         // Redis connect!
-                        var connectionMultiplexer = ConnectionMultiplexer.Connect(_options.Value.ApiKeyEventConnection);
-                        var endpoints = connectionMultiplexer.GetEndPoints();
+                        var connectionMultiplexerManager = scope.ServiceProvider
+                            .GetRequiredService<ConnectionMultiplexerManager>();
+                        var endpoints = connectionMultiplexerManager.ApiKeyEventMultiplexer.GetEndPoints();
 
                         // Iterate all keys
-                        foreach (var apiKey in connectionMultiplexer.GetServer(endpoints[0]).Keys())
+                        foreach (var apiKey in connectionMultiplexerManager.ApiKeyEventMultiplexer.GetServer(endpoints[0]).Keys())
                         {
-                            var database = connectionMultiplexer.GetDatabase();
+                            var database = connectionMultiplexerManager.ApiKeyEventMultiplexer.GetDatabase();
                             // Pop the elements from the left
                             var oldestWeight = database.ListLeftPop(apiKey);
 
@@ -174,6 +177,10 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
                 catch (RedisServerException rse)
                 {
                     _logger.LogError($"{_hostedServiceName} ExecuteAsync (REDIS ERROR): {rse}");
+                }
+                catch (NpgsqlException npgsqlException)
+                {
+                    _logger.LogCritical($"{_hostedServiceName} PSQL Error: {npgsqlException.Message}");
                 }
             }
 
