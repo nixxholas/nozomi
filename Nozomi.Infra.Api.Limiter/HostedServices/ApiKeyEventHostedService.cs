@@ -161,10 +161,11 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
                                                        $" Key: {apiKey}");
                                 }
                             }
-                            else // Weight is not a valid integer/long..
+                            else // Weight is not a valid integer/long or no value yet.
                             {
-                                _logger.LogWarning($"{_hostedServiceName} ExecuteAsync: Invalid event weight " +
-                                                   $"for API Key {apiKey} with a weight of {oldestWeight}");
+                                if (oldestWeight.HasValue && !oldestWeight.IsNullOrEmpty)
+                                    _logger.LogWarning($"{_hostedServiceName} ExecuteAsync: Invalid event " +
+                                                       $"weight for API Key {apiKey} with a weight of {oldestWeight}");
                             }
                         }
                     }
