@@ -6,6 +6,7 @@ using Nozomi.Infra.Api.Limiter.Events.Interfaces;
 using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Preprocessing.Options;
+using Nozomi.Preprocessing.Singleton;
 using Nozomi.Repo.Auth.Data;
 using StackExchange.Redis;
 
@@ -13,14 +14,13 @@ namespace Nozomi.Infra.Api.Limiter.Events
 {
     public class NozomiRedisEvent : BaseEvent<NozomiRedisEvent>, INozomiRedisEvent
     {
-        private readonly IConnectionMultiplexer _apiKeyEventsConnectionMultiplexer;
-        private readonly IConnectionMultiplexer _apiKeyUsersConnectionMultiplexer;
+        private readonly ConnectionMultiplexerManager _connectionMultiplexerManager;
         
-        public NozomiRedisEvent(ILogger<NozomiRedisEvent> logger, IOptions<NozomiRedisCacheOptions> options) 
+        public NozomiRedisEvent(ILogger<NozomiRedisEvent> logger, 
+            ConnectionMultiplexerManager connectionMultiplexerManager) 
             : base(logger)
         {
-            _apiKeyEventsConnectionMultiplexer = ConnectionMultiplexer.Connect(options.Value.ApiKeyEventConnection);
-            _apiKeyUsersConnectionMultiplexer = ConnectionMultiplexer.Connect(options.Value.ApiKeyUserConnection);
+            _connectionMultiplexerManager = connectionMultiplexerManager;
         }
 
         public IEnumerable<RedisKey> AllKeys(RedisDatabases redisDatabase = RedisDatabases.Default)
@@ -28,11 +28,14 @@ namespace Nozomi.Infra.Api.Limiter.Events
             switch (redisDatabase)
             {
                 case RedisDatabases.ApiKeyEvents:
-                    var apiKeyEventEndPoints = _apiKeyEventsConnectionMultiplexer.GetEndPoints();
-                    return _apiKeyEventsConnectionMultiplexer.GetServer(apiKeyEventEndPoints[0]).Keys();
+                    var apiKeyEventEndPoints = _connectionMultiplexerManager.ApiKeyEventMultiplexer
+                        .GetEndPoints();
+                    return _connectionMultiplexerManager.ApiKeyEventMultiplexer
+                        .GetServer(apiKeyEventEndPoints[0]).Keys();
                 default:
-                    var apiKeyUserEventEndPoints = _apiKeyUsersConnectionMultiplexer.GetEndPoints();
-                    return _apiKeyUsersConnectionMultiplexer.GetServer(apiKeyUserEventEndPoints[0]).Keys();
+                    var apiKeyUserEndPoints = _connectionMultiplexerManager.ApiKeyUserMultiplexer
+                        .GetEndPoints();
+                    return _connectionMultiplexerManager.ApiKeyUserMultiplexer.GetServer(apiKeyUserEndPoints[0]).Keys();
             }
         }
 
@@ -43,9 +46,9 @@ namespace Nozomi.Infra.Api.Limiter.Events
                 switch (redisDatabase)
                 {
                     case RedisDatabases.ApiKeyEvents:
-                        return _apiKeyEventsConnectionMultiplexer.GetDatabase().KeyExists(key);
+                        return _connectionMultiplexerManager.ApiKeyEventMultiplexer.GetDatabase().KeyExists(key);
                     default:
-                        return _apiKeyUsersConnectionMultiplexer.GetDatabase().KeyExists(key);
+                        return _connectionMultiplexerManager.ApiKeyUserMultiplexer.GetDatabase().KeyExists(key);
                 }
             }
 
@@ -61,10 +64,10 @@ namespace Nozomi.Infra.Api.Limiter.Events
                 switch (redisDatabase)
                 {
                     case RedisDatabases.ApiKeyEvents:
-                        database = _apiKeyEventsConnectionMultiplexer.GetDatabase();
+                        database = _connectionMultiplexerManager.ApiKeyEventMultiplexer.GetDatabase();
                         break;
                     default:
-                        database = _apiKeyUsersConnectionMultiplexer.GetDatabase();
+                        database = _connectionMultiplexerManager.ApiKeyUserMultiplexer.GetDatabase();
                         break;
                 }
 
@@ -87,10 +90,10 @@ namespace Nozomi.Infra.Api.Limiter.Events
                 switch (redisDatabase)
                 {
                     case RedisDatabases.ApiKeyEvents:
-                        database = _apiKeyEventsConnectionMultiplexer.GetDatabase();
+                        database = _connectionMultiplexerManager.ApiKeyEventMultiplexer.GetDatabase();
                         break;
                     default:
-                        database = _apiKeyUsersConnectionMultiplexer.GetDatabase();
+                        database = _connectionMultiplexerManager.ApiKeyUserMultiplexer.GetDatabase();
                         break;
                 }
 
