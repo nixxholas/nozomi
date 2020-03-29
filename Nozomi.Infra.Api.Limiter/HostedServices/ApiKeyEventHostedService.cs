@@ -66,14 +66,12 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
                     using (var scope = _scopeFactory.CreateScope())
                     {
                         // Redis connect!
-                        var connectionMultiplexerManager = scope.ServiceProvider
-                            .GetRequiredService<ConnectionMultiplexerManager>();
-                        var endpoints = connectionMultiplexerManager.ApiKeyEventMultiplexer.GetEndPoints();
+                        var nozomiRedisEvent = scope.ServiceProvider.GetRequiredService<INozomiRedisEvent>();
 
                         // Iterate all keys
-                        foreach (var apiKey in connectionMultiplexerManager.ApiKeyEventMultiplexer.GetServer(endpoints[0]).Keys())
+                        foreach (var apiKey in nozomiRedisEvent.AllKeys(RedisDatabases.ApiKeyUser))
                         {
-                            var database = connectionMultiplexerManager.ApiKeyEventMultiplexer.GetDatabase();
+                            var database = nozomiRedisEvent.GetDatabase(RedisDatabases.ApiKeyEvents);
                             // Pop the elements from the left
                             var oldestWeight = database.ListLeftPop(apiKey);
 
@@ -81,7 +79,6 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
                             if (oldestWeight.HasValue && long.TryParse(oldestWeight, out var weight) && weight >= 0)
                             {
                                 // First navigate to the user first
-                                var nozomiRedisEvent = scope.ServiceProvider.GetRequiredService<INozomiRedisEvent>();
                                 var userKey = nozomiRedisEvent.GetValue(apiKey,
                                     RedisDatabases.ApiKeyUser);
 
