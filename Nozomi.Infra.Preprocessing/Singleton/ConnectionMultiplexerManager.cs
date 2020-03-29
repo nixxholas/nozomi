@@ -21,7 +21,7 @@ namespace Nozomi.Preprocessing.Singleton
                 return ConnectionMultiplexer.Connect(apiKeyUserConnectionStr);
             });
 
-        public static ConnectionMultiplexer ApiKeyUserMultiplexer => ApiKeyUserCacheLazyConnection.Value;
+        public ConnectionMultiplexer ApiKeyUserMultiplexer => ApiKeyUserCacheLazyConnection.Value;
 
         private static readonly Lazy<ConnectionMultiplexer> ApiKeyEventCacheLazyConnection = 
             new Lazy<ConnectionMultiplexer>(() =>
@@ -30,6 +30,6 @@ namespace Nozomi.Preprocessing.Singleton
                 return ConnectionMultiplexer.Connect(apiKeyEventConnectionStr);
             });
 
-        public static ConnectionMultiplexer ApiKeyEventMultiplexer => ApiKeyEventCacheLazyConnection.Value;
+        public ConnectionMultiplexer ApiKeyEventMultiplexer => ApiKeyEventCacheLazyConnection.Value;
     }
 }
