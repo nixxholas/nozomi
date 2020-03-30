@@ -54,6 +54,11 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
                         // Ensure that there's any users before iterating
                         if (users.Any())
                         {
+                            var redisEvent =
+                                scope.ServiceProvider.GetRequiredService<INozomiRedisEvent>();
+                            var redisService =
+                                scope.ServiceProvider.GetRequiredService<INozomiRedisService>();
+                            
                             // Iterate every user
                             foreach (var user in users)
                             {
@@ -96,12 +101,10 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
                                             _logger.LogInformation(
                                                 $"{_hostedServiceName} ExecuteAsync: User {user.Id}" +
                                                 $" has exceeded his usage by {usage - quota}. Ban time!");
-
-                                            var nozomiRedisService =
-                                                scope.ServiceProvider.GetRequiredService<INozomiRedisService>();
+                                            
                                             foreach (var userApiKey in userApiKeys) // BAN!!
                                             {
-                                                nozomiRedisService.Remove(RedisDatabases.ApiKeyUser, userApiKey.Value);
+                                                redisService.Remove(RedisDatabases.ApiKeyUser, userApiKey.Value);
                                                 _logger.LogInformation($"{_hostedServiceName} ExecuteAsync: " +
                                                                        $" API Key {userApiKey.Value} removed for " +
                                                                        $"user {user.Id} in Redis.");
@@ -110,11 +113,6 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
                                         else // Limit not reached, ensure API keys exist
                                         {
                                             // =========================== ADDITION LOGIC =========================== //
-
-                                            var redisEvent =
-                                                scope.ServiceProvider.GetRequiredService<INozomiRedisEvent>();
-                                            var redisService =
-                                                scope.ServiceProvider.GetRequiredService<INozomiRedisService>();
 
                                             // Iterate the user's api keys and populate the cache if needed
                                             foreach (var userApiKey in userApiKeys)
@@ -151,10 +149,6 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
                                 {
                                     if (userIsStaff) // User is a staff..
                                     {
-                                        // Just let him in.
-                                        var redisEvent = scope.ServiceProvider.GetRequiredService<INozomiRedisEvent>();
-                                        var redisService =
-                                            scope.ServiceProvider.GetRequiredService<INozomiRedisService>();
                                         // Obtain the Api Keys first
                                         var userApiKeys = authDbContext.ApiKeys
                                             .AsNoTracking()
