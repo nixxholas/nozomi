@@ -25,6 +25,8 @@ import OidcCallbackError from '../components/auth/oidc-callback-error';
 // @ts-ignore
 import Pricing from '../views/Pricing';
 // @ts-ignore
+import RequestInputForm from '../views/RequestInputForm';
+// @ts-ignore
 import Bugs from '../views/Bugs';
 
 export const routes = [
@@ -82,6 +84,9 @@ export const routes = [
   { name: 'dashboard', path: '/dashboard', props: true, component: DashboardHome,
     meta: { icon: 'columns', isPublic: false, onNav: false }
   },
+  { name: 'request-input-form', path: '/Request/Create', props: true, component: RequestInputForm,
+    meta: { icon: '', isPublic: false, onNav: false }
+  },  
   { name: 'settings', path: '/settings', props: true, component: SettingsIndex,
     meta: { icon: null, isPublic: false, onNav: false }
   },
