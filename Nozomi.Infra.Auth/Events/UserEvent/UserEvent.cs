@@ -69,6 +69,15 @@ namespace Nozomi.Infra.Auth.Events.UserEvent
 
         public bool IsInRoles(string userId, ICollection<string> roleNames)
         {
+#if DEBUG
+            var userRoles = _context.UserRoles.AsNoTracking()
+                .Where(ur => ur.UserId.Equals(userId))
+                .Include(ur => ur.Role);
+
+            var hasStaffRole = userRoles.AsEnumerable()
+                .Any(ur => roleNames.Contains(ur.Role.Name));
+#endif
+            
             return _context.UserRoles.AsNoTracking()
                 .Where(ur => ur.UserId.Equals(userId))
                 .Include(ur => ur.Role)

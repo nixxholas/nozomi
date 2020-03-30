@@ -8,13 +8,13 @@ using Nozomi.Base.Auth.Models;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.Auth.Data;
 
-namespace Nozomi.Infra.Auth.Services.QuotaClaims
+namespace Nozomi.Infra.Auth.Services.QuotaClaim
 {
-    public class QuotaClaimsService : BaseService<QuotaClaimsService, AuthDbContext>, IQuotaClaimsService
+    public class QuotaClaimService : BaseService<QuotaClaimService, AuthDbContext>, IQuotaClaimService
     {
         private readonly UserManager<Base.Auth.Models.User> _userManager;
         
-        public QuotaClaimsService(ILogger<QuotaClaimsService> logger, AuthDbContext authDbContext,
+        public QuotaClaimService(ILogger<QuotaClaimService> logger, AuthDbContext authDbContext,
             UserManager<Base.Auth.Models.User> userManager) : base(logger, authDbContext)
         {
             _userManager = userManager;

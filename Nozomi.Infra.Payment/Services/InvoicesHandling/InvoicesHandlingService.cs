@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Nozomi.Infra.Auth.Events.UserEvent;
-using Nozomi.Infra.Auth.Services.QuotaClaims;
+using Nozomi.Infra.Auth.Services.QuotaClaim;
 using Nozomi.Preprocessing.Abstracts;
 using Stripe;
 
@@ -11,12 +11,12 @@ namespace Nozomi.Infra.Payment.Services.InvoicesHandling
     public class InvoicesHandlingService : BaseService<InvoicesHandlingService>, IInvoicesHandlingService
     {
         private readonly IUserEvent _userEvent;
-        private readonly IQuotaClaimsService _quotaClaimsService;
+        private readonly IQuotaClaimService _quotaClaimService;
         
         public InvoicesHandlingService(ILogger<InvoicesHandlingService> logger, IUserEvent userEvent, 
-            IQuotaClaimsService quotaClaimsService) : base(logger) {
+            IQuotaClaimService quotaClaimService) : base(logger) {
             _userEvent = userEvent;
-            _quotaClaimsService = quotaClaimsService;
+            _quotaClaimService = quotaClaimService;
         }
 
         public async Task InvoiceFinalized(Invoice invoice)
@@ -30,7 +30,7 @@ namespace Nozomi.Infra.Payment.Services.InvoicesHandling
                 throw new NullReferenceException($"{_serviceName} {methodName}: " +
                                                  "Unable to find user tied to customer id.");
             
-            _quotaClaimsService.ResetUsage(user.Id);
+            _quotaClaimService.ResetUsage(user.Id);
         }
 
         private void PerformInvoicePrecheck(Invoice invoice, string methodName)

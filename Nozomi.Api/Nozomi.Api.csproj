@@ -14,6 +14,13 @@
       <DocumentationFile>bin\Release\Nozomi.Api.xml</DocumentationFile>
     </PropertyGroup>
 
+    <!--https://stackoverflow.com/questions/54762744/net-core-include-folder-in-publish-->
+    <ItemGroup>
+        <Content Include="Images\**">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
+
     <ItemGroup>
       <ProjectReference Include="..\Nozomi.Infra.Api.Limiter\Nozomi.Infra.Api.Limiter.csproj" />
       <ProjectReference Include="..\Nozomi.Infra.Service\Nozomi.Infra.Service.csproj" />
@@ -25,5 +32,7 @@
       <PackageReference Include="VaultSharp" Version="0.11.1002" />
     </ItemGroup>
 
-
+    <ItemGroup>
+      <Folder Include="wwwroot" />
+    </ItemGroup>
 </Project>

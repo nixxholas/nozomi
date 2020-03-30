@@ -18,6 +18,7 @@ using Swashbuckle.AspNetCore.Filters;
 
 namespace Nozomi.Api.Controllers.AnalysedComponent
 {
+    [SwaggerTag("API Set that provides interaction with Analysed Components.")]
     public class AnalysedComponentController : BaseApiController<AnalysedComponentController>,
         IAnalysedComponentController
     {

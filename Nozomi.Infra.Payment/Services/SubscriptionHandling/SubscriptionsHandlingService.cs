@@ -7,7 +7,7 @@ using Microsoft.Extensions.Options;
 using Nozomi.Base.Auth.Models;
 using Nozomi.Base.BCL.Configurations;
 using Nozomi.Infra.Auth.Events.UserEvent;
-using Nozomi.Infra.Auth.Services.QuotaClaims;
+using Nozomi.Infra.Auth.Services.QuotaClaim;
 using Nozomi.Infra.Auth.Services.User;
 using Nozomi.Infra.Payment.Events.Bootstripe;
 using Nozomi.Infra.Payment.Services.Bootstripe;
@@ -18,7 +18,7 @@ namespace Nozomi.Infra.Payment.Services.SubscriptionHandling
 {
     public class SubscriptionsHandlingService: BaseService<SubscriptionsHandlingService>, ISubscriptionsHandlingService
     {
-        private readonly IQuotaClaimsService _quotaClaimsService;
+        private readonly IQuotaClaimService _quotaClaimService;
         private readonly IUserEvent _userEvent;
         private readonly IUserService _userService;
         private readonly IBootstripeEvent _bootstripeEvent;
@@ -27,9 +27,9 @@ namespace Nozomi.Infra.Payment.Services.SubscriptionHandling
         private readonly SubscriptionService _subscriptionService;
         private readonly PlanService _planService;
         
-        public SubscriptionsHandlingService(ILogger<SubscriptionsHandlingService> logger, IQuotaClaimsService quotaClaimsService, IUserEvent userEvent, IUserService userService, IBootstripeEvent bootstripeEvent, IOptions<StripeOptions> stripeConfiguration) : base(logger)
+        public SubscriptionsHandlingService(ILogger<SubscriptionsHandlingService> logger, IQuotaClaimService quotaClaimService, IUserEvent userEvent, IUserService userService, IBootstripeEvent bootstripeEvent, IOptions<StripeOptions> stripeConfiguration) : base(logger)
         {
-            _quotaClaimsService = quotaClaimsService;
+            _quotaClaimService = quotaClaimService;
             _userEvent = userEvent;
             _userService = userService;
             _bootstripeEvent = bootstripeEvent;
@@ -77,7 +77,7 @@ namespace Nozomi.Infra.Payment.Services.SubscriptionHandling
                 throw new StripeException($"{_serviceName} {methodName}: An error occured while trying to create subscription for plan {planId} for {user.Id}");
 
             _userService.AddSubscription(user.Id, subscription.Id);
-            _quotaClaimsService.SetQuota(user.Id, quotaValue);
+            _quotaClaimService.SetQuota(user.Id, quotaValue);
         }
         
         public async Task ChangePlan(string planId, User user)
@@ -138,7 +138,7 @@ namespace Nozomi.Infra.Payment.Services.SubscriptionHandling
             if (!int.TryParse(quotaString, out quotaValue))
                 throw new FormatException($"{_serviceName} {methodName}: Failed to parse plan quota to int");
             
-            _quotaClaimsService.SetQuota(user.Id, quotaValue);
+            _quotaClaimService.SetQuota(user.Id, quotaValue);
             
             _logger.LogInformation($"{_serviceName} {methodName}: Updated user {user.Id} quota to {quotaValue}");
             return;

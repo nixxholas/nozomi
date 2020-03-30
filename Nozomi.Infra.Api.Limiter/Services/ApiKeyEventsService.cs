@@ -5,10 +5,13 @@ using System.Linq;
 using IdentityModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Nozomi.Infra.Api.Limiter.Events.Interfaces;
 using Nozomi.Infra.Api.Limiter.Services.Interfaces;
 using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Abstracts;
+using Nozomi.Preprocessing.Options;
+using Nozomi.Preprocessing.Singleton;
 using Nozomi.Repo.Auth.Data;
 using StackExchange.Redis;
 
@@ -16,22 +19,22 @@ namespace Nozomi.Infra.Api.Limiter.Services
 {
     public class ApiKeyEventsService : BaseService<ApiKeyEventsService>, IApiKeyEventsService
     {
-        private readonly IConnectionMultiplexer _connectionMultiplexer;
+        private readonly ConnectionMultiplexerManager _connectionMultiplexerManager;
         private readonly INozomiRedisEvent _nozomiRedisEvent;
         
         public ApiKeyEventsService(ILogger<ApiKeyEventsService> logger, INozomiRedisEvent nozomiRedisEvent, 
-            IConnectionMultiplexer connectionMultiplexer) 
+            ConnectionMultiplexerManager connectionMultiplexerManager) 
             : base(logger)
         {
-            _connectionMultiplexer = connectionMultiplexer;
+            _connectionMultiplexerManager = connectionMultiplexerManager;
             _nozomiRedisEvent = nozomiRedisEvent;
         }
 
         public ApiKeyEventsService(IHttpContextAccessor contextAccessor, ILogger<ApiKeyEventsService> logger, 
-            INozomiRedisEvent nozomiRedisEvent, IConnectionMultiplexer connectionMultiplexer) 
+            INozomiRedisEvent nozomiRedisEvent, ConnectionMultiplexerManager connectionMultiplexerManager) 
             : base(contextAccessor, logger)
         {
-            _connectionMultiplexer = connectionMultiplexer;
+            _connectionMultiplexerManager = connectionMultiplexerManager;
             _nozomiRedisEvent = nozomiRedisEvent;
         }
 
@@ -52,8 +55,9 @@ namespace Nozomi.Infra.Api.Limiter.Services
                     Create(apiKey); // Create the api key into the redis cache first
 
                 // Always push a new item to the right
-                _connectionMultiplexer.GetDatabase((int) RedisDatabases.ApiKeyEvents)
-                    .ListRightPush(apiKey, fillAmount);
+                // _connectionMultiplexerManager.GetDatabase((int) RedisDatabases.ApiKeyEvents)
+                //     .ListRightPush(apiKey, fillAmount);
+                _connectionMultiplexerManager.ApiKeyEventMultiplexer.GetDatabase().ListRightPush(apiKey, fillAmount);
                 _logger.LogInformation($"{_serviceName} Fill: API key usage {apiKey} of {fillAmount} tokens " +
                                        "added to ApiKeyEvents cache.");
                 return;
@@ -69,8 +73,8 @@ namespace Nozomi.Infra.Api.Limiter.Services
             {
                 _logger.LogInformation($"{_serviceName} Clear: Clearing unrecorded events for api key " +
                                        $"{apiKey}");
-                var connections = _connectionMultiplexer.GetEndPoints();
-                var server = _connectionMultiplexer.GetServer(connections[0]);
+                var connections = _connectionMultiplexerManager.ApiKeyEventMultiplexer.GetEndPoints();
+                var server = _connectionMultiplexerManager.ApiKeyEventMultiplexer.GetServer(connections[0]);
                 // https://stackoverflow.com/questions/41247952/stackexchange-redis-delete-all-keys-that-start-with
                 var apiKeyPairs = server.Keys(pattern: $"*{apiKey}*", pageSize: 1000).ToList();
 
@@ -78,8 +82,9 @@ namespace Nozomi.Infra.Api.Limiter.Services
                 {
                     foreach (var apiKeyPair in apiKeyPairs)
                     {
-                        _connectionMultiplexer.GetDatabase((int) RedisDatabases.ApiKeyEvents)
-                            .KeyDelete(apiKeyPair);
+                        // _connectionMultiplexerManager.GetDatabase((int) RedisDatabases.ApiKeyEvents)
+                        //     .KeyDelete(apiKeyPair);
+                        _connectionMultiplexerManager.ApiKeyEventMultiplexer.GetDatabase().KeyDelete(apiKeyPair);
                     }
 
                     _logger.LogInformation($"{_serviceName} Clear: Unrecorded events cleared for key " +
@@ -98,8 +103,9 @@ namespace Nozomi.Infra.Api.Limiter.Services
                 if (!_nozomiRedisEvent.Exists(key,RedisDatabases.ApiKeyEvents))
                 {
                     // Since it doesn't exist yet, create it
-                    _connectionMultiplexer.GetDatabase((int) RedisDatabases.ApiKeyEvents)
-                        .ListLeftPush(key, 0);
+                    // _connectionMultiplexerManager.GetDatabase((int) RedisDatabases.ApiKeyEvents)
+                    //     .ListLeftPush(key, 0);
+                    _connectionMultiplexerManager.ApiKeyEventMultiplexer.GetDatabase().ListLeftPush(key, 0);
                     _logger.LogInformation($"{_serviceName} Create: Key {key} added to cache.");
 
                     return;

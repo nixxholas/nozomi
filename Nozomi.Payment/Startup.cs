@@ -13,7 +13,7 @@ using Newtonsoft.Json;
 using Nozomi.Base.Auth.Models;
 using Nozomi.Base.BCL.Configurations;
 using Nozomi.Infra.Auth.Events.UserEvent;
-using Nozomi.Infra.Auth.Services.QuotaClaims;
+using Nozomi.Infra.Auth.Services.QuotaClaim;
 using Nozomi.Infra.Auth.Services.User;
 using Nozomi.Infra.Payment.Events.Bootstripe;
 using Nozomi.Infra.Payment.Services.Bootstripe;
@@ -165,7 +165,7 @@ namespace Nozomi.Payment
             services.AddScoped<IComponentService, ComponentService>();
             services.AddScoped<IDisputesHandlingService, DisputesHandlingService>();
             services.AddScoped<IInvoicesHandlingService, InvoicesHandlingService>();
-            services.AddScoped<IQuotaClaimsService, QuotaClaimsService>();
+            services.AddScoped<IQuotaClaimService, QuotaClaimService>();
             services.AddScoped<IRequestService, RequestService>();
             services.AddScoped<ISubscriptionsHandlingService, SubscriptionsHandlingService>();
             services.AddScoped<IUserService, UserService>();
