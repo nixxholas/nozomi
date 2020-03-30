@@ -77,18 +77,15 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
                                 var usageClaim = requiredUserClaims.SingleOrDefault(uc =>
                                     uc.ClaimType.Equals(NozomiJwtClaimTypes.UserUsage));
 
-                                // Is user a staff member?
-                                var userEvent = scope.ServiceProvider.GetRequiredService<IUserEvent>();
-                                var userIsStaff = userEvent.IsInRoles(user.Id,
-                                    NozomiPermissions.AllowAllStaffRoles.Split(", "));
-
                                 // Safety net, has valid quota and usage
                                 if (quotaClaim != null && usageClaim != null && long.TryParse(quotaClaim.ClaimValue,
                                         out var quota) && long.TryParse(usageClaim.ClaimValue, out var usage))
                                 {
-                                    // Obtain the Api Keys first
+                                    var userEvent = scope.ServiceProvider.GetRequiredService<IUserEvent>();
+                                    var userIsStaff = userEvent.IsInRoles(user.Id, // Is user a staff member?
+                                        NozomiPermissions.AllowAllStaffRoles.Split(", "));
                                     var userApiKeys = authDbContext.ApiKeys.AsNoTracking()
-                                        .Where(e => e.UserId.Equals(user.Id));
+                                        .Where(e => e.UserId.Equals(user.Id)); // Obtain the Api Keys first
                                     
                                     if (userApiKeys.Any() && !userIsStaff) // Any API keys? and is user a staff? hopefully no
                                     {
