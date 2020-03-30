@@ -84,14 +84,13 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
 
                                 // Safety net, has valid quota and usage
                                 if (quotaClaim != null && usageClaim != null && long.TryParse(quotaClaim.ClaimValue,
-                                        out var quota) && long.TryParse(usageClaim.ClaimValue, out var usage)
-                                    && !userIsStaff)
+                                        out var quota) && long.TryParse(usageClaim.ClaimValue, out var usage))
                                 {
                                     // Obtain the Api Keys first
                                     var userApiKeys = authDbContext.ApiKeys.AsNoTracking()
                                         .Where(e => e.UserId.Equals(user.Id));
-
-                                    if (userApiKeys.Any()) // Any API keys?
+                                    
+                                    if (userApiKeys.Any() && !userIsStaff) // Any API keys? and is user a staff? hopefully no
                                     {
                                         // Check if quota and usage has exceeded the limits
                                         if (usage > quota) // Limit reached, bar user from usage.
@@ -138,22 +137,8 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
                                             }
                                         }
                                     }
-                                    else // Nope, warn!!!
+                                    else if (userIsStaff) // User is a staff..
                                     {
-                                        _logger.LogWarning($"{_hostedServiceName} ExecuteAsync: wait, " +
-                                                           $"peculiar event, user {user.Id} has no API keys but has " +
-                                                           $"hit his limit of {quota}..");
-                                    }
-                                }
-                                else
-                                {
-                                    if (userIsStaff) // User is a staff..
-                                    {
-                                        // Obtain the Api Keys first
-                                        var userApiKeys = authDbContext.ApiKeys
-                                            .AsNoTracking()
-                                            .Where(e => e.UserId.Equals(user.Id));
-
                                         // Iterate the user's api keys and populate the cache if needed
                                         foreach (var userApiKey in userApiKeys)
                                         {
@@ -164,25 +149,31 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
                                                 redisService.Add(RedisDatabases.ApiKeyUser, userApiKey.Value,
                                                     user.Id);
                                                 _logger.LogInformation($"{_hostedServiceName} ExecuteAsync: " +
-                                                                       $" Api Key {userApiKey.Value} added with " +
-                                                                       $"symlink to user {user.Id}");
+                                                                       $" Staff Api Key {userApiKey.Value} added with " +
+                                                                       $"symlink to Staff member {user.Id}");
                                             }
                                         }
                                     }
-                                    else
+                                    else // Nope, warn!!!
                                     {
-                                        var quotaClaimService = scope.ServiceProvider
-                                            .GetRequiredService<IQuotaClaimService>();
-
-                                        if (quotaClaim == null) // If quota claim is null, set it
-                                            quotaClaimService.SetQuota(user.Id, 0);
-
-                                        if (usageClaim == null) // If usage claim is null, set it
-                                            quotaClaimService.AddUsage(user.Id, 0);
-
-                                        // _logger.LogInformation($"{_hostedServiceName} ExecuteAsync: No usage and/or " +
-                                        //                        $"quota found for user {user.Id}.");
+                                        _logger.LogWarning($"{_hostedServiceName} ExecuteAsync: wait, " +
+                                                           $"peculiar event, user {user.Id} has no API keys but has " +
+                                                           $"hit his limit of {quota}..");
                                     }
+                                }
+                                else
+                                {
+                                    var quotaClaimService = scope.ServiceProvider
+                                        .GetRequiredService<IQuotaClaimService>();
+
+                                    if (quotaClaim == null) // If quota claim is null, set it
+                                        quotaClaimService.SetQuota(user.Id, 0);
+
+                                    if (usageClaim == null) // If usage claim is null, set it
+                                        quotaClaimService.AddUsage(user.Id, 0);
+
+                                    // _logger.LogInformation($"{_hostedServiceName} ExecuteAsync: No usage and/or " +
+                                    //                        $"quota found for user {user.Id}.");
                                 }
                             }
                         }
