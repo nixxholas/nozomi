@@ -40,158 +40,168 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
 
             while (!stoppingToken.IsCancellationRequested)
             {
-                using (var scope = _scopeFactory.CreateScope())
+                try
                 {
-                    var authDbContext = scope.ServiceProvider.GetRequiredService<AuthDbContext>();
-
-                    // Obtain all users who have API keys
-                    var users = authDbContext.Users.AsNoTracking()
-                        .Include(u => u.ApiKeys)
-                        .Where(u => u.ApiKeys.Any());
-
-                    // Ensure that there's any users before iterating
-                    if (users.Any())
+                    using (var scope = _scopeFactory.CreateScope())
                     {
-                        // Iterate every user
-                        foreach (var user in users)
+                        var authDbContext = scope.ServiceProvider.GetRequiredService<AuthDbContext>();
+
+                        // Obtain all users who have API keys
+                        var users = authDbContext.Users.AsNoTracking()
+                            .Include(u => u.ApiKeys)
+                            .Where(u => u.ApiKeys.Any());
+
+                        // Ensure that there's any users before iterating
+                        if (users.Any())
                         {
-                            // Obtain the user's quota and usage
-                            var requiredUserClaims = authDbContext.UserClaims
-                                .AsNoTracking()
-                                .Where(uc => uc.UserId.Equals(user.Id)
-                                             && (uc.ClaimType.Equals(NozomiJwtClaimTypes.UserQuota)
-                                                 || uc.ClaimType.Equals(NozomiJwtClaimTypes.UserUsage)));
-
-                            // Quota
-                            var quotaClaim = requiredUserClaims.SingleOrDefault(uc =>
-                                uc.ClaimType.Equals(NozomiJwtClaimTypes.UserQuota));
-
-                            // Usage
-                            var usageClaim = requiredUserClaims.SingleOrDefault(uc =>
-                                uc.ClaimType.Equals(NozomiJwtClaimTypes.UserUsage));
-                            
-                            // Is user a staff member?
-                            var userEvent = scope.ServiceProvider.GetRequiredService<IUserEvent>();
-                            var userIsStaff = userEvent.IsInRoles(user.Id,
-                                NozomiPermissions.AllowAllStaffRoles.Split(", "));
-                            
-                            // Safety net, has valid quota and usage
-                            if (quotaClaim != null && usageClaim != null && long.TryParse(quotaClaim.ClaimValue,
-                                out var quota) && long.TryParse(usageClaim.ClaimValue, out var usage)
-                                && !userIsStaff)
+                            // Iterate every user
+                            foreach (var user in users)
                             {
-                                // Obtain the Api Keys first
-                                var userApiKeys = authDbContext.ApiKeys.AsNoTracking()
-                                    .Where(e => e.UserId.Equals(user.Id));
+                                // Obtain the user's quota and usage
+                                var requiredUserClaims = authDbContext.UserClaims
+                                    .AsNoTracking()
+                                    .Where(uc => uc.UserId.Equals(user.Id)
+                                                 && (uc.ClaimType.Equals(NozomiJwtClaimTypes.UserQuota)
+                                                     || uc.ClaimType.Equals(NozomiJwtClaimTypes.UserUsage)));
 
-                                if (userApiKeys.Any()) // Any API keys?
+                                // Quota
+                                var quotaClaim = requiredUserClaims.SingleOrDefault(uc =>
+                                    uc.ClaimType.Equals(NozomiJwtClaimTypes.UserQuota));
+
+                                // Usage
+                                var usageClaim = requiredUserClaims.SingleOrDefault(uc =>
+                                    uc.ClaimType.Equals(NozomiJwtClaimTypes.UserUsage));
+
+                                // Is user a staff member?
+                                var userEvent = scope.ServiceProvider.GetRequiredService<IUserEvent>();
+                                var userIsStaff = userEvent.IsInRoles(user.Id,
+                                    NozomiPermissions.AllowAllStaffRoles.Split(", "));
+
+                                // Safety net, has valid quota and usage
+                                if (quotaClaim != null && usageClaim != null && long.TryParse(quotaClaim.ClaimValue,
+                                        out var quota) && long.TryParse(usageClaim.ClaimValue, out var usage)
+                                    && !userIsStaff)
                                 {
-                                    // Check if quota and usage has exceeded the limits
-                                    if (usage > quota) // Limit reached, bar user from usage.
+                                    // Obtain the Api Keys first
+                                    var userApiKeys = authDbContext.ApiKeys.AsNoTracking()
+                                        .Where(e => e.UserId.Equals(user.Id));
+
+                                    if (userApiKeys.Any()) // Any API keys?
                                     {
-                                        // =========================== REMOVAL LOGIC FIRST =========================== //
-
-                                        _logger.LogInformation($"{_hostedServiceName} ExecuteAsync: User {user.Id}" +
-                                                               $" has exceeded his usage by {usage - quota}. Ban time!");
-
-                                        var nozomiRedisService =
-                                            scope.ServiceProvider.GetRequiredService<INozomiRedisService>();
-                                        foreach (var userApiKey in userApiKeys) // BAN!!
+                                        // Check if quota and usage has exceeded the limits
+                                        if (usage > quota) // Limit reached, bar user from usage.
                                         {
-                                            nozomiRedisService.Remove(RedisDatabases.ApiKeyUser, userApiKey.Value);
-                                            _logger.LogInformation($"{_hostedServiceName} ExecuteAsync: " +
-                                                                   $" API Key {userApiKey.Value} removed for " +
-                                                                   $"user {user.Id} in Redis.");
+                                            // =========================== REMOVAL LOGIC FIRST =========================== //
+
+                                            _logger.LogInformation(
+                                                $"{_hostedServiceName} ExecuteAsync: User {user.Id}" +
+                                                $" has exceeded his usage by {usage - quota}. Ban time!");
+
+                                            var nozomiRedisService =
+                                                scope.ServiceProvider.GetRequiredService<INozomiRedisService>();
+                                            foreach (var userApiKey in userApiKeys) // BAN!!
+                                            {
+                                                nozomiRedisService.Remove(RedisDatabases.ApiKeyUser, userApiKey.Value);
+                                                _logger.LogInformation($"{_hostedServiceName} ExecuteAsync: " +
+                                                                       $" API Key {userApiKey.Value} removed for " +
+                                                                       $"user {user.Id} in Redis.");
+                                            }
+                                        }
+                                        else // Limit not reached, ensure API keys exist
+                                        {
+                                            // =========================== ADDITION LOGIC =========================== //
+
+                                            var redisEvent =
+                                                scope.ServiceProvider.GetRequiredService<INozomiRedisEvent>();
+                                            var redisService =
+                                                scope.ServiceProvider.GetRequiredService<INozomiRedisService>();
+
+                                            // Iterate the user's api keys and populate the cache if needed
+                                            foreach (var userApiKey in userApiKeys)
+                                            {
+                                                // If the cache does not contain this api key,
+                                                if (!redisEvent.Exists(userApiKey.Value,
+                                                    RedisDatabases.ApiKeyUser))
+                                                {
+                                                    // Add it into the cache
+                                                    redisService.Add(RedisDatabases.ApiKeyUser, userApiKey.Value,
+                                                        user.Id);
+                                                    _logger.LogInformation($"{_hostedServiceName} ExecuteAsync: " +
+                                                                           $" Api Key {userApiKey.Value} added with " +
+                                                                           $"symlink to user {user.Id}");
+                                                }
+
+                                                // Don't refactor this, may need it.. not sure when
+                                                // else
+                                                // {
+                                                //     _logger.LogInformation($"{_hostedServiceName} ExecuteAsync: " +
+                                                //                            $" Api Key {userApiKey.Value} already added");
+                                                // }
+                                            }
                                         }
                                     }
-                                    else // Limit not reached, ensure API keys exist
+                                    else // Nope, warn!!!
                                     {
-                                        // =========================== ADDITION LOGIC =========================== //
-
+                                        _logger.LogWarning($"{_hostedServiceName} ExecuteAsync: wait, " +
+                                                           $"peculiar event, user {user.Id} has no API keys but has " +
+                                                           $"hit his limit of {quota}..");
+                                    }
+                                }
+                                else
+                                {
+                                    if (userIsStaff) // User is a staff..
+                                    {
+                                        // Just let him in.
                                         var redisEvent = scope.ServiceProvider.GetRequiredService<INozomiRedisEvent>();
                                         var redisService =
                                             scope.ServiceProvider.GetRequiredService<INozomiRedisService>();
+                                        // Obtain the Api Keys first
+                                        var userApiKeys = authDbContext.ApiKeys
+                                            .AsNoTracking()
+                                            .Where(e => e.UserId.Equals(user.Id));
 
                                         // Iterate the user's api keys and populate the cache if needed
                                         foreach (var userApiKey in userApiKeys)
                                         {
-                                            // If the cache does not contain this api key,
-                                            if (!redisEvent.Exists(userApiKey.Value, 
+                                            if (!redisEvent.Exists(userApiKey.Value,
                                                 RedisDatabases.ApiKeyUser))
                                             {
                                                 // Add it into the cache
-                                                redisService.Add(RedisDatabases.ApiKeyUser, userApiKey.Value, 
+                                                redisService.Add(RedisDatabases.ApiKeyUser, userApiKey.Value,
                                                     user.Id);
                                                 _logger.LogInformation($"{_hostedServiceName} ExecuteAsync: " +
                                                                        $" Api Key {userApiKey.Value} added with " +
                                                                        $"symlink to user {user.Id}");
                                             }
-                                            // Don't refactor this, may need it.. not sure when
-                                            // else
-                                            // {
-                                            //     _logger.LogInformation($"{_hostedServiceName} ExecuteAsync: " +
-                                            //                            $" Api Key {userApiKey.Value} already added");
-                                            // }
                                         }
                                     }
-                                }
-                                else // Nope, warn!!!
-                                {
-                                    _logger.LogWarning($"{_hostedServiceName} ExecuteAsync: wait, " +
-                                                       $"peculiar event, user {user.Id} has no API keys but has " +
-                                                       $"hit his limit of {quota}..");
-                                }
-                            }
-                            else
-                            {
-                                if (userIsStaff) // User is a staff..
-                                {
-                                    // Just let him in.
-                                    var redisEvent = scope.ServiceProvider.GetRequiredService<INozomiRedisEvent>();
-                                    var redisService =
-                                        scope.ServiceProvider.GetRequiredService<INozomiRedisService>();
-                                    // Obtain the Api Keys first
-                                    var userApiKeys = authDbContext.ApiKeys
-                                        .AsNoTracking()
-                                        .Where(e => e.UserId.Equals(user.Id));
-
-                                    // Iterate the user's api keys and populate the cache if needed
-                                    foreach (var userApiKey in userApiKeys)
+                                    else
                                     {
-                                        if (!redisEvent.Exists(userApiKey.Value, 
-                                            RedisDatabases.ApiKeyUser))
-                                        {
-                                            // Add it into the cache
-                                            redisService.Add(RedisDatabases.ApiKeyUser, userApiKey.Value, 
-                                                user.Id);
-                                            _logger.LogInformation($"{_hostedServiceName} ExecuteAsync: " +
-                                                                   $" Api Key {userApiKey.Value} added with " +
-                                                                   $"symlink to user {user.Id}");
-                                        }
-                                    }
-                                }
-                                else
-                                {
-                                    var quotaClaimService = scope.ServiceProvider
-                                        .GetRequiredService<IQuotaClaimService>();
-                                    
-                                    if (quotaClaim == null) // If quota claim is null, set it
-                                        quotaClaimService.SetQuota(user.Id, 0);
-                                    
-                                    if (usageClaim == null) // If usage claim is null, set it
-                                        quotaClaimService.AddUsage(user.Id, 0);
+                                        var quotaClaimService = scope.ServiceProvider
+                                            .GetRequiredService<IQuotaClaimService>();
 
-                                    // _logger.LogInformation($"{_hostedServiceName} ExecuteAsync: No usage and/or " +
-                                    //                        $"quota found for user {user.Id}.");
+                                        if (quotaClaim == null) // If quota claim is null, set it
+                                            quotaClaimService.SetQuota(user.Id, 0);
+
+                                        if (usageClaim == null) // If usage claim is null, set it
+                                            quotaClaimService.AddUsage(user.Id, 0);
+
+                                        // _logger.LogInformation($"{_hostedServiceName} ExecuteAsync: No usage and/or " +
+                                        //                        $"quota found for user {user.Id}.");
+                                    }
                                 }
                             }
                         }
+                        else
+                        {
+                            _logger.LogInformation($"{_hostedServiceName} ExecuteAsync: Apparently, no users " +
+                                                   "with Api keys to check!");
+                        }
                     }
-                    else
-                    {
-                        _logger.LogInformation($"{_hostedServiceName} ExecuteAsync: Apparently, no users " +
-                                               "with Api keys to check!");
-                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogCritical($"{_hostedServiceName} Critical! : {ex}");
                 }
 
                 await Task.Delay(100, stoppingToken);
