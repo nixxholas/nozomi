@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -66,6 +67,7 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
                     using (var scope = _scopeFactory.CreateScope())
                     {
                         // Redis connect!
+                        var authDbContext = scope.ServiceProvider.GetRequiredService<AuthDbContext>();
                         var nozomiRedisEvent = scope.ServiceProvider.GetRequiredService<INozomiRedisEvent>();
 
                         // Iterate all keys
@@ -85,8 +87,6 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
                                 // Since we got the user's key,
                                 if (!userKey.IsNullOrEmpty)
                                 {
-                                    var authDbContext = scope.ServiceProvider.GetRequiredService<AuthDbContext>();
-
                                     // Obtain the user's quota
                                     var userQuota = authDbContext.UserClaims
                                         .AsTracking()
@@ -179,6 +179,10 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
                 catch (NpgsqlException npgsqlException)
                 {
                     _logger.LogCritical($"{_hostedServiceName} PSQL Error: {npgsqlException.Message}");
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogCritical($"{_hostedServiceName} Critical!! : {ex}");
                 }
             }
 
