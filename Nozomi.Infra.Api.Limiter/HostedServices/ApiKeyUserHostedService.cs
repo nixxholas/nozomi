@@ -10,6 +10,8 @@ using Nozomi.Base.Auth.Global;
 using Nozomi.Infra.Api.Limiter.Events.Interfaces;
 using Nozomi.Infra.Api.Limiter.Services.Interfaces;
 using Nozomi.Infra.Auth.Events.UserEvent;
+using Nozomi.Infra.Auth.Services.QuotaClaim;
+using Nozomi.Infra.Auth.Services.User;
 using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Preprocessing.Statics;
@@ -170,8 +172,17 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
                                 }
                                 else
                                 {
-                                    _logger.LogInformation($"{_hostedServiceName} ExecuteAsync: No usage and/or " +
-                                                           $"quota found for user {user.Id}.");
+                                    var quotaClaimService = scope.ServiceProvider
+                                        .GetRequiredService<IQuotaClaimService>();
+                                    
+                                    if (quotaClaim == null) // If quota claim is null, set it
+                                        quotaClaimService.SetQuota(user.Id, 0);
+                                    
+                                    if (usageClaim == null) // If usage claim is null, set it
+                                        quotaClaimService.AddUsage(user.Id, 0);
+
+                                    // _logger.LogInformation($"{_hostedServiceName} ExecuteAsync: No usage and/or " +
+                                    //                        $"quota found for user {user.Id}.");
                                 }
                             }
                         }

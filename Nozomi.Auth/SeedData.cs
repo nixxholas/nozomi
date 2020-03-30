@@ -212,6 +212,14 @@ namespace Nozomi.Auth
                             throw new Exception(result.Errors.First().Description);
                         }
 
+                        context.ApiKeys.Add(new ApiKey
+                        {
+                            Label = "First Dev Key",
+                            Value = Randomizer.GenerateRandomCryptographicKey(32),
+                            UserId = stripeDummy.Id
+                        });
+                        context.SaveChanges();
+
                         Console.WriteLine("stripe created");
 
                         var ownerAddResult = userMgr.AddToRoleAsync(stripeDummy, RoleEnum.Owner.GetDescription()).Result;
@@ -259,6 +267,14 @@ namespace Nozomi.Auth
                         {
                             throw new Exception(result.Errors.First().Description);
                         }
+
+                        context.ApiKeys.Add(new ApiKey
+                        {
+                            Label = "First Dev Key",
+                            Value = Randomizer.GenerateRandomCryptographicKey(32),
+                            UserId = nicholas.Id
+                        });
+                        context.SaveChanges();
 
                         Console.WriteLine("nicholas created");
                     }

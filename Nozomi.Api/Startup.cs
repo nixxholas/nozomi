@@ -22,14 +22,13 @@ using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Interfaces;
 using Microsoft.OpenApi.Models;
-using Nozomi.Api.Extensions;
-using Nozomi.Api.Filters;
 using Nozomi.Infra.Api.Limiter.Events;
 using Nozomi.Infra.Api.Limiter.Events.Interfaces;
 using Nozomi.Infra.Api.Limiter.Handlers;
 using Nozomi.Infra.Api.Limiter.Services;
 using Nozomi.Infra.Api.Limiter.Services.Interfaces;
 using Nozomi.Preprocessing;
+using Nozomi.Preprocessing.Extensions;
 using Nozomi.Preprocessing.Options;
 using Nozomi.Repo.Auth.Data;
 using Nozomi.Repo.Data;
@@ -76,7 +75,7 @@ namespace Nozomi.Api
                 options.ForwardLimit = 2;
             });
             
-            if (WebHostEnvironment.IsStaging() || WebHostEnvironment.IsProduction())
+            if (WebHostEnvironment.IsProduction())
             {
                 var vaultUrl = Configuration["vaultUrl"];
                 var vaultToken = Configuration["vaultToken"];
@@ -106,7 +105,8 @@ namespace Nozomi.Api
                     .GetAwaiter()
                     .GetResult().Data;
                 
-                services.ConfigureRedis((string) vault["redis"]);
+                services.ConfigureRedisMultiplexers((string) vault["redis-api-user"], 
+                    (string) vault["redis-api-event"]);
 
                 services.AddDbContextPool<NozomiDbContext>(options =>
                 {
@@ -122,8 +122,17 @@ namespace Nozomi.Api
                 Console.WriteLine(@"Welcome to the dev environment, your machine is named: " + Environment.MachineName);
                 
                 var redisStr = Configuration.GetConnectionString("LocalRedis:" + Environment.MachineName);
-                
-                services.ConfigureRedis(redisStr);
+                var redisEventsStr = Configuration.GetConnectionString("EventsLocalRedis:" 
+                                                                       + Environment.MachineName);
+
+                if (WebHostEnvironment.IsStaging())
+                {
+                    redisStr = Configuration.GetConnectionString("StageRedis");
+                    redisEventsStr = Configuration.GetConnectionString("EventsStageRedis");
+                }
+
+                services.ConfigureRedisMultiplexers(redisStr, 
+                    redisEventsStr);
 
                 services.AddDbContextPool<NozomiDbContext>(options =>
                 {
@@ -173,6 +182,8 @@ namespace Nozomi.Api
                     Version = GlobalApiVariables.CURRENT_API_REVISION.ToString(),
                     Extensions = new Dictionary<string, IOpenApiExtension>
                     {
+                        // Get the custom logo ready bitches
+                        // https://stackoverflow.com/questions/54335549/adding-x-logo-vendor-extension-using-swashbuckle-asp-net-core-for-redoc
                         { "x-logo", new OpenApiObject
                             {
                                 // TODO: Fix full routing
@@ -260,8 +271,17 @@ namespace Nozomi.Api
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
+            if (env.IsDevelopment() || env.IsStaging())
             {
+                // Treating this web app like a CDN lol
+                // https://www.tutorialsteacher.com/core/aspnet-core-static-file
+                app.UseStaticFiles(new StaticFileOptions()
+                {
+                    FileProvider = new PhysicalFileProvider(
+                        Path.Combine(Directory.GetCurrentDirectory(), @"Images")),
+                    RequestPath = new PathString("/api-images")
+                });
+                
                 app.UseDeveloperExceptionPage();
             }
             else
@@ -269,16 +289,15 @@ namespace Nozomi.Api
                 app.UseHsts();
 
                 app.UseResponseCompression();
+
+                // Treating this web app like a CDN lol
+                // https://www.tutorialsteacher.com/core/aspnet-core-static-file
+                app.UseStaticFiles(new StaticFileOptions()
+                {
+                    FileProvider = new PhysicalFileProvider("/app/Images"),
+                    RequestPath = new PathString("/api-images")
+                });
             }
-            
-            app.UseStaticFiles();
-            
-            app.UseStaticFiles(new StaticFileOptions()
-            {
-                FileProvider = new PhysicalFileProvider(
-                    Path.Combine(Directory.GetCurrentDirectory(), @"Images")),
-                RequestPath = new PathString("/api-images")
-            });
 
             app.UseHttpsRedirection();
 

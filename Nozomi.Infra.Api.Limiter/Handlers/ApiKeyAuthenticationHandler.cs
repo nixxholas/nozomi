@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Security.Claims;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
@@ -31,24 +32,23 @@ namespace Nozomi.Infra.Api.Limiter.Handlers
 
         protected override Task<AuthenticateResult> HandleAuthenticateAsync() 
         {
-            var token = Request.Headers[ApiKeyAuthenticationOptions.HeaderKey];
+            var token = Request.Headers[ApiKeyAuthenticationOptions.HeaderKey].FirstOrDefault();
 
             if (string.IsNullOrEmpty(token)) {
                 return Task.FromResult (AuthenticateResult.Fail ("Token is null"));
             }
 
             var nozomiRedisEvent = _serviceProvider.GetRequiredService<INozomiRedisEvent>();
-            var isValidToken = nozomiRedisEvent.Exists(token, RedisDatabases.ApiKeyUser);
-
-            if (!isValidToken) {
+            if (!nozomiRedisEvent.Exists(token, RedisDatabases.ApiKeyUser)) {
                 return Task.FromResult (AuthenticateResult.Fail ($"Invalid token {token}."));
             }
 
             var claims = new [] { new Claim ("token", token) };
             var identity = new ClaimsIdentity (claims, nameof (ApiKeyAuthenticationHandler));
             var ticket = new AuthenticationTicket (new ClaimsPrincipal (identity), Scheme.Name);
-            Logger.LogInformation($"ApiKeyAuthenticationHandler: token {token} is authorised.");
-            return Task.FromResult (AuthenticateResult.Success (ticket));
+            Logger.LogInformation($"ApiKeyAuthenticationHandler: token ending with " +
+                                  $"{token.Substring(token.Length - 8)} is authorised.");
+            return Task.FromResult (AuthenticateResult.Success(ticket));
         }
     }
 }

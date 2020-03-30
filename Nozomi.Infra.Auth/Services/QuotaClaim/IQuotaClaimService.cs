@@ -1,8 +1,6 @@
-﻿using System.Threading.Tasks;
-
-namespace Nozomi.Infra.Auth.Services.QuotaClaims
+﻿namespace Nozomi.Infra.Auth.Services.QuotaClaim
 {
-    public interface IQuotaClaimsService
+    public interface IQuotaClaimService
     {
         void SetQuota(string userId, int quotaAmt);
 

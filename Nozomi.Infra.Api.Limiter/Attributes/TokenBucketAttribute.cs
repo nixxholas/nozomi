@@ -46,6 +46,8 @@ namespace Nozomi.Infra.Api.Limiter.Attributes
         /// </summary>
         public string Message { get; set; }
 
+        // Some helpers
+        // https://ignas.me/tech/custom-authentication-asp-net-core-20/
         public override void OnActionExecuting(ActionExecutingContext c)
         {
             if (c.HttpContext.Request.Headers.TryGetValue(ApiKeyAuthenticationOptions.HeaderKey, 

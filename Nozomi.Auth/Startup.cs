@@ -26,7 +26,7 @@ using Nozomi.Infra.Auth.Events.UserEvent;
 using Nozomi.Infra.Auth.Events.EmailSender;
 using Nozomi.Infra.Auth.Services.Address;
 using Nozomi.Infra.Auth.Services.ApiKey;
-using Nozomi.Infra.Auth.Services.QuotaClaims;
+using Nozomi.Infra.Auth.Services.QuotaClaim;
 using Nozomi.Infra.Auth.Services.User;
 using Nozomi.Infra.Blockchain.Auth.Events;
 using Nozomi.Infra.Blockchain.Auth.Events.Interfaces;
@@ -302,7 +302,7 @@ namespace Nozomi.Auth
             services.AddScoped<IAddressService, AddressService>();
             services.AddScoped<IApiKeyService, ApiKeyService>();
             services.AddScoped<IUserService, UserService>();
-            services.AddScoped<IQuotaClaimsService, QuotaClaimsService>();
+            services.AddScoped<IQuotaClaimService, QuotaClaimService>();
 
             //Infra.Payment Services & Events
             services.AddTransient<IBootstripeEvent, BootstripeEvent>();

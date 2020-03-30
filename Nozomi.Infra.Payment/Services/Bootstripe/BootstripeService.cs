@@ -11,7 +11,6 @@ using Microsoft.VisualBasic.CompilerServices;
 using Nozomi.Base.Auth.Models;
 using Nozomi.Base.BCL.Configurations;
 using Nozomi.Infra.Auth.Events.UserEvent;
-using Nozomi.Infra.Auth.Services.QuotaClaims;
 using Nozomi.Infra.Auth.Services.User;
 using Nozomi.Preprocessing.Abstracts;
 using Stripe;
@@ -21,17 +20,17 @@ namespace Nozomi.Infra.Payment.Services.Bootstripe
     public class BootstripeService : BaseService<BootstripeService>, IBootstripeService
     {
         private readonly IUserService _userService;
-        // private readonly IQuotaClaimsService _quotaClaimsService;
+        // private readonly IQuotaClaimService _quotaClaimService;
         private readonly IUserEvent _userEvent;
 
         public BootstripeService(ILogger<BootstripeService> logger, IUserService userService, IUserEvent userEvent,
-            IOptions<StripeOptions> stripeOptions// , IQuotaClaimsService quotaClaimsService
+            IOptions<StripeOptions> stripeOptions// , IQuotaClaimService quotaClaimService
             ) : base(logger)
         {
             StripeConfiguration.ApiKey = stripeOptions.Value.SecretKey;
 
             _userService = userService;
-            // _quotaClaimsService = quotaClaimsService;
+            // _quotaClaimService = quotaClaimService;
             _userEvent = userEvent;
         }
 
