@@ -1,7 +1,7 @@
 import axios from "axios";
 import store from "@/store";
 
-const baseUrl = 'api/RequestPropertyType/';
+const baseUrl = '/api/RequestPropertyType/';
 export default {
     all() {
         return new Promise((resolve, reject) => {
