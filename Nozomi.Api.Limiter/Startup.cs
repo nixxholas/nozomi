@@ -17,6 +17,7 @@ using Nozomi.Infra.Api.Limiter.HostedServices;
 using Nozomi.Infra.Api.Limiter.Services;
 using Nozomi.Infra.Api.Limiter.Services.Interfaces;
 using Nozomi.Infra.Auth.Events.UserEvent;
+using Nozomi.Infra.Auth.Services.QuotaClaim;
 using Nozomi.Preprocessing.Extensions;
 using Nozomi.Repo.Auth.Data;
 using StackExchange.Redis;
@@ -109,6 +110,7 @@ namespace Nozomi.Api.Limiter
 
             services.AddTransient<IApiKeyEventsService, ApiKeyEventsService>();
             services.AddTransient<INozomiRedisService, NozomiRedisService>();
+            services.AddTransient<IQuotaClaimService, QuotaClaimService>();
 
             // Hosted service injections
             services.AddHostedService<ApiKeyEventHostedService>();
