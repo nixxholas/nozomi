@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -28,20 +29,27 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
     /// </summary>
     public class ApiKeyUserHostedService : BaseHostedService<ApiKeyUserHostedService>
     {
-        public ApiKeyUserHostedService(IServiceScopeFactory scopeFactory) : base(scopeFactory)
-        {
-        }
+        public ApiKeyUserHostedService(IServiceScopeFactory scopeFactory) : base(scopeFactory) {}
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             _logger.LogInformation($"{_hostedServiceName} is starting.");
 
             stoppingToken.Register(() => _logger.LogInformation($"{_hostedServiceName} is stopping."));
+            
+            var timer = new Stopwatch(); // Timer for tracing
+            timer.Start();
 
             while (!stoppingToken.IsCancellationRequested)
             {
                 try
                 {
+                    if (timer.Elapsed.Equals(TimeSpan.FromMinutes(30)))
+                    {
+                        timer.Restart();
+                        _logger.LogInformation($"{_hostedServiceName} is still running!");
+                    }
+
                     using (var scope = _scopeFactory.CreateScope())
                     {
                         var authDbContext = scope.ServiceProvider.GetRequiredService<AuthDbContext>();
