@@ -120,6 +120,9 @@ namespace Nozomi.Api.Limiter
             services.AddHostedService<ApiKeyEventHostedService>();
             services.AddHostedService<ApiKeyUserHostedService>();
             
+            // Health Check DI
+            services.AddSingleton<ApiKeyUserHealthCheck>();
+            
             services.AddHealthChecks()
                 .AddCheck<ApiKeyUserHealthCheck>(
                     "api_key_user_hostedservice", 

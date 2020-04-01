@@ -24,15 +24,20 @@ namespace Nozomi.Preprocessing.Publishers
         public Task PublishAsync(HealthReport report, 
             CancellationToken cancellationToken)
         {
-            if (report.Status == HealthStatus.Healthy)
+            switch (report.Status)
             {
-                _logger.LogInformation("{Timestamp} Readiness Probe Status: {Result}", 
-                    DateTime.UtcNow, report.Status);
-            }
-            else
-            {
-                _logger.LogError("{Timestamp} Readiness Probe Status: {Result}", 
-                    DateTime.UtcNow, report.Status);
+                case HealthStatus.Healthy:
+                    _logger.LogInformation("{Timestamp} Readiness Probe Status: {Result}", 
+                        DateTime.UtcNow, report.Status);
+                    break;
+                case HealthStatus.Degraded:
+                    _logger.LogWarning("{Timestamp} Readiness Probe Status: {Result}", 
+                        DateTime.UtcNow, report.Status);
+                    break;
+                case HealthStatus.Unhealthy:
+                    _logger.LogError("{Timestamp} Readiness Probe Status: {Result}", 
+                        DateTime.UtcNow, report.Status);
+                    break;
             }
 
             cancellationToken.ThrowIfCancellationRequested();
