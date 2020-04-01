@@ -12,12 +12,9 @@ namespace Nozomi.Infra.Auth.Services.QuotaClaim
 {
     public class QuotaClaimService : BaseService<QuotaClaimService, AuthDbContext>, IQuotaClaimService
     {
-        private readonly UserManager<Base.Auth.Models.User> _userManager;
-        
-        public QuotaClaimService(ILogger<QuotaClaimService> logger, AuthDbContext authDbContext,
-            UserManager<Base.Auth.Models.User> userManager) : base(logger, authDbContext)
+        public QuotaClaimService(ILogger<QuotaClaimService> logger, AuthDbContext authDbContext) 
+            : base(logger, authDbContext)
         {
-            _userManager = userManager;
         }
 
         public void SetQuota(string userId, int quotaAmt)
