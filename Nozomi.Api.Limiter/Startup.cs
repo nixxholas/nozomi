@@ -9,16 +9,19 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
 using Nozomi.Base.Auth.Models;
 using Nozomi.Infra.Api.Limiter.Events;
 using Nozomi.Infra.Api.Limiter.Events.Interfaces;
+using Nozomi.Infra.Api.Limiter.HealthChecks;
 using Nozomi.Infra.Api.Limiter.HostedServices;
 using Nozomi.Infra.Api.Limiter.Services;
 using Nozomi.Infra.Api.Limiter.Services.Interfaces;
 using Nozomi.Infra.Auth.Events.UserEvent;
 using Nozomi.Infra.Auth.Services.QuotaClaim;
 using Nozomi.Preprocessing.Extensions;
+using Nozomi.Preprocessing.Publishers;
 using Nozomi.Repo.Auth.Data;
 using StackExchange.Redis;
 using VaultSharp;
@@ -115,6 +118,20 @@ namespace Nozomi.Api.Limiter
             // Hosted service injections
             services.AddHostedService<ApiKeyEventHostedService>();
             services.AddHostedService<ApiKeyUserHostedService>();
+            
+            services.AddHealthChecks()
+                .AddCheck<ApiKeyUserHealthCheck>(
+                    "api_key_user_hostedservice", 
+                    failureStatus: HealthStatus.Degraded, 
+                    tags: new[] { "ready" });
+            
+            services.Configure<HealthCheckPublisherOptions>(options =>
+            {
+                options.Delay = TimeSpan.FromSeconds(2);
+                options.Predicate = (check) => check.Tags.Contains("ready");
+            });
+
+            services.AddSingleton<IHealthCheckPublisher, ReadinessPublisher>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
