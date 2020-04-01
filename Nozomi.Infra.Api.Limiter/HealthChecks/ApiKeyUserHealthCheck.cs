@@ -6,28 +6,28 @@ namespace Nozomi.Infra.Api.Limiter.HealthChecks
 {
     public class ApiKeyUserHealthCheck : IHealthCheck
     {
-        private volatile bool _startupTaskCompleted = false;
+        private volatile bool _apiKeyUserTaskCompleted = false;
 
         public string Name => "slow_dependency_check";
 
-        public bool StartupTaskCompleted
+        public bool ApiKeyUserTaskCompleted
         {
-            get => _startupTaskCompleted;
-            set => _startupTaskCompleted = value;
+            get => _apiKeyUserTaskCompleted;
+            set => _apiKeyUserTaskCompleted = value;
         }
 
         public Task<HealthCheckResult> CheckHealthAsync(
             HealthCheckContext context, 
             CancellationToken cancellationToken = default(CancellationToken))
         {
-            if (StartupTaskCompleted)
+            if (ApiKeyUserTaskCompleted)
             {
                 return Task.FromResult(
-                    HealthCheckResult.Healthy("ApiKeyUserHostedService is complete."));
+                    HealthCheckResult.Unhealthy("ApiKeyUserHostedService has stopped."));
             }
 
             return Task.FromResult(
-                HealthCheckResult.Unhealthy("ApiKeyUserHostedService is still running."));
+                HealthCheckResult.Healthy("ApiKeyUserHostedService is still running."));
         }
     }
 }

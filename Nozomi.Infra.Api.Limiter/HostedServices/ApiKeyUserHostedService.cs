@@ -207,7 +207,7 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
             _logger.LogCritical($"{_hostedServiceName} is out of loop!!!");
 #endif
 
-            _healthCheck.StartupTaskCompleted = true;
+            _healthCheck.ApiKeyUserTaskCompleted = true;
 
             _logger.LogWarning($"{_hostedServiceName} has broken out of its loop.");
         }
