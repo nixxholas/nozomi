@@ -6,11 +6,11 @@ using Microsoft.Extensions.Logging;
 
 namespace Nozomi.Preprocessing.Publishers
 {
-    public class ReadinessPublisher : IHealthCheckPublisher
+    public class LivenessPublisher : IHealthCheckPublisher
     {
         private readonly ILogger _logger;
 
-        public ReadinessPublisher(ILogger<ReadinessPublisher> logger)
+        public LivenessPublisher(ILogger<LivenessPublisher> logger)
         {
             _logger = logger;
         }

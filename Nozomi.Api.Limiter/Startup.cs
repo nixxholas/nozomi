@@ -124,19 +124,17 @@ namespace Nozomi.Api.Limiter
             services.AddSingleton<ApiKeyUserHealthCheck>();
             
             services.AddHealthChecks()
-                .AddCheck<ApiKeyUserHealthCheck>(
-                    "api_key_user_hostedservice", 
-                    failureStatus: HealthStatus.Degraded, 
-                    tags: new[] { "ready" })
-                .AddMemoryHealthCheck("Nozomi.Api.Limiter", HealthStatus.Unhealthy);
+                .AddCheck<ApiKeyUserHealthCheck>("api_key_user_hostedservice", 
+                    failureStatus: HealthStatus.Degraded, tags: new[] { "live" })
+                .AddMemoryHealthCheck("Nozomi.Api.Limiter", HealthStatus.Unhealthy, new []{ "live"});
 
             services.Configure<HealthCheckPublisherOptions>(options =>
             {
                 options.Delay = TimeSpan.FromSeconds(30);
-                options.Predicate = (check) => check.Tags.Contains("ready");
+                options.Predicate = (check) => check.Tags.Contains("live");
             });
 
-            services.AddSingleton<IHealthCheckPublisher, ReadinessPublisher>();
+            services.AddSingleton<IHealthCheckPublisher, LivenessPublisher>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
