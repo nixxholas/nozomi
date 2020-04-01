@@ -21,6 +21,7 @@ using Nozomi.Infra.Api.Limiter.Services.Interfaces;
 using Nozomi.Infra.Auth.Events.UserEvent;
 using Nozomi.Infra.Auth.Services.QuotaClaim;
 using Nozomi.Preprocessing.Extensions;
+using Nozomi.Preprocessing.HealthChecks;
 using Nozomi.Preprocessing.Publishers;
 using Nozomi.Repo.Auth.Data;
 using StackExchange.Redis;
@@ -123,8 +124,9 @@ namespace Nozomi.Api.Limiter
                 .AddCheck<ApiKeyUserHealthCheck>(
                     "api_key_user_hostedservice", 
                     failureStatus: HealthStatus.Degraded, 
-                    tags: new[] { "ready" });
-            
+                    tags: new[] { "ready" })
+                .AddMemoryHealthCheck("Nozomi.Api.Limiter", HealthStatus.Unhealthy);
+
             services.Configure<HealthCheckPublisherOptions>(options =>
             {
                 options.Delay = TimeSpan.FromSeconds(30);
