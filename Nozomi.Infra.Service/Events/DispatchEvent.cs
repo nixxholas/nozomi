@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -284,7 +285,6 @@ namespace Nozomi.Service.Events
 
                         // Pull in the payload
                         HttpResponseMessage payload;
-
                         switch (dispatchInputModel.Type)
                         {
                             case RequestType.HttpGet:
@@ -379,7 +379,7 @@ namespace Nozomi.Service.Events
                             {
                                 // Start the timer if there actually is a killswitch timing
                                 if (dispatchInputModel.SocketKillSwitchDelay > 0 && !stopWatch.IsRunning)
-                                    stopWatch.Start();
+                                    stopWatch.Start(); // OnMessage() will handle the closure
 
                                 foreach (var wsCommand in dispatchInputModel.WebsocketCommands)
                                 {
@@ -429,8 +429,6 @@ namespace Nozomi.Service.Events
                                                                                    $"{dispatchInputModel.Endpoint} invalid" +
                                                                                    $" response type.");
                                     }
-
-                                    ;
                                 }
                                 else
                                 {
