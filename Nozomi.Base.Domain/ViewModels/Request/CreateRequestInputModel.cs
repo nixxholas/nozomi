@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using FluentValidation;
 using Nozomi.Data.Models.Web;
+using Nozomi.Data.ViewModels.Component;
 using Nozomi.Data.ViewModels.RequestProperty;
 using Nozomi.Data.ViewModels.WebsocketCommand;
 
@@ -61,6 +62,11 @@ namespace Nozomi.Data.ViewModels.Request
         /// The unique GUID identifier of the Currency Type linked to this request.
         /// </summary>
         public string CurrencyTypeGuid { get; set; }
+        
+        /// <summary>
+        /// The collection of components for this request.
+        /// </summary>
+        public ICollection<CreateComponentViewModel> Components { get; set; }
         
         /// <summary>
         /// The collection of request properties for this request.
