@@ -8,6 +8,16 @@ namespace Nozomi.Data.Models.Web.Websocket
     [DataContract]
     public class WebsocketCommand : Entity
     {
+        public WebsocketCommand() {}
+
+        public WebsocketCommand(CommandType type, string name, long delay, bool isEnabled)
+        {
+            CommandType = type;
+            Name = name;
+            Delay = delay;
+            IsEnabled = isEnabled;
+        }
+        
         public long Id { get; set; }
         
         public Guid Guid { get; set; }

@@ -1,5 +1,8 @@
+using System.Collections.Generic;
 using FluentValidation;
 using Nozomi.Data.Models.Web;
+using Nozomi.Data.ViewModels.RequestProperty;
+using Nozomi.Data.ViewModels.WebsocketCommand;
 
 namespace Nozomi.Data.ViewModels.Request
 {
@@ -58,6 +61,16 @@ namespace Nozomi.Data.ViewModels.Request
         /// The unique GUID identifier of the Currency Type linked to this request.
         /// </summary>
         public string CurrencyTypeGuid { get; set; }
+        
+        /// <summary>
+        /// The collection of request properties for this request.
+        /// </summary>
+        public ICollection<CreateRequestPropertyInputModel> RequestProperties { get; set; }
+        
+        /// <summary>
+        /// The collection of websocket commands for this request.
+        /// </summary>
+        public ICollection<CreateWebsocketCommandInputModel> WebsocketCommands { get; set; }
 
         public bool IsValid()
         {
@@ -90,6 +103,11 @@ namespace Nozomi.Data.ViewModels.Request
                 //     .Unless(r =>
                 //         // Ignore the check if a currency or currency pair is selected
                 //         !string.IsNullOrEmpty(r.CurrencySlug) || !string.IsNullOrEmpty(r.CurrencyPairGuid));
+
+                // Rule for WebsocketCommands to be empty unless its a websocket request type
+                RuleFor(e => e.WebsocketCommands).Empty()
+                    .Unless(e => e.RequestType
+                        .Equals(Models.Web.RequestType.WebSocket));
             }
         }
     }

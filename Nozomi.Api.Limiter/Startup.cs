@@ -118,8 +118,10 @@ namespace Nozomi.Api.Limiter
 
             // Hosted service injections
             services.AddHostedService<ApiKeyEventHostedService>();
-            services.AddHostedService<ApiKeyUserHostedService>();
-            
+            //services.AddHostedService<ApiKeyUserHostedService>();
+            services.AddHostedService<ApiKeyUserAdditionHostedService>();
+            services.AddHostedService<ApiKeyUserRemoverHostedService>();
+
             // Health Check DI
             services.AddSingleton<ApiKeyUserHealthCheck>();
             
@@ -130,7 +132,7 @@ namespace Nozomi.Api.Limiter
 
             services.Configure<HealthCheckPublisherOptions>(options =>
             {
-                options.Delay = TimeSpan.FromSeconds(30);
+                options.Delay = TimeSpan.FromHours(1);
                 options.Predicate = (check) => check.Tags.Contains("live");
             });
 

@@ -8,6 +8,13 @@ namespace Nozomi.Data.Models.Web
     public class RequestProperty : Entity
     {
         public RequestProperty() {}
+        
+        public RequestProperty(RequestPropertyType requestPropertyType, string key, string value)
+        {
+            RequestPropertyType = requestPropertyType;
+            Key = key;
+            Value = value;
+        }
 
         /// <summary>
         /// Manual-based construction
