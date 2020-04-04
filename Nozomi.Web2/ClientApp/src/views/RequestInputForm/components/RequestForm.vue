@@ -1,6 +1,6 @@
 <template>
     <section>
-        <h1 class="title">Specify an endpoint</h1>
+        <h1 class="title pt-5">Specify an endpoint</h1>
         <p class="subtitle">
             Where should we poll your information from?
         </p>
@@ -30,7 +30,33 @@
         </b-field>
 
         <!-- Response type -->
-        
+        <b-field label-position="inside">
+            <template slot="label">
+                <p>
+                    <span>Response type</span>
+                    <b-tooltip type="is-dark"
+                               label="What kind of data format are we polling for you?"
+                               class="is-valigned"
+                               multilined
+                    >
+                        <b-icon size="is-small" icon="question-circle"></b-icon>
+                    </b-tooltip>
+                </p>
+            </template>
+            
+            <b-select placeholder="Select a response"
+                      v-model="requestForm.responseType"
+                      size="is-medium"
+                      expanded
+            >
+                <option v-for="responseType in responseTypes" 
+                        :key="responseType.key"
+                        :value="responseType.value"
+                >
+                    {{ responseType.key }}
+                </option>
+            </b-select>
+        </b-field>
 
         <!-- Data polling settings for Nozomi -->
         <h1 class="subtitle pt-5">Fetch frequency</h1>
@@ -47,7 +73,6 @@
                         <b-icon size="is-small" icon="question-circle"></b-icon>
                     </b-tooltip>
                 </p>
-
             </template>
 
             <b-input type="number"
@@ -70,7 +95,6 @@
                         <b-icon size="is-small" icon="question-circle"></b-icon>
                     </b-tooltip>
                 </p>
-
             </template>
             <b-input type="number"
                      size="is-medium"
@@ -79,6 +103,8 @@
             >
             </b-input>
         </b-field>
+        
+        <b-button @click="submitForm">Next</b-button>
 
     </section>
 </template>
@@ -108,6 +134,11 @@
                     isEnabled: true,
                     parentType: -1
                 }
+            }
+        },
+        methods: {
+            submitForm() {
+                this.$emit("onCreate");
             }
         }
     }
