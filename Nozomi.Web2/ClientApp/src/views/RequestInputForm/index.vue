@@ -8,12 +8,16 @@
                     <div class="column is-8">
                         <div class="box">
 
-                            <b-steps v-model="activeStep" :animated="true">
+                            <b-steps v-model="activeStep" 
+                                     :animated="true"
+                                     :has-navigation="false"
+                            >
 
                                 <b-step-item label="Create Request">
                                     <RequestForm :request-methods="requestMethods"
                                                  :response-types="responseTypes"
                                                  :request-form="requestFormInput"
+                                                 @onCreate="createRequest"
                                     />
                                 </b-step-item>
 
@@ -89,17 +93,32 @@
                     this.requestMethods = requestMethods.data.value || [];
                     this.responseTypes = responseTypes.data.value || [];
                     this.requestPropertyTypes = requestPropertyTypes.data || [];
-
-                    if (this.requestMethods.length > 0) {
-                        this.requestFormInput.requestMethod = this.requestMethods[0].value;
-                    }
                 })
                 .catch((error) => {
                     console.error(error);
                 })
                 .finally(() => {
                     this.isLoading = false;
+                    this.setDefaultRequestForm();
                 });
+        },
+        
+        methods: {
+            setDefaultRequestForm() {
+                if (this.requestMethods.length > 0) {
+                    this.requestFormInput.requestMethod = this.requestMethods[0].value;
+                }
+
+                if (this.responseTypes.length > 0) {
+                    this.requestFormInput.responseType = this.responseTypes[0].value;
+                }
+            },
+            
+            createRequest() {
+                // TODO: Submit request form here
+                
+                this.activeStep++;
+            }
         }
     }
 </script>
