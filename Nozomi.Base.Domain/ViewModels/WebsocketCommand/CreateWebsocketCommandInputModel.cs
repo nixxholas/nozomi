@@ -27,7 +27,7 @@ namespace Nozomi.Data.ViewModels.WebsocketCommand
         /// <summary>
         /// The unique identifier of the request this command is linked to.
         /// </summary>
-        public string RequestGuid { get; set; }
+        public Guid RequestGuid { get; set; }
 
         /// <summary>
         /// Is this enabled?

@@ -7,10 +7,12 @@ using Microsoft.Extensions.Logging;
 using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.Requests;
 using Nozomi.Data.Models.Web;
+using Nozomi.Data.Models.Web.Websocket;
 using Nozomi.Data.ViewModels.Request;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.Data;
 using Nozomi.Service.Events.Interfaces;
+using Nozomi.Service.Services.Interfaces;
 using Nozomi.Service.Services.Requests.Interfaces;
 using Component = Nozomi.Data.Models.Web.Component;
 
@@ -21,14 +23,19 @@ namespace Nozomi.Service.Services.Requests
         private readonly ICurrencyEvent _currencyEvent;
         private readonly ICurrencyPairEvent _currencyPairEvent;
         private readonly ICurrencyTypeEvent _currencyTypeEvent;
+        private readonly IWebsocketCommandEvent _websocketCommandEvent;
+        private readonly IWebsocketCommandService _websocketCommandService;
         
         public RequestService(ILogger<RequestService> logger, NozomiDbContext context,
-            ICurrencyEvent currencyEvent, ICurrencyPairEvent currencyPairEvent, ICurrencyTypeEvent currencyTypeEvent)
+            ICurrencyEvent currencyEvent, ICurrencyPairEvent currencyPairEvent, ICurrencyTypeEvent currencyTypeEvent,
+            IWebsocketCommandEvent websocketCommandEvent, IWebsocketCommandService websocketCommandService)
             : base(logger, context)
         {
             _currencyEvent = currencyEvent;
             _currencyPairEvent = currencyPairEvent;
             _currencyTypeEvent = currencyTypeEvent;
+            _websocketCommandEvent = websocketCommandEvent;
+            _websocketCommandService = websocketCommandService;
         }
 
         public long Create(Request request, string userId = null)
@@ -348,6 +355,20 @@ namespace Nozomi.Service.Services.Requests
                     request.DataPath = vm.DataPath;
                     request.Delay = vm.Delay;
                     request.FailureDelay = vm.FailureDelay;
+                    request.RequestComponents = vm.Components
+                        .Select(c => new Component()).ToList();
+                    request.RequestProperties = vm.Properties
+                        .Select(p => new RequestProperty()).ToList();
+                    if (vm.WebsocketCommands != null && vm.WebsocketCommands.Any()) { // Safetynet
+                        // Update the commands if any
+                        foreach (var updWsc in vm.WebsocketCommands)
+                        {
+                            if (_websocketCommandEvent.Exists(updWsc.Guid, userId)) // Ensure it exists first
+                            {
+                                _websocketCommandService.Update(updWsc, userId);
+                            }
+                        }
+                    }
 
                     switch (vm.ParentType)
                     {
@@ -381,6 +402,12 @@ namespace Nozomi.Service.Services.Requests
                                 return false;
 
                             break;
+                        case CreateRequestInputModel.RequestParentType.None:
+                            // No parent type, continue
+                            break;
+                        default:
+                            throw new InvalidEnumArgumentException("[RequestService/Update/UpdateRequestInputModel]: "
+                                                                   + "Invalid parent type.");
                     }
                     
                     _context.Requests.Update(request);

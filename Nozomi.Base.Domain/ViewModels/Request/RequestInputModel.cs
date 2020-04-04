@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Nozomi.Data.Models.Web;
 using Nozomi.Data.ViewModels.Component;
 using Nozomi.Data.ViewModels.RequestProperty;
+using Nozomi.Data.ViewModels.WebsocketCommand;
 
 namespace Nozomi.Data.ViewModels.Request
 {
@@ -64,5 +65,7 @@ namespace Nozomi.Data.ViewModels.Request
         /// The request properties that are linked to this request.
         /// </summary>
         public ICollection<RequestPropertyViewModel> Properties { get; set; }
+        
+        public new ICollection<UpdateWebsocketCommandInputModel> WebsocketCommands { get; set; }
     }
 }

@@ -41,10 +41,9 @@ namespace Nozomi.Service.Services
             if (vm.IsValid())
             {
                 // Obtain the request and see if it is appropriate
-                if (!_requestEvent.Exists(vm.RequestGuid, false, userId) 
-                    || !Guid.TryParse(vm.RequestGuid, out var parsedGuid))
+                if (!_requestEvent.Exists(vm.RequestGuid, false, userId))
                     throw new KeyNotFoundException("Request not found!");
-                var request = _requestEvent.GetByGuid(parsedGuid);
+                var request = _requestEvent.GetByGuid(vm.RequestGuid);
                 
                 // Setup the command first
                 var command = new WebsocketCommand
@@ -79,12 +78,11 @@ namespace Nozomi.Service.Services
 
         public void Update(UpdateWebsocketCommandInputModel vm, string userId = null)
         {
-            if (vm.IsValid() && _websocketCommandEvent.Exists(vm.Guid, userId) 
-                             && Guid.TryParse(vm.Guid, out var parsedGuid))
+            if (vm.IsValid() && _websocketCommandEvent.Exists(vm.Guid, userId))
             {
                 var query = _context.WebsocketCommands.Include(c => c.WebsocketCommandProperties)
                     .AsTracking()
-                    .SingleOrDefault(c => c.Guid.Equals(parsedGuid));
+                    .SingleOrDefault(c => c.Guid.Equals(vm.Guid));
                 
                 if (query == null)
                     throw new KeyNotFoundException("Command not found!");

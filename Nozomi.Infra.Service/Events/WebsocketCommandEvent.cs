@@ -210,8 +210,8 @@ namespace Nozomi.Service.Events
             if (track)
                 command = command.AsTracking();
 
-            return command.Select(c => new WebsocketCommandViewModel(c.Guid.ToString(), 
-                c.CommandType, c.Name, c.Delay, c.IsEnabled, c.WebsocketCommandProperties
+            return command.Select(c => new WebsocketCommandViewModel(c.Guid, c.CommandType, c.Name, 
+                    c.Delay, c.IsEnabled, c.WebsocketCommandProperties
                     .Select(p => 
                         new WebsocketCommandPropertyViewModel(p.Guid.ToString(), p.CommandPropertyType, 
                             p.Key, p.Value, p.IsEnabled, c.Guid.ToString()))
@@ -239,8 +239,8 @@ namespace Nozomi.Service.Events
             if (track)
                 command = command.AsTracking();
 
-            return command.Select(c => new WebsocketCommandViewModel(c.Guid.ToString(), 
-                    c.CommandType, c.Name, c.Delay, c.IsEnabled, c.WebsocketCommandProperties
+            return command.Select(c => new WebsocketCommandViewModel(c.Guid, c.CommandType, c.Name, 
+                    c.Delay, c.IsEnabled, c.WebsocketCommandProperties
                         .Select(p => 
                             new WebsocketCommandPropertyViewModel(p.Guid.ToString(), p.CommandPropertyType, 
                                 p.Key, p.Value, p.IsEnabled, c.Guid.ToString()))
@@ -268,8 +268,8 @@ namespace Nozomi.Service.Events
             if (track)
                 command = command.AsTracking();
 
-            return command.Select(c => new WebsocketCommandViewModel(c.Guid.ToString(), 
-                    c.CommandType, c.Name, c.Delay, c.IsEnabled, c.WebsocketCommandProperties
+            return command.Select(c => new WebsocketCommandViewModel(c.Guid, c.CommandType, c.Name, 
+                c.Delay, c.IsEnabled, c.WebsocketCommandProperties
                         .Select(p => 
                             new WebsocketCommandPropertyViewModel(p.Guid.ToString(), p.CommandPropertyType, 
                                 p.Key, p.Value, p.IsEnabled, c.Guid.ToString()))
@@ -296,8 +296,8 @@ namespace Nozomi.Service.Events
             if (track)
                 command = command.AsTracking();
 
-            return command.Select(c => new WebsocketCommandViewModel(c.Guid.ToString(), 
-                c.CommandType, c.Name, c.Delay, c.IsEnabled, c.WebsocketCommandProperties
+            return command.Select(c => new WebsocketCommandViewModel(c.Guid, c.CommandType, c.Name, 
+                c.Delay, c.IsEnabled, c.WebsocketCommandProperties
                     .Select(p => 
                         new WebsocketCommandPropertyViewModel(p.Guid.ToString(), p.CommandPropertyType, 
                             p.Key, p.Value, p.IsEnabled, c.Guid.ToString()))
@@ -323,8 +323,8 @@ namespace Nozomi.Service.Events
             return query
                 .Skip(index * NozomiServiceConstants.WebsocketCommandTakeoutLimit)
                 .Take(NozomiServiceConstants.WebsocketCommandTakeoutLimit)
-                .Select(wsc => new WebsocketCommandViewModel(wsc.Guid.ToString(), wsc.CommandType,
-                    wsc.Name, wsc.Delay, wsc.IsEnabled, wsc.WebsocketCommandProperties
+                .Select(wsc => new WebsocketCommandViewModel(wsc.Guid, wsc.CommandType, wsc.Name, 
+                    wsc.Delay, wsc.IsEnabled, wsc.WebsocketCommandProperties
                         .Select(wscp => 
                             new WebsocketCommandPropertyViewModel(wscp.Guid.ToString(), wscp.CommandPropertyType, 
                                 wscp.Key, wscp.Value, wscp.IsEnabled, wsc.Guid.ToString()))
