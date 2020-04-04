@@ -90,37 +90,18 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
                                 }
 
                                 // Safety net, has valid quota and usage
-                                if (quotaClaim != null && usageClaim != null
-                                                       && long.TryParse(quotaClaim.ClaimValue, out var quota)
+                                if (long.TryParse(quotaClaim.ClaimValue, out var quota)
                                                        && long.TryParse(usageClaim.ClaimValue, out var usage))
                                 {
                                     var userEvent = scope.ServiceProvider.GetRequiredService<IUserEvent>();
-                                    var userIsStaff = userEvent.IsInRoles(user.Id, // Is user a staff member?
-                                        NozomiPermissions.AllowAllStaffRoles.Split(", "));
 
-                                    if (!userIsStaff) // Is user a staff? hopefully no
+                                    // ======================= RUNNING ONLY ADDITION LOGIC ======================= //
+
+                                    if (!userEvent.IsInRoles(user.Id, // Ensure he/she is not a staff member
+                                        NozomiPermissions.AllowAllStaffRoles.Split(", ")))
                                     {
-                                        // Check if quota and usage has exceeded the limits
-                                        if (usage > quota) // Limit reached, bar user from usage.
+                                        if (usage < quota) // Check if usage is below the quota.
                                         {
-                                            // =========================== REMOVAL LOGIC FIRST =========================== //
-
-                                            _logger.LogInformation(
-                                                $"{_hostedServiceName} ExecuteAsync: User {user.Id}" +
-                                                $" has exceeded his usage by {usage - quota}. Ban time!");
-
-                                            foreach (var userApiKey in user.ApiKeys) // BAN!!
-                                            {
-                                                redisService.Remove(RedisDatabases.ApiKeyUser, userApiKey.Value);
-                                                _logger.LogInformation($"{_hostedServiceName} ExecuteAsync: " +
-                                                                       $" API Key {userApiKey.Value} removed for " +
-                                                                       $"user {user.Id} in Redis.");
-                                            }
-                                        }
-                                        else // Limit not reached, ensure API keys exist
-                                        {
-                                            // =========================== ADDITION LOGIC =========================== //
-
                                             // Iterate the user's api keys and populate the cache if needed
                                             foreach (var userApiKey in user.ApiKeys)
                                             {
@@ -135,13 +116,21 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
                                                                            $" Api Key {userApiKey.Value} added with " +
                                                                            $"symlink to user {user.Id}");
                                                 }
-
-                                                // Don't refactor this, may need it.. not sure when
-                                                // else
-                                                // {
-                                                //     _logger.LogInformation($"{_hostedServiceName} ExecuteAsync: " +
-                                                //                            $" Api Key {userApiKey.Value} already added");
-                                                // }
+                                            }
+                                        }
+                                        else // Since he/she has exceeded the quota, let's do a simple check for beeping
+                                        {
+                                            foreach (var userApiKey in user.ApiKeys)
+                                            {
+                                                // If the cache contains this api key,
+                                                if (redisEvent.Exists(userApiKey.Value,
+                                                    RedisDatabases.ApiKeyUser))
+                                                {
+                                                    _logger.LogWarning($"{_hostedServiceName} ExecuteAsync: " +
+                                                                           $" Api Key {userApiKey.Value} owned by " +
+                                                                           $"{user.Id} has exceeded his/her quota " +
+                                                                           $"and is still active!");
+                                                }
                                             }
                                         }
                                     }
@@ -162,6 +151,10 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
                                             }
                                         }
                                     }
+                                }
+                                else
+                                {
+                                    _logger.LogWarning($"{_hostedServiceName} ");
                                 }
                             }
                     }
