@@ -11,7 +11,7 @@ namespace Nozomi.Service.Services.Requests.Interfaces
     {
         long Create(Request request, string userId = null);
 
-        void Create(CreateRequestViewModel vm, string userId = null);
+        void Create(CreateRequestInputModel vm, string userId = null);
         
         NozomiResult<string> Create(CreateRequest createRequest, string userId = null);
         
@@ -25,7 +25,7 @@ namespace Nozomi.Service.Services.Requests.Interfaces
 
         NozomiResult<string> Update(UpdateRequest updateRequest, string userId = null);
 
-        bool Update(UpdateRequestViewModel vm, string userId = null);
+        bool Update(UpdateRequestInputModel vm, string userId = null);
 
         void Delete(string requestGuid, bool hardDelete = true, string userId = null);
 

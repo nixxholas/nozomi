@@ -2,7 +2,7 @@ using FluentValidation;
 
 namespace Nozomi.Data.ViewModels.Request
 {
-    public class UpdateRequestViewModel : RequestViewModel
+    public class UpdateRequestInputModel : RequestInputModel
     {
         public new bool? IsEnabled { get; set; }
         
@@ -12,7 +12,7 @@ namespace Nozomi.Data.ViewModels.Request
             return validator.Validate(this).IsValid;
         }
 
-        protected class UpdateRequestValidator : AbstractValidator<UpdateRequestViewModel>
+        protected class UpdateRequestValidator : AbstractValidator<UpdateRequestInputModel>
         {
             public UpdateRequestValidator()
             {

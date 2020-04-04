@@ -6,11 +6,11 @@ using Nozomi.Data.ViewModels.RequestProperty;
 
 namespace Nozomi.Data.ViewModels.Request
 {
-    public class RequestViewModel : CreateRequestViewModel
+    public class RequestInputModel : CreateRequestInputModel
     {
-        public RequestViewModel() {}
+        public RequestInputModel() {}
         
-        public RequestViewModel(Guid guid, RequestType requestType, ResponseType responseType, string dataPath,
+        public RequestInputModel(Guid guid, RequestType requestType, ResponseType responseType, string dataPath,
             int delay, long failureDelay, bool isEnabled, string currencySlug, string currencyPairGuid, 
             string currencyTypeGuid)
         {
@@ -26,7 +26,7 @@ namespace Nozomi.Data.ViewModels.Request
             CurrencyTypeGuid = currencyTypeGuid;
         }
         
-        public RequestViewModel(Guid guid, RequestType requestType, ResponseType responseType, string dataPath,
+        public RequestInputModel(Guid guid, RequestType requestType, ResponseType responseType, string dataPath,
             int delay, long failureDelay, bool isEnabled, string currencySlug, string currencyPairGuid, 
             string currencyTypeGuid, ICollection<ComponentViewModel> components, 
             ICollection<RequestPropertyViewModel> properties)

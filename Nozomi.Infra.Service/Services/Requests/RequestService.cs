@@ -46,7 +46,7 @@ namespace Nozomi.Service.Services.Requests
             }
         }
 
-        public void Create(CreateRequestViewModel vm, string userId = null)
+        public void Create(CreateRequestInputModel vm, string userId = null)
         {
             if (vm.IsValid())
             {
@@ -56,41 +56,41 @@ namespace Nozomi.Service.Services.Requests
                 switch (vm.ParentType)
                 {
                     // Validate it at the db end
-                    case CreateRequestViewModel.RequestParentType.Currency:
+                    case CreateRequestInputModel.RequestParentType.Currency:
                         var currency = _currencyEvent.GetBySlug(vm.CurrencySlug);
 
                         if (currency == null)
-                            throw new KeyNotFoundException("[RequestService/Create/CreateRequestViewModel]: " +
+                            throw new KeyNotFoundException("[RequestService/Create/CreateRequestInputModel]: " +
                                                            "Currency not found.");
 
                         request.CurrencyId = currency.Id;
                         break;
-                    case CreateRequestViewModel.RequestParentType.CurrencyPair:
+                    case CreateRequestInputModel.RequestParentType.CurrencyPair:
                         var currencyPair = _currencyPairEvent.Get(vm.CurrencyPairGuid);
                         
                         if (currencyPair == null)
-                            throw new KeyNotFoundException("[RequestService/Create/CreateRequestViewModel]: " +
+                            throw new KeyNotFoundException("[RequestService/Create/CreateRequestInputModel]: " +
                                                            "Currency pair not found.");
                         
                         request.CurrencyPairId = currencyPair.Id;
                         break;
-                    case CreateRequestViewModel.RequestParentType.CurrencyType:
+                    case CreateRequestInputModel.RequestParentType.CurrencyType:
                         if (!Guid.TryParse(vm.CurrencyTypeGuid, out var ctGuid))
                             throw new ArgumentException("Invalid currency type key.");
                         
                         var currencyType = _currencyTypeEvent.Get(ctGuid);
                         
                         if (currencyType == null)
-                            throw new KeyNotFoundException("[RequestService/Create/CreateRequestViewModel]: " +
+                            throw new KeyNotFoundException("[RequestService/Create/CreateRequestInputModel]: " +
                                                            "Currency type not found.");
                         
                         request.CurrencyTypeId = currencyType.Id;
                         break;
-                    case CreateRequestViewModel.RequestParentType.None:
+                    case CreateRequestInputModel.RequestParentType.None:
                         // No parent type, continue
                         break;
                     default:
-                        throw new InvalidEnumArgumentException("[RequestService/Create/CreateRequestViewModel]: "
+                        throw new InvalidEnumArgumentException("[RequestService/Create/CreateRequestInputModel]: "
                                                                + "Invalid parent type.");
                 }
                 
@@ -100,7 +100,7 @@ namespace Nozomi.Service.Services.Requests
             else
             {
                 throw new InvalidCastException(
-                    "[RequestService/Create/CreateRequestViewModel]: Invalid input given.");   
+                    "[RequestService/Create/CreateRequestInputModel]: Invalid input given.");   
             }
         }
 
@@ -331,7 +331,7 @@ namespace Nozomi.Service.Services.Requests
             }
         }
 
-        public bool Update(UpdateRequestViewModel vm, string userId = null)
+        public bool Update(UpdateRequestInputModel vm, string userId = null)
         {
             // Safetynet
             if (vm != null && vm.IsValid())
@@ -351,7 +351,7 @@ namespace Nozomi.Service.Services.Requests
 
                     switch (vm.ParentType)
                     {
-                        case CreateRequestViewModel.RequestParentType.Currency:
+                        case CreateRequestInputModel.RequestParentType.Currency:
                             var currency = _currencyEvent.GetBySlug(vm.CurrencySlug);
 
                             if (currency != null)
@@ -360,7 +360,7 @@ namespace Nozomi.Service.Services.Requests
                                 return false;
                             
                             break;
-                        case CreateRequestViewModel.RequestParentType.CurrencyPair:
+                        case CreateRequestInputModel.RequestParentType.CurrencyPair:
                             var currencyPair = _currencyPairEvent.Get(vm.CurrencyPairGuid);
 
                             if (currencyPair != null)
@@ -369,7 +369,7 @@ namespace Nozomi.Service.Services.Requests
                                 return false;
 
                             break;
-                        case CreateRequestViewModel.RequestParentType.CurrencyType:
+                        case CreateRequestInputModel.RequestParentType.CurrencyType:
                             if (!Guid.TryParse(vm.CurrencyTypeGuid, out var ctGuid))
                                 throw new ArgumentException("Invalid currency type id.");
                             

@@ -164,7 +164,7 @@ namespace Nozomi.Service.Events
                 .SingleOrDefault(r => r.Id.Equals(id) && r.DeletedAt == null);
         }
 
-        public IQueryable<RequestViewModel> ViewAll(int index = 0, string createdBy = null, bool enabledOnly = true, 
+        public IQueryable<RequestInputModel> ViewAll(int index = 0, string createdBy = null, bool enabledOnly = true, 
             bool track = false)
         {
             if (index < 0)
@@ -189,7 +189,7 @@ namespace Nozomi.Service.Events
                     .Include(r => r.RequestType)
                     .Skip(index * 100)
                     .Take(100)
-                    .Select(r => new RequestViewModel(r.Guid, r.RequestType, r.ResponseType, r.DataPath, 
+                    .Select(r => new RequestInputModel(r.Guid, r.RequestType, r.ResponseType, r.DataPath, 
                         r.Delay, r.FailureDelay, r.IsEnabled, r.CurrencyId > 0 ? r.Currency.Slug : null, 
                         r.CurrencyPairId > 0 ? r.CurrencyPair.Guid.ToString() : null, 
                         r.CurrencyTypeId > 0 ? r.CurrencyType.Guid.ToString() : null,
@@ -205,7 +205,7 @@ namespace Nozomi.Service.Events
             return query
                 .Skip(index  * 100)
                 .Take(100)
-                .Select(r => new RequestViewModel(r.Guid, r.RequestType, r.ResponseType, r.DataPath, r.Delay,
+                .Select(r => new RequestInputModel(r.Guid, r.RequestType, r.ResponseType, r.DataPath, r.Delay,
                     r.FailureDelay, r.IsEnabled, r.CurrencyId > 0 ? r.Currency.Slug : null, 
                     r.CurrencyPairId > 0 ? r.CurrencyPair.Guid.ToString() : null, 
                     r.CurrencyTypeId > 0 ? r.CurrencyType.Guid.ToString() : null, 

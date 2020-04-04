@@ -6,7 +6,7 @@ using Nozomi.Data.ViewModels.WebsocketCommand;
 
 namespace Nozomi.Data.ViewModels.Request
 {
-    public class CreateRequestViewModel
+    public class CreateRequestInputModel
     {
         /// <summary>
         /// The protocol type of this request.
@@ -78,7 +78,7 @@ namespace Nozomi.Data.ViewModels.Request
             return validator.Validate(this).IsValid;
         }
 
-        protected class CreateRequestValidator : AbstractValidator<CreateRequestViewModel>
+        protected class CreateRequestValidator : AbstractValidator<CreateRequestInputModel>
         {
             public CreateRequestValidator()
             {

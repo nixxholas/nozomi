@@ -51,7 +51,7 @@ namespace Nozomi.Web2.Controllers.v1.Request
         [Authorize]
         [HttpPost]
         [Throttle(Name = "Request/Create", Milliseconds = 2500)]
-        public async Task<IActionResult> Create([FromBody]CreateRequestViewModel vm)
+        public async Task<IActionResult> Create([FromBody]CreateRequestInputModel vm)
         {
             var sub = ((ClaimsIdentity) User.Identity)
                 .Claims.SingleOrDefault(c => c.Type.Equals(JwtClaimTypes.Subject))?.Value;
@@ -109,7 +109,7 @@ namespace Nozomi.Web2.Controllers.v1.Request
         [Authorize]
         [HttpPut]
         [Throttle(Name = "Request/Update", Milliseconds = 2500)]
-        public IActionResult Update([FromBody]UpdateRequestViewModel vm)
+        public IActionResult Update([FromBody]UpdateRequestInputModel vm)
         {
             var sub = ((ClaimsIdentity) User.Identity)
                 .Claims.SingleOrDefault(c => c.Type.Equals(JwtClaimTypes.Subject))?.Value;

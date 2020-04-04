@@ -10,13 +10,13 @@ using Swashbuckle.AspNetCore.Filters;
 
 namespace Nozomi.Api.Controllers.AnalysedComponent.Examples
 {
-    public class AllOkExample : IExamplesProvider<IEnumerable<RequestViewModel>>
+    public class AllOkExample : IExamplesProvider<IEnumerable<RequestInputModel>>
     {
-        public IEnumerable<RequestViewModel> GetExamples()
+        public IEnumerable<RequestInputModel> GetExamples()
         {
-            return new List<RequestViewModel>
+            return new List<RequestInputModel>
             {
-                new RequestViewModel
+                new RequestInputModel
                 {
                     Guid = Guid.NewGuid(),
                     IsEnabled = true,
@@ -25,7 +25,7 @@ namespace Nozomi.Api.Controllers.AnalysedComponent.Examples
                     DataPath = "https://api.nozomi.one/api/connect/validate",
                     Delay = 10000,
                     FailureDelay = 60000,
-                    ParentType = CreateRequestViewModel.RequestParentType.None,
+                    ParentType = CreateRequestInputModel.RequestParentType.None,
                     Components = new List<ComponentViewModel>
                     {
                         new ComponentViewModel
