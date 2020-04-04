@@ -58,6 +58,29 @@ namespace Nozomi.Service.Events
             throw new NullReferenceException($"{_eventName} GetByGuid: Invalid Request property GUID.");
         }
 
+        public RequestProperty GetByGuid(Guid guid, string validatingUserId = null, bool ensureNotDisabledOrDeleted = true,
+            bool track = false)
+        {
+            var query = _context.RequestProperties
+                .Where(rp => rp.Guid.Equals(guid));
+
+            query = track ? query.AsTracking() : query.AsNoTracking();
+
+            if (query.Any())
+            {
+                if (!string.IsNullOrEmpty(validatingUserId))
+                    query = query.Where(rp => rp.CreatedById.Equals(validatingUserId));
+
+                if (ensureNotDisabledOrDeleted)
+                    query = query.Where(rp => rp.DeletedAt == null && rp.IsEnabled);
+
+                return query.SingleOrDefault();
+            }
+                
+            throw new KeyNotFoundException($"{_eventName} GetByGuid: Can't find the request property " +
+                                           $"with this guid {guid}.");
+        }
+
         /// <summary>
         /// Get Properties By Request API
         /// </summary>
