@@ -86,6 +86,9 @@ namespace Nozomi.Service.Services.Requests
                         
                         request.CurrencyTypeId = currencyType.Id;
                         break;
+                    case CreateRequestViewModel.RequestParentType.None:
+                        // No parent type, continue
+                        break;
                     default:
                         throw new InvalidEnumArgumentException("[RequestService/Create/CreateRequestViewModel]: "
                                                                + "Invalid parent type.");
