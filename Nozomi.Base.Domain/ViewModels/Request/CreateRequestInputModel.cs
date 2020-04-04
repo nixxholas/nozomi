@@ -66,7 +66,7 @@ namespace Nozomi.Data.ViewModels.Request
         /// <summary>
         /// The collection of components for this request.
         /// </summary>
-        public ICollection<CreateComponentViewModel> Components { get; set; }
+        public ICollection<CreateComponentInputModel> Components { get; set; }
         
         /// <summary>
         /// The collection of request properties for this request.

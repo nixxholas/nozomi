@@ -75,7 +75,7 @@ namespace Nozomi.Web2.Controllers.v1.Component
         [Authorize(Roles = NozomiPermissions.AllowAllStaffRoles)]
         [HttpPost]
         [Throttle(Name = "Component/Create", Milliseconds = 2500)]
-        public IActionResult Create([FromBody]CreateComponentViewModel vm)
+        public IActionResult Create([FromBody]CreateComponentInputModel vm)
         {
             var sub = ((ClaimsIdentity) User.Identity)
                 .Claims.SingleOrDefault(c => c.Type.Equals(JwtClaimTypes.Subject))?.Value;

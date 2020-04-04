@@ -4,7 +4,7 @@ using Nozomi.Data.Models.Web;
 
 namespace Nozomi.Data.ViewModels.Component
 {
-    public class CreateComponentViewModel
+    public class CreateComponentInputModel
     {
         public Models.Web.ComponentType Type { get; set; }
     
@@ -26,7 +26,7 @@ namespace Nozomi.Data.ViewModels.Component
             return validator.Validate(this).IsValid;
         }
         
-        protected class CreateComponentValidator : AbstractValidator<CreateComponentViewModel>
+        protected class CreateComponentValidator : AbstractValidator<CreateComponentInputModel>
         {
             public CreateComponentValidator()
             {

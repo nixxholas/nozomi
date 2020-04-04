@@ -28,7 +28,7 @@ namespace Nozomi.Service.Services
             _componentHistoricItemService = componentHistoricItemService;
         }
 
-        public void Create(CreateComponentViewModel vm, string userId = null)
+        public void Create(CreateComponentInputModel vm, string userId = null)
         {
             if (vm.IsValid() && !_requestEvent.Exists(vm.Type, vm.RequestId))
             {
@@ -42,7 +42,7 @@ namespace Nozomi.Service.Services
                 _context.Components.Add(requestComponent);
                 _context.SaveChanges(userId);
                 
-                _logger.LogInformation($"{_serviceName} Create (CreateComponentViewModel): request " +
+                _logger.LogInformation($"{_serviceName} Create (CreateComponentInputModel): request " +
                                        $"component {requestComponent.Guid} is created by {userId}");
 
                 return; // Done

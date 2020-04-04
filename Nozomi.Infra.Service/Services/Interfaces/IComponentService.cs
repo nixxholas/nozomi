@@ -6,7 +6,7 @@ namespace Nozomi.Service.Services.Interfaces
 {
     public interface IComponentService
     {
-        void Create(CreateComponentViewModel vm, string userId = null);
+        void Create(CreateComponentInputModel vm, string userId = null);
         
         NozomiResult<string> Create(CreateRequestComponent createRequestComponent, string userId = null);
 
