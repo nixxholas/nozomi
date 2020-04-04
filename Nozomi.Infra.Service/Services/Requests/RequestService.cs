@@ -50,7 +50,8 @@ namespace Nozomi.Service.Services.Requests
         {
             if (vm.IsValid())
             {
-                var request = new Request(vm.RequestType, vm.ResponseType, vm.DataPath, vm.Delay, vm.FailureDelay);
+                var request = new Request(vm.RequestType, vm.ResponseType, vm.DataPath, vm.Delay, vm.FailureDelay,
+                    vm.RequestProperties, vm.WebsocketCommands);
 
                 switch (vm.ParentType)
                 {
