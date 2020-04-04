@@ -23,17 +23,20 @@ namespace Nozomi.Service.Services.Requests
         private readonly ICurrencyEvent _currencyEvent;
         private readonly ICurrencyPairEvent _currencyPairEvent;
         private readonly ICurrencyTypeEvent _currencyTypeEvent;
+        private readonly IRequestPropertyEvent _requestPropertyEvent;
         private readonly IWebsocketCommandEvent _websocketCommandEvent;
         private readonly IWebsocketCommandService _websocketCommandService;
         
         public RequestService(ILogger<RequestService> logger, NozomiDbContext context,
             ICurrencyEvent currencyEvent, ICurrencyPairEvent currencyPairEvent, ICurrencyTypeEvent currencyTypeEvent,
-            IWebsocketCommandEvent websocketCommandEvent, IWebsocketCommandService websocketCommandService)
+            IRequestPropertyEvent requestPropertyEvent, IWebsocketCommandEvent websocketCommandEvent, 
+            IWebsocketCommandService websocketCommandService)
             : base(logger, context)
         {
             _currencyEvent = currencyEvent;
             _currencyPairEvent = currencyPairEvent;
             _currencyTypeEvent = currencyTypeEvent;
+            _requestPropertyEvent = requestPropertyEvent;
             _websocketCommandEvent = websocketCommandEvent;
             _websocketCommandService = websocketCommandService;
         }
