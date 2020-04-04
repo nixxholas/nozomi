@@ -100,6 +100,24 @@ namespace Nozomi.Service.Events
             return false;
         }
 
+        public bool Exists(Guid requestGuid, bool ignoreDeletedOrDisabled = false, string userId = null)
+        {
+            var query = _context.Requests.AsNoTracking()
+                .Where(r => r.Guid.Equals(requestGuid));
+
+            if (!ignoreDeletedOrDisabled)
+                query = query.Where(r => r.IsEnabled && r.DeletedAt == null);
+
+            if (!string.IsNullOrEmpty(userId))
+                query = query.Where(r => r.CreatedById.Equals(userId));
+
+#if DEBUG
+            var hasAnything = query.Any();
+#endif
+                
+            return query.Any();
+        }
+
         public bool Exists(ComponentType type, long requestId)
         {
             return _context.Components.AsNoTracking()

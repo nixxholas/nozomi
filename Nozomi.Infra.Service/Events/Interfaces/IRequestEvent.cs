@@ -19,6 +19,8 @@ namespace Nozomi.Service.Events.Interfaces
         bool Exists(long requestId, bool ignoreDeletedOrDisabled = false, string userId = null);
 
         bool Exists(string requestGuid, bool ignoreDeletedOrDisabled = false, string userId = null);
+
+        bool Exists(Guid requestGuid, bool ignoreDeletedOrDisabled = false, string userId = null);
         
         bool Exists(ComponentType type, long requestId);
         
