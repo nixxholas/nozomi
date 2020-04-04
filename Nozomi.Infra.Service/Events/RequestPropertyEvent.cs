@@ -19,6 +19,17 @@ namespace Nozomi.Service.Events
         {
         }
 
+        public bool Exists(Guid guid, string userId = null)
+        {
+            var query = _context.RequestProperties
+                .Where(rp => rp.Guid.Equals(guid));
+
+            if (!string.IsNullOrEmpty(userId))
+                query = query.Where(rp => rp.CreatedById.Equals(userId));
+
+            return query.Any();
+        }
+
         public RequestProperty GetByGuid(string guid, string validatingUserId = null, 
             bool ensureNotDisabledOrDeleted = true, bool track = false)
         {
