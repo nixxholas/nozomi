@@ -8,6 +8,8 @@ using Nozomi.Data.AreaModels.v1.RequestProperty;
 using Nozomi.Data.AreaModels.v1.Requests;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web.Websocket;
+using Nozomi.Data.ViewModels.RequestProperty;
+using Nozomi.Data.ViewModels.WebsocketCommand;
 
 namespace Nozomi.Data.Models.Web
 {
@@ -107,6 +109,24 @@ namespace Nozomi.Data.Models.Web
             DataPath = dataPath;
             Delay = delay;
             FailureDelay = failureDelay;
+        }
+        
+        public Request(RequestType requestType, ResponseType responseType, string dataPath, int delay,
+            long failureDelay, ICollection<CreateRequestPropertyInputModel> requestProperties, 
+            ICollection<CreateWebsocketCommandInputModel> websocketCommands)
+        {
+            Guid = Guid.NewGuid();
+            RequestType = requestType;
+            ResponseType = responseType;
+            DataPath = dataPath;
+            Delay = delay;
+            FailureDelay = failureDelay;
+            RequestProperties = requestProperties.Select(rp =>
+                new RequestProperty(rp.Type, rp.Key, rp.Value))
+                .ToList();
+            WebsocketCommands = websocketCommands.Select(wsc => 
+                new WebsocketCommand(wsc.Type, wsc.Name, wsc.Delay, wsc.IsEnabled))
+                .ToList();
         }
         
         public long Id { get; set; }
