@@ -43,7 +43,7 @@ namespace Nozomi.Service.Services
                 if (request != null && (request.RequestProperties == null || !request.RequestProperties
                         // Ensure we don't check for duplicate custom headers
                     .Any(rp => (!rp.RequestPropertyType.Equals(RequestPropertyType.HttpHeader_Custom)
-                                // Ignore invalids
+                                                                                  // Ignore invalids
                                || !rp.RequestPropertyType.Equals(RequestPropertyType.Invalid)) 
                                // And ensure there are no dupes among the defaults
                                && rp.RequestPropertyType.Equals(inputModel.Type))))

@@ -71,7 +71,7 @@ namespace Nozomi.Data.ViewModels.Request
         /// <summary>
         /// The collection of request properties for this request.
         /// </summary>
-        public ICollection<CreateRequestPropertyInputModel> RequestProperties { get; set; }
+        public ICollection<CreateRequestPropertyInputModel> Properties { get; set; }
         
         /// <summary>
         /// The collection of websocket commands for this request.

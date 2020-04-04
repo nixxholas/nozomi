@@ -1,10 +1,14 @@
+using System.Collections.Generic;
 using FluentValidation;
+using Nozomi.Data.ViewModels.RequestProperty;
 
 namespace Nozomi.Data.ViewModels.Request
 {
     public class UpdateRequestInputModel : RequestInputModel
     {
         public new bool? IsEnabled { get; set; }
+        
+        public new ICollection<UpdateRequestPropertyInputModel> Properties { get; set; }
         
         public new bool IsValid()
         {

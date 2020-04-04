@@ -25,12 +25,13 @@ namespace Nozomi.Service.Services.Requests
         private readonly ICurrencyTypeEvent _currencyTypeEvent;
         private readonly IRequestPropertyEvent _requestPropertyEvent;
         private readonly IWebsocketCommandEvent _websocketCommandEvent;
+        private readonly IRequestPropertyService _requestPropertyService;
         private readonly IWebsocketCommandService _websocketCommandService;
         
         public RequestService(ILogger<RequestService> logger, NozomiDbContext context,
             ICurrencyEvent currencyEvent, ICurrencyPairEvent currencyPairEvent, ICurrencyTypeEvent currencyTypeEvent,
-            IRequestPropertyEvent requestPropertyEvent, IWebsocketCommandEvent websocketCommandEvent, 
-            IWebsocketCommandService websocketCommandService)
+            IRequestPropertyEvent requestPropertyEvent, IRequestPropertyService requestPropertyService, 
+            IWebsocketCommandEvent websocketCommandEvent, IWebsocketCommandService websocketCommandService)
             : base(logger, context)
         {
             _currencyEvent = currencyEvent;
@@ -38,6 +39,7 @@ namespace Nozomi.Service.Services.Requests
             _currencyTypeEvent = currencyTypeEvent;
             _requestPropertyEvent = requestPropertyEvent;
             _websocketCommandEvent = websocketCommandEvent;
+            _requestPropertyService = requestPropertyService;
             _websocketCommandService = websocketCommandService;
         }
 
@@ -61,7 +63,7 @@ namespace Nozomi.Service.Services.Requests
             if (vm.IsValid())
             {
                 var request = new Request(vm.RequestType, vm.ResponseType, vm.DataPath, vm.Delay, vm.FailureDelay,
-                    vm.RequestProperties, vm.WebsocketCommands, vm.Components);
+                    vm.Properties, vm.WebsocketCommands, vm.Components);
 
                 switch (vm.ParentType)
                 {
@@ -360,8 +362,16 @@ namespace Nozomi.Service.Services.Requests
                     request.FailureDelay = vm.FailureDelay;
                     request.RequestComponents = vm.Components
                         .Select(c => new Component()).ToList();
-                    request.RequestProperties = vm.Properties
-                        .Select(p => new RequestProperty()).ToList();
+                    if (vm.Properties != null && vm.Properties.Any())
+                    {
+                        foreach (var updReqProp in vm.Properties)
+                        {
+                            if (_requestPropertyEvent.Exists(updReqProp.Guid, userId))
+                            {
+                                _requestPropertyService.Update(updReqProp, userId);
+                            }
+                        }
+                    }
                     if (vm.WebsocketCommands != null && vm.WebsocketCommands.Any()) { // Safetynet
                         // Update the commands if any
                         foreach (var updWsc in vm.WebsocketCommands)
