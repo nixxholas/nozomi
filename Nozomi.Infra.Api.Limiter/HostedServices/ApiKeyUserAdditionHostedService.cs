@@ -67,6 +67,10 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
                                     quotaClaimService.SetQuota(user.Id, 0);
                                     _logger.LogInformation($"{_hostedServiceName} User: {user.Id} has no " +
                                                            $"quota claim, created one for him/her here.");
+
+                                    quotaClaim = authDbContext.UserClaims
+                                        .FirstOrDefault(uc => uc.UserId.Equals(user.Id) 
+                                                              && uc.ClaimType.Equals(NozomiJwtClaimTypes.UserQuota));
                                 }
 
                                 // Usage
@@ -79,6 +83,10 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
                                     quotaClaimService.AddUsage(user.Id, 0);
                                     _logger.LogInformation($"{_hostedServiceName} User: {user.Id} has no " +
                                                            $"usage claim, created one for him/her here.");
+
+                                    usageClaim = authDbContext.UserClaims
+                                        .FirstOrDefault(uc => uc.UserId.Equals(user.Id) 
+                                                              && uc.ClaimType.Equals(NozomiJwtClaimTypes.UserUsage));
                                 }
 
                                 // Safety net, has valid quota and usage
@@ -154,13 +162,6 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
                                             }
                                         }
                                     }
-
-                                    // else // Nope, warn!!!
-                                    // {
-                                    //     _logger.LogWarning($"{_hostedServiceName} ExecuteAsync: wait, " +
-                                    //                        $"peculiar event, user {user.Id} has no API keys but has " +
-                                    //                        $"hit his limit of {quota}..");
-                                    // }
                                 }
                             }
                     }
