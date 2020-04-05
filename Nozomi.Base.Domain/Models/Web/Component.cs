@@ -48,6 +48,19 @@ namespace Nozomi.Data.Models.Web
             StoreHistoricals = storeHistoricals;
             RequestId = requestId;
         }
+        
+        public Component(long componentTypeId, string identifier, string queryComponent,
+            bool anomalyIgnorance, bool isDenominated, bool storeHistoricals, long requestId)
+        {
+            Guid = Guid.NewGuid();
+            ComponentTypeId = componentTypeId;
+            Identifier = identifier;
+            QueryComponent = queryComponent;
+            AnomalyIgnorance = anomalyIgnorance;
+            IsDenominated = isDenominated;
+            StoreHistoricals = storeHistoricals;
+            RequestId = requestId;
+        }
 
         public Component(Component component, int historicIndex, int historicItemAmount)
         {

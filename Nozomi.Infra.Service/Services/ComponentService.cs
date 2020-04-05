@@ -31,13 +31,13 @@ namespace Nozomi.Service.Services
 
         public void Create(CreateComponentInputModel vm, string userId = null)
         {
-            if (vm.IsValid() && !_requestEvent.Exists(vm.Type, vm.RequestId))
+            if (vm.IsValid())
             {
                 var requestId = _requestEvent.GetId(vm.RequestId);
                 if (requestId <= 0)
                     throw new ArgumentException("Request not found.");
 
-                var requestComponent = new Component(vm.Type, vm.Identifier,
+                var requestComponent = new Component(vm.ComponentTypeId, vm.Identifier,
                     vm.QueryComponent, vm.AnomalyIgnorance, vm.IsDenominated, vm.StoreHistoricals, requestId);
 
                 _context.Components.Add(requestComponent);
