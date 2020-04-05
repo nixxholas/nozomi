@@ -96,7 +96,7 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
                                                             && long.TryParse(usageClaim.ClaimValue,
                                                                 out var usageCount)
                                                             // But the usage exceeds the quota
-                                                            && usageCount > quotaCount)
+                                                            && usageCount >= quotaCount)
                                 {
                                     _logger.LogInformation(
                                         $"{_hostedServiceName} ExecuteAsync: User {user.Id}" +
