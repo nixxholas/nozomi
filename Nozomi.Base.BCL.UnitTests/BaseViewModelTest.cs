@@ -5,14 +5,18 @@ namespace Nozomi.Base.BCL.UnitTests
     public class BaseViewModelTest
     {
         [Fact]
-        public void initialise_baseviewmodel_success()
+        public void InitialBaseViewModelSuccess()
         {
             var bvm = new BaseViewModel
             {
                 StatusMessage = "Testing"
             };
+
+            bvm.StatusMessage = "work";
             
-            Assert.True(bvm != null && !string.IsNullOrEmpty(bvm.StatusMessage));
+            Assert.True(bvm != null 
+                        && !string.IsNullOrEmpty(bvm.StatusMessage)
+                        && bvm.StatusMessage == "work");
         }
     }
 }
