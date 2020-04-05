@@ -7,6 +7,8 @@ namespace Nozomi.Data.ViewModels.Component
 {
     public class UpdateComponentInputModel
     {
+        public Guid Guid { get; set; }
+        
         public long ComponentTypeId { get; set; }
 
         public string Identifier { get; set; }
@@ -20,6 +22,11 @@ namespace Nozomi.Data.ViewModels.Component
         public bool StoreHistoricals { get; set; }
         
         public IEnumerable<ComponentHistoricItemViewModel> History { get; set; }
+
+        public bool IsValid()
+        {
+            return new UpdateComponentInputValidator().Validate(this).IsValid;
+        }
         
         public class UpdateComponentInputValidator : AbstractValidator<UpdateComponentInputModel>
         {
