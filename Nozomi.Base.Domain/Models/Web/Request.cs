@@ -119,7 +119,7 @@ namespace Nozomi.Data.Models.Web
                     new WebsocketCommand(wsc.Type, wsc.Name, wsc.Delay, wsc.IsEnabled))
                 .ToList();
             RequestComponents = components.Select(c =>
-                new Component(c.Type, c.Identifier, c.QueryComponent, c.AnomalyIgnorance, c.IsDenominated,
+                new Component(c.ComponentTypeId, c.Identifier, c.QueryComponent, c.AnomalyIgnorance, c.IsDenominated,
                     c.StoreHistoricals))
                 .ToList();
         }
