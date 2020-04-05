@@ -59,13 +59,13 @@ namespace Nozomi.Data.ViewModels.Request
         /// <summary>
         /// The components that are linked to this request.
         /// </summary>
-        public ICollection<ComponentViewModel> Components { get; set; }
+        public new ICollection<ComponentViewModel> Components { get; set; }
         
         /// <summary>
         /// The request properties that are linked to this request.
         /// </summary>
-        public ICollection<RequestPropertyViewModel> Properties { get; set; }
+        public new ICollection<RequestPropertyViewModel> Properties { get; set; }
         
-        public new ICollection<UpdateWebsocketCommandInputModel> WebsocketCommands { get; set; }
+        public new ICollection<WebsocketCommandViewModel> WebsocketCommands { get; set; }
     }
 }
