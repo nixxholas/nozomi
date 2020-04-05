@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -85,14 +86,18 @@ namespace Nozomi.HttpSyncing
                 });
             }
 
+            services.AddTransient<IComponentEvent, ComponentEvent>();
             services.AddTransient<ICurrencyEvent, CurrencyEvent>();
             services.AddTransient<ICurrencyPairEvent, CurrencyPairEvent>();
             services.AddTransient<ICurrencyTypeEvent, CurrencyTypeEvent>();
             services.AddTransient<IRequestEvent, RequestEvent>();
             services.AddTransient<IRequestPropertyEvent, RequestPropertyEvent>();
-            services.AddTransient<IComponentHistoricItemService, ComponentHistoricItemService>();
+            services.AddTransient<IWebsocketCommandEvent, WebsocketCommandEvent>();
             services.AddTransient<IComponentService, ComponentService>();
+            services.AddTransient<IComponentHistoricItemService, ComponentHistoricItemService>();
             services.AddTransient<IRequestService, RequestService>();
+            services.AddTransient<IRequestPropertyService, RequestPropertyService>();
+            services.AddTransient<IWebsocketCommandService, WebsocketCommandService>();
             services.AddHostedService<HttpGetRequestSyncingService>();
             services.AddHostedService<HttpPostRequestSyncingService>();
         }
