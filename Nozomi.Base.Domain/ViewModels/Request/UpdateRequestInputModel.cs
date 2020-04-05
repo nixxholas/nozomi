@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using FluentValidation;
+using Nozomi.Data.ViewModels.Component;
 using Nozomi.Data.ViewModels.RequestProperty;
+using Nozomi.Data.ViewModels.WebsocketCommand;
 
 namespace Nozomi.Data.ViewModels.Request
 {
@@ -8,7 +10,11 @@ namespace Nozomi.Data.ViewModels.Request
     {
         public new bool? IsEnabled { get; set; }
         
+        public new ICollection<UpdateComponentInputModel> Components { get; set; }
+        
         public new ICollection<UpdateRequestPropertyInputModel> Properties { get; set; }
+        
+        public new ICollection<UpdateWebsocketCommandInputModel> WebsocketCommands { get; set; }
         
         public new bool IsValid()
         {
