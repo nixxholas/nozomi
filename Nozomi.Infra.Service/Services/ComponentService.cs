@@ -18,13 +18,15 @@ namespace Nozomi.Service.Services
     public class ComponentService : BaseService<ComponentService, NozomiDbContext>,
         IComponentService
     {
+        private readonly IComponentTypeEvent _componentTypeEvent;
         private readonly IRequestEvent _requestEvent;
         private readonly IComponentHistoricItemService _componentHistoricItemService;
 
-        public ComponentService(ILogger<ComponentService> logger, IRequestEvent requestEvent,
-            IComponentHistoricItemService componentHistoricItemService,
+        public ComponentService(ILogger<ComponentService> logger, IComponentTypeEvent componentTypeEvent, 
+            IRequestEvent requestEvent, IComponentHistoricItemService componentHistoricItemService,
             NozomiDbContext context) : base(logger, context)
         {
+            _componentTypeEvent = componentTypeEvent;
             _requestEvent = requestEvent;
             _componentHistoricItemService = componentHistoricItemService;
         }
@@ -280,9 +282,8 @@ namespace Nozomi.Service.Services
                     _context.SaveChanges(userId); // Push e changes
 
                     if (vm.History != null && vm.History.Any()) // If there's anything, we'll have to update it
-                    {
-                        
-                    }
+                        foreach (var historicItem in vm.History)
+                            _componentHistoricItemService.Update(historicItem, userId);
 
                     return;
                 }

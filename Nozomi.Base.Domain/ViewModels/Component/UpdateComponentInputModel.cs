@@ -21,7 +21,7 @@ namespace Nozomi.Data.ViewModels.Component
         
         public bool StoreHistoricals { get; set; }
         
-        public IEnumerable<ComponentHistoricItemViewModel> History { get; set; }
+        public ICollection<UpdateComponentHistoricItemInputModel> History { get; set; }
 
         public bool IsValid()
         {
