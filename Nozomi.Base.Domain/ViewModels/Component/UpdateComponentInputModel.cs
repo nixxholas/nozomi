@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using FluentValidation;
 using Nozomi.Data.ViewModels.ComponentHistoricItem;
 
 namespace Nozomi.Data.ViewModels.Component
@@ -19,5 +20,16 @@ namespace Nozomi.Data.ViewModels.Component
         public bool StoreHistoricals { get; set; }
         
         public IEnumerable<ComponentHistoricItemViewModel> History { get; set; }
+        
+        public class UpdateComponentInputValidator : AbstractValidator<UpdateComponentInputModel>
+        {
+            public UpdateComponentInputValidator()
+            {
+                RuleFor(e => e.ComponentTypeId).GreaterThan(0);
+                RuleFor(e => e.IsDenominated).NotNull();
+                RuleFor(e => e.AnomalyIgnorance).NotNull();
+                RuleFor(e => e.StoreHistoricals).NotNull();
+            }
+        }
     }
 }
