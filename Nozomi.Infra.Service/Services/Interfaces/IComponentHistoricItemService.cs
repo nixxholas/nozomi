@@ -1,5 +1,6 @@
 using System;
 using Nozomi.Data.Models.Web;
+using Nozomi.Data.ViewModels.ComponentHistoricItem;
 
 namespace Nozomi.Service.Services.Interfaces
 {
@@ -12,5 +13,7 @@ namespace Nozomi.Service.Services.Interfaces
         void Remove(Guid guid, string userId = null, bool hardDelete = false);
 
         void Remove(ComponentHistoricItem componentHistoricItem, string userId = null, bool hardDelete = false);
+
+        void Update(UpdateComponentHistoricItemInputModel vm, string userId = null);
     }
 }

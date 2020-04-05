@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using IdentityModel;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -43,74 +44,77 @@ namespace Nozomi.Infra.Api.Limiter.HostedServices
 
                         // Obtain all users who have API keys
                         var users = authDbContext.Users.AsNoTracking()
+                            .Include(u => u.UserClaims)
                             .Include(u => u.ApiKeys)
                             .Where(u => u.ApiKeys.Any());
 
                         // Iterate every user
                         foreach (var user in users)
                         {
-                            var redisEvent =
-                                scope.ServiceProvider.GetRequiredService<INozomiRedisEvent>();
                             var redisService =
                                 scope.ServiceProvider.GetRequiredService<INozomiRedisService>();
-                            var quotaClaimService = scope.ServiceProvider
-                                .GetRequiredService<IQuotaClaimService>();
+                            var userEvent = scope.ServiceProvider.GetRequiredService<IUserEvent>();
 
-                            // Obtain the user's quota and usage
-                            var requiredUserClaims = authDbContext.UserClaims
-                                .AsNoTracking()
-                                .Where(uc => uc.UserId.Equals(user.Id)
-                                             && (uc.ClaimType.Equals(NozomiJwtClaimTypes.UserQuota)
-                                                 || uc.ClaimType.Equals(NozomiJwtClaimTypes.UserUsage)));
-
-                            // Quota
-                            var quotaClaim = requiredUserClaims.SingleOrDefault(uc =>
-                                uc.ClaimType.Equals(NozomiJwtClaimTypes.UserQuota));
-
-                            // Usage
-                            var usageClaim = requiredUserClaims.SingleOrDefault(uc =>
-                                uc.ClaimType.Equals(NozomiJwtClaimTypes.UserUsage));
-
-                            // ======================== SCENARIO 1: NO USAGE OR QUOTA CLAIMS ======================== //
-                            // If the user has invalid quota or usage counts,
-                            if (quotaClaim == null || usageClaim == null)
+                            // Ensure the user is not a staff member
+                            if (!userEvent.IsInRoles(user.Id,
+                                NozomiPermissions.AllowAllStaffRoles.Split(", ")))
                             {
-                                _logger.LogInformation($"{_hostedServiceName} User does not have a " +
-                                                       $"proper quota and/or usage claim!");
+                                // Obtain the user's quota and usage
+                                var requiredUserClaims = authDbContext.UserClaims
+                                    .AsNoTracking()
+                                    .Where(uc => uc.UserId.Equals(user.Id)
+                                                 && (uc.ClaimType.Equals(NozomiJwtClaimTypes.UserQuota)
+                                                     || uc.ClaimType.Equals(NozomiJwtClaimTypes.UserUsage)));
 
-                                foreach (var userApiKey in user.ApiKeys) // BAN!!
+                                // Quota
+                                var quotaClaim = requiredUserClaims.SingleOrDefault(uc =>
+                                    uc.ClaimType.Equals(NozomiJwtClaimTypes.UserQuota));
+
+                                // Usage
+                                var usageClaim = requiredUserClaims.SingleOrDefault(uc =>
+                                    uc.ClaimType.Equals(NozomiJwtClaimTypes.UserUsage));
+
+                                // ======================== SCENARIO 1: NO USAGE OR QUOTA CLAIMS ======================== //
+                                // If the user has invalid quota or usage counts,
+                                if (quotaClaim == null || usageClaim == null)
                                 {
-                                    redisService.Remove(RedisDatabases.ApiKeyUser, userApiKey.Value);
-                                    _logger.LogInformation($"{_hostedServiceName} ExecuteAsync: " +
-                                                           $" API Key {userApiKey.Value} removed for " +
-                                                           $"user {user.Id} in Redis.");
-                                }
-                            }
-                            // ======================== SCENARIO 2: EXCEEDED USAGE ======================== //
-                            else if (quotaClaim != null && usageClaim != null // If the claims ain't null 
-                                                        && long.TryParse(quotaClaim.ClaimValue,
-                                                            out var quotaCount)
-                                                        && long.TryParse(usageClaim.ClaimValue,
-                                                            out var usageCount)
-                                                        // But the usage exceeds the quota
-                                                        && usageCount > quotaCount)
-                            {
-                                _logger.LogInformation(
-                                    $"{_hostedServiceName} ExecuteAsync: User {user.Id}" +
-                                    $" has exceeded his usage by {usageCount - quotaCount}. Ban time!");
+                                    _logger.LogInformation($"{_hostedServiceName} User does not have a " +
+                                                           $"proper quota and/or usage claim!");
 
-                                foreach (var userApiKey in user.ApiKeys) // BAN!!
-                                {
-                                    redisService.Remove(RedisDatabases.ApiKeyUser, userApiKey.Value);
-                                    _logger.LogInformation($"{_hostedServiceName} ExecuteAsync: " +
-                                                           $" API Key {userApiKey.Value} removed for " +
-                                                           $"user {user.Id} in Redis.");
+                                    foreach (var userApiKey in user.ApiKeys) // BAN!!
+                                    {
+                                        redisService.Remove(RedisDatabases.ApiKeyUser, userApiKey.Value);
+                                        _logger.LogInformation($"{_hostedServiceName} ExecuteAsync: " +
+                                                               $" API Key {userApiKey.Value} removed for " +
+                                                               $"user {user.Id} in Redis.");
+                                    }
                                 }
-                            }
-                            // ======================== SCENARIO 3: ALL IN THE CLEAR ======================== //
-                            else
-                            {
-                                // User is still valid for API consumption
+                                // ======================== SCENARIO 2: EXCEEDED USAGE ======================== //
+                                else if (quotaClaim != null && usageClaim != null // If the claims ain't null 
+                                                            && long.TryParse(quotaClaim.ClaimValue,
+                                                                out var quotaCount)
+                                                            && long.TryParse(usageClaim.ClaimValue,
+                                                                out var usageCount)
+                                                            // But the usage exceeds the quota
+                                                            && usageCount >= quotaCount)
+                                {
+                                    _logger.LogInformation(
+                                        $"{_hostedServiceName} ExecuteAsync: User {user.Id}" +
+                                        $" has exceeded his usage by {usageCount - quotaCount}. Ban time!");
+
+                                    foreach (var userApiKey in user.ApiKeys) // BAN!!
+                                    {
+                                        redisService.Remove(RedisDatabases.ApiKeyUser, userApiKey.Value);
+                                        _logger.LogInformation($"{_hostedServiceName} ExecuteAsync: " +
+                                                               $" API Key {userApiKey.Value} removed for " +
+                                                               $"user {user.Id} in Redis.");
+                                    }
+                                }
+                                // ======================== SCENARIO 3: ALL IN THE CLEAR ======================== //
+                                else
+                                {
+                                    // User is still valid for API consumption
+                                }
                             }
                         }
                     }

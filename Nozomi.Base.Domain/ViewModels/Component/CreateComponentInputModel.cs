@@ -4,10 +4,10 @@ using Nozomi.Data.Models.Web;
 
 namespace Nozomi.Data.ViewModels.Component
 {
-    public class CreateComponentViewModel
+    public class CreateComponentInputModel
     {
-        public Models.Web.ComponentType Type { get; set; }
-    
+        public long ComponentTypeId { get; set; }
+
         public string Identifier { get; set; }
         
         public string QueryComponent { get; set; }
@@ -26,11 +26,11 @@ namespace Nozomi.Data.ViewModels.Component
             return validator.Validate(this).IsValid;
         }
         
-        protected class CreateComponentValidator : AbstractValidator<CreateComponentViewModel>
+        protected class CreateComponentValidator : AbstractValidator<CreateComponentInputModel>
         {
             public CreateComponentValidator()
             {
-                RuleFor(e => e.Type).IsInEnum();
+                RuleFor(e => e.ComponentTypeId).GreaterThan(0);
                 // RuleFor(e => e.Identifier); // No rule for identifier, it's not a requirement
                 // RuleFor(e => e.QueryComponent); // No rule for query component, it's not a requirement
                 RuleFor(e => e.IsDenominated).NotNull();

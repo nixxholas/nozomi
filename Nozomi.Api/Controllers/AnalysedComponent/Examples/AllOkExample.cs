@@ -25,7 +25,7 @@ namespace Nozomi.Api.Controllers.AnalysedComponent.Examples
                     DataPath = "https://api.nozomi.one/api/connect/validate",
                     Delay = 10000,
                     FailureDelay = 60000,
-                    ParentType = CreateRequestViewModel.RequestParentType.None,
+                    ParentType = CreateRequestInputModel.RequestParentType.None,
                     Components = new List<ComponentViewModel>
                     {
                         new ComponentViewModel

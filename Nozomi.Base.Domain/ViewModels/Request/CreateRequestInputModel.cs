@@ -1,12 +1,13 @@
 using System.Collections.Generic;
 using FluentValidation;
 using Nozomi.Data.Models.Web;
+using Nozomi.Data.ViewModels.Component;
 using Nozomi.Data.ViewModels.RequestProperty;
 using Nozomi.Data.ViewModels.WebsocketCommand;
 
 namespace Nozomi.Data.ViewModels.Request
 {
-    public class CreateRequestViewModel
+    public class CreateRequestInputModel
     {
         /// <summary>
         /// The protocol type of this request.
@@ -63,9 +64,14 @@ namespace Nozomi.Data.ViewModels.Request
         public string CurrencyTypeGuid { get; set; }
         
         /// <summary>
+        /// The collection of components for this request.
+        /// </summary>
+        public ICollection<CreateComponentInputModel> Components { get; set; }
+        
+        /// <summary>
         /// The collection of request properties for this request.
         /// </summary>
-        public ICollection<CreateRequestPropertyInputModel> RequestProperties { get; set; }
+        public ICollection<CreateRequestPropertyInputModel> Properties { get; set; }
         
         /// <summary>
         /// The collection of websocket commands for this request.
@@ -78,7 +84,7 @@ namespace Nozomi.Data.ViewModels.Request
             return validator.Validate(this).IsValid;
         }
 
-        protected class CreateRequestValidator : AbstractValidator<CreateRequestViewModel>
+        protected class CreateRequestValidator : AbstractValidator<CreateRequestInputModel>
         {
             public CreateRequestValidator()
             {

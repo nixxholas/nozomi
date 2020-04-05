@@ -8,6 +8,7 @@ using Nozomi.Data.AreaModels.v1.RequestProperty;
 using Nozomi.Data.AreaModels.v1.Requests;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web.Websocket;
+using Nozomi.Data.ViewModels.Component;
 using Nozomi.Data.ViewModels.RequestProperty;
 using Nozomi.Data.ViewModels.WebsocketCommand;
 
@@ -101,19 +102,9 @@ namespace Nozomi.Data.Models.Web
         }
 
         public Request(RequestType requestType, ResponseType responseType, string dataPath, int delay,
-            long failureDelay)
-        {
-            Guid = Guid.NewGuid();
-            RequestType = requestType;
-            ResponseType = responseType;
-            DataPath = dataPath;
-            Delay = delay;
-            FailureDelay = failureDelay;
-        }
-        
-        public Request(RequestType requestType, ResponseType responseType, string dataPath, int delay,
             long failureDelay, ICollection<CreateRequestPropertyInputModel> requestProperties, 
-            ICollection<CreateWebsocketCommandInputModel> websocketCommands)
+            ICollection<CreateWebsocketCommandInputModel> websocketCommands, 
+            ICollection<CreateComponentInputModel> components)
         {
             Guid = Guid.NewGuid();
             RequestType = requestType;
@@ -122,10 +113,14 @@ namespace Nozomi.Data.Models.Web
             Delay = delay;
             FailureDelay = failureDelay;
             RequestProperties = requestProperties.Select(rp =>
-                new RequestProperty(rp.Type, rp.Key, rp.Value))
+                    new RequestProperty(rp.Type, rp.Key, rp.Value))
                 .ToList();
             WebsocketCommands = websocketCommands.Select(wsc => 
-                new WebsocketCommand(wsc.Type, wsc.Name, wsc.Delay, wsc.IsEnabled))
+                    new WebsocketCommand(wsc.Type, wsc.Name, wsc.Delay, wsc.IsEnabled))
+                .ToList();
+            RequestComponents = components.Select(c =>
+                new Component(c.ComponentTypeId, c.Identifier, c.QueryComponent, c.AnomalyIgnorance, c.IsDenominated,
+                    c.StoreHistoricals))
                 .ToList();
         }
         

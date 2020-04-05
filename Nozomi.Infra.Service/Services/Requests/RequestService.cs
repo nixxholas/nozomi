@@ -7,10 +7,12 @@ using Microsoft.Extensions.Logging;
 using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.Requests;
 using Nozomi.Data.Models.Web;
+using Nozomi.Data.Models.Web.Websocket;
 using Nozomi.Data.ViewModels.Request;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.Data;
 using Nozomi.Service.Events.Interfaces;
+using Nozomi.Service.Services.Interfaces;
 using Nozomi.Service.Services.Requests.Interfaces;
 using Component = Nozomi.Data.Models.Web.Component;
 
@@ -18,17 +20,32 @@ namespace Nozomi.Service.Services.Requests
 {
     public class RequestService : BaseService<RequestService, NozomiDbContext>, IRequestService
     {
+        private readonly IComponentEvent _componentEvent;
         private readonly ICurrencyEvent _currencyEvent;
         private readonly ICurrencyPairEvent _currencyPairEvent;
         private readonly ICurrencyTypeEvent _currencyTypeEvent;
+        private readonly IRequestPropertyEvent _requestPropertyEvent;
+        private readonly IWebsocketCommandEvent _websocketCommandEvent;
+        private readonly IComponentService _componentService;
+        private readonly IRequestPropertyService _requestPropertyService;
+        private readonly IWebsocketCommandService _websocketCommandService;
         
-        public RequestService(ILogger<RequestService> logger, NozomiDbContext context,
-            ICurrencyEvent currencyEvent, ICurrencyPairEvent currencyPairEvent, ICurrencyTypeEvent currencyTypeEvent)
+        public RequestService(ILogger<RequestService> logger, NozomiDbContext context, IComponentEvent componentEvent,
+            ICurrencyEvent currencyEvent, ICurrencyPairEvent currencyPairEvent, ICurrencyTypeEvent currencyTypeEvent,
+            IRequestPropertyEvent requestPropertyEvent, IWebsocketCommandEvent websocketCommandEvent, 
+            IComponentService componentService, IRequestPropertyService requestPropertyService, 
+            IWebsocketCommandService websocketCommandService)
             : base(logger, context)
         {
+            _componentEvent = componentEvent;
             _currencyEvent = currencyEvent;
             _currencyPairEvent = currencyPairEvent;
             _currencyTypeEvent = currencyTypeEvent;
+            _requestPropertyEvent = requestPropertyEvent;
+            _websocketCommandEvent = websocketCommandEvent;
+            _componentService = componentService;
+            _requestPropertyService = requestPropertyService;
+            _websocketCommandService = websocketCommandService;
         }
 
         public long Create(Request request, string userId = null)
@@ -46,51 +63,51 @@ namespace Nozomi.Service.Services.Requests
             }
         }
 
-        public void Create(CreateRequestViewModel vm, string userId = null)
+        public void Create(CreateRequestInputModel vm, string userId = null)
         {
             if (vm.IsValid())
             {
                 var request = new Request(vm.RequestType, vm.ResponseType, vm.DataPath, vm.Delay, vm.FailureDelay,
-                    vm.RequestProperties, vm.WebsocketCommands);
+                    vm.Properties, vm.WebsocketCommands, vm.Components);
 
                 switch (vm.ParentType)
                 {
                     // Validate it at the db end
-                    case CreateRequestViewModel.RequestParentType.Currency:
+                    case CreateRequestInputModel.RequestParentType.Currency:
                         var currency = _currencyEvent.GetBySlug(vm.CurrencySlug);
 
                         if (currency == null)
-                            throw new KeyNotFoundException("[RequestService/Create/CreateRequestViewModel]: " +
+                            throw new KeyNotFoundException("[RequestService/Create/CreateRequestInputModel]: " +
                                                            "Currency not found.");
 
                         request.CurrencyId = currency.Id;
                         break;
-                    case CreateRequestViewModel.RequestParentType.CurrencyPair:
+                    case CreateRequestInputModel.RequestParentType.CurrencyPair:
                         var currencyPair = _currencyPairEvent.Get(vm.CurrencyPairGuid);
                         
                         if (currencyPair == null)
-                            throw new KeyNotFoundException("[RequestService/Create/CreateRequestViewModel]: " +
+                            throw new KeyNotFoundException("[RequestService/Create/CreateRequestInputModel]: " +
                                                            "Currency pair not found.");
                         
                         request.CurrencyPairId = currencyPair.Id;
                         break;
-                    case CreateRequestViewModel.RequestParentType.CurrencyType:
+                    case CreateRequestInputModel.RequestParentType.CurrencyType:
                         if (!Guid.TryParse(vm.CurrencyTypeGuid, out var ctGuid))
                             throw new ArgumentException("Invalid currency type key.");
                         
                         var currencyType = _currencyTypeEvent.Get(ctGuid);
                         
                         if (currencyType == null)
-                            throw new KeyNotFoundException("[RequestService/Create/CreateRequestViewModel]: " +
+                            throw new KeyNotFoundException("[RequestService/Create/CreateRequestInputModel]: " +
                                                            "Currency type not found.");
                         
                         request.CurrencyTypeId = currencyType.Id;
                         break;
-                    case CreateRequestViewModel.RequestParentType.None:
+                    case CreateRequestInputModel.RequestParentType.None:
                         // No parent type, continue
                         break;
                     default:
-                        throw new InvalidEnumArgumentException("[RequestService/Create/CreateRequestViewModel]: "
+                        throw new InvalidEnumArgumentException("[RequestService/Create/CreateRequestInputModel]: "
                                                                + "Invalid parent type.");
                 }
                 
@@ -100,7 +117,7 @@ namespace Nozomi.Service.Services.Requests
             else
             {
                 throw new InvalidCastException(
-                    "[RequestService/Create/CreateRequestViewModel]: Invalid input given.");   
+                    "[RequestService/Create/CreateRequestInputModel]: Invalid input given.");   
             }
         }
 
@@ -331,7 +348,7 @@ namespace Nozomi.Service.Services.Requests
             }
         }
 
-        public bool Update(UpdateRequestViewModel vm, string userId = null)
+        public bool Update(UpdateRequestInputModel vm, string userId = null)
         {
             // Safetynet
             if (vm != null && vm.IsValid())
@@ -348,10 +365,34 @@ namespace Nozomi.Service.Services.Requests
                     request.DataPath = vm.DataPath;
                     request.Delay = vm.Delay;
                     request.FailureDelay = vm.FailureDelay;
+                    if (vm.Components != null && vm.Components.Any()) { // Safetynet
+                        // Update the components if any
+                        foreach (var updComp in vm.Components)
+                        {
+                            if (_componentEvent.Exists(updComp.Guid, userId))
+                                _componentService.Update(updComp, userId);
+                        }
+                    }
+                    if (vm.Properties != null && vm.Properties.Any()) { // Safetynet
+                        // Update the properties if any
+                        foreach (var updReqProp in vm.Properties)
+                        {
+                            if (_requestPropertyEvent.Exists(updReqProp.Guid, userId)) // Ensure it exists first
+                                _requestPropertyService.Update(updReqProp, userId);
+                        }
+                    }
+                    if (vm.WebsocketCommands != null && vm.WebsocketCommands.Any()) { // Safetynet
+                        // Update the commands if any
+                        foreach (var updWsc in vm.WebsocketCommands)
+                        {
+                            if (_websocketCommandEvent.Exists(updWsc.Guid, userId)) // Ensure it exists first
+                                _websocketCommandService.Update(updWsc, userId);
+                        }
+                    }
 
                     switch (vm.ParentType)
                     {
-                        case CreateRequestViewModel.RequestParentType.Currency:
+                        case CreateRequestInputModel.RequestParentType.Currency:
                             var currency = _currencyEvent.GetBySlug(vm.CurrencySlug);
 
                             if (currency != null)
@@ -360,7 +401,7 @@ namespace Nozomi.Service.Services.Requests
                                 return false;
                             
                             break;
-                        case CreateRequestViewModel.RequestParentType.CurrencyPair:
+                        case CreateRequestInputModel.RequestParentType.CurrencyPair:
                             var currencyPair = _currencyPairEvent.Get(vm.CurrencyPairGuid);
 
                             if (currencyPair != null)
@@ -369,7 +410,7 @@ namespace Nozomi.Service.Services.Requests
                                 return false;
 
                             break;
-                        case CreateRequestViewModel.RequestParentType.CurrencyType:
+                        case CreateRequestInputModel.RequestParentType.CurrencyType:
                             if (!Guid.TryParse(vm.CurrencyTypeGuid, out var ctGuid))
                                 throw new ArgumentException("Invalid currency type id.");
                             
@@ -381,6 +422,12 @@ namespace Nozomi.Service.Services.Requests
                                 return false;
 
                             break;
+                        case CreateRequestInputModel.RequestParentType.None:
+                            // No parent type, continue
+                            break;
+                        default:
+                            throw new InvalidEnumArgumentException("[RequestService/Update/UpdateRequestInputModel]: "
+                                                                   + "Invalid parent type.");
                     }
                     
                     _context.Requests.Update(request);

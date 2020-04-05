@@ -1,10 +1,12 @@
 ﻿using System;
+using System.ComponentModel;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Nozomi.Data.Models.Web;
 using Nozomi.Infra.Syncing.HostedServices.RequestTypes;
 using Nozomi.Repo.Data;
 using Nozomi.Service.Events;
@@ -85,13 +87,19 @@ namespace Nozomi.HttpSyncing
                 });
             }
 
-            services.AddScoped<ICurrencyEvent, CurrencyEvent>();
-            services.AddScoped<ICurrencyPairEvent, CurrencyPairEvent>();
-            services.AddScoped<ICurrencyTypeEvent, CurrencyTypeEvent>();
-            services.AddScoped<IRequestEvent, RequestEvent>();
-            services.AddTransient<IComponentHistoricItemService, ComponentHistoricItemService>();
+            services.AddTransient<IComponentEvent, ComponentEvent>();
+            services.AddTransient<IComponentTypeEvent, ComponentTypeEvent>();
+            services.AddTransient<ICurrencyEvent, CurrencyEvent>();
+            services.AddTransient<ICurrencyPairEvent, CurrencyPairEvent>();
+            services.AddTransient<ICurrencyTypeEvent, CurrencyTypeEvent>();
+            services.AddTransient<IRequestEvent, RequestEvent>();
+            services.AddTransient<IRequestPropertyEvent, RequestPropertyEvent>();
+            services.AddTransient<IWebsocketCommandEvent, WebsocketCommandEvent>();
             services.AddTransient<IComponentService, ComponentService>();
+            services.AddTransient<IComponentHistoricItemService, ComponentHistoricItemService>();
             services.AddTransient<IRequestService, RequestService>();
+            services.AddTransient<IRequestPropertyService, RequestPropertyService>();
+            services.AddTransient<IWebsocketCommandService, WebsocketCommandService>();
             services.AddHostedService<HttpGetRequestSyncingService>();
             services.AddHostedService<HttpPostRequestSyncingService>();
         }

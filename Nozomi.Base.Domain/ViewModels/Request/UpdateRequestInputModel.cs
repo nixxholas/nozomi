@@ -1,10 +1,20 @@
+using System.Collections.Generic;
 using FluentValidation;
+using Nozomi.Data.ViewModels.Component;
+using Nozomi.Data.ViewModels.RequestProperty;
+using Nozomi.Data.ViewModels.WebsocketCommand;
 
 namespace Nozomi.Data.ViewModels.Request
 {
-    public class UpdateRequestViewModel : RequestViewModel
+    public class UpdateRequestInputModel : RequestViewModel
     {
         public new bool? IsEnabled { get; set; }
+        
+        public new ICollection<UpdateComponentInputModel> Components { get; set; }
+        
+        public new ICollection<UpdateRequestPropertyInputModel> Properties { get; set; }
+        
+        public new ICollection<UpdateWebsocketCommandInputModel> WebsocketCommands { get; set; }
         
         public new bool IsValid()
         {
@@ -12,7 +22,7 @@ namespace Nozomi.Data.ViewModels.Request
             return validator.Validate(this).IsValid;
         }
 
-        protected class UpdateRequestValidator : AbstractValidator<UpdateRequestViewModel>
+        protected class UpdateRequestValidator : AbstractValidator<UpdateRequestInputModel>
         {
             public UpdateRequestValidator()
             {
