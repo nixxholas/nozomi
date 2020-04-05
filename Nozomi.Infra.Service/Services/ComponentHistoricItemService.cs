@@ -1,8 +1,10 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.Models.Web;
+using Nozomi.Data.ViewModels.ComponentHistoricItem;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.Data;
 using Nozomi.Service.Services.Interfaces;
@@ -150,6 +152,34 @@ namespace Nozomi.Service.Services
             }
 
             throw new NullReferenceException("Invalid historic item for removal.");
+        }
+
+        public void Update(UpdateComponentHistoricItemInputModel vm, string userId = null)
+        {
+            if (vm.IsValid())
+            {
+                var query = _context.ComponentHistoricItems.AsTracking()
+                    .Where(e => e.Guid.Equals(vm.Guid));
+
+                if (!string.IsNullOrEmpty(userId))
+                    query = query.Where(e => e.CreatedById.Equals(userId));
+
+                var item = query.FirstOrDefault();
+                if (item != null)
+                {
+                    item.HistoricDateTime = vm.Timestamp;
+                    item.Value = vm.Value;
+
+                    _context.ComponentHistoricItems.Update(item);
+                    _context.SaveChanges(userId);
+
+                    return;
+                }
+                
+                throw new KeyNotFoundException("Invalid historic item.");
+            }
+
+            throw new InvalidOperationException("");
         }
     }
 }

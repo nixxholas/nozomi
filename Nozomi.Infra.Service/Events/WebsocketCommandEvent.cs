@@ -52,6 +52,17 @@ namespace Nozomi.Service.Events
             throw new InvalidOperationException("Invalid Websocket Command GUID!");
         }
 
+        public bool Exists(Guid websocketCommandGuid, string userId = null)
+        {
+            var query = _context.WebsocketCommands
+                .Where(c => c.Guid.Equals(websocketCommandGuid));
+
+            if (!string.IsNullOrEmpty(userId))
+                query = query.Where(c => c.CreatedById.Equals(userId));
+
+            return query.Any();
+        }
+
         public bool Exists(long requestId, CommandType type, string name)
         {
             if (requestId > 0 && !string.IsNullOrEmpty(name))
@@ -199,8 +210,8 @@ namespace Nozomi.Service.Events
             if (track)
                 command = command.AsTracking();
 
-            return command.Select(c => new WebsocketCommandViewModel(c.Guid.ToString(), 
-                c.CommandType, c.Name, c.Delay, c.IsEnabled, c.WebsocketCommandProperties
+            return command.Select(c => new WebsocketCommandViewModel(c.Guid, c.CommandType, c.Name, 
+                    c.Delay, c.IsEnabled, c.WebsocketCommandProperties
                     .Select(p => 
                         new WebsocketCommandPropertyViewModel(p.Guid.ToString(), p.CommandPropertyType, 
                             p.Key, p.Value, p.IsEnabled, c.Guid.ToString()))
@@ -228,8 +239,8 @@ namespace Nozomi.Service.Events
             if (track)
                 command = command.AsTracking();
 
-            return command.Select(c => new WebsocketCommandViewModel(c.Guid.ToString(), 
-                    c.CommandType, c.Name, c.Delay, c.IsEnabled, c.WebsocketCommandProperties
+            return command.Select(c => new WebsocketCommandViewModel(c.Guid, c.CommandType, c.Name, 
+                    c.Delay, c.IsEnabled, c.WebsocketCommandProperties
                         .Select(p => 
                             new WebsocketCommandPropertyViewModel(p.Guid.ToString(), p.CommandPropertyType, 
                                 p.Key, p.Value, p.IsEnabled, c.Guid.ToString()))
@@ -257,8 +268,8 @@ namespace Nozomi.Service.Events
             if (track)
                 command = command.AsTracking();
 
-            return command.Select(c => new WebsocketCommandViewModel(c.Guid.ToString(), 
-                    c.CommandType, c.Name, c.Delay, c.IsEnabled, c.WebsocketCommandProperties
+            return command.Select(c => new WebsocketCommandViewModel(c.Guid, c.CommandType, c.Name, 
+                c.Delay, c.IsEnabled, c.WebsocketCommandProperties
                         .Select(p => 
                             new WebsocketCommandPropertyViewModel(p.Guid.ToString(), p.CommandPropertyType, 
                                 p.Key, p.Value, p.IsEnabled, c.Guid.ToString()))
@@ -285,8 +296,8 @@ namespace Nozomi.Service.Events
             if (track)
                 command = command.AsTracking();
 
-            return command.Select(c => new WebsocketCommandViewModel(c.Guid.ToString(), 
-                c.CommandType, c.Name, c.Delay, c.IsEnabled, c.WebsocketCommandProperties
+            return command.Select(c => new WebsocketCommandViewModel(c.Guid, c.CommandType, c.Name, 
+                c.Delay, c.IsEnabled, c.WebsocketCommandProperties
                     .Select(p => 
                         new WebsocketCommandPropertyViewModel(p.Guid.ToString(), p.CommandPropertyType, 
                             p.Key, p.Value, p.IsEnabled, c.Guid.ToString()))
@@ -312,8 +323,8 @@ namespace Nozomi.Service.Events
             return query
                 .Skip(index * NozomiServiceConstants.WebsocketCommandTakeoutLimit)
                 .Take(NozomiServiceConstants.WebsocketCommandTakeoutLimit)
-                .Select(wsc => new WebsocketCommandViewModel(wsc.Guid.ToString(), wsc.CommandType,
-                    wsc.Name, wsc.Delay, wsc.IsEnabled, wsc.WebsocketCommandProperties
+                .Select(wsc => new WebsocketCommandViewModel(wsc.Guid, wsc.CommandType, wsc.Name, 
+                    wsc.Delay, wsc.IsEnabled, wsc.WebsocketCommandProperties
                         .Select(wscp => 
                             new WebsocketCommandPropertyViewModel(wscp.Guid.ToString(), wscp.CommandPropertyType, 
                                 wscp.Key, wscp.Value, wscp.IsEnabled, wsc.Guid.ToString()))

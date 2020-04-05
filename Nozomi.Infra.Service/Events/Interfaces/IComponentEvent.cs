@@ -21,6 +21,8 @@ namespace Nozomi.Service.Events.Interfaces
         
         ICollection<Component> All(int index = 0, bool includeNested = false);
 
+        bool Exists(Guid guid, string userId = null);
+
         long GetPredicateCount(Expression<Func<Component, bool>> predicate);
 
         long GetCorrelationPredicateCount(long analysedComponentId, Expression<Func<Component, bool>> predicate);

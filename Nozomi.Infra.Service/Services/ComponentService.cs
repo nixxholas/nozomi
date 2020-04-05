@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
@@ -17,32 +18,34 @@ namespace Nozomi.Service.Services
     public class ComponentService : BaseService<ComponentService, NozomiDbContext>,
         IComponentService
     {
+        private readonly IComponentTypeEvent _componentTypeEvent;
         private readonly IRequestEvent _requestEvent;
         private readonly IComponentHistoricItemService _componentHistoricItemService;
 
-        public ComponentService(ILogger<ComponentService> logger, IRequestEvent requestEvent,
-            IComponentHistoricItemService componentHistoricItemService,
+        public ComponentService(ILogger<ComponentService> logger, IComponentTypeEvent componentTypeEvent, 
+            IRequestEvent requestEvent, IComponentHistoricItemService componentHistoricItemService,
             NozomiDbContext context) : base(logger, context)
         {
+            _componentTypeEvent = componentTypeEvent;
             _requestEvent = requestEvent;
             _componentHistoricItemService = componentHistoricItemService;
         }
 
-        public void Create(CreateComponentViewModel vm, string userId = null)
+        public void Create(CreateComponentInputModel vm, string userId = null)
         {
-            if (vm.IsValid() && !_requestEvent.Exists(vm.Type, vm.RequestId))
+            if (vm.IsValid())
             {
                 var requestId = _requestEvent.GetId(vm.RequestId);
                 if (requestId <= 0)
                     throw new ArgumentException("Request not found.");
 
-                var requestComponent = new Component(vm.Type, vm.Identifier,
+                var requestComponent = new Component(vm.ComponentTypeId, vm.Identifier,
                     vm.QueryComponent, vm.AnomalyIgnorance, vm.IsDenominated, vm.StoreHistoricals, requestId);
 
                 _context.Components.Add(requestComponent);
                 _context.SaveChanges(userId);
                 
-                _logger.LogInformation($"{_serviceName} Create (CreateComponentViewModel): request " +
+                _logger.LogInformation($"{_serviceName} Create (CreateComponentInputModel): request " +
                                        $"component {requestComponent.Guid} is created by {userId}");
 
                 return; // Done
@@ -253,6 +256,42 @@ namespace Nozomi.Service.Services
                     $"Invalid component datum id:{id}, val:{val}. Please make sure that the " +
                     "Component is properly instantiated.");
             }
+        }
+
+        public void Update(UpdateComponentInputModel vm, string userId = null)
+        {
+            if (vm.IsValid())
+            {
+                var query = _context.Components.AsTracking()
+                    .Where(e => e.Guid.Equals(vm.Guid));
+
+                if (!string.IsNullOrEmpty(userId))
+                    query = query.Where(e => e.CreatedById.Equals(userId));
+
+                var component = query.FirstOrDefault();
+                if (component != null)
+                {
+                    component.ComponentTypeId = vm.ComponentTypeId;
+                    component.Identifier = vm.Identifier;
+                    component.QueryComponent = vm.QueryComponent;
+                    component.IsDenominated = vm.IsDenominated;
+                    component.AnomalyIgnorance = vm.AnomalyIgnorance;
+                    component.StoreHistoricals = vm.StoreHistoricals;
+
+                    _context.Components.Update(component);
+                    _context.SaveChanges(userId); // Push e changes
+
+                    if (vm.History != null && vm.History.Any()) // If there's anything, we'll have to update it
+                        foreach (var historicItem in vm.History)
+                            _componentHistoricItemService.Update(historicItem, userId);
+
+                    return;
+                }
+                
+                throw new KeyNotFoundException("Can't find the component for the associated payload and/or user.");
+            }
+
+            throw new InvalidOperationException("Invalid payload.");
         }
 
         public NozomiResult<string> Update(UpdateRequestComponent updateRequestComponent, string userId = null)

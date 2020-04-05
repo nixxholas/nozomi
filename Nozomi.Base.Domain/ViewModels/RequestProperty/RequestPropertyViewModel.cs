@@ -9,7 +9,7 @@ namespace Nozomi.Data.ViewModels.RequestProperty
         
         public RequestPropertyViewModel(Guid guid, RequestPropertyType type, string key, string value)
         {
-            Guid = guid.ToString();
+            Guid = guid;
             Type = type;
             Key = key;
             Value = value;
@@ -18,6 +18,6 @@ namespace Nozomi.Data.ViewModels.RequestProperty
         /// <summary>
         /// The unique identifier of the request property.
         /// </summary>
-        public string Guid { get; set; }
+        public Guid Guid { get; set; }
     }
 }

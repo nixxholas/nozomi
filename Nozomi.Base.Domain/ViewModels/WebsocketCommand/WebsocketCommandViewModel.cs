@@ -9,7 +9,7 @@ namespace Nozomi.Data.ViewModels.WebsocketCommand
     {
         public WebsocketCommandViewModel() {}
 
-        public WebsocketCommandViewModel(string guid, CommandType type, string name, long delay,
+        public WebsocketCommandViewModel(Guid guid, CommandType type, string name, long delay,
             bool isEnabled, ICollection<WebsocketCommandPropertyViewModel> properties, string requestGuid)
         {
             Guid = guid;
@@ -18,7 +18,10 @@ namespace Nozomi.Data.ViewModels.WebsocketCommand
             Delay = delay;
             IsEnabled = isEnabled;
             Properties = properties;
-            RequestGuid = requestGuid;
+            if (System.Guid.TryParse(requestGuid, out var parsedGuid))
+                RequestGuid = parsedGuid;
+            else
+                throw new InvalidCastException("Invalid request guid.");
         }
         
         /// <summary>
@@ -40,7 +43,7 @@ namespace Nozomi.Data.ViewModels.WebsocketCommand
         /// <summary>
         /// The unique identifier of the request this command is linked to.
         /// </summary>
-        public string RequestGuid { get; set; }
+        public Guid RequestGuid { get; set; }
 
         /// <summary>
         /// Is this enabled?
@@ -56,7 +59,7 @@ namespace Nozomi.Data.ViewModels.WebsocketCommand
         /// <summary>
         /// The unique GUID identifier of he websocket command.
         /// </summary>
-        public string Guid { get; set; }
+        public Guid Guid { get; set; }
         
         /// <summary>
         /// The collection of properties linked to this websocket command.

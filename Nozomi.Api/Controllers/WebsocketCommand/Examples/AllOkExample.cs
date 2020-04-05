@@ -17,7 +17,7 @@ namespace Nozomi.Api.Controllers.WebsocketCommand.Examples
             
             return new List<WebsocketCommandViewModel>
             {
-                new WebsocketCommandViewModel(Guid.NewGuid().ToString(), CommandType.Json, "Command", 5000, 
+                new WebsocketCommandViewModel(Guid.NewGuid(), CommandType.Json, "Command", 5000, 
                     true, new List<WebsocketCommandPropertyViewModel>
                     {
                         new WebsocketCommandPropertyViewModel
@@ -29,7 +29,7 @@ namespace Nozomi.Api.Controllers.WebsocketCommand.Examples
                             IsEnabled = true 
                         }
                     }, exampleRequestGuid.ToString()),
-                new WebsocketCommandViewModel(Guid.NewGuid().ToString(), CommandType.Json, "Auth", 5000, 
+                new WebsocketCommandViewModel(Guid.NewGuid(), CommandType.Json, "Auth", 5000, 
                     true, new List<WebsocketCommandPropertyViewModel>
                     {
                         new WebsocketCommandPropertyViewModel

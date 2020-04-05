@@ -9,11 +9,11 @@ namespace Nozomi.Web2.Controllers.v1.Request
     {
         NozomiResult<JsonResult> All(bool includeNested);
 
-        Task<IActionResult> Create(CreateRequestViewModel vm);
+        Task<IActionResult> Create(CreateRequestInputModel vm);
         
         IActionResult GetAll(int index = 0);
 
-        IActionResult Update(UpdateRequestViewModel vm);
+        IActionResult Update(UpdateRequestInputModel vm);
 
         IActionResult Delete(string guid);
     }
