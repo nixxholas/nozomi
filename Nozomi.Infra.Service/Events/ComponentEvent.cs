@@ -219,6 +219,17 @@ namespace Nozomi.Service.Events
                     .ToList();
         }
 
+        public bool Exists(Guid guid, string userId = null)
+        {
+            var query = _context.Components.AsNoTracking()
+                .Where(e => e.Guid.Equals(guid));
+
+            if (!string.IsNullOrEmpty(userId))
+                query = query.Where(e => e.CreatedById.Equals(userId));
+
+            return query.Any();
+        }
+
         public long GetPredicateCount(Expression<Func<Component, bool>> predicate)
         {
             if (predicate == null)
