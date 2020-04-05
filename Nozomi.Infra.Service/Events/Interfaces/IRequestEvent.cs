@@ -34,7 +34,7 @@ namespace Nozomi.Service.Events.Interfaces
         
         Request GetActive(long id, bool track = false);
 
-        IQueryable<RequestInputModel> ViewAll(int index = 0, string createdBy = null, bool enabledOnly = true, 
+        IQueryable<RequestViewModel> ViewAll(int index = 0, string createdBy = null, bool enabledOnly = true, 
             bool track = false);
 
         /// <summary>

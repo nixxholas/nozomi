@@ -4,7 +4,7 @@ using Nozomi.Data.ViewModels.RequestProperty;
 
 namespace Nozomi.Data.ViewModels.Request
 {
-    public class UpdateRequestInputModel : RequestInputModel
+    public class UpdateRequestInputModel : RequestViewModel
     {
         public new bool? IsEnabled { get; set; }
         

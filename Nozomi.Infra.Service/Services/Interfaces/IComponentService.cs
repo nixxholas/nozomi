@@ -15,6 +15,8 @@ namespace Nozomi.Service.Services.Interfaces
         NozomiResult<string> UpdatePairValue(long id, decimal val);
         NozomiResult<string> UpdatePairValue(long id, string val);
 
+        void Update(UpdateComponentInputModel vm, string userId = null);
+
         NozomiResult<string> Update(UpdateRequestComponent updateRequestComponent, string userId = null);
 
         NozomiResult<string> Delete(long id, string userId = null, bool hardDelete = false);

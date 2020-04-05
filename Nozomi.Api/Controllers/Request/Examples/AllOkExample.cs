@@ -10,13 +10,13 @@ using Swashbuckle.AspNetCore.Filters;
 
 namespace Nozomi.Api.Controllers.Request.Examples
 {
-    public class AllOkExample : IExamplesProvider<IEnumerable<RequestInputModel>>
+    public class AllOkExample : IExamplesProvider<IEnumerable<RequestViewModel>>
     {
-        public IEnumerable<RequestInputModel> GetExamples()
+        public IEnumerable<RequestViewModel> GetExamples()
         {
-            return new List<RequestInputModel>
+            return new List<RequestViewModel>
             {
-                new RequestInputModel
+                new RequestViewModel
                 {
                     Guid = Guid.NewGuid(),
                     IsEnabled = true,

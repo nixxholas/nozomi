@@ -20,25 +20,30 @@ namespace Nozomi.Service.Services.Requests
 {
     public class RequestService : BaseService<RequestService, NozomiDbContext>, IRequestService
     {
+        private readonly IComponentEvent _componentEvent;
         private readonly ICurrencyEvent _currencyEvent;
         private readonly ICurrencyPairEvent _currencyPairEvent;
         private readonly ICurrencyTypeEvent _currencyTypeEvent;
         private readonly IRequestPropertyEvent _requestPropertyEvent;
         private readonly IWebsocketCommandEvent _websocketCommandEvent;
+        private readonly IComponentService _componentService;
         private readonly IRequestPropertyService _requestPropertyService;
         private readonly IWebsocketCommandService _websocketCommandService;
         
-        public RequestService(ILogger<RequestService> logger, NozomiDbContext context,
+        public RequestService(ILogger<RequestService> logger, NozomiDbContext context, IComponentEvent componentEvent,
             ICurrencyEvent currencyEvent, ICurrencyPairEvent currencyPairEvent, ICurrencyTypeEvent currencyTypeEvent,
-            IRequestPropertyEvent requestPropertyEvent, IRequestPropertyService requestPropertyService, 
-            IWebsocketCommandEvent websocketCommandEvent, IWebsocketCommandService websocketCommandService)
+            IRequestPropertyEvent requestPropertyEvent, IWebsocketCommandEvent websocketCommandEvent, 
+            IComponentService componentService, IRequestPropertyService requestPropertyService, 
+            IWebsocketCommandService websocketCommandService)
             : base(logger, context)
         {
+            _componentEvent = componentEvent;
             _currencyEvent = currencyEvent;
             _currencyPairEvent = currencyPairEvent;
             _currencyTypeEvent = currencyTypeEvent;
             _requestPropertyEvent = requestPropertyEvent;
             _websocketCommandEvent = websocketCommandEvent;
+            _componentService = componentService;
             _requestPropertyService = requestPropertyService;
             _websocketCommandService = websocketCommandService;
         }
@@ -360,16 +365,20 @@ namespace Nozomi.Service.Services.Requests
                     request.DataPath = vm.DataPath;
                     request.Delay = vm.Delay;
                     request.FailureDelay = vm.FailureDelay;
-                    request.RequestComponents = vm.Components
-                        .Select(c => new Component()).ToList();
-                    if (vm.Properties != null && vm.Properties.Any())
-                    {
+                    if (vm.Components != null && vm.Components.Any()) { // Safetynet
+                        // Update the components if any
+                        foreach (var updComp in vm.Components)
+                        {
+                            if (_componentEvent.Exists(updComp.Guid, userId))
+                                _componentService.Update(updComp, userId);
+                        }
+                    }
+                    if (vm.Properties != null && vm.Properties.Any()) { // Safetynet
+                        // Update the properties if any
                         foreach (var updReqProp in vm.Properties)
                         {
-                            if (_requestPropertyEvent.Exists(updReqProp.Guid, userId))
-                            {
+                            if (_requestPropertyEvent.Exists(updReqProp.Guid, userId)) // Ensure it exists first
                                 _requestPropertyService.Update(updReqProp, userId);
-                            }
                         }
                     }
                     if (vm.WebsocketCommands != null && vm.WebsocketCommands.Any()) { // Safetynet
@@ -377,9 +386,7 @@ namespace Nozomi.Service.Services.Requests
                         foreach (var updWsc in vm.WebsocketCommands)
                         {
                             if (_websocketCommandEvent.Exists(updWsc.Guid, userId)) // Ensure it exists first
-                            {
                                 _websocketCommandService.Update(updWsc, userId);
-                            }
                         }
                     }
 

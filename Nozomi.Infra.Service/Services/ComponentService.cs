@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
@@ -253,6 +254,43 @@ namespace Nozomi.Service.Services
                     $"Invalid component datum id:{id}, val:{val}. Please make sure that the " +
                     "Component is properly instantiated.");
             }
+        }
+
+        public void Update(UpdateComponentInputModel vm, string userId = null)
+        {
+            if (vm.IsValid())
+            {
+                var query = _context.Components.AsTracking()
+                    .Where(e => e.Guid.Equals(vm.Guid));
+
+                if (!string.IsNullOrEmpty(userId))
+                    query = query.Where(e => e.CreatedById.Equals(userId));
+
+                var component = query.FirstOrDefault();
+                if (component != null)
+                {
+                    component.ComponentTypeId = vm.ComponentTypeId;
+                    component.Identifier = vm.Identifier;
+                    component.QueryComponent = vm.QueryComponent;
+                    component.IsDenominated = vm.IsDenominated;
+                    component.AnomalyIgnorance = vm.AnomalyIgnorance;
+                    component.StoreHistoricals = vm.StoreHistoricals;
+
+                    _context.Components.Update(component);
+                    _context.SaveChanges(userId); // Push e changes
+
+                    if (vm.History != null && vm.History.Any()) // If there's anything, we'll have to update it
+                    {
+                        
+                    }
+
+                    return;
+                }
+                
+                throw new KeyNotFoundException("Can't find the component for the associated payload and/or user.");
+            }
+
+            throw new InvalidOperationException("Invalid payload.");
         }
 
         public NozomiResult<string> Update(UpdateRequestComponent updateRequestComponent, string userId = null)

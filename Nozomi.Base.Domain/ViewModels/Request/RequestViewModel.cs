@@ -7,11 +7,11 @@ using Nozomi.Data.ViewModels.WebsocketCommand;
 
 namespace Nozomi.Data.ViewModels.Request
 {
-    public class RequestInputModel : CreateRequestInputModel
+    public class RequestViewModel : CreateRequestInputModel
     {
-        public RequestInputModel() {}
+        public RequestViewModel() {}
         
-        public RequestInputModel(Guid guid, RequestType requestType, ResponseType responseType, string dataPath,
+        public RequestViewModel(Guid guid, RequestType requestType, ResponseType responseType, string dataPath,
             int delay, long failureDelay, bool isEnabled, string currencySlug, string currencyPairGuid, 
             string currencyTypeGuid)
         {
@@ -27,7 +27,7 @@ namespace Nozomi.Data.ViewModels.Request
             CurrencyTypeGuid = currencyTypeGuid;
         }
         
-        public RequestInputModel(Guid guid, RequestType requestType, ResponseType responseType, string dataPath,
+        public RequestViewModel(Guid guid, RequestType requestType, ResponseType responseType, string dataPath,
             int delay, long failureDelay, bool isEnabled, string currencySlug, string currencyPairGuid, 
             string currencyTypeGuid, ICollection<ComponentViewModel> components, 
             ICollection<RequestPropertyViewModel> properties)
