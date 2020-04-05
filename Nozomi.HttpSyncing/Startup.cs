@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Nozomi.Data.Models.Web;
 using Nozomi.Infra.Syncing.HostedServices.RequestTypes;
 using Nozomi.Repo.Data;
 using Nozomi.Service.Events;
@@ -87,6 +88,7 @@ namespace Nozomi.HttpSyncing
             }
 
             services.AddTransient<IComponentEvent, ComponentEvent>();
+            services.AddTransient<IComponentTypeEvent, ComponentTypeEvent>();
             services.AddTransient<ICurrencyEvent, CurrencyEvent>();
             services.AddTransient<ICurrencyPairEvent, CurrencyPairEvent>();
             services.AddTransient<ICurrencyTypeEvent, CurrencyTypeEvent>();
