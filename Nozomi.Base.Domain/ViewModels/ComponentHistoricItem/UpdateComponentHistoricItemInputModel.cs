@@ -6,6 +6,11 @@ namespace Nozomi.Data.ViewModels.ComponentHistoricItem
     public class UpdateComponentHistoricItemInputModel
     {
         /// <summary>
+        /// Unique identifier of this historic item.
+        /// </summary>
+        public Guid Guid { get; set; }
+        
+        /// <summary>
         /// The timestamp of this historical value.
         /// </summary>
         public DateTime Timestamp { get; set; }
