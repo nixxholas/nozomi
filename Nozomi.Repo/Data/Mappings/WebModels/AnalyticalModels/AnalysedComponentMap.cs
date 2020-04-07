@@ -30,18 +30,18 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
             entityTypeBuilder.Property(ac => ac.Delay).HasDefaultValue(86400000); // 24 hours
             entityTypeBuilder.Property(ac => ac.ComponentType).HasDefaultValue(AnalysedComponentType.Unknown);
 
-            entityTypeBuilder.HasOne(ac => ac.Currency)
-                .WithMany(c => c.AnalysedComponents).HasForeignKey(ac => ac.CurrencyId)
-                .OnDelete(DeleteBehavior.Restrict)
-                .IsRequired(false);
-            entityTypeBuilder.HasOne(ac => ac.CurrencyType)
-                .WithMany(ct => ct.AnalysedComponents).HasForeignKey(ac => ac.CurrencyTypeId)
-                .OnDelete(DeleteBehavior.Restrict)
-                .IsRequired(false);
-            entityTypeBuilder.HasOne(ac => ac.CurrencyPair)
-                .WithMany(r => r.AnalysedComponents).HasForeignKey(ac => ac.CurrencyPairId)
-                .OnDelete(DeleteBehavior.Restrict)
-                .IsRequired(false);
+            // entityTypeBuilder.HasOne(ac => ac.Currency)
+            //     .WithMany(c => c.AnalysedComponents).HasForeignKey(ac => ac.CurrencyId)
+            //     .OnDelete(DeleteBehavior.Restrict)
+            //     .IsRequired(false);
+            // entityTypeBuilder.HasOne(ac => ac.CurrencyType)
+            //     .WithMany(ct => ct.AnalysedComponents).HasForeignKey(ac => ac.CurrencyTypeId)
+            //     .OnDelete(DeleteBehavior.Restrict)
+            //     .IsRequired(false);
+            // entityTypeBuilder.HasOne(ac => ac.CurrencyPair)
+            //     .WithMany(r => r.AnalysedComponents).HasForeignKey(ac => ac.CurrencyPairId)
+            //     .OnDelete(DeleteBehavior.Restrict)
+            //     .IsRequired(false);
             entityTypeBuilder.HasMany(ac => ac.AnalysedHistoricItems)
                 .WithOne(ahi => ahi.AnalysedComponent).HasForeignKey(ac => ac.AnalysedComponentId)
                 .OnDelete(DeleteBehavior.Restrict);

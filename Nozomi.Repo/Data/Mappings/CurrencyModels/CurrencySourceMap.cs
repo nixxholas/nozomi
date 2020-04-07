@@ -15,14 +15,14 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
             entityTypeBuilder.HasIndex(cs => new { cs.CurrencyId, cs.SourceId }).IsUnique()
                 .HasName("CurrencySource_CK_CurrencyId_SourceId");
 
-            entityTypeBuilder.HasOne(cs => cs.Currency)
-                .WithMany(c => c.CurrencySources).HasForeignKey(cs => cs.CurrencyId)
-                .OnDelete(DeleteBehavior.Restrict)
-                .HasConstraintName("CurrencySource_Currency_Constraint");
-            entityTypeBuilder.HasOne(cs => cs.Source)
-                .WithMany(s => s.SourceCurrencies).HasForeignKey(cs => cs.SourceId)
-                .OnDelete(DeleteBehavior.Restrict)
-                .HasConstraintName("CurrencySource_Source_Constraint");
+            // entityTypeBuilder.HasOne(cs => cs.Currency)
+            //     .WithMany(c => c.CurrencySources).HasForeignKey(cs => cs.CurrencyId)
+            //     .OnDelete(DeleteBehavior.Restrict)
+            //     .HasConstraintName("CurrencySource_Currency_Constraint");
+            // entityTypeBuilder.HasOne(cs => cs.Source)
+            //     .WithMany(s => s.SourceCurrencies).HasForeignKey(cs => cs.SourceId)
+            //     .OnDelete(DeleteBehavior.Restrict)
+            //     .HasConstraintName("CurrencySource_Source_Constraint");
         }
     }
 }

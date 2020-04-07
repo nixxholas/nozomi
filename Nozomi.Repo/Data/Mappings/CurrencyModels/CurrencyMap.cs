@@ -24,20 +24,20 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
             entityTypeBuilder.Property(c => c.DenominationName).IsRequired(false);
             entityTypeBuilder.Property(c => c.Name).IsRequired();
 
-            entityTypeBuilder.HasMany(c => c.AnalysedComponents).WithOne(ac => ac.Currency)
-                .HasForeignKey(c => c.CurrencyId).OnDelete(DeleteBehavior.Cascade)
-                .HasConstraintName("Currency_AnalysedComponents_Constraint")
-                .IsRequired(false);
-            entityTypeBuilder.HasOne(c => c.CurrencyType).WithMany(ct => ct.Currencies)
-                .HasForeignKey(c => c.CurrencyTypeId).OnDelete(DeleteBehavior.Cascade)
-                .HasConstraintName("Currencies_CurrencyType_Constraint");
-            entityTypeBuilder.HasMany(c => c.CurrencySources).WithOne(cs => cs.Currency)
-                .HasForeignKey(cs => cs.CurrencyId).OnDelete(DeleteBehavior.Restrict)
-                .HasConstraintName("Currency_CurrencySources_Constraint");
-            entityTypeBuilder.HasMany(c => c.Requests).WithOne(r => r.Currency)
-                .HasForeignKey(r => r.CurrencyId).OnDelete(DeleteBehavior.Cascade)
-                .HasConstraintName("Currencies_CurrencyRequests_Constraint")
-                .IsRequired(false);
+            // entityTypeBuilder.HasMany(c => c.AnalysedComponents).WithOne(ac => ac.Currency)
+            //     .HasForeignKey(c => c.CurrencyId).OnDelete(DeleteBehavior.Cascade)
+            //     .HasConstraintName("Currency_AnalysedComponents_Constraint")
+            //     .IsRequired(false);
+            // entityTypeBuilder.HasOne(c => c.CurrencyType).WithMany(ct => ct.Currencies)
+            //     .HasForeignKey(c => c.CurrencyTypeId).OnDelete(DeleteBehavior.Cascade)
+            //     .HasConstraintName("Currencies_CurrencyType_Constraint");
+            // entityTypeBuilder.HasMany(c => c.CurrencySources).WithOne(cs => cs.Currency)
+            //     .HasForeignKey(cs => cs.CurrencyId).OnDelete(DeleteBehavior.Restrict)
+            //     .HasConstraintName("Currency_CurrencySources_Constraint");
+            // entityTypeBuilder.HasMany(c => c.Requests).WithOne(r => r.Currency)
+            //     .HasForeignKey(r => r.CurrencyId).OnDelete(DeleteBehavior.Cascade)
+            //     .HasConstraintName("Currencies_CurrencyRequests_Constraint")
+            //     .IsRequired(false);
         }
     }
 }
