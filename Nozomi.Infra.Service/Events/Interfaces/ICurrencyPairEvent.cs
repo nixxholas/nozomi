@@ -15,17 +15,17 @@ namespace Nozomi.Service.Events.Interfaces
         
         long GetCount(string mainTicker = null);
         
-        ICollection<CurrencyPair> GetAllByCounterCurrency(
+        ICollection<ItemPair> GetAllByCounterCurrency(
             string counterCurrencyAbbrv = CoreConstants.GenericCounterCurrency);
         
-        ICollection<CurrencyPair> GetAllByMainCurrency(
+        ICollection<ItemPair> GetAllByMainCurrency(
             string mainCurrencyAbbrv = CoreConstants.GenericCurrency);
 
         [Obsolete]
         ICollection<Component> GetComponents(long analysedComponentId, bool track = false, int index = 0,
             bool ensureValid = true, ICollection<GenericComponentType> componentTypes = null);
 
-        ICollection<CurrencyPair> GetAllByTickerPairAbbreviation(string tickerPairAbbreviation, bool track = false);
+        ICollection<ItemPair> GetAllByTickerPairAbbreviation(string tickerPairAbbreviation, bool track = false);
 
         bool HasRelatedComponent(long analysedComponentId, AnalysedComponentType type);
 
@@ -41,13 +41,13 @@ namespace Nozomi.Service.Events.Interfaces
         AnalysedComponent GetRelatedAnalysedComponent(long analysedComponentId, AnalysedComponentType type, bool track = false);
 
         ICollection<AnalysedComponent> GetAnalysedComponents(long analysedComponentId, bool track = false);
-        ICollection<CurrencyPair> GetAll();
+        ICollection<ItemPair> GetAll();
 
-        CurrencyPair Get(long id, bool track = false, string userId = null);
+        ItemPair Get(long id, bool track = false, string userId = null);
 
-        CurrencyPair Get(string guid, bool track = false, string userId = null);
+        ItemPair Get(string guid, bool track = false, string userId = null);
 
-        CurrencyPair Get(Guid guid, bool track = false, string userId = null);
+        ItemPair Get(Guid guid, bool track = false, string userId = null);
 
         IEnumerable<CurrencyPairViewModel> Search(string queryTickerPair = null, int page = 0, int itemsPerPage = 0);
     }

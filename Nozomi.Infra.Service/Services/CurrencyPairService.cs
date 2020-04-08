@@ -37,7 +37,7 @@ namespace Nozomi.Service.Services
                 if (source != null && 
                     _currencySourceService.EnsurePairIsCreated(vm.MainTicker, vm.CounterTicker, source.Id, userId))
                 {
-                    _context.CurrencyPairs.Add(new CurrencyPair(vm.Type,
+                    _context.CurrencyPairs.Add(new ItemPair(vm.Type,
                         vm.MainTicker, vm.CounterTicker, vm.ApiUrl, vm.DefaultComponent, source.Id, vm.IsEnabled));
                 
                     return _context.SaveChanges(userId) == 1;   
@@ -62,10 +62,10 @@ namespace Nozomi.Service.Services
 
                     if (currencyPair != null)
                     {
-                        currencyPair.CurrencyPairType = vm.Type;
+                        currencyPair.Type = vm.Type;
                         currencyPair.MainTicker = vm.MainTicker;
                         currencyPair.CounterTicker = vm.CounterTicker;
-                        currencyPair.APIUrl = vm.ApiUrl;
+                        currencyPair.ApiUrl = vm.ApiUrl;
                         currencyPair.DefaultComponent = vm.DefaultComponent;
                         currencyPair.SourceId = source.Id;
                         currencyPair.IsEnabled = source.IsEnabled;
@@ -117,10 +117,10 @@ namespace Nozomi.Service.Services
                     NozomiResultType.Failed, "Please ensure that the main ticker is valid, that it exists in that source.");
             }
             
-            var currencyPair = new CurrencyPair()
+            var currencyPair = new ItemPair()
             {
-                CurrencyPairType = createCurrencyPair.CurrencyPairType,
-                APIUrl = createCurrencyPair.ApiUrl,
+                Type = createCurrencyPair.CurrencyPairType,
+                ApiUrl = createCurrencyPair.ApiUrl,
                 DefaultComponent = createCurrencyPair.DefaultComponent,
                 SourceId = createCurrencyPair.SourceId,
                 MainTicker = createCurrencyPair.MainCurrencyAbbrv,
@@ -163,8 +163,8 @@ namespace Nozomi.Service.Services
             cpToUpd.MainTicker = updateCurrencyPair.MainCurrencyAbbrv;
             cpToUpd.CounterTicker = updateCurrencyPair.CounterCurrencyAbbrv;
             cpToUpd.SourceId = updateCurrencyPair.SourceId;
-            cpToUpd.CurrencyPairType = updateCurrencyPair.CurrencyPairType;
-            cpToUpd.APIUrl = updateCurrencyPair.ApiUrl;
+            cpToUpd.Type = updateCurrencyPair.CurrencyPairType;
+            cpToUpd.ApiUrl = updateCurrencyPair.ApiUrl;
             cpToUpd.DefaultComponent = updateCurrencyPair.DefaultComponent;
             cpToUpd.IsEnabled = updateCurrencyPair.IsEnabled;
             
@@ -206,7 +206,7 @@ namespace Nozomi.Service.Services
             return new NozomiResult<string>(NozomiResultType.Failed, "Delete failed.");
         }
 
-        public IEnumerable<CurrencyPair> GetAllActive(int index = 0, bool includeNested = false)
+        public IEnumerable<ItemPair> GetAllActive(int index = 0, bool includeNested = false)
         {
             return !includeNested ? _context.CurrencyPairs.Include(cp => cp.Requests)
                     .ThenInclude(cpr => cpr.RequestComponents)
@@ -221,7 +221,7 @@ namespace Nozomi.Service.Services
         public IEnumerable<string> GetAllCurrencyPairUrls()
         {
             return _context.CurrencyPairs.Where(cp => cp.DeletedAt == null && cp.IsEnabled)
-                .Select(cp => cp.APIUrl)
+                .Select(cp => cp.ApiUrl)
                 .ToList();
         }
 

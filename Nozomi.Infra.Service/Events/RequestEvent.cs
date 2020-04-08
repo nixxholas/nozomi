@@ -190,7 +190,7 @@ namespace Nozomi.Service.Events
             
             var query = _context.Requests.AsNoTracking()
                 .Include(r => r.Item)
-                .Include(r => r.CurrencyPair)
+                .Include(r => r.ItemPair)
                 .Include(r => r.CurrencyType)
                 .Where(r => r.DeletedAt == null);
 
@@ -209,7 +209,7 @@ namespace Nozomi.Service.Events
                     .Take(100)
                     .Select(r => new RequestViewModel(r.Guid, r.RequestType, r.ResponseType, r.DataPath, 
                         r.Delay, r.FailureDelay, r.IsEnabled, r.CurrencyId > 0 ? r.Item.Slug : null, 
-                        r.CurrencyPairId > 0 ? r.CurrencyPair.Guid.ToString() : null, 
+                        r.CurrencyPairId > 0 ? r.ItemPair.Guid.ToString() : null, 
                         r.CurrencyTypeId > 0 ? r.CurrencyType.Guid.ToString() : null,
                         r.RequestComponents.Select(rc => new ComponentViewModel
                         {
@@ -225,7 +225,7 @@ namespace Nozomi.Service.Events
                 .Take(100)
                 .Select(r => new RequestViewModel(r.Guid, r.RequestType, r.ResponseType, r.DataPath, r.Delay,
                     r.FailureDelay, r.IsEnabled, r.CurrencyId > 0 ? r.Item.Slug : null, 
-                    r.CurrencyPairId > 0 ? r.CurrencyPair.Guid.ToString() : null, 
+                    r.CurrencyPairId > 0 ? r.ItemPair.Guid.ToString() : null, 
                     r.CurrencyTypeId > 0 ? r.CurrencyType.Guid.ToString() : null, 
                     null, null));
         }
@@ -462,7 +462,7 @@ namespace Nozomi.Service.Events
                 EF.CompileQuery((NozomiDbContext context, RequestType type) =>
                     context.Requests
                         .Include(cpr => cpr.RequestComponents)
-                        .Include(r => r.CurrencyPair)
+                        .Include(r => r.ItemPair)
                         .Include(r => r.RequestProperties)
                         .Include(r => r.WebsocketCommands)
                         .ThenInclude(wsc => wsc.WebsocketCommandProperties)

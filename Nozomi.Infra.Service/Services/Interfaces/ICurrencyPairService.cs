@@ -20,7 +20,7 @@ namespace Nozomi.Service.Services.Interfaces
         
         long[][] GetCurrencySourceMappings();
         //IEnumerable<CurrencyPair> GetAvailCPairsForAdvType(long id);
-        IEnumerable<CurrencyPair> GetAllActive(int index = 0, bool includeNested = false);
+        IEnumerable<ItemPair> GetAllActive(int index = 0, bool includeNested = false);
         IEnumerable<string> GetAllCurrencyPairUrls();
     }
 }
