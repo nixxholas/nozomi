@@ -102,7 +102,7 @@ namespace Nozomi.Repo.Migrations
                         .IsUnique()
                         .HasName("Currency_Index_Slug");
 
-                    b.ToTable("Items");
+                    b.ToTable("Currencies");
                 });
 
             modelBuilder.Entity("Nozomi.Data.Models.Currency.CurrencyPair", b =>
@@ -273,7 +273,7 @@ namespace Nozomi.Repo.Migrations
                     b.ToTable("CurrencySources");
                 });
 
-            modelBuilder.Entity("Nozomi.Data.Models.Currency.ItemType", b =>
+            modelBuilder.Entity("Nozomi.Data.Models.Currency.CurrencyType", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -992,8 +992,8 @@ namespace Nozomi.Repo.Migrations
 
             modelBuilder.Entity("Nozomi.Data.Models.Currency.Currency", b =>
                 {
-                    b.HasOne("Nozomi.Data.Models.Currency.ItemType", "ItemType")
-                        .WithMany("Items")
+                    b.HasOne("Nozomi.Data.Models.Currency.CurrencyType", "CurrencyType")
+                        .WithMany("Currencies")
                         .HasForeignKey("CurrencyTypeId")
                         .HasConstraintName("CurrencyType_Currencies_Constraint")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1058,7 +1058,7 @@ namespace Nozomi.Repo.Migrations
                         .HasForeignKey("CurrencyPairId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("Nozomi.Data.Models.Currency.ItemType", "ItemType")
+                    b.HasOne("Nozomi.Data.Models.Currency.CurrencyType", "CurrencyType")
                         .WithMany("AnalysedComponents")
                         .HasForeignKey("CurrencyTypeId")
                         .HasConstraintName("CurrencyType_AnalysedComponents_Constraint")
@@ -1105,7 +1105,7 @@ namespace Nozomi.Repo.Migrations
                         .HasForeignKey("CurrencyPairId")
                         .HasConstraintName("CurrencyPair_CurrencyPairRequest_Constraint");
 
-                    b.HasOne("Nozomi.Data.Models.Currency.ItemType", "ItemType")
+                    b.HasOne("Nozomi.Data.Models.Currency.CurrencyType", "CurrencyType")
                         .WithMany("Requests")
                         .HasForeignKey("CurrencyTypeId")
                         .HasConstraintName("CurrencyType_Request_Constraint");

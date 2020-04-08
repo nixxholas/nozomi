@@ -47,7 +47,7 @@ namespace Nozomi.Data.Models.Categorisation
         public Guid Guid { get; set; }
 
         public long ItemTypeId { get; set; }
-        public ItemType ItemType { get; set; }
+        public CurrencyType ItemType { get; set; }
         
         public string LogoPath { get; set; }
 

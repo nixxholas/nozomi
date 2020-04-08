@@ -23,7 +23,7 @@ namespace Nozomi.Service.Services
         {
             if (vm.IsValid() && !_currencyTypeEvent.Exists(vm.TypeShortForm))
             {
-                var currencyType = new ItemType(vm.TypeShortForm, vm.Name);
+                var currencyType = new CurrencyType(vm.TypeShortForm, vm.Name);
                 
                 _context.CurrencyTypes.Add(currencyType);
                 _context.SaveChanges(userId);

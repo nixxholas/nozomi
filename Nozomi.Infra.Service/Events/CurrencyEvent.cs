@@ -99,7 +99,7 @@ namespace Nozomi.Service.Events
                 index = 0;
 
             if (string.IsNullOrWhiteSpace(currencyType))
-                throw new ArgumentNullException("Parameter 'itemType' is supposed to contain a valid string.");
+                throw new ArgumentNullException("Parameter 'currencyType' is supposed to contain a valid string.");
 
             var query = _context.Currencies.AsNoTracking()
                 .Include(c => c.ItemType)
@@ -197,7 +197,7 @@ namespace Nozomi.Service.Events
                 index = 0;
 
             if (string.IsNullOrWhiteSpace(currencyType))
-                throw new ArgumentNullException("Parameter 'itemType' is supposed to contain a valid string.");
+                throw new ArgumentNullException("Parameter 'currencyType' is supposed to contain a valid string.");
 
             var query = _context.Currencies.AsNoTracking()
                 .Include(c => c.ItemType)
@@ -585,13 +585,13 @@ namespace Nozomi.Service.Events
                 return 0;
 
             return query
-                .Include(ct => ct.Items)
+                .Include(ct => ct.Currencies)
                 .ThenInclude(c => c.AnalysedComponents)
                 .ThenInclude(ac => ac.AnalysedHistoricItems)
-                .Include(ct => ct.Items)
+                .Include(ct => ct.Currencies)
                 .ThenInclude(c => c.Requests)
                 .ThenInclude(r => r.RequestComponents)
-                .SelectMany(ct => ct.Items
+                .SelectMany(ct => ct.Currencies
                     .Where(c => c.DeletedAt == null && c.IsEnabled)
                     .OrderBy(c => c.Id))
                 .LongCount();
@@ -641,7 +641,7 @@ namespace Nozomi.Service.Events
                 .Select(c => new CurrencyDTO
                 {
                     Id = c.Id,
-                    ItemType = c.ItemType,
+                    CurrencyType = c.ItemType,
                     LogoPath = c.LogoPath,
                     Abbreviation = c.Abbreviation,
                     SourceCount = c.ItemSources.Count,

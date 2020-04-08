@@ -191,7 +191,7 @@ namespace Nozomi.Service.Events
             var query = _context.Requests.AsNoTracking()
                 .Include(r => r.Item)
                 .Include(r => r.ItemPair)
-                .Include(r => r.ItemType)
+                .Include(r => r.CurrencyType)
                 .Where(r => r.DeletedAt == null);
 
             if (!string.IsNullOrWhiteSpace(createdBy) && !string.IsNullOrEmpty(createdBy))
@@ -210,7 +210,7 @@ namespace Nozomi.Service.Events
                     .Select(r => new RequestViewModel(r.Guid, r.RequestType, r.ResponseType, r.DataPath, 
                         r.Delay, r.FailureDelay, r.IsEnabled, r.CurrencyId > 0 ? r.Item.Slug : null, 
                         r.CurrencyPairId > 0 ? r.ItemPair.Guid.ToString() : null, 
-                        r.CurrencyTypeId > 0 ? r.ItemType.Guid.ToString() : null,
+                        r.CurrencyTypeId > 0 ? r.CurrencyType.Guid.ToString() : null,
                         r.RequestComponents.Select(rc => new ComponentViewModel
                         {
                             Guid = rc.Guid,
@@ -226,7 +226,7 @@ namespace Nozomi.Service.Events
                 .Select(r => new RequestViewModel(r.Guid, r.RequestType, r.ResponseType, r.DataPath, r.Delay,
                     r.FailureDelay, r.IsEnabled, r.CurrencyId > 0 ? r.Item.Slug : null, 
                     r.CurrencyPairId > 0 ? r.ItemPair.Guid.ToString() : null, 
-                    r.CurrencyTypeId > 0 ? r.ItemType.Guid.ToString() : null, 
+                    r.CurrencyTypeId > 0 ? r.CurrencyType.Guid.ToString() : null, 
                     null, null));
         }
 

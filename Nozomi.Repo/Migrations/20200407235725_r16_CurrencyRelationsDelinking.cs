@@ -20,7 +20,7 @@ namespace Nozomi.Repo.Migrations
 
             migrationBuilder.DropForeignKey(
                 name: "CurrencyType_Currencies_Constraint",
-                table: "Items");
+                table: "Currencies");
 
             migrationBuilder.DropForeignKey(
                 name: "Source_CurrencyPairs_Constraint",
@@ -88,7 +88,7 @@ namespace Nozomi.Repo.Migrations
 
             migrationBuilder.AlterColumn<string>(
                 name: "Description",
-                table: "Items",
+                table: "Currencies",
                 nullable: false,
                 oldClrType: typeof(string),
                 oldType: "text",
@@ -108,7 +108,7 @@ namespace Nozomi.Repo.Migrations
                 name: "FK_AnalysedComponents_Currencies_CurrencyId",
                 table: "AnalysedComponents",
                 column: "CurrencyId",
-                principalTable: "Items",
+                principalTable: "Currencies",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Restrict);
 
@@ -130,7 +130,7 @@ namespace Nozomi.Repo.Migrations
 
             migrationBuilder.AddForeignKey(
                 name: "FK_Currencies_CurrencyTypes_CurrencyTypeId",
-                table: "Items",
+                table: "Currencies",
                 column: "CurrencyTypeId",
                 principalTable: "CurrencyTypes",
                 principalColumn: "Id",
@@ -148,7 +148,7 @@ namespace Nozomi.Repo.Migrations
                 name: "FK_CurrencySources_Currencies_CurrencyId",
                 table: "CurrencySources",
                 column: "CurrencyId",
-                principalTable: "Items",
+                principalTable: "Currencies",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Cascade);
 
@@ -164,7 +164,7 @@ namespace Nozomi.Repo.Migrations
                 name: "FK_Requests_Currencies_CurrencyId",
                 table: "Requests",
                 column: "CurrencyId",
-                principalTable: "Items",
+                principalTable: "Currencies",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Restrict);
 
@@ -201,7 +201,7 @@ namespace Nozomi.Repo.Migrations
 
             migrationBuilder.DropForeignKey(
                 name: "FK_Currencies_CurrencyTypes_CurrencyTypeId",
-                table: "Items");
+                table: "Currencies");
 
             migrationBuilder.DropForeignKey(
                 name: "FK_CurrencyPairs_Sources_SourceId",
@@ -264,7 +264,7 @@ namespace Nozomi.Repo.Migrations
 
             migrationBuilder.AlterColumn<string>(
                 name: "Description",
-                table: "Items",
+                table: "Currencies",
                 type: "text",
                 nullable: true,
                 oldClrType: typeof(string));
@@ -282,7 +282,7 @@ namespace Nozomi.Repo.Migrations
                 name: "Currency_AnalysedComponents_Constraint",
                 table: "AnalysedComponents",
                 column: "CurrencyId",
-                principalTable: "Items",
+                principalTable: "Currencies",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Cascade);
 
@@ -304,7 +304,7 @@ namespace Nozomi.Repo.Migrations
 
             migrationBuilder.AddForeignKey(
                 name: "CurrencyType_Currencies_Constraint",
-                table: "Items",
+                table: "Currencies",
                 column: "CurrencyTypeId",
                 principalTable: "CurrencyTypes",
                 principalColumn: "Id",
@@ -322,7 +322,7 @@ namespace Nozomi.Repo.Migrations
                 name: "CurrencySource_Currency_Constraint",
                 table: "CurrencySources",
                 column: "CurrencyId",
-                principalTable: "Items",
+                principalTable: "Currencies",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Restrict);
 
@@ -338,7 +338,7 @@ namespace Nozomi.Repo.Migrations
                 name: "Currencies_CurrencyRequests_Constraint",
                 table: "Requests",
                 column: "CurrencyId",
-                principalTable: "Items",
+                principalTable: "Currencies",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Cascade);
 

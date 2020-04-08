@@ -34,7 +34,7 @@ namespace Nozomi.Data.ViewModels.Request
                 RuleFor(r => r.Delay).GreaterThan(-1);
                 RuleFor(r => r.FailureDelay).GreaterThan(-1);
                 RuleFor(r => r.ParentType).IsInEnum();
-                // // Safetynet for Items
+                // // Safetynet for Currencies
                 // RuleFor(r => r.CurrencySlug).NotNull().NotEmpty()
                 //     // Ignore the check if a currency pair or currency type is selected.
                 //     .Unless(r => 

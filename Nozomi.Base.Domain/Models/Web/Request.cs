@@ -36,7 +36,7 @@ namespace Nozomi.Data.Models.Web
             CurrencyPairId = r.CurrencyPairId;
             ItemPair = r.ItemPair;
             CurrencyTypeId = r.CurrencyTypeId;
-            ItemType = r.ItemType;
+            CurrencyType = r.CurrencyType;
             CreatedAt = r.CreatedAt;
             CreatedById = r.CreatedById;
             ModifiedAt = r.ModifiedAt;
@@ -62,7 +62,7 @@ namespace Nozomi.Data.Models.Web
         /// <param name="currencyPairId"></param>
         /// <param name="itemPair"></param>
         /// <param name="currencyTypeId"></param>
-        /// <param name="itemType"></param>
+        /// <param name="currencyType"></param>
         /// <param name="createdAt"></param>
         /// <param name="createdById"></param>
         /// <param name="modifiedAt"></param>
@@ -73,7 +73,7 @@ namespace Nozomi.Data.Models.Web
         /// <param name="websocketCommands"></param>
         public Request(long id, Guid guid, RequestType requestType, ResponseType responseType, string dataPath,
             int delay, long failureDelay, long currencyId, Item item, long currencyPairId,
-            ItemPair itemPair, long currencyTypeId, ItemType itemType, DateTime createdAt,
+            ItemPair itemPair, long currencyTypeId, CurrencyType currencyType, DateTime createdAt,
             string createdById, DateTime modifiedAt, string modifiedById, bool isEnabled,
             ICollection<Component> components, ICollection<RequestProperty> requestProperties,
             ICollection<WebsocketCommand> websocketCommands)
@@ -90,7 +90,7 @@ namespace Nozomi.Data.Models.Web
             CurrencyPairId = currencyPairId;
             ItemPair = itemPair;
             CurrencyTypeId = currencyTypeId;
-            ItemType = itemType;
+            CurrencyType = currencyType;
             CreatedAt = createdAt;
             CreatedById = createdById;
             ModifiedAt = modifiedAt;
@@ -167,7 +167,7 @@ namespace Nozomi.Data.Models.Web
         
         public long? CurrencyTypeId { get; set; }
         
-        public ItemType ItemType { get; set; }
+        public CurrencyType CurrencyType { get; set; }
 
         public ICollection<Component> RequestComponents { get; set; }
         public ICollection<RequestProperty> RequestProperties { get; set; }

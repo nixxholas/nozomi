@@ -69,7 +69,7 @@ namespace Nozomi.Data.Models.Web.Analytical
             CurrencyId = component.CurrencyId;
             ItemPair = component.ItemPair;
             CurrencyPairId = component.CurrencyPairId;
-            ItemType = component.ItemType;
+            CurrencyType = component.CurrencyType;
             CurrencyTypeId = component.CurrencyTypeId;
             Value = component.Value;
             IsFailing = component.IsFailing;
@@ -103,7 +103,7 @@ namespace Nozomi.Data.Models.Web.Analytical
             CurrencyId = component.CurrencyId;
             ItemPair = component.ItemPair;
             CurrencyPairId = component.CurrencyPairId;
-            ItemType = component.ItemType;
+            CurrencyType = component.CurrencyType;
             CurrencyTypeId = component.CurrencyTypeId;
             Value = component.Value;
             IsFailing = component.IsFailing;
@@ -154,7 +154,7 @@ namespace Nozomi.Data.Models.Web.Analytical
             CurrencyId = component.CurrencyId;
             ItemPair = component.ItemPair;
             CurrencyPairId = component.CurrencyPairId;
-            ItemType = component.ItemType;
+            CurrencyType = component.CurrencyType;
             CurrencyTypeId = component.CurrencyTypeId;
             Value = component.Value;
             IsFailing = component.IsFailing;
@@ -207,7 +207,7 @@ namespace Nozomi.Data.Models.Web.Analytical
             CurrencyId = component.CurrencyId;
             ItemPair = component.ItemPair;
             CurrencyPairId = component.CurrencyPairId;
-            ItemType = component.ItemType;
+            CurrencyType = component.CurrencyType;
             CurrencyTypeId = component.CurrencyTypeId;
             Value = component.Value;
             IsFailing = component.IsFailing;
@@ -298,7 +298,7 @@ namespace Nozomi.Data.Models.Web.Analytical
         
         public long? CurrencyTypeId { get; set; }
         
-        public ItemType ItemType { get; set; }
+        public CurrencyType CurrencyType { get; set; }
         
         public ICollection<AnalysedHistoricItem> AnalysedHistoricItems { get; set; }
     }
