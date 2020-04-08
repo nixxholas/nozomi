@@ -149,7 +149,7 @@ namespace Nozomi.Repo.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CurrencyPairs",
+                name: "ItemPairs",
                 columns: table => new
                 {
                     Id = table.Column<long>(nullable: false)
@@ -253,7 +253,7 @@ namespace Nozomi.Repo.Migrations
                     table.ForeignKey(
                         name: "FK_AnalysedComponents_CurrencyPairs_CurrencyPairId",
                         column: x => x.CurrencyPairId,
-                        principalTable: "CurrencyPairs",
+                        principalTable: "ItemPairs",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -301,7 +301,7 @@ namespace Nozomi.Repo.Migrations
                     table.ForeignKey(
                         name: "CurrencyPair_CurrencyPairRequest_Constraint",
                         column: x => x.CurrencyPairId,
-                        principalTable: "CurrencyPairs",
+                        principalTable: "ItemPairs",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
@@ -546,18 +546,18 @@ namespace Nozomi.Repo.Migrations
 
             migrationBuilder.CreateIndex(
                 name: "IX_CurrencyPairs_Guid",
-                table: "CurrencyPairs",
+                table: "ItemPairs",
                 column: "Guid",
                 unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_CurrencyPairs_SourceId",
-                table: "CurrencyPairs",
+                table: "ItemPairs",
                 column: "SourceId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_CurrencyPairs_MainTicker_CounterTicker_SourceId",
-                table: "CurrencyPairs",
+                table: "ItemPairs",
                 columns: new[] { "MainTicker", "CounterTicker", "SourceId" });
 
             migrationBuilder.CreateIndex(
@@ -706,7 +706,7 @@ namespace Nozomi.Repo.Migrations
                 name: "Items");
 
             migrationBuilder.DropTable(
-                name: "CurrencyPairs");
+                name: "ItemPairs");
 
             migrationBuilder.DropTable(
                 name: "CurrencyTypes");

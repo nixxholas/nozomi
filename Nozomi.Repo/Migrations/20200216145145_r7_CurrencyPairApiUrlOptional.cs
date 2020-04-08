@@ -8,7 +8,7 @@ namespace Nozomi.Repo.Migrations
         {
             migrationBuilder.AlterColumn<string>(
                 name: "APIUrl",
-                table: "CurrencyPairs",
+                table: "ItemPairs",
                 nullable: true,
                 oldClrType: typeof(string),
                 oldType: "text");
@@ -18,7 +18,7 @@ namespace Nozomi.Repo.Migrations
         {
             migrationBuilder.AlterColumn<string>(
                 name: "APIUrl",
-                table: "CurrencyPairs",
+                table: "ItemPairs",
                 type: "text",
                 nullable: false,
                 oldClrType: typeof(string),

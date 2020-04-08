@@ -188,7 +188,7 @@ namespace Nozomi.Service.Events
                 if (track)
                 {
                     query.Include(cp => cp.Source)
-                        .ThenInclude(s => s.SourceCurrencies)
+                        .ThenInclude(s => s.SourceItems)
                         .ThenInclude(sc => sc.Item);
                 }
 

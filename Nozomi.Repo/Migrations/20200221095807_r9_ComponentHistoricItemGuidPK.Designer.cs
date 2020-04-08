@@ -170,7 +170,7 @@ namespace Nozomi.Repo.Migrations
 
                     b.HasIndex("MainTicker", "CounterTicker", "SourceId");
 
-                    b.ToTable("CurrencyPairs");
+                    b.ToTable("ItemPairs");
                 });
 
             modelBuilder.Entity("Nozomi.Data.Models.Currency.CurrencyProperty", b =>
@@ -995,7 +995,7 @@ namespace Nozomi.Repo.Migrations
             modelBuilder.Entity("Nozomi.Data.Models.Currency.CurrencyPair", b =>
                 {
                     b.HasOne("Nozomi.Data.Models.Currency.Source", "Source")
-                        .WithMany("CurrencyPairs")
+                        .WithMany("ItemPairs")
                         .HasForeignKey("SourceId")
                         .HasConstraintName("Source_CurrencyPairs_Constraint")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1021,7 +1021,7 @@ namespace Nozomi.Repo.Migrations
                         .IsRequired();
 
                     b.HasOne("Nozomi.Data.Models.Currency.Source", "Source")
-                        .WithMany("SourceCurrencies")
+                        .WithMany("SourceItems")
                         .HasForeignKey("SourceId")
                         .HasConstraintName("CurrencySource_Source_Constraint")
                         .OnDelete(DeleteBehavior.Restrict)

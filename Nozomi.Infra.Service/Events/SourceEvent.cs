@@ -52,17 +52,17 @@ namespace Nozomi.Service.Events
             if (countPairs)
             {
                 query = query
-                    .Include(s => s.CurrencyPairs);
+                    .Include(s => s.ItemPairs);
             }
 
             if (includeNested)
             {
                 query = query
-                    .Include(s => s.SourceCurrencies)
+                    .Include(s => s.SourceItems)
                     .ThenInclude(sc => sc.Item)
-                    .Include(s => s.CurrencyPairs)
+                    .Include(s => s.ItemPairs)
                     .ThenInclude(cp => cp.Source)
-                    .ThenInclude(s => s.SourceCurrencies)
+                    .ThenInclude(s => s.SourceItems)
                     .ThenInclude(sc => sc.Item);
             }
 
@@ -76,17 +76,17 @@ namespace Nozomi.Service.Events
             if (countPairs)
             {
                 query = query
-                    .Include(s => s.CurrencyPairs);
+                    .Include(s => s.ItemPairs);
             }
 
             if (includeNested)
             {
                 query = query
-                    .Include(s => s.SourceCurrencies)
+                    .Include(s => s.SourceItems)
                     .ThenInclude(sc => sc.Item)
-                    .Include(s => s.CurrencyPairs)
+                    .Include(s => s.ItemPairs)
                     .ThenInclude(cp => cp.Source)
-                    .ThenInclude(s => s.SourceCurrencies)
+                    .ThenInclude(s => s.SourceItems)
                     .ThenInclude(sc => sc.Item);
             }
             
@@ -102,17 +102,17 @@ namespace Nozomi.Service.Events
 //            if (countPairs)
 //            {
 //                query = query
-//                    .Include(s => s.CurrencyPairs);
+//                    .Include(s => s.ItemPairs);
 //            }
 //
 //            if (includeNested)
 //            {
 //                query = query
-//                    .Include(s => s.SourceCurrencies)
+//                    .Include(s => s.SourceItems)
 //                    .ThenInclude(sc => sc.Currency)
-//                    .Include(s => s.CurrencyPairs)
+//                    .Include(s => s.ItemPairs)
 //                    .ThenInclude(cp => cp.Source)
-//                    .ThenInclude(s => s.SourceCurrencies)
+//                    .ThenInclude(s => s.SourceItems)
 //                    .ThenInclude(sc => sc.Currency);
 //            }
 //
@@ -124,15 +124,15 @@ namespace Nozomi.Service.Events
             if (includeNested) {
                 return _context.Sources.Where(cs => cs.DeletedAt == null)
                     .Where(cs => cs.IsEnabled)
-                    .Include(cs => cs.SourceCurrencies)
-                    .Include(cs => cs.CurrencyPairs)
+                    .Include(cs => cs.SourceItems)
+                    .Include(cs => cs.ItemPairs)
                     .Select(cs => new
                     {
                         id = cs.Id, 
                         abbrv = cs.Abbreviation,
                         name = cs.Name,
-                        currencies = cs.SourceCurrencies,
-                        currencyPairs = cs.CurrencyPairs
+                        currencies = cs.SourceItems,
+                        currencyPairs = cs.ItemPairs
                     });
             } else {
                 return _context.Sources.Where(cs => cs.DeletedAt == null)
