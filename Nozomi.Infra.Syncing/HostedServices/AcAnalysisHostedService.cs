@@ -171,23 +171,23 @@ namespace Nozomi.Infra.Syncing.HostedServices
                                             {
                                                 // Value check first
                                                 if (decimal.TryParse(ac.Value, out var val) && val > decimal.Zero
-                                                                                            && ac.Item != null)
+                                                                                            && ac.Currency != null)
                                                 {
                                                     // Does this ticker exist on the list of market caps yet?
-                                                    if (marketCapByCurrencies.ContainsKey(ac.Item.Abbreviation))
+                                                    if (marketCapByCurrencies.ContainsKey(ac.Currency.Abbreviation))
                                                     {
                                                         // Since yes, let's work on averaging it
-                                                        marketCapByCurrencies[ac.Item.Abbreviation] =
+                                                        marketCapByCurrencies[ac.Currency.Abbreviation] =
                                                             decimal.Divide(
                                                                 decimal.Add(
-                                                                    marketCapByCurrencies[ac.Item.Abbreviation],
+                                                                    marketCapByCurrencies[ac.Currency.Abbreviation],
                                                                     val),
                                                                 2);
                                                     }
                                                     else
                                                     {
                                                         // Since no, let's set it
-                                                        marketCapByCurrencies.Add(ac.Item.Abbreviation, val);
+                                                        marketCapByCurrencies.Add(ac.Currency.Abbreviation, val);
                                                     }
                                                 }
                                             }
@@ -469,7 +469,7 @@ namespace Nozomi.Infra.Syncing.HostedServices
                                                                  // Make sure the main currency matches this currency
                                                                  && ahi.AnalysedComponent.CurrencyPair.Source
                                                                      .SourceCurrencies
-                                                                     .Any(sc => sc.Item.Abbreviation
+                                                                     .Any(sc => sc.Currency.Abbreviation
                                                                          .Equals(ahi.AnalysedComponent.CurrencyPair
                                                                              .MainTicker))
                                                                  // Make sure we only check for the CurrentAveragePrice component
@@ -623,7 +623,7 @@ namespace Nozomi.Infra.Syncing.HostedServices
                                                                  // Make sure the main currency matches this currency
                                                                  && ahi.AnalysedComponent.CurrencyPair.Source
                                                                      .SourceCurrencies
-                                                                     .Any(sc => sc.Item.Abbreviation
+                                                                     .Any(sc => sc.Currency.Abbreviation
                                                                          .Equals(ahi.AnalysedComponent.CurrencyPair
                                                                              .MainTicker))
                                                                  // Make sure we only check for the CurrentAveragePrice component

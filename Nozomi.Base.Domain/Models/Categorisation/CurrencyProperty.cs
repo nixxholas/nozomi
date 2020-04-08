@@ -19,7 +19,7 @@ namespace Nozomi.Data.Models.Categorisation
         
         public long CurrencyId { get; set; }
         
-        public Item Item { get; set; }
+        public Currency Currency { get; set; }
 
         public bool IsValid()
         {

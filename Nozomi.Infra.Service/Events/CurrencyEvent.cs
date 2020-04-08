@@ -41,10 +41,10 @@ namespace Nozomi.Service.Events
             return _context.Currencies.AsNoTracking()
                 .Where(c => c.Slug.Equals(slug) && c.DeletedAt == null)
                 .Include(c => c.AnalysedComponents)
-                .Include(c => c.ItemType)
+                .Include(c => c.CurrencyType)
                 .Select(c => new CurrencyViewModel
                 {
-                    CurrencyTypeGuid = c.ItemType.Guid,
+                    CurrencyTypeGuid = c.CurrencyType.Guid,
                     Abbreviation = c.Abbreviation,
                     Slug = c.Slug,
                     Name = c.Name,
@@ -102,9 +102,9 @@ namespace Nozomi.Service.Events
                 throw new ArgumentNullException("Parameter 'currencyType' is supposed to contain a valid string.");
 
             var query = _context.Currencies.AsNoTracking()
-                .Include(c => c.ItemType)
+                .Include(c => c.CurrencyType)
                 .Where(c => c.DeletedAt == null && c.IsEnabled
-                                                && c.ItemType.TypeShortForm.Equals(currencyType,
+                                                && c.CurrencyType.TypeShortForm.Equals(currencyType,
                                                     StringComparison.InvariantCultureIgnoreCase));
 
             if (!query.Any())
@@ -119,7 +119,7 @@ namespace Nozomi.Service.Events
                 return query
                     .Select(c => new CurrencyViewModel
                     {
-                        CurrencyTypeGuid = c.ItemType.Guid,
+                        CurrencyTypeGuid = c.CurrencyType.Guid,
                         Abbreviation = c.Abbreviation,
                         Slug = c.Slug,
                         Name = c.Name,
@@ -151,7 +151,7 @@ namespace Nozomi.Service.Events
                 return query
                     .Select(c => new CurrencyViewModel
                     {
-                        CurrencyTypeGuid = c.ItemType.Guid,
+                        CurrencyTypeGuid = c.CurrencyType.Guid,
                         Abbreviation = c.Abbreviation,
                         Slug = c.Slug,
                         Name = c.Name,
@@ -173,7 +173,7 @@ namespace Nozomi.Service.Events
             return query
                 .Select(c => new CurrencyViewModel
                 {
-                    CurrencyTypeGuid = c.ItemType.Guid,
+                    CurrencyTypeGuid = c.CurrencyType.Guid,
                     Abbreviation = c.Abbreviation,
                     Slug = c.Slug,
                     Name = c.Name,
@@ -200,11 +200,11 @@ namespace Nozomi.Service.Events
                 throw new ArgumentNullException("Parameter 'currencyType' is supposed to contain a valid string.");
 
             var query = _context.Currencies.AsNoTracking()
-                .Include(c => c.ItemType)
+                .Include(c => c.CurrencyType)
                 .Include(c => c.AnalysedComponents)
                 .ThenInclude(ac => ac.AnalysedHistoricItems)
-                .Where(c => c.DeletedAt == null && c.IsEnabled && c.ItemType != null
-                            && c.ItemType.TypeShortForm
+                .Where(c => c.DeletedAt == null && c.IsEnabled && c.CurrencyType != null
+                            && c.CurrencyType.TypeShortForm
                                 .Equals(currencyType.ToUpper()));
 
             if (!query.Any())
@@ -226,11 +226,11 @@ namespace Nozomi.Service.Events
                 case CurrencySortingEnum.Type:
                     query = !orderDescending
                         ? query
-                            .Include(c => c.ItemType)
-                            .OrderBy(c => c.ItemType.Name)
+                            .Include(c => c.CurrencyType)
+                            .OrderBy(c => c.CurrencyType.Name)
                         : query
-                            .Include(c => c.ItemType)
-                            .OrderByDescending(c => c.ItemType.Name);
+                            .Include(c => c.CurrencyType)
+                            .OrderByDescending(c => c.CurrencyType.Name);
                     break;
                 case CurrencySortingEnum.Name: // Handle all cases.
                     query = !orderDescending 
@@ -256,7 +256,7 @@ namespace Nozomi.Service.Events
                     return descendingQuery
                         .Select(c => new CurrencyViewModel
                         {
-                            CurrencyTypeGuid = c.ItemType.Guid,
+                            CurrencyTypeGuid = c.CurrencyType.Guid,
                             Abbreviation = c.Abbreviation,
                             Slug = c.Slug,
                             Name = c.Name,
@@ -289,7 +289,7 @@ namespace Nozomi.Service.Events
                     return descendingQuery
                         .Select(c => new CurrencyViewModel
                         {
-                            CurrencyTypeGuid = c.ItemType.Guid,
+                            CurrencyTypeGuid = c.CurrencyType.Guid,
                             Abbreviation = c.Abbreviation,
                             Slug = c.Slug,
                             Name = c.Name,
@@ -312,7 +312,7 @@ namespace Nozomi.Service.Events
                 return descendingQuery
                     .Select(c => new CurrencyViewModel
                     {
-                        CurrencyTypeGuid = c.ItemType.Guid,
+                        CurrencyTypeGuid = c.CurrencyType.Guid,
                         Abbreviation = c.Abbreviation,
                         Slug = c.Slug,
                         Name = c.Name,
@@ -338,7 +338,7 @@ namespace Nozomi.Service.Events
                     return ascendingQuery
                         .Select(c => new CurrencyViewModel
                         {
-                            CurrencyTypeGuid = c.ItemType.Guid,
+                            CurrencyTypeGuid = c.CurrencyType.Guid,
                             Abbreviation = c.Abbreviation,
                             Slug = c.Slug,
                             Name = c.Name,
@@ -371,7 +371,7 @@ namespace Nozomi.Service.Events
                     return ascendingQuery
                         .Select(c => new CurrencyViewModel
                         {
-                            CurrencyTypeGuid = c.ItemType.Guid,
+                            CurrencyTypeGuid = c.CurrencyType.Guid,
                             Abbreviation = c.Abbreviation,
                             Slug = c.Slug,
                             Name = c.Name,
@@ -394,7 +394,7 @@ namespace Nozomi.Service.Events
                 return ascendingQuery
                     .Select(c => new CurrencyViewModel
                     {
-                        CurrencyTypeGuid = c.ItemType.Guid,
+                        CurrencyTypeGuid = c.CurrencyType.Guid,
                         Abbreviation = c.Abbreviation,
                         Slug = c.Slug,
                         Name = c.Name,
@@ -410,7 +410,7 @@ namespace Nozomi.Service.Events
                 .Take(itemsPerIndex)
                 .Select(c => new CurrencyViewModel
                 {
-                    CurrencyTypeGuid = c.ItemType.Guid,
+                    CurrencyTypeGuid = c.CurrencyType.Guid,
                     Abbreviation = c.Abbreviation,
                     Slug = c.Slug,
                     Name = c.Name,
@@ -421,14 +421,14 @@ namespace Nozomi.Service.Events
                 });
         }
 
-        public Item Get(long id, bool track = false)
+        public Currency Get(long id, bool track = false)
         {
             var query = _context.Currencies.AsNoTracking();
 
             if (track)
                 query = query.AsTracking()
                     .Include(c => c.AnalysedComponents)
-                    .Include(c => c.ItemSources)
+                    .Include(c => c.CurrencySources)
                     .ThenInclude(cs => cs.Source)
                     .Include(c => c.Requests)
                     .ThenInclude(cr => cr.RequestComponents);
@@ -442,14 +442,14 @@ namespace Nozomi.Service.Events
         /// </summary>
         /// <param name="abbreviation"></param>
         /// <returns></returns>
-        public Item GetCurrencyByAbbreviation(string abbreviation, bool track = false)
+        public Currency GetCurrencyByAbbreviation(string abbreviation, bool track = false)
         {
             var query = _context.Currencies.AsNoTracking();
 
             if (track)
             {
                 query = query.Include(c => c.AnalysedComponents)
-                    .Include(c => c.ItemSources)
+                    .Include(c => c.CurrencySources)
                     .ThenInclude(cs => cs.Source)
                     .Include(c => c.Requests)
                     .ThenInclude(cr => cr.RequestComponents);
@@ -459,7 +459,7 @@ namespace Nozomi.Service.Events
                 .SingleOrDefault(c => c.Abbreviation.Equals(abbreviation, StringComparison.InvariantCultureIgnoreCase));
         }
 
-        public Item GetBySlug(string slug)
+        public Currency GetBySlug(string slug)
         {
             if (string.IsNullOrEmpty(slug))
                 throw new ArgumentNullException("Invalid slug.");
@@ -499,7 +499,7 @@ namespace Nozomi.Service.Events
                 var reqComp = _context.Requests.AsNoTracking()
                     .Where(cr => cr.DeletedAt == null && cr.IsEnabled
                                                       && cr.CurrencyId.Equals(curr.Id))
-                    .Include(cp => cp.Item)
+                    .Include(cp => cp.Currency)
                     .Include(cpr => cpr.RequestComponents)
                     .ThenInclude(rc => rc.RcdHistoricItems)
                     // Obtain only the circulating supply
@@ -523,10 +523,10 @@ namespace Nozomi.Service.Events
                 // Obtain the main ticker first
                 var mainTicker = _context.Currencies.AsNoTracking()
                     .Where(c => c.DeletedAt == null && c.IsEnabled)
-                    .Include(c => c.ItemSources)
+                    .Include(c => c.CurrencySources)
                     .ThenInclude(cs => cs.Source)
                     .ThenInclude(s => s.CurrencyPairs)
-                    .Where(c => c.ItemSources
+                    .Where(c => c.CurrencySources
                         .Any(cs => cs.Source.CurrencyPairs
                             .Where(cp => cp.DeletedAt == null && cp.IsEnabled)
                             .Any(cp => cp.Id.Equals(analysedComponent.CurrencyPairId))));
@@ -597,7 +597,7 @@ namespace Nozomi.Service.Events
                 .LongCount();
         }
 
-        public ICollection<Item> GetAll(bool includeNested = false)
+        public ICollection<Currency> GetAll(bool includeNested = false)
         {
             var query = _context.Currencies.AsNoTracking();
 
@@ -605,16 +605,16 @@ namespace Nozomi.Service.Events
             {
                 query = query
                     .Include(c => c.AnalysedComponents)
-                    .Include(c => c.ItemType)
-                    .Include(c => c.ItemSources)
+                    .Include(c => c.CurrencyType)
+                    .Include(c => c.CurrencySources)
                     .Include(c => c.Requests)
-                    .Include(c => c.ItemProperties);
+                    .Include(c => c.CurrencyProperties);
             }
 
             return query.ToList();
         }
 
-        public ICollection<Item> GetAllNonDeleted(bool includeNested = false)
+        public ICollection<Currency> GetAllNonDeleted(bool includeNested = false)
         {
             var query = _context.Currencies.AsNoTracking()
                 .Where(c => c.DeletedAt == null);
@@ -623,11 +623,11 @@ namespace Nozomi.Service.Events
             {
                 query = query
                     .Include(c => c.AnalysedComponents)
-                    .Include(c => c.ItemType)
-                    .Include(c => c.ItemSources)
+                    .Include(c => c.CurrencyType)
+                    .Include(c => c.CurrencySources)
                     .ThenInclude(cs => cs.Source)
                     .Include(c => c.Requests)
-                    .Include(c => c.ItemProperties);
+                    .Include(c => c.CurrencyProperties);
             }
 
             return query.ToList();
@@ -637,14 +637,14 @@ namespace Nozomi.Service.Events
         {
             return _context.Currencies.AsNoTracking()
                 .Where(c => c.DeletedAt == null)
-                .Include(c => c.ItemSources)
+                .Include(c => c.CurrencySources)
                 .Select(c => new CurrencyDTO
                 {
                     Id = c.Id,
-                    CurrencyType = c.ItemType,
+                    CurrencyType = c.CurrencyType,
                     LogoPath = c.LogoPath,
                     Abbreviation = c.Abbreviation,
-                    SourceCount = c.ItemSources.Count,
+                    SourceCount = c.CurrencySources.Count,
                     Slug = c.Slug,
                     Name = c.Name,
                     Description = c.Description,
@@ -664,7 +664,7 @@ namespace Nozomi.Service.Events
             return false;
         }
 
-        public IEnumerable<Item> GetAllActive(bool includeNested = false)
+        public IEnumerable<Currency> GetAllActive(bool includeNested = false)
         {
             if (includeNested)
             {
@@ -672,9 +672,9 @@ namespace Nozomi.Service.Events
                     .Where(c => c.DeletedAt == null && c.IsEnabled)
                     .Include(c => c.AnalysedComponents)
                     .Include(c => c.Requests)
-                    .Include(c => c.ItemSources)
-                    .Include(c => c.ItemProperties)
-                    .Include(c => c.ItemType);
+                    .Include(c => c.CurrencySources)
+                    .Include(c => c.CurrencyProperties)
+                    .Include(c => c.CurrencyType);
             }
             else
             {
@@ -697,7 +697,7 @@ namespace Nozomi.Service.Events
                 return _context.Currencies.AsNoTracking()
                     .Where(c => c.DeletedAt == null)
                     .Where(c => c.IsEnabled)
-                    .Include(c => c.ItemType)
+                    .Include(c => c.CurrencyType)
                     .Select(c => new
                     {
                         id = c.Id,
@@ -705,8 +705,8 @@ namespace Nozomi.Service.Events
                         CurrencyType =
                             new
                             {
-                                name = c.ItemType.Name,
-                                typeShortForm = c.ItemType.TypeShortForm
+                                name = c.CurrencyType.Name,
+                                typeShortForm = c.CurrencyType.TypeShortForm
                             },
                         name = c.Name
                     });
@@ -743,7 +743,7 @@ namespace Nozomi.Service.Events
                     .AsNoTracking()
                     .Where(c => c.DeletedAt == null)
                     .Where(c => c.IsEnabled)
-                    .Include(c => c.ItemType)
+                    .Include(c => c.CurrencyType)
                     .DistinctBy(c => c.Abbreviation)
                     .Select(c => new
                     {
@@ -752,8 +752,8 @@ namespace Nozomi.Service.Events
                         CurrencyType =
                             new
                             {
-                                name = c.ItemType.Name,
-                                typeShortForm = c.ItemType.TypeShortForm
+                                name = c.CurrencyType.Name,
+                                typeShortForm = c.CurrencyType.TypeShortForm
                             },
                         Name = c.Name
                     });
@@ -842,13 +842,13 @@ namespace Nozomi.Service.Events
             CurrencySortingEnum orderingParam = CurrencySortingEnum.None)
         {
             var query = _context.Currencies.AsNoTracking()
-                .Where(c => c.IsEnabled && c.DeletedAt == null && c.ItemTypeId > 0);
+                .Where(c => c.IsEnabled && c.DeletedAt == null && c.CurrencyTypeId > 0);
 
             if (!string.IsNullOrEmpty(currencyTypeName))
                 query = query
-                    .Include(c => c.ItemType)
-                    .Where(c => c.ItemType.DeletedAt == null && c.ItemType.IsEnabled &&
-                                c.ItemType.Name.ToUpper().Equals(currencyTypeName.ToUpper()));
+                    .Include(c => c.CurrencyType)
+                    .Where(c => c.CurrencyType.DeletedAt == null && c.CurrencyType.IsEnabled &&
+                                c.CurrencyType.Name.ToUpper().Equals(currencyTypeName.ToUpper()));
 
             switch (orderingParam) // Ignore case sensitivity
             {
@@ -863,11 +863,11 @@ namespace Nozomi.Service.Events
                 case CurrencySortingEnum.Type:
                     query = orderAscending
                         ? query
-                            .Include(c => c.ItemType)
-                            .OrderBy(c => c.ItemType.Name)
+                            .Include(c => c.CurrencyType)
+                            .OrderBy(c => c.CurrencyType.Name)
                         : query
-                            .Include(c => c.ItemType)
-                            .OrderByDescending(c => c.ItemType.Name);
+                            .Include(c => c.CurrencyType)
+                            .OrderByDescending(c => c.CurrencyType.Name);
                     break;
                 default: // Handle all cases.
                     query = orderAscending ? query.OrderBy(c => c.Name) : query.OrderByDescending(c => c.Name);
@@ -878,11 +878,11 @@ namespace Nozomi.Service.Events
                 // .OrderBy(orderingParam, orderAscending) // TODO: Make use of LinqExtensions again
                 .Skip(page * itemsPerPage)
                 .Take(itemsPerPage)
-                .Include(c => c.ItemType)
+                .Include(c => c.CurrencyType)
                 .Select(c => new CurrencyViewModel
                 {
                     Abbreviation = c.Abbreviation,
-                    CurrencyTypeGuid = c.ItemType.Guid,
+                    CurrencyTypeGuid = c.CurrencyType.Guid,
                     DenominationName = c.DenominationName,
                     Denominations = c.Denominations,
                     Description = c.Description,
@@ -906,9 +906,9 @@ namespace Nozomi.Service.Events
 
             return _context.Currencies.AsNoTracking()
                 .Where(c => c.DeletedAt == null && c.IsEnabled && c.Slug.Equals(slug))
-                .Include(c => c.ItemSources)
+                .Include(c => c.CurrencySources)
                 .ThenInclude(cs => cs.Source)
-                .SelectMany(c => c.ItemSources
+                .SelectMany(c => c.CurrencySources
                     .Where(cs => cs.IsEnabled && cs.DeletedAt == null
                                               && cs.Source.DeletedAt == null && cs.Source.IsEnabled))
                 .LongCount();
@@ -921,9 +921,9 @@ namespace Nozomi.Service.Events
 
             return _context.Currencies.AsNoTracking()
                 .Where(c => c.DeletedAt == null && c.IsEnabled && c.Slug.Equals(slug))
-                .Include(c => c.ItemSources)
+                .Include(c => c.CurrencySources)
                 .ThenInclude(cs => cs.Source)
-                .SelectMany(c => c.ItemSources
+                .SelectMany(c => c.CurrencySources
                     .Where(cs => cs.IsEnabled && cs.DeletedAt == null
                                               && cs.Source.DeletedAt == null && cs.Source.IsEnabled))
                 .Select(cs => new SourceViewModel

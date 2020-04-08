@@ -41,7 +41,7 @@ namespace Nozomi.Service.Services
                     throw new Exception("Currency type not found."); // TODO: Custom exception
                 
                 // Time to create
-                var currency = new Item(currencyType.Id, vm.LogoPath, vm.Abbreviation, vm.Slug, vm.Name, 
+                var currency = new Currency(currencyType.Id, vm.LogoPath, vm.Abbreviation, vm.Slug, vm.Name, 
                     vm.Description, vm.Denominations, vm.DenominationName);
                 
                 _context.Currencies.Add(currency);
@@ -56,15 +56,15 @@ namespace Nozomi.Service.Services
         {
             if (vm.IsValid() && !string.IsNullOrWhiteSpace(userId))
             {
-                Item item;
+                Currency currency;
                 
                 // Also check if the user owns this currency first
                 if (vm.Id != null && vm.Id > 0) // ID-based currency obtaining
                 {
-                    item = _currencyEvent.Get((long) vm.Id);
+                    currency = _currencyEvent.Get((long) vm.Id);
                 } else if (!string.IsNullOrWhiteSpace(vm.Slug) && !string.IsNullOrEmpty(vm.Slug))
                 { // Slug-based currency obtaining
-                    item = _currencyEvent.GetBySlug(vm.Slug);
+                    currency = _currencyEvent.GetBySlug(vm.Slug);
                 }
                 else
                 {
@@ -76,16 +76,16 @@ namespace Nozomi.Service.Services
                     .ToList();
                 
                 // Null Checks
-                if (item == null ||
+                if (currency == null ||
                     // Or if the slug is null or if the ID < 0, which counts it as invalid.
-                    string.IsNullOrEmpty(item.Slug) || item.Id <= 0)
+                    string.IsNullOrEmpty(currency.Slug) || currency.Id <= 0)
                     throw new InvalidOperationException("Invalid currency.");
                 
                 // Role Checks
                 // If the user in not a staff,
                 if (!userRoles.Any(r => NozomiPermissions.AllowAllStaffRoles.Contains(r.Value))
                     // And if the creator is the machine or if the user accessing this API is not the creator,
-                    && (item.CreatedById == null || !item.CreatedById.Equals(userId)))
+                    && (currency.CreatedById == null || !currency.CreatedById.Equals(userId)))
                     throw new AccessViolationException("You do not have permissions to modify this currency.");
                 
                 // Obtain the currency type
@@ -95,9 +95,9 @@ namespace Nozomi.Service.Services
                     throw new Exception("Currency type not found."); // TODO: Custom exception
 
                 // Time to create
-                var updatedCurrency = _currencyEvent.Get(item.Id, true);
+                var updatedCurrency = _currencyEvent.Get(currency.Id, true);
                 
-                updatedCurrency.ItemTypeId = currencyType.Id;
+                updatedCurrency.CurrencyTypeId = currencyType.Id;
                 updatedCurrency.LogoPath = vm.LogoPath;
                 updatedCurrency.Abbreviation = vm.Abbreviation;
                 updatedCurrency.Slug = vm.Slug;

@@ -412,7 +412,7 @@ namespace Nozomi.Service.Events
             if (track)
             {
                 qCurrency = qCurrency
-                    .Include(c => c.ItemSources)
+                    .Include(c => c.CurrencySources)
                     .ThenInclude(cs => cs.Source)
                     .ThenInclude(s => s.CurrencyPairs)
                     .ThenInclude(cp => cp.Requests)
@@ -422,7 +422,7 @@ namespace Nozomi.Service.Events
             else
             {
                 qCurrency = qCurrency
-                    .Include(c => c.ItemSources)
+                    .Include(c => c.CurrencySources)
                     .ThenInclude(cs => cs.Source)
                     .ThenInclude(s => s.CurrencyPairs)
                     .ThenInclude(cp => cp.Requests)
@@ -430,7 +430,7 @@ namespace Nozomi.Service.Events
             }
 
             return qCurrency
-                .SelectMany(c => c.ItemSources
+                .SelectMany(c => c.CurrencySources
                     .Where(cs => cs.IsEnabled && cs.DeletedAt == null)
                     .SelectMany(cs => cs.Source
                         .CurrencyPairs

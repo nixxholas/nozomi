@@ -9,15 +9,15 @@ using Nozomi.Data.Models.Web.Analytical;
 namespace Nozomi.Data.Models.Categorisation
 {
     [DataContract]
-    public class Item : Entity
+    public class Currency : Entity
     {
-        public Item() {}
+        public Currency() {}
 
-        public Item(long itemTypeId, string logoPath, string abbreviation, string slug, string name,
+        public Currency(long currencyTypeId, string logoPath, string abbreviation, string slug, string name,
             string description, int denominations, string denominationName)
         {
             Guid = Guid.NewGuid();
-            ItemTypeId = itemTypeId;
+            CurrencyTypeId = currencyTypeId;
             LogoPath = logoPath;
             Abbreviation = abbreviation;
             Slug = slug;
@@ -27,11 +27,11 @@ namespace Nozomi.Data.Models.Categorisation
             DenominationName = denominationName;
         }
         
-        public Item(long id, long itemTypeId, string logoPath, string abbreviation, string slug, string name,
+        public Currency(long id, long currencyTypeId, string logoPath, string abbreviation, string slug, string name,
             string description, int denominations, string denominationName)
         {
             Id = id;
-            ItemTypeId = itemTypeId;
+            CurrencyTypeId = currencyTypeId;
             LogoPath = logoPath;
             Abbreviation = abbreviation;
             Slug = slug;
@@ -46,8 +46,8 @@ namespace Nozomi.Data.Models.Categorisation
         
         public Guid Guid { get; set; }
 
-        public long ItemTypeId { get; set; }
-        public CurrencyType ItemType { get; set; }
+        public long CurrencyTypeId { get; set; }
+        public CurrencyType CurrencyType { get; set; }
         
         public string LogoPath { get; set; }
 
@@ -70,15 +70,15 @@ namespace Nozomi.Data.Models.Categorisation
         
         public ICollection<AnalysedComponent> AnalysedComponents { get; set; }
         
-        public ICollection<CurrencyProperty> ItemProperties { get; set; }
+        public ICollection<CurrencyProperty> CurrencyProperties { get; set; }
         
-        public ICollection<CurrencySource> ItemSources { get; set; }
+        public ICollection<CurrencySource> CurrencySources { get; set; }
         
         public ICollection<Request> Requests { get; set; }
 
         public bool IsValid()
         {
-            return !String.IsNullOrEmpty(Abbreviation) && !String.IsNullOrEmpty(Name) && ItemTypeId > 0;
+            return !String.IsNullOrEmpty(Abbreviation) && !String.IsNullOrEmpty(Name) && CurrencyTypeId > 0;
         }
     }
 }

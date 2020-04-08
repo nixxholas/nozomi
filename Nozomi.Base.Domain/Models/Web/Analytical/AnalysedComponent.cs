@@ -65,7 +65,7 @@ namespace Nozomi.Data.Models.Web.Analytical
             Id = component.Id;
             Guid = component.Guid;
             ComponentType = component.ComponentType;
-            Item = component.Item;
+            Currency = component.Currency;
             CurrencyId = component.CurrencyId;
             CurrencyPair = component.CurrencyPair;
             CurrencyPairId = component.CurrencyPairId;
@@ -99,7 +99,7 @@ namespace Nozomi.Data.Models.Web.Analytical
             Id = component.Id;
             Guid = component.Guid;
             ComponentType = component.ComponentType;
-            Item = component.Item;
+            Currency = component.Currency;
             CurrencyId = component.CurrencyId;
             CurrencyPair = component.CurrencyPair;
             CurrencyPairId = component.CurrencyPairId;
@@ -150,7 +150,7 @@ namespace Nozomi.Data.Models.Web.Analytical
             Id = component.Id;
             Guid = component.Guid;
             ComponentType = component.ComponentType;
-            Item = component.Item;
+            Currency = component.Currency;
             CurrencyId = component.CurrencyId;
             CurrencyPair = component.CurrencyPair;
             CurrencyPairId = component.CurrencyPairId;
@@ -203,7 +203,7 @@ namespace Nozomi.Data.Models.Web.Analytical
             Id = component.Id;
             Guid = component.Guid;
             ComponentType = component.ComponentType;
-            Item = component.Item;
+            Currency = component.Currency;
             CurrencyId = component.CurrencyId;
             CurrencyPair = component.CurrencyPair;
             CurrencyPairId = component.CurrencyPairId;
@@ -290,7 +290,7 @@ namespace Nozomi.Data.Models.Web.Analytical
         
         public long? CurrencyId { get; set; }
         
-        public Item Item { get; set; }
+        public Currency Currency { get; set; }
         
         public long? CurrencyPairId { get; set; }
         

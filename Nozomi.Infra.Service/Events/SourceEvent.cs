@@ -59,11 +59,11 @@ namespace Nozomi.Service.Events
             {
                 query = query
                     .Include(s => s.SourceCurrencies)
-                    .ThenInclude(sc => sc.Item)
+                    .ThenInclude(sc => sc.Currency)
                     .Include(s => s.CurrencyPairs)
                     .ThenInclude(cp => cp.Source)
                     .ThenInclude(s => s.SourceCurrencies)
-                    .ThenInclude(sc => sc.Item);
+                    .ThenInclude(sc => sc.Currency);
             }
 
             return query.ToList();
@@ -83,11 +83,11 @@ namespace Nozomi.Service.Events
             {
                 query = query
                     .Include(s => s.SourceCurrencies)
-                    .ThenInclude(sc => sc.Item)
+                    .ThenInclude(sc => sc.Currency)
                     .Include(s => s.CurrencyPairs)
                     .ThenInclude(cp => cp.Source)
                     .ThenInclude(s => s.SourceCurrencies)
-                    .ThenInclude(sc => sc.Item);
+                    .ThenInclude(sc => sc.Currency);
             }
             
             return query;
@@ -179,8 +179,8 @@ namespace Nozomi.Service.Events
         {            
             return _context.CurrencySources.AsNoTracking()
                 .Where(cs => cs.DeletedAt == null && cs.IsEnabled)
-                .Include(cs => cs.Item)
-                .Where(cs => cs.Item.Slug.Equals(slug))
+                .Include(cs => cs.Currency)
+                .Where(cs => cs.Currency.Slug.Equals(slug))
                 .Include(cs => cs.Source)
                 .Skip(page * 20)
                 .Take(20)

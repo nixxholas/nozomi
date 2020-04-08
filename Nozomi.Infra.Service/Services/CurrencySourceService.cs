@@ -79,10 +79,10 @@ namespace Nozomi.Service.Services
             string userId = null)
         {
             if (!_context.CurrencySources.AsNoTracking()
-                .Include(cs => cs.Item)
+                .Include(cs => cs.Currency)
                 .Any(cs => cs.DeletedAt == null && cs.IsEnabled 
-                                                  && cs.Item != null 
-                                                  && cs.Item.Slug.Equals(mainTicker)))
+                                                  && cs.Currency != null 
+                                                  && cs.Currency.Slug.Equals(mainTicker)))
             {
                 // Since it doesn't exist, symlink the new currency source
                 var mainCurrencySource = new CurrencySource(sourceId);
@@ -94,10 +94,10 @@ namespace Nozomi.Service.Services
             }
             
             if (!_context.CurrencySources.AsNoTracking()
-                .Include(cs => cs.Item)
+                .Include(cs => cs.Currency)
                 .Any(cs => cs.DeletedAt == null && cs.IsEnabled 
-                                                && cs.Item != null 
-                                                && cs.Item.Slug.Equals(counterTicker)))
+                                                && cs.Currency != null 
+                                                && cs.Currency.Slug.Equals(counterTicker)))
             {
                 // Since it doesn't exist, symlink the new currency source
                 var counterCurrencySource = new CurrencySource(sourceId);

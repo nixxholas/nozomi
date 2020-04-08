@@ -189,7 +189,7 @@ namespace Nozomi.Service.Events
                 throw new ArgumentOutOfRangeException("Invalid index.");
             
             var query = _context.Requests.AsNoTracking()
-                .Include(r => r.Item)
+                .Include(r => r.Currency)
                 .Include(r => r.CurrencyPair)
                 .Include(r => r.CurrencyType)
                 .Where(r => r.DeletedAt == null);
@@ -208,7 +208,7 @@ namespace Nozomi.Service.Events
                     .Skip(index * 100)
                     .Take(100)
                     .Select(r => new RequestViewModel(r.Guid, r.RequestType, r.ResponseType, r.DataPath, 
-                        r.Delay, r.FailureDelay, r.IsEnabled, r.CurrencyId > 0 ? r.Item.Slug : null, 
+                        r.Delay, r.FailureDelay, r.IsEnabled, r.CurrencyId > 0 ? r.Currency.Slug : null, 
                         r.CurrencyPairId > 0 ? r.CurrencyPair.Guid.ToString() : null, 
                         r.CurrencyTypeId > 0 ? r.CurrencyType.Guid.ToString() : null,
                         r.RequestComponents.Select(rc => new ComponentViewModel
@@ -224,7 +224,7 @@ namespace Nozomi.Service.Events
                 .Skip(index  * 100)
                 .Take(100)
                 .Select(r => new RequestViewModel(r.Guid, r.RequestType, r.ResponseType, r.DataPath, r.Delay,
-                    r.FailureDelay, r.IsEnabled, r.CurrencyId > 0 ? r.Item.Slug : null, 
+                    r.FailureDelay, r.IsEnabled, r.CurrencyId > 0 ? r.Currency.Slug : null, 
                     r.CurrencyPairId > 0 ? r.CurrencyPair.Guid.ToString() : null, 
                     r.CurrencyTypeId > 0 ? r.CurrencyType.Guid.ToString() : null, 
                     null, null));

@@ -87,9 +87,9 @@ namespace Nozomi.Service
 
                     if (type != null)
                     {
-                        var bitcoin = new Item
+                        var bitcoin = new Currency
                         {
-                            ItemTypeId = type.Id,
+                            CurrencyTypeId = type.Id,
                             Abbreviation = "BTC",
                             LogoPath = "/assets/svg/icons/btc.svg",
                             Name = "Bitcoin",
@@ -131,9 +131,9 @@ namespace Nozomi.Service
 
                     if (type != null)
                     {
-                        var tether = new Item
+                        var tether = new Currency
                         {
-                            ItemTypeId = type.Id,
+                            CurrencyTypeId = type.Id,
                             LogoPath = "/assets/svg/icons/usdt.svg",
                             Abbreviation = "USDT",
                             Slug = "usdt",
@@ -167,9 +167,9 @@ namespace Nozomi.Service
 
                     if (type != null)
                     {
-                        var ethereum = new Item
+                        var ethereum = new Currency
                         {
-                            ItemTypeId = type.Id,
+                            CurrencyTypeId = type.Id,
                             LogoPath = "/assets/svg/icons/eth.svg",
                             Abbreviation = "ETH",
                             Slug = "eth",
