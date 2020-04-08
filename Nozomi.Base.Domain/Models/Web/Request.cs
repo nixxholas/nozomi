@@ -34,7 +34,7 @@ namespace Nozomi.Data.Models.Web
             CurrencyId = r.CurrencyId;
             Item = r.Item;
             CurrencyPairId = r.CurrencyPairId;
-            ItemPair = r.ItemPair;
+            CurrencyPair = r.CurrencyPair;
             CurrencyTypeId = r.CurrencyTypeId;
             CurrencyType = r.CurrencyType;
             CreatedAt = r.CreatedAt;
@@ -60,7 +60,7 @@ namespace Nozomi.Data.Models.Web
         /// <param name="currencyId"></param>
         /// <param name="item"></param>
         /// <param name="currencyPairId"></param>
-        /// <param name="itemPair"></param>
+        /// <param name="currencyPair"></param>
         /// <param name="currencyTypeId"></param>
         /// <param name="currencyType"></param>
         /// <param name="createdAt"></param>
@@ -73,7 +73,7 @@ namespace Nozomi.Data.Models.Web
         /// <param name="websocketCommands"></param>
         public Request(long id, Guid guid, RequestType requestType, ResponseType responseType, string dataPath,
             int delay, long failureDelay, long currencyId, Item item, long currencyPairId,
-            ItemPair itemPair, long currencyTypeId, CurrencyType currencyType, DateTime createdAt,
+            CurrencyPair currencyPair, long currencyTypeId, CurrencyType currencyType, DateTime createdAt,
             string createdById, DateTime modifiedAt, string modifiedById, bool isEnabled,
             ICollection<Component> components, ICollection<RequestProperty> requestProperties,
             ICollection<WebsocketCommand> websocketCommands)
@@ -88,7 +88,7 @@ namespace Nozomi.Data.Models.Web
             CurrencyId = currencyId;
             Item = item;
             CurrencyPairId = currencyPairId;
-            ItemPair = itemPair;
+            CurrencyPair = currencyPair;
             CurrencyTypeId = currencyTypeId;
             CurrencyType = currencyType;
             CreatedAt = createdAt;
@@ -163,7 +163,7 @@ namespace Nozomi.Data.Models.Web
         
         public long? CurrencyPairId { get; set; }
         
-        public ItemPair ItemPair { get; set; }
+        public CurrencyPair CurrencyPair { get; set; }
         
         public long? CurrencyTypeId { get; set; }
         

@@ -207,9 +207,9 @@ namespace Nozomi.Service
 
                     if (binanceSource != null)
                     {
-                        var btcusdtBinance = new ItemPair
+                        var btcusdtBinance = new CurrencyPair
                         {
-                            Type = CurrencyPairType.TRADEABLE,
+                            CurrencyPairType = CurrencyPairType.TRADEABLE,
                             DefaultComponent = "b",
                             SourceId = binanceSource.Id,
                             MainTicker = "BTC",
@@ -270,9 +270,9 @@ namespace Nozomi.Service
 
                     if (binanceSource != null)
                     {
-                        var ethusdtBinance = new ItemPair
+                        var ethusdtBinance = new CurrencyPair
                         {
-                            Type = CurrencyPairType.TRADEABLE,
+                            CurrencyPairType = CurrencyPairType.TRADEABLE,
                             DefaultComponent = "b",
                             SourceId = binanceSource.Id,
                             MainTicker = "ETH",

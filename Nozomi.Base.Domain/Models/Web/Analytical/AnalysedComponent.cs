@@ -67,7 +67,7 @@ namespace Nozomi.Data.Models.Web.Analytical
             ComponentType = component.ComponentType;
             Item = component.Item;
             CurrencyId = component.CurrencyId;
-            ItemPair = component.ItemPair;
+            CurrencyPair = component.CurrencyPair;
             CurrencyPairId = component.CurrencyPairId;
             CurrencyType = component.CurrencyType;
             CurrencyTypeId = component.CurrencyTypeId;
@@ -101,7 +101,7 @@ namespace Nozomi.Data.Models.Web.Analytical
             ComponentType = component.ComponentType;
             Item = component.Item;
             CurrencyId = component.CurrencyId;
-            ItemPair = component.ItemPair;
+            CurrencyPair = component.CurrencyPair;
             CurrencyPairId = component.CurrencyPairId;
             CurrencyType = component.CurrencyType;
             CurrencyTypeId = component.CurrencyTypeId;
@@ -152,7 +152,7 @@ namespace Nozomi.Data.Models.Web.Analytical
             ComponentType = component.ComponentType;
             Item = component.Item;
             CurrencyId = component.CurrencyId;
-            ItemPair = component.ItemPair;
+            CurrencyPair = component.CurrencyPair;
             CurrencyPairId = component.CurrencyPairId;
             CurrencyType = component.CurrencyType;
             CurrencyTypeId = component.CurrencyTypeId;
@@ -205,7 +205,7 @@ namespace Nozomi.Data.Models.Web.Analytical
             ComponentType = component.ComponentType;
             Item = component.Item;
             CurrencyId = component.CurrencyId;
-            ItemPair = component.ItemPair;
+            CurrencyPair = component.CurrencyPair;
             CurrencyPairId = component.CurrencyPairId;
             CurrencyType = component.CurrencyType;
             CurrencyTypeId = component.CurrencyTypeId;
@@ -294,7 +294,7 @@ namespace Nozomi.Data.Models.Web.Analytical
         
         public long? CurrencyPairId { get; set; }
         
-        public ItemPair ItemPair { get; set; }
+        public CurrencyPair CurrencyPair { get; set; }
         
         public long? CurrencyTypeId { get; set; }
         

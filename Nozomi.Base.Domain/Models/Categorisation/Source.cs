@@ -74,7 +74,7 @@ namespace Nozomi.Data.Models.Categorisation
         public SourceType SourceType { get; set; }
         
         public ICollection<CurrencySource> SourceCurrencies { get; set; }
-        public ICollection<ItemPair> CurrencyPairs { get; set; }
+        public ICollection<CurrencyPair> CurrencyPairs { get; set; }
 
         public bool IsValid()
         {

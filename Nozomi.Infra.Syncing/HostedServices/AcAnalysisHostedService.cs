@@ -297,7 +297,7 @@ namespace Nozomi.Infra.Syncing.HostedServices
                                     // Ensure that all components used are valid, no historical values are being tapped on.
                                     true, index, false, ac => // Make sure its the generic counter currency
                                         // since we can't convert yet
-                                        ac.ItemPair.CounterTicker
+                                        ac.CurrencyPair.CounterTicker
                                             .Equals(CoreConstants.GenericCounterCurrency)
                                         && ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice),
                                     ac => NumberHelper.IsNumericDecimal(ac.Value));
@@ -322,7 +322,7 @@ namespace Nozomi.Infra.Syncing.HostedServices
                                         // Ensure that all components used are valid, no historical values are being tapped on.
                                         true, ++index, false, ac => // Make sure its the generic counter currency
                                             // since we can't convert yet
-                                            ac.ItemPair.CounterTicker.ToUpper()
+                                            ac.CurrencyPair.CounterTicker.ToUpper()
                                                 .Equals(CoreConstants.GenericCounterCurrency.ToUpper())
                                             && ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice),
                                         ac => NumberHelper.IsNumericDecimal(ac.Value));
@@ -467,10 +467,10 @@ namespace Nozomi.Infra.Syncing.HostedServices
                                                                  // Relational checks
                                                                  && ahi.AnalysedComponent.CurrencyPairId != null
                                                                  // Make sure the main currency matches this currency
-                                                                 && ahi.AnalysedComponent.ItemPair.Source
+                                                                 && ahi.AnalysedComponent.CurrencyPair.Source
                                                                      .SourceCurrencies
                                                                      .Any(sc => sc.Item.Abbreviation
-                                                                         .Equals(ahi.AnalysedComponent.ItemPair
+                                                                         .Equals(ahi.AnalysedComponent.CurrencyPair
                                                                              .MainTicker))
                                                                  // Make sure we only check for the CurrentAveragePrice component
                                                                  && ahi.AnalysedComponent.ComponentType
@@ -619,12 +619,12 @@ namespace Nozomi.Infra.Syncing.HostedServices
                                                                  && ahi.HistoricDateTime >=
                                                                  DateTime.UtcNow.Subtract(dataTimespan)
                                                                  // Relational checks
-                                                                 && ahi.AnalysedComponent.ItemPair != null
+                                                                 && ahi.AnalysedComponent.CurrencyPair != null
                                                                  // Make sure the main currency matches this currency
-                                                                 && ahi.AnalysedComponent.ItemPair.Source
+                                                                 && ahi.AnalysedComponent.CurrencyPair.Source
                                                                      .SourceCurrencies
                                                                      .Any(sc => sc.Item.Abbreviation
-                                                                         .Equals(ahi.AnalysedComponent.ItemPair
+                                                                         .Equals(ahi.AnalysedComponent.CurrencyPair
                                                                              .MainTicker))
                                                                  // Make sure we only check for the CurrentAveragePrice component
                                                                  && ahi.AnalysedComponent.ComponentType

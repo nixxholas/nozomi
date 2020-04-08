@@ -9,18 +9,18 @@ using Nozomi.Data.Models.Web.Analytical;
 namespace Nozomi.Data.Models.Categorisation
 {
     [DataContract]
-    public class ItemPair : Entity
+    public class CurrencyPair : Entity
     {
-        public ItemPair() {}
+        public CurrencyPair() {}
 
-        public ItemPair(CurrencyPairType type, string mainTicker, string counterTicker, 
+        public CurrencyPair(CurrencyPairType currencyPairType, string mainTicker, string counterTicker, 
             string apiUrl, string defaultComponent, long sourceId, bool isEnabled = false)
         {
             Guid = Guid.NewGuid();
-            Type = type;
+            CurrencyPairType = currencyPairType;
             MainTicker = mainTicker;
             CounterTicker = counterTicker;
-            ApiUrl = apiUrl;
+            APIUrl = apiUrl;
             DefaultComponent = defaultComponent;
             SourceId = sourceId;
             IsEnabled = isEnabled;
@@ -31,9 +31,9 @@ namespace Nozomi.Data.Models.Categorisation
         
         public Guid Guid { get; set; }
 
-        public CurrencyPairType Type { get; set; }
+        public CurrencyPairType CurrencyPairType { get; set; }
 
-        public string ApiUrl { get; set; }
+        public string APIUrl { get; set; }
         
         /// <summary>
         /// Which CPC to rely on by default?
@@ -52,5 +52,13 @@ namespace Nozomi.Data.Models.Categorisation
         
         [DataMember]
         public string CounterTicker { get; set; }
+        
+        public bool IsValid()
+        {
+            return !string.IsNullOrEmpty(MainTicker) && !string.IsNullOrEmpty(CounterTicker) 
+                   && CurrencyPairType > 0 && (!string.IsNullOrEmpty(APIUrl))
+                                          && (!string.IsNullOrEmpty(DefaultComponent))
+                                          && (SourceId > 0);
+        }
     }
 }

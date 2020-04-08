@@ -25,7 +25,7 @@ namespace Nozomi.Service.Events
         {
         }
 
-        public ICollection<ItemPair> GetAllByMainCurrency(string mainCurrencyAbbrv = CoreConstants.GenericCurrency)
+        public ICollection<CurrencyPair> GetAllByMainCurrency(string mainCurrencyAbbrv = CoreConstants.GenericCurrency)
         {
             return _context.CurrencyPairs.AsNoTracking()
                 .Where(cp => cp.DeletedAt == null && cp.IsEnabled
@@ -57,7 +57,7 @@ namespace Nozomi.Service.Events
                     components = components.Where(c => c.DeletedAt == null && c.IsEnabled);
 
                 components = components.Include(r => r.Request)
-                    .ThenInclude(r => r.ItemPair)
+                    .ThenInclude(r => r.CurrencyPair)
                     .Where(c => c.Request.CurrencyPairId.Equals(aComp.CurrencyPairId))
                     .Include(e => e.RcdHistoricItems)
                     .Skip(index * NozomiServiceConstants.RequestComponentTakeoutLimit)
@@ -103,8 +103,8 @@ namespace Nozomi.Service.Events
             switch (orderingParam.ToLower()) // Ignore case sensitivity
             {
                 case "Type":
-                    query = orderAscending ? query.OrderBy(cp => cp.Type) : 
-                        query.OrderByDescending(cp => cp.Type);
+                    query = orderAscending ? query.OrderBy(cp => cp.CurrencyPairType) : 
+                        query.OrderByDescending(cp => cp.CurrencyPairType);
                     break;
                 case "SourceName":
                     query = orderAscending ? query
@@ -128,7 +128,7 @@ namespace Nozomi.Service.Events
                 .Select(cp => new CurrencyPairViewModel
                 {
                     Guid = cp.Guid,
-                    Type = cp.Type,
+                    Type = cp.CurrencyPairType,
                     MainTicker = cp.MainTicker,
                     CounterTicker = cp.CounterTicker,
                     SourceGuid = cp.Source.Guid.ToString(),
@@ -164,7 +164,7 @@ namespace Nozomi.Service.Events
                 .LongCount();
         }
 
-        public ICollection<ItemPair> GetAllByCounterCurrency(string counterCurrencyAbbrv =
+        public ICollection<CurrencyPair> GetAllByCounterCurrency(string counterCurrencyAbbrv =
             CoreConstants.GenericCounterCurrency)
         {
             return _context.CurrencyPairs.AsNoTracking()
@@ -174,7 +174,7 @@ namespace Nozomi.Service.Events
                 .ToList();
         }
 
-        public ICollection<ItemPair> GetAllByTickerPairAbbreviation(string tickerPairAbbreviation,
+        public ICollection<CurrencyPair> GetAllByTickerPairAbbreviation(string tickerPairAbbreviation,
             bool track = false)
         {
             if (!string.IsNullOrEmpty(tickerPairAbbreviation))
@@ -287,14 +287,14 @@ namespace Nozomi.Service.Events
             return null;
         }
 
-        public ICollection<ItemPair> GetAll()
+        public ICollection<CurrencyPair> GetAll()
         {
             return _context.CurrencyPairs.AsNoTracking()
                 .Where(cp => cp.DeletedAt == null)
                 .ToList();
         }
 
-        public ItemPair Get(long id, bool track = false, string userId = null)
+        public CurrencyPair Get(long id, bool track = false, string userId = null)
         {
             if (track)
                 return _context.CurrencyPairs.Include(cp => cp.Requests)
@@ -307,7 +307,7 @@ namespace Nozomi.Service.Events
                 .SingleOrDefault(cp => cp.Id.Equals(id) && cp.DeletedAt == null);
         }
 
-        public ItemPair Get(string guid, bool track = false, string userId = null)
+        public CurrencyPair Get(string guid, bool track = false, string userId = null)
         {
             if (!Guid.TryParse(guid, out var parsedGuid))
                 throw new InvalidConstraintException("Can't parse the given guid.");
@@ -323,7 +323,7 @@ namespace Nozomi.Service.Events
                 .SingleOrDefault(cp => cp.Guid.Equals(parsedGuid) && cp.DeletedAt == null);
         }
 
-        public ItemPair Get(Guid guid, bool track = false, string userId = null)
+        public CurrencyPair Get(Guid guid, bool track = false, string userId = null)
         {
             if (guid == null)
                 throw new InvalidConstraintException("Can't parse the given guid.");
@@ -367,7 +367,7 @@ namespace Nozomi.Service.Events
                 .Select(cp => new CurrencyPairViewModel
                 {
                     Guid = cp.Guid,
-                    Type = cp.Type,
+                    Type = cp.CurrencyPairType,
                     DefaultComponent = cp.DefaultComponent,
                     MainTicker = cp.MainTicker,
                     CounterTicker = cp.CounterTicker,

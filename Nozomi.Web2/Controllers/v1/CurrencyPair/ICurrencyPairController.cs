@@ -27,6 +27,6 @@ namespace Nozomi.Web2.Controllers.v1.CurrencyPair
         
         IActionResult Search(string query = null, int page = 0, int itemsPerPage = 50);
 
-        NozomiResult<ICollection<Data.Models.Categorisation.ItemPair>> Ticker(string abbrv);
+        NozomiResult<ICollection<Data.Models.Categorisation.CurrencyPair>> Ticker(string abbrv);
     }
 }

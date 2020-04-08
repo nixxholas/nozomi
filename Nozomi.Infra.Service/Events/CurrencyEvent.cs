@@ -790,16 +790,16 @@ namespace Nozomi.Service.Events
                 components = components.Where(ac => ac.DeletedAt == null && ac.IsEnabled);
 
             components = components
-                .Include(ac => ac.ItemPair)
+                .Include(ac => ac.CurrencyPair)
                 .ThenInclude(cp => cp.Source)
                 .ThenInclude(s => s.SourceCurrencies)
-                .Where(ac => ac.ItemPair != null // Make sure the currency pair is not null
-                             && ac.ItemPair.MainTicker.Equals(mainCurrency
+                .Where(ac => ac.CurrencyPair != null // Make sure the currency pair is not null
+                             && ac.CurrencyPair.MainTicker.Equals(mainCurrency
                                  .Abbreviation) // Make sure the main ticker is the currency
-                             && ac.ItemPair.Source != null &&
-                             ac.ItemPair.Source.SourceCurrencies !=
+                             && ac.CurrencyPair.Source != null &&
+                             ac.CurrencyPair.Source.SourceCurrencies !=
                              null // Make sure the source currency is not empty
-                             && ac.ItemPair.Source.SourceCurrencies // Second layer check.
+                             && ac.CurrencyPair.Source.SourceCurrencies // Second layer check.
                                  .Any(sc => sc.DeletedAt == null && sc.IsEnabled && sc.CurrencyId.Equals(currencyId)));
 
             if (track)
