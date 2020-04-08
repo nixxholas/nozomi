@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web;
 using Nozomi.Data.ViewModels.ComponentHistoricItem;
 

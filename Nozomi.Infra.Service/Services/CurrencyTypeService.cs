@@ -1,6 +1,6 @@
 using System;
 using Microsoft.Extensions.Logging;
-using Nozomi.Data.Models.Categorisation;
+using Nozomi.Data.Models.Currency;
 using Nozomi.Data.ViewModels.CurrencyType;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.Data;

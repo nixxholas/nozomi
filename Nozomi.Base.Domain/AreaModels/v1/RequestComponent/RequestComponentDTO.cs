@@ -1,3 +1,4 @@
+using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web;
 
 namespace Nozomi.Data.AreaModels.v1.RequestComponent

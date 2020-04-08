@@ -1,5 +1,5 @@
 using Nozomi.Data.AreaModels.v1.CurrencyPair;
-using Nozomi.Data.Models.Categorisation;
+using Nozomi.Data.Models.Currency;
 using Swashbuckle.AspNetCore.Filters;
 
 namespace Nozomi.Preprocessing.Swagger.Examples.Requests.v1.CurrencyPair

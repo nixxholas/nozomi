@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 using Nozomi.Base.BCL;
 
-namespace Nozomi.Data.Models.Categorisation
+namespace Nozomi.Data.Models.Currency
 {
     [DataContract]
     public class SourceType : Entity

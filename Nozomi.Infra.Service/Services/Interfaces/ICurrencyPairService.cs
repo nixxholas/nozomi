@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.CurrencyPair;
-using Nozomi.Data.Models.Categorisation;
+using Nozomi.Data.Models.Currency;
 using Nozomi.Data.ViewModels.CurrencyPair;
 
 namespace Nozomi.Service.Services.Interfaces

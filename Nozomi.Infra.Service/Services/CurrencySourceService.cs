@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.CurrencySource;
-using Nozomi.Data.Models.Categorisation;
+using Nozomi.Data.Models.Currency;
 using Nozomi.Data.ViewModels.CurrencySource;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.Data;

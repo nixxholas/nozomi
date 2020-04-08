@@ -1,6 +1,6 @@
 using System.ComponentModel;
 
-namespace Nozomi.Data.Models.Categorisation
+namespace Nozomi.Data.Models.Currency
 {
     public enum CurrencyPropertyType
     {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using Nozomi.Base.BCL;
+using Nozomi.Data.Models.Currency;
 
 namespace Nozomi.Data.Models.Web
 {

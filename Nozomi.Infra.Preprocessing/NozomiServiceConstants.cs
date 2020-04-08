@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using Nozomi.Base.BCL.Helpers.Enumerator;
-using Nozomi.Data.Models.Categorisation;
+using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web;
 using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Data.Models.Web.Websocket;

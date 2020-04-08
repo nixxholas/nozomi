@@ -6,7 +6,7 @@ using Nozomi.Base.BCL;
 using Nozomi.Data.Models.Web;
 using Nozomi.Data.Models.Web.Analytical;
 
-namespace Nozomi.Data.Models.Categorisation
+namespace Nozomi.Data.Models.Currency
 {
     [DataContract]
     public class Currency : Entity

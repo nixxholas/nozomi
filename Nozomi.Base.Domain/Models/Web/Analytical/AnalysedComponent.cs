@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using Nozomi.Base.BCL;
-using Nozomi.Data.Models.Categorisation;
+using Nozomi.Data.Models.Currency;
 
 namespace Nozomi.Data.Models.Web.Analytical
 {
@@ -290,7 +290,7 @@ namespace Nozomi.Data.Models.Web.Analytical
         
         public long? CurrencyId { get; set; }
         
-        public Currency Currency { get; set; }
+        public Currency.Currency Currency { get; set; }
         
         public long? CurrencyPairId { get; set; }
         
