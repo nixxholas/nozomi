@@ -163,7 +163,7 @@ namespace Nozomi.Service.Events
                           s.Abbreviation.Equals(abbrv.ToUpper()));
         }
 
-        public IEnumerable<Source> GetAllCurrencySourceOptions(IEnumerable<ItemSource> currencySources)
+        public IEnumerable<Source> GetAllCurrencySourceOptions(IEnumerable<CurrencySource> currencySources)
         {
             IEnumerable<Source> sources = currencySources.Select(cs => cs.Source).ToList();
             

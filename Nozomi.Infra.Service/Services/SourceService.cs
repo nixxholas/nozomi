@@ -130,9 +130,9 @@ namespace Nozomi.Service.Services
 
                             if (currency != null)
                             {
-                                _context.CurrencySources.Add(new ItemSource
+                                _context.CurrencySources.Add(new CurrencySource
                                 {
-                                    ItemId = usc.Id,
+                                    CurrencyId = usc.Id,
                                     SourceId = usc.SourceId
                                 });
                                 _context.SaveChanges();
@@ -286,7 +286,7 @@ namespace Nozomi.Service.Services
                                     if (!_context
                                         .CurrencySources.AsNoTracking()
                                         .Any(cs => cs.SourceId.Equals(usc.SourceId)
-                                                                  && cs.ItemId.Equals(currency.ItemId)))
+                                                                  && cs.CurrencyId.Equals(currency.CurrencyId)))
                                     {
                                         currency.SourceId = usc.SourceId;
                                         
@@ -314,9 +314,9 @@ namespace Nozomi.Service.Services
 
                             if (currency != null)
                             {
-                                _context.CurrencySources.Add(new ItemSource
+                                _context.CurrencySources.Add(new CurrencySource
                                 {
-                                    ItemId = currency.Id,
+                                    CurrencyId = currency.Id,
                                     SourceId = usc.SourceId
                                 });
                                 _context.SaveChanges();

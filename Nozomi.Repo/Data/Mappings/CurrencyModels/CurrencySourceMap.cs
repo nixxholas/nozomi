@@ -5,14 +5,14 @@ using Nozomi.Data.Models.Categorisation;
 
 namespace Nozomi.Repo.Data.Mappings.CurrencyModels
 {
-    public class CurrencySourceMap : BaseMap<ItemSource>
+    public class CurrencySourceMap : BaseMap<CurrencySource>
     {
-        public CurrencySourceMap(EntityTypeBuilder<ItemSource> entityTypeBuilder) : base(entityTypeBuilder)
+        public CurrencySourceMap(EntityTypeBuilder<CurrencySource> entityTypeBuilder) : base(entityTypeBuilder)
         {
             entityTypeBuilder.HasKey(cs => cs.Id).HasName("CurrencySource_PK_Id");
             entityTypeBuilder.Property(cs => cs.Id).ValueGeneratedOnAdd();
             
-            entityTypeBuilder.HasIndex(cs => new { CurrencyId = cs.ItemId, cs.SourceId }).IsUnique()
+            entityTypeBuilder.HasIndex(cs => new { cs.CurrencyId, cs.SourceId }).IsUnique()
                 .HasName("CurrencySource_CK_CurrencyId_SourceId");
 
             // entityTypeBuilder.HasOne(cs => cs.Currency)
