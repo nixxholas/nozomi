@@ -62,8 +62,8 @@ namespace Nozomi.Data.Models.Categorisation
 
         public long PairCount()
         {
-            if (ItemPairs != null)
-                return ItemPairs.Count;
+            if (CurrencyPairs != null)
+                return CurrencyPairs.Count;
 
             return -1;
         }
@@ -73,8 +73,8 @@ namespace Nozomi.Data.Models.Categorisation
         
         public SourceType SourceType { get; set; }
         
-        public ICollection<ItemSource> SourceItems { get; set; }
-        public ICollection<ItemPair> ItemPairs { get; set; }
+        public ICollection<ItemSource> SourceCurrencies { get; set; }
+        public ICollection<ItemPair> CurrencyPairs { get; set; }
 
         public bool IsValid()
         {

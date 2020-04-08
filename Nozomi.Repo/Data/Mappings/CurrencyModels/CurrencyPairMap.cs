@@ -32,7 +32,7 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
             // entityTypeBuilder.Property(cp => cp.APIUrl).IsRequired();
             entityTypeBuilder.Property(cp => cp.DefaultComponent).IsRequired();
 
-            // entityTypeBuilder.HasOne(cp => cp.Source).WithMany(cs => cs.ItemPairs)
+            // entityTypeBuilder.HasOne(cp => cp.Source).WithMany(cs => cs.CurrencyPairs)
             //     .HasForeignKey(cp => cp.SourceId)
             //     .HasConstraintName("CurrencyPairs_CurrencySource_Constraint");
             // entityTypeBuilder.HasMany(cp => cp.AnalysedComponents).WithOne(ac => ac.CurrencyPair)

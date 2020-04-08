@@ -134,7 +134,7 @@ namespace Nozomi.Service.Events.Analysis
                         .Include(ahi => ahi.AnalysedComponent)
                         .ThenInclude(ac => ac.ItemPair)
                         .ThenInclude(cp => cp.Source)
-                        .ThenInclude(s => s.SourceItems)
+                        .ThenInclude(s => s.SourceCurrencies)
                         .ThenInclude(sc => sc.Item)
                         .Include(ahi => ahi.AnalysedComponent)
                         .ThenInclude(ac => ac.ItemType);
@@ -173,7 +173,7 @@ namespace Nozomi.Service.Events.Analysis
                         .Include(ahi => ahi.AnalysedComponent)
                         .ThenInclude(ac => ac.ItemPair)
                         .ThenInclude(cp => cp.Source)
-                        .ThenInclude(s => s.SourceItems)
+                        .ThenInclude(s => s.SourceCurrencies)
                         .ThenInclude(sc => sc.Item)
                         .Include(ahi => ahi.AnalysedComponent)
                         .ThenInclude(ac => ac.ItemType)

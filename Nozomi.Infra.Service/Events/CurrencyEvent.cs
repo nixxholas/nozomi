@@ -525,9 +525,9 @@ namespace Nozomi.Service.Events
                     .Where(c => c.DeletedAt == null && c.IsEnabled)
                     .Include(c => c.ItemSources)
                     .ThenInclude(cs => cs.Source)
-                    .ThenInclude(s => s.ItemPairs)
+                    .ThenInclude(s => s.CurrencyPairs)
                     .Where(c => c.ItemSources
-                        .Any(cs => cs.Source.ItemPairs
+                        .Any(cs => cs.Source.CurrencyPairs
                             .Where(cp => cp.DeletedAt == null && cp.IsEnabled)
                             .Any(cp => cp.Id.Equals(analysedComponent.CurrencyPairId))));
 
@@ -792,14 +792,14 @@ namespace Nozomi.Service.Events
             components = components
                 .Include(ac => ac.ItemPair)
                 .ThenInclude(cp => cp.Source)
-                .ThenInclude(s => s.SourceItems)
+                .ThenInclude(s => s.SourceCurrencies)
                 .Where(ac => ac.ItemPair != null // Make sure the currency pair is not null
                              && ac.ItemPair.MainTicker.Equals(mainCurrency
                                  .Abbreviation) // Make sure the main ticker is the currency
                              && ac.ItemPair.Source != null &&
-                             ac.ItemPair.Source.SourceItems !=
+                             ac.ItemPair.Source.SourceCurrencies !=
                              null // Make sure the source currency is not empty
-                             && ac.ItemPair.Source.SourceItems // Second layer check.
+                             && ac.ItemPair.Source.SourceCurrencies // Second layer check.
                                  .Any(sc => sc.DeletedAt == null && sc.IsEnabled && sc.ItemId.Equals(currencyId)));
 
             if (track)

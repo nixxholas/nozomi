@@ -414,7 +414,7 @@ namespace Nozomi.Service.Events
                 qCurrency = qCurrency
                     .Include(c => c.ItemSources)
                     .ThenInclude(cs => cs.Source)
-                    .ThenInclude(s => s.ItemPairs)
+                    .ThenInclude(s => s.CurrencyPairs)
                     .ThenInclude(cp => cp.Requests)
                     .ThenInclude(cpr => cpr.RequestComponents)
                     .ThenInclude(rc => rc.RcdHistoricItems);
@@ -424,7 +424,7 @@ namespace Nozomi.Service.Events
                 qCurrency = qCurrency
                     .Include(c => c.ItemSources)
                     .ThenInclude(cs => cs.Source)
-                    .ThenInclude(s => s.ItemPairs)
+                    .ThenInclude(s => s.CurrencyPairs)
                     .ThenInclude(cp => cp.Requests)
                     .ThenInclude(cpr => cpr.RequestComponents);
             }
@@ -433,7 +433,7 @@ namespace Nozomi.Service.Events
                 .SelectMany(c => c.ItemSources
                     .Where(cs => cs.IsEnabled && cs.DeletedAt == null)
                     .SelectMany(cs => cs.Source
-                        .ItemPairs
+                        .CurrencyPairs
                         .Where(cp => cp.IsEnabled && cp.DeletedAt == null
                                                   && cp.CounterTicker.Equals(
                                                       CoreConstants.GenericCounterCurrency))

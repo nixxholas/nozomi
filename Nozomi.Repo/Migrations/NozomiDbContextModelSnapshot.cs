@@ -172,7 +172,7 @@ namespace Nozomi.Repo.Migrations
 
                     b.HasIndex("MainTicker", "CounterTicker", "SourceId");
 
-                    b.ToTable("ItemPairs");
+                    b.ToTable("CurrencyPairs");
                 });
 
             modelBuilder.Entity("Nozomi.Data.Models.Currency.CurrencyProperty", b =>
@@ -1338,7 +1338,7 @@ namespace Nozomi.Repo.Migrations
             modelBuilder.Entity("Nozomi.Data.Models.Currency.CurrencyPair", b =>
                 {
                     b.HasOne("Nozomi.Data.Models.Currency.Source", "Source")
-                        .WithMany("ItemPairs")
+                        .WithMany("CurrencyPairs")
                         .HasForeignKey("SourceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1362,7 +1362,7 @@ namespace Nozomi.Repo.Migrations
                         .IsRequired();
 
                     b.HasOne("Nozomi.Data.Models.Currency.Source", "Source")
-                        .WithMany("SourceItems")
+                        .WithMany("SourceCurrencies")
                         .HasForeignKey("SourceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

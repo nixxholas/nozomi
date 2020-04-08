@@ -25,10 +25,10 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                 .WithMany(st => st.Sources)
                 .HasForeignKey(s => s.SourceTypeGuid)
                 .IsRequired();
-            // entityTypeBuilder.HasMany(s => s.SourceItems).WithOne(c => c.Source)
+            // entityTypeBuilder.HasMany(s => s.SourceCurrencies).WithOne(c => c.Source)
             //     .HasForeignKey(c=> c.SourceId).OnDelete(DeleteBehavior.Restrict)
             //     .HasConstraintName("Source_SourceCurrencies_Constraint");
-            // entityTypeBuilder.HasMany(s => s.ItemPairs).WithOne(cp => cp.Source)
+            // entityTypeBuilder.HasMany(s => s.CurrencyPairs).WithOne(cp => cp.Source)
             //     .HasForeignKey(cp => cp.SourceId)
             //     .HasConstraintName("Source_CurrencyPairs_Constraint");
         }

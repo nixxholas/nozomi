@@ -321,10 +321,10 @@ namespace Nozomi.Service.Events.Analysis
         {
             var cPairs = _context.CurrencyPairs.AsNoTracking()
                 .Include(cp => cp.Source)
-                .ThenInclude(s => s.SourceItems)
+                .ThenInclude(s => s.SourceCurrencies)
                 .ThenInclude(sc => sc.Item)
                 // Make sure the source has such currency
-                .Where(cp => cp.Source.SourceItems.Any(sc => sc.ItemId.Equals(currencyId)
+                .Where(cp => cp.Source.SourceCurrencies.Any(sc => sc.ItemId.Equals(currencyId)
                                                                   // And that the main currency abbreviation matches
                                                                   // the currency's abbreviation
                                                                   && sc.Item.Abbreviation.Equals(cp.MainTicker)))

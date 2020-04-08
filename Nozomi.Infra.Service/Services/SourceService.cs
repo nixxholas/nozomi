@@ -75,8 +75,8 @@ namespace Nozomi.Service.Services
         {
             if (updateSource == null) return false;
 
-            var sourceToUpd = _context.Sources.Include(s => s.SourceItems)
-                .Include(s => s.ItemPairs)
+            var sourceToUpd = _context.Sources.Include(s => s.SourceCurrencies)
+                .Include(s => s.CurrencyPairs)
                 .SingleOrDefault(s => s.IsEnabled && s.DeletedAt == null
                                       && s.Id.Equals(updateSource.Id));
 
@@ -93,7 +93,7 @@ namespace Nozomi.Service.Services
                     foreach (var usc in updateSource.UpdateSourceCurrencies)
                     {
                         // Modification or Addition?
-                        if (sourceToUpd.SourceItems
+                        if (sourceToUpd.SourceCurrencies
                                 .Any(c => c.Id.Equals(usc.Id)) // Make sure this source has the currency first
                             && usc.SourceId >= 0) // Make sure we're not making an invalid modification
                         {
@@ -120,7 +120,7 @@ namespace Nozomi.Service.Services
                                 // Log failure
                             }
                         }
-                        else if (!sourceToUpd.SourceItems.Any(c => c.Id.Equals(usc.Id) 
+                        else if (!sourceToUpd.SourceCurrencies.Any(c => c.Id.Equals(usc.Id) 
                                                                   && c.SourceId.Equals(usc.SourceId))
                             && usc.SourceId.Equals(sourceToUpd.Id))
                         {
@@ -150,7 +150,7 @@ namespace Nozomi.Service.Services
                     foreach (var ucp in updateSource.UpdateCurrencyPairs)
                     {
                         // Modification or addition?
-                        if (sourceToUpd.ItemPairs
+                        if (sourceToUpd.CurrencyPairs
                                 .Any(cp => cp.Id.Equals(ucp.Id)) // Make sure this source has the currency first
                             && ucp.CurrencySourceId >= 0) // Make sure we're not making an invalid modification
                         {
@@ -177,7 +177,7 @@ namespace Nozomi.Service.Services
                                 // Log failure
                             }
                         }
-                        else if (!sourceToUpd.ItemPairs.Any(cp => cp.Id.Equals(ucp.Id) 
+                        else if (!sourceToUpd.CurrencyPairs.Any(cp => cp.Id.Equals(ucp.Id) 
                                                                   && cp.SourceId.Equals(ucp.CurrencySourceId))
                             && ucp.CurrencySourceId.Equals(sourceToUpd.Id))
                         {
@@ -245,8 +245,8 @@ namespace Nozomi.Service.Services
         {
             if (updateSource == null) return false;
 
-            var sourceToUpd = _context.Sources.Include(s => s.SourceItems)
-                .Include(s => s.ItemPairs)
+            var sourceToUpd = _context.Sources.Include(s => s.SourceCurrencies)
+                .Include(s => s.CurrencyPairs)
                 .SingleOrDefault(s => s.DeletedAt == null
                                       && s.Id.Equals(updateSource.Id));
 
@@ -264,7 +264,7 @@ namespace Nozomi.Service.Services
                     foreach (var usc in updateSource.UpdateSourceCurrencies)
                     {
                         // Modification or Addition?
-                        if (sourceToUpd.SourceItems
+                        if (sourceToUpd.SourceCurrencies
                                 .Any(c => c.Id.Equals(usc.Id)) // Make sure this source has the currency first
                             && usc.SourceId >= 0) // Make sure we're not making an invalid modification
                         {
@@ -304,7 +304,7 @@ namespace Nozomi.Service.Services
                                 // Log failure
                             }
                         }
-                        else if (!sourceToUpd.SourceItems.Any(c => c.Id.Equals(usc.Id) 
+                        else if (!sourceToUpd.SourceCurrencies.Any(c => c.Id.Equals(usc.Id) 
                                                                   && c.SourceId.Equals(usc.SourceId))
                             && usc.SourceId.Equals(sourceToUpd.Id))
                         {
@@ -334,7 +334,7 @@ namespace Nozomi.Service.Services
                     foreach (var ucp in updateSource.UpdateCurrencyPairs)
                     {
                         // Modification or addition?
-                        if (sourceToUpd.ItemPairs
+                        if (sourceToUpd.CurrencyPairs
                                 .Any(cp => cp.Id.Equals(ucp.Id)) // Make sure this source has the currency first
                             && ucp.CurrencySourceId >= 0) // Make sure we're not making an invalid modification
                         {
@@ -378,7 +378,7 @@ namespace Nozomi.Service.Services
                                 // Log failure
                             }
                         }
-                        else if (!sourceToUpd.ItemPairs.Any(cp => cp.Id.Equals(ucp.Id) 
+                        else if (!sourceToUpd.CurrencyPairs.Any(cp => cp.Id.Equals(ucp.Id) 
                                                                   && cp.SourceId.Equals(ucp.CurrencySourceId))
                             && ucp.CurrencySourceId.Equals(sourceToUpd.Id))
                         {

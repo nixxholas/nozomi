@@ -468,7 +468,7 @@ namespace Nozomi.Infra.Syncing.HostedServices
                                                                  && ahi.AnalysedComponent.CurrencyPairId != null
                                                                  // Make sure the main currency matches this currency
                                                                  && ahi.AnalysedComponent.ItemPair.Source
-                                                                     .SourceItems
+                                                                     .SourceCurrencies
                                                                      .Any(sc => sc.Item.Abbreviation
                                                                          .Equals(ahi.AnalysedComponent.ItemPair
                                                                              .MainTicker))
@@ -622,7 +622,7 @@ namespace Nozomi.Infra.Syncing.HostedServices
                                                                  && ahi.AnalysedComponent.ItemPair != null
                                                                  // Make sure the main currency matches this currency
                                                                  && ahi.AnalysedComponent.ItemPair.Source
-                                                                     .SourceItems
+                                                                     .SourceCurrencies
                                                                      .Any(sc => sc.Item.Abbreviation
                                                                          .Equals(ahi.AnalysedComponent.ItemPair
                                                                              .MainTicker))

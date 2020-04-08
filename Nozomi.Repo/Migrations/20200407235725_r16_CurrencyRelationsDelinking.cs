@@ -24,7 +24,7 @@ namespace Nozomi.Repo.Migrations
 
             migrationBuilder.DropForeignKey(
                 name: "Source_CurrencyPairs_Constraint",
-                table: "ItemPairs");
+                table: "CurrencyPairs");
 
             migrationBuilder.DropForeignKey(
                 name: "CurrencySource_Currency_Constraint",
@@ -64,7 +64,7 @@ namespace Nozomi.Repo.Migrations
 
             migrationBuilder.AlterColumn<string>(
                 name: "MainTicker",
-                table: "ItemPairs",
+                table: "CurrencyPairs",
                 nullable: false,
                 oldClrType: typeof(string),
                 oldType: "text",
@@ -72,7 +72,7 @@ namespace Nozomi.Repo.Migrations
 
             migrationBuilder.AlterColumn<string>(
                 name: "CounterTicker",
-                table: "ItemPairs",
+                table: "CurrencyPairs",
                 nullable: false,
                 oldClrType: typeof(string),
                 oldType: "text",
@@ -80,7 +80,7 @@ namespace Nozomi.Repo.Migrations
 
             migrationBuilder.AlterColumn<string>(
                 name: "APIUrl",
-                table: "ItemPairs",
+                table: "CurrencyPairs",
                 nullable: false,
                 oldClrType: typeof(string),
                 oldType: "text",
@@ -116,7 +116,7 @@ namespace Nozomi.Repo.Migrations
                 name: "FK_AnalysedComponents_CurrencyPairs_CurrencyPairId",
                 table: "AnalysedComponents",
                 column: "CurrencyPairId",
-                principalTable: "ItemPairs",
+                principalTable: "CurrencyPairs",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Restrict);
 
@@ -138,7 +138,7 @@ namespace Nozomi.Repo.Migrations
 
             migrationBuilder.AddForeignKey(
                 name: "FK_CurrencyPairs_Sources_SourceId",
-                table: "ItemPairs",
+                table: "CurrencyPairs",
                 column: "SourceId",
                 principalTable: "Sources",
                 principalColumn: "Id",
@@ -172,7 +172,7 @@ namespace Nozomi.Repo.Migrations
                 name: "FK_Requests_CurrencyPairs_CurrencyPairId",
                 table: "Requests",
                 column: "CurrencyPairId",
-                principalTable: "ItemPairs",
+                principalTable: "CurrencyPairs",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Restrict);
 
@@ -205,7 +205,7 @@ namespace Nozomi.Repo.Migrations
 
             migrationBuilder.DropForeignKey(
                 name: "FK_CurrencyPairs_Sources_SourceId",
-                table: "ItemPairs");
+                table: "CurrencyPairs");
 
             migrationBuilder.DropForeignKey(
                 name: "FK_CurrencySources_Currencies_CurrencyId",
@@ -243,21 +243,21 @@ namespace Nozomi.Repo.Migrations
 
             migrationBuilder.AlterColumn<string>(
                 name: "MainTicker",
-                table: "ItemPairs",
+                table: "CurrencyPairs",
                 type: "text",
                 nullable: true,
                 oldClrType: typeof(string));
 
             migrationBuilder.AlterColumn<string>(
                 name: "CounterTicker",
-                table: "ItemPairs",
+                table: "CurrencyPairs",
                 type: "text",
                 nullable: true,
                 oldClrType: typeof(string));
 
             migrationBuilder.AlterColumn<string>(
                 name: "APIUrl",
-                table: "ItemPairs",
+                table: "CurrencyPairs",
                 type: "text",
                 nullable: true,
                 oldClrType: typeof(string));
@@ -290,7 +290,7 @@ namespace Nozomi.Repo.Migrations
                 name: "FK_AnalysedComponents_CurrencyPairs_CurrencyPairId",
                 table: "AnalysedComponents",
                 column: "CurrencyPairId",
-                principalTable: "ItemPairs",
+                principalTable: "CurrencyPairs",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Cascade);
 
@@ -312,7 +312,7 @@ namespace Nozomi.Repo.Migrations
 
             migrationBuilder.AddForeignKey(
                 name: "Source_CurrencyPairs_Constraint",
-                table: "ItemPairs",
+                table: "CurrencyPairs",
                 column: "SourceId",
                 principalTable: "Sources",
                 principalColumn: "Id",
@@ -346,7 +346,7 @@ namespace Nozomi.Repo.Migrations
                 name: "CurrencyPair_CurrencyPairRequest_Constraint",
                 table: "Requests",
                 column: "CurrencyPairId",
-                principalTable: "ItemPairs",
+                principalTable: "CurrencyPairs",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Restrict);
 

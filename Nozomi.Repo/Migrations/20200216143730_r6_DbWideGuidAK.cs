@@ -20,7 +20,7 @@ namespace Nozomi.Repo.Migrations
 
             migrationBuilder.DropIndex(
                 name: "IX_CurrencyPairs_Guid",
-                table: "ItemPairs");
+                table: "CurrencyPairs");
 
             migrationBuilder.DropIndex(
                 name: "IX_Currencies_Guid",
@@ -52,7 +52,7 @@ namespace Nozomi.Repo.Migrations
 
             migrationBuilder.AddUniqueConstraint(
                 name: "AK_CurrencyPairs_Guid",
-                table: "ItemPairs",
+                table: "CurrencyPairs",
                 column: "Guid");
 
             migrationBuilder.AddUniqueConstraint(
@@ -86,7 +86,7 @@ namespace Nozomi.Repo.Migrations
 
             migrationBuilder.DropUniqueConstraint(
                 name: "AK_CurrencyPairs_Guid",
-                table: "ItemPairs");
+                table: "CurrencyPairs");
 
             migrationBuilder.DropUniqueConstraint(
                 name: "AK_Currencies_Guid",
@@ -116,7 +116,7 @@ namespace Nozomi.Repo.Migrations
 
             migrationBuilder.CreateIndex(
                 name: "IX_CurrencyPairs_Guid",
-                table: "ItemPairs",
+                table: "CurrencyPairs",
                 column: "Guid",
                 unique: true);
 
