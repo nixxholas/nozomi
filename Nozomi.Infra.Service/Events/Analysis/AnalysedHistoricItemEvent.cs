@@ -130,12 +130,12 @@ namespace Nozomi.Service.Events.Analysis
                 {
                     query = query
                         .Include(ahi => ahi.AnalysedComponent)
-                        .ThenInclude(ac => ac.Currency)
+                        .ThenInclude(ac => ac.Item)
                         .Include(ahi => ahi.AnalysedComponent)
                         .ThenInclude(ac => ac.CurrencyPair)
                         .ThenInclude(cp => cp.Source)
                         .ThenInclude(s => s.SourceCurrencies)
-                        .ThenInclude(sc => sc.Currency)
+                        .ThenInclude(sc => sc.Item)
                         .Include(ahi => ahi.AnalysedComponent)
                         .ThenInclude(ac => ac.CurrencyType);
                 }
@@ -169,12 +169,12 @@ namespace Nozomi.Service.Events.Analysis
                 var query = _context.AnalysedHistoricItems.AsNoTracking()
                     .Where(ahi => correlations.Any(ac => ac.Id.Equals(ahi.AnalysedComponentId)))
                     .Include(ahi => ahi.AnalysedComponent)
-                        .ThenInclude(ac => ac.Currency)
+                        .ThenInclude(ac => ac.Item)
                         .Include(ahi => ahi.AnalysedComponent)
                         .ThenInclude(ac => ac.CurrencyPair)
                         .ThenInclude(cp => cp.Source)
                         .ThenInclude(s => s.SourceCurrencies)
-                        .ThenInclude(sc => sc.Currency)
+                        .ThenInclude(sc => sc.Item)
                         .Include(ahi => ahi.AnalysedComponent)
                         .ThenInclude(ac => ac.CurrencyType)
                         .AsQueryable();

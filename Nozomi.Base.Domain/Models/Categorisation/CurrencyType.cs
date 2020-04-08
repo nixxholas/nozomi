@@ -48,7 +48,7 @@ namespace Nozomi.Data.Models.Categorisation
         
         public ICollection<AnalysedComponent> AnalysedComponents { get; set; }
 
-        public ICollection<Currency> Currencies { get; set; }
+        public ICollection<Item> Currencies { get; set; }
         
         public ICollection<Request> Requests { get; set; }
 

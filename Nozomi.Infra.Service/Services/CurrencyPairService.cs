@@ -94,8 +94,8 @@ namespace Nozomi.Service.Services
             
             // Check the main ticker
             if (!_context.CurrencySources.AsNoTracking()
-                .Include(cs => cs.Currency)
-                .Any(cs => cs.Currency.Abbreviation
+                .Include(cs => cs.Item)
+                .Any(cs => cs.Item.Abbreviation
                                .Equals(createCurrencyPair.MainCurrencyAbbrv,
                                    StringComparison.InvariantCultureIgnoreCase)
                            && cs.SourceId.Equals(createCurrencyPair.SourceId)))
@@ -107,8 +107,8 @@ namespace Nozomi.Service.Services
 
             // Check the counter ticker
             if (!_context.CurrencySources.AsNoTracking()
-                .Include(cs => cs.Currency)
-                .Any(cs => cs.Currency.Abbreviation.Equals(createCurrencyPair.CounterCurrencyAbbrv,
+                .Include(cs => cs.Item)
+                .Any(cs => cs.Item.Abbreviation.Equals(createCurrencyPair.CounterCurrencyAbbrv,
                                StringComparison.InvariantCultureIgnoreCase)
                            && cs.SourceId.Equals(createCurrencyPair.SourceId)))
             {
@@ -138,12 +138,12 @@ namespace Nozomi.Service.Services
         {
             if (updateCurrencyPair == null || !updateCurrencyPair.IsValid()
                 || !_context.CurrencySources.AsNoTracking()
-                    .Include(cs => cs.Currency)
-                    .Any(cs => cs.Currency.Abbreviation.Equals(updateCurrencyPair.MainCurrencyAbbrv)
+                    .Include(cs => cs.Item)
+                    .Any(cs => cs.Item.Abbreviation.Equals(updateCurrencyPair.MainCurrencyAbbrv)
                         && cs.SourceId.Equals(updateCurrencyPair.SourceId))
                 || !_context.CurrencySources.AsNoTracking()
-                .Include(cs => cs.Currency)
-                .Any(cs => cs.Currency.Abbreviation.Equals(updateCurrencyPair.CounterCurrencyAbbrv)
+                .Include(cs => cs.Item)
+                .Any(cs => cs.Item.Abbreviation.Equals(updateCurrencyPair.CounterCurrencyAbbrv)
                            && cs.SourceId.Equals(updateCurrencyPair.SourceId)))
                 return new NozomiResult<string>(
                     NozomiResultType.Failed, "Please ensure that the payload is valid");

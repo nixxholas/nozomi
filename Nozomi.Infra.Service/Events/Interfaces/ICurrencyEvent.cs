@@ -28,11 +28,11 @@ namespace Nozomi.Service.Events.Interfaces
             ICollection<AnalysedComponentType> typesToTake = null, 
             ICollection<AnalysedComponentType> typesToDeepen = null);
 
-        Currency Get(long id, bool track = false);
+        Item Get(long id, bool track = false);
         
-        Currency GetCurrencyByAbbreviation(string abbreviation, bool track = false);
+        Item GetCurrencyByAbbreviation(string abbreviation, bool track = false);
 
-        Currency GetBySlug(string slug);
+        Item GetBySlug(string slug);
         
         /// <summary>
         /// Provides the caller the total amount of currency currently circulating
@@ -46,14 +46,14 @@ namespace Nozomi.Service.Events.Interfaces
 
         long GetCountByType(string typeShortForm);
         
-        ICollection<Currency> GetAll(bool includeNested = false);
-        ICollection<Currency> GetAllNonDeleted(bool includeNested = false);
+        ICollection<Item> GetAll(bool includeNested = false);
+        ICollection<Item> GetAllNonDeleted(bool includeNested = false);
         
         ICollection<CurrencyDTO> GetAllDTO();
         
         bool Any(CreateCurrency currency);
         
-        IEnumerable<Currency> GetAllActive(bool includeNested = false);
+        IEnumerable<Item> GetAllActive(bool includeNested = false);
         IEnumerable<dynamic> GetAllActiveObsc(bool includeNested = false);
         IEnumerable<dynamic> GetAllActiveDistinctObsc(bool includeNested = false);
 

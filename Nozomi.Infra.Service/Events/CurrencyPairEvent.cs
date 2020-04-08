@@ -189,7 +189,7 @@ namespace Nozomi.Service.Events
                 {
                     query.Include(cp => cp.Source)
                         .ThenInclude(s => s.SourceCurrencies)
-                        .ThenInclude(sc => sc.Currency);
+                        .ThenInclude(sc => sc.Item);
                 }
 
                 return query.ToList();

@@ -7,7 +7,7 @@ namespace Nozomi.Data.ViewModels.Admin.Currency
         /// <summary>
         /// Stores all currency data to the currency.
         /// </summary>
-        public Models.Categorisation.Currency Currency { get; set; }
+        public Models.Categorisation.Item Item { get; set; }
         
         public IEnumerable<Models.Categorisation.Source> CurrencySourcesOptions { get; set; }
         
