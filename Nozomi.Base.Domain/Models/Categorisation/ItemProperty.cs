@@ -5,7 +5,7 @@ using Nozomi.Base.BCL;
 namespace Nozomi.Data.Models.Categorisation
 {
     [DataContract]
-    public class CurrencyProperty : Entity
+    public class ItemProperty : Entity
     {
         public long Id { get; set; }
         
@@ -17,13 +17,8 @@ namespace Nozomi.Data.Models.Categorisation
         [DataMember]
         public string Value { get; set; }
         
-        public long CurrencyId { get; set; }
+        public long ItemId { get; set; }
         
         public Item Item { get; set; }
-
-        public bool IsValid()
-        {
-            return Type >= 0 && !string.IsNullOrEmpty(Value) && CurrencyId > 0;
-        }
     }
 }

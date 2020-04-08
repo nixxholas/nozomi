@@ -5,9 +5,9 @@ using Nozomi.Data.Models.Categorisation;
 
 namespace Nozomi.Repo.Data.Mappings.CurrencyModels
 {
-    public class CurrencyPropertyMap : BaseMap<CurrencyProperty>
+    public class CurrencyPropertyMap : BaseMap<ItemProperty>
     {
-        public CurrencyPropertyMap(EntityTypeBuilder<CurrencyProperty> entityTypeBuilder) : base(entityTypeBuilder)
+        public CurrencyPropertyMap(EntityTypeBuilder<ItemProperty> entityTypeBuilder) : base(entityTypeBuilder)
         {
             entityTypeBuilder.HasKey(cp => cp.Id).HasName("CurrencyProperty_PK_Id");
             entityTypeBuilder.Property(cp => cp.Id).ValueGeneratedOnAdd();
