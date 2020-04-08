@@ -7,9 +7,9 @@ using Nozomi.Service.Events.Interfaces;
 
 namespace Nozomi.Service.Events
 {
-    public class CurrencySourceEvent : BaseEvent<CurrencySource, NozomiDbContext>, ICurrencySourceEvent
+    public class CurrencySourceEvent : BaseEvent<ItemSource, NozomiDbContext>, ICurrencySourceEvent
     {
-        public CurrencySourceEvent(ILogger<CurrencySource> logger, NozomiDbContext unitOfWork) : base(logger, unitOfWork)
+        public CurrencySourceEvent(ILogger<ItemSource> logger, NozomiDbContext unitOfWork) : base(logger, unitOfWork)
         {
         }
 
@@ -18,7 +18,7 @@ namespace Nozomi.Service.Events
             return _context.CurrencySources
                 .Any(cs => cs.DeletedAt == null
                            && cs.SourceId.Equals(sourceId)
-                           && cs.CurrencyId.Equals(currencyId));
+                           && cs.ItemId.Equals(currencyId));
         }
     }
 }

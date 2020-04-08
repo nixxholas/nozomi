@@ -33,13 +33,13 @@ namespace Nozomi.Service.Services
             try
             {
                 if (_context.CurrencySources.AsNoTracking()
-                    .Any(cs => cs.CurrencyId.Equals(currencySource.CurrencyId)
+                    .Any(cs => cs.ItemId.Equals(currencySource.CurrencyId)
                                && cs.SourceId.Equals(currencySource.SourceId)))
                     return new NozomiResult<string>(NozomiResultType.Failed, "Source to currency binding already exists.");
                 
-                _context.CurrencySources.Add(new CurrencySource
+                _context.CurrencySources.Add(new ItemSource
                 {
-                    CurrencyId = currencySource.CurrencyId,
+                    ItemId = currencySource.CurrencyId,
                     SourceId = currencySource.SourceId
                 });
 
@@ -63,7 +63,7 @@ namespace Nozomi.Service.Services
                 if (source != null && currency != null 
                                    && !_currencySourceEvent.Exists(source.Id, currency.Id))
                 {
-                    _context.CurrencySources.Add(new CurrencySource(source.Id, currency.Id));
+                    _context.CurrencySources.Add(new ItemSource(source.Id, currency.Id));
 
                     _context.SaveChanges(userId);
 
@@ -85,9 +85,9 @@ namespace Nozomi.Service.Services
                                                   && cs.Item.Slug.Equals(mainTicker)))
             {
                 // Since it doesn't exist, symlink the new currency source
-                var mainCurrencySource = new CurrencySource(sourceId);
+                var mainCurrencySource = new ItemSource(sourceId);
                 var mainCurrency = _currencyEvent.GetBySlug(mainTicker);
-                mainCurrencySource.CurrencyId = mainCurrency.Id;
+                mainCurrencySource.ItemId = mainCurrency.Id;
                 
                 _context.CurrencySources.Add(mainCurrencySource);
                 _context.SaveChanges(userId);
@@ -100,9 +100,9 @@ namespace Nozomi.Service.Services
                                                 && cs.Item.Slug.Equals(counterTicker)))
             {
                 // Since it doesn't exist, symlink the new currency source
-                var counterCurrencySource = new CurrencySource(sourceId);
+                var counterCurrencySource = new ItemSource(sourceId);
                 var counterCurrency = _currencyEvent.GetBySlug(counterTicker);
-                counterCurrencySource.CurrencyId = counterCurrency.Id;
+                counterCurrencySource.ItemId = counterCurrency.Id;
                 
                 _context.CurrencySources.Add(counterCurrencySource);
                 _context.SaveChanges(userId);

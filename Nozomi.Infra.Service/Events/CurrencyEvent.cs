@@ -800,7 +800,7 @@ namespace Nozomi.Service.Events
                              ac.ItemPair.Source.SourceCurrencies !=
                              null // Make sure the source currency is not empty
                              && ac.ItemPair.Source.SourceCurrencies // Second layer check.
-                                 .Any(sc => sc.DeletedAt == null && sc.IsEnabled && sc.CurrencyId.Equals(currencyId)));
+                                 .Any(sc => sc.DeletedAt == null && sc.IsEnabled && sc.ItemId.Equals(currencyId)));
 
             if (track)
                 components = components.Include(ac => ac.AnalysedHistoricItems);

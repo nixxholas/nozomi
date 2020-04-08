@@ -109,12 +109,12 @@ namespace Nozomi.Service
 
                         var binanceSource = context.Sources.SingleOrDefault(s => s.Abbreviation.Equals("bn"));
                         if (binanceSource != null && !context.CurrencySources
-                            .Any(cs => cs.CurrencyId.Equals(bitcoin.Id) 
+                            .Any(cs => cs.ItemId.Equals(bitcoin.Id) 
                                        && cs.SourceId.Equals(binanceSource.Id)))
                         {
-                            var btcBinanceSource = new CurrencySource
+                            var btcBinanceSource = new ItemSource
                             {
-                                CurrencyId = bitcoin.Id,
+                                ItemId = bitcoin.Id,
                                 SourceId = binanceSource.Id
                             };
 
@@ -145,12 +145,12 @@ namespace Nozomi.Service
 
                         var binanceSource = context.Sources.SingleOrDefault(s => s.Abbreviation.Equals("bn"));
                         if (binanceSource != null && !context.CurrencySources
-                            .Any(cs => cs.CurrencyId.Equals(tether.Id) 
+                            .Any(cs => cs.ItemId.Equals(tether.Id) 
                                        && cs.SourceId.Equals(binanceSource.Id)))
                         {
-                            var tetherBinanceSource = new CurrencySource
+                            var tetherBinanceSource = new ItemSource
                             {
-                                CurrencyId = tether.Id,
+                                ItemId = tether.Id,
                                 SourceId = binanceSource.Id
                             };
 
@@ -181,12 +181,12 @@ namespace Nozomi.Service
 
                         var binanceSource = context.Sources.SingleOrDefault(s => s.Abbreviation.Equals("bn"));
                         if (binanceSource != null && !context.CurrencySources
-                            .Any(cs => cs.CurrencyId.Equals(ethereum.Id) 
+                            .Any(cs => cs.ItemId.Equals(ethereum.Id) 
                                        && cs.SourceId.Equals(binanceSource.Id)))
                         {
-                            var ethereumBinanceSource = new CurrencySource
+                            var ethereumBinanceSource = new ItemSource
                             {
-                                CurrencyId = ethereum.Id,
+                                ItemId = ethereum.Id,
                                 SourceId = binanceSource.Id
                             };
 

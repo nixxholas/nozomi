@@ -324,7 +324,7 @@ namespace Nozomi.Service.Events.Analysis
                 .ThenInclude(s => s.SourceCurrencies)
                 .ThenInclude(sc => sc.Item)
                 // Make sure the source has such currency
-                .Where(cp => cp.Source.SourceCurrencies.Any(sc => sc.CurrencyId.Equals(currencyId)
+                .Where(cp => cp.Source.SourceCurrencies.Any(sc => sc.ItemId.Equals(currencyId)
                                                                   // And that the main currency abbreviation matches
                                                                   // the currency's abbreviation
                                                                   && sc.Item.Abbreviation.Equals(cp.MainTicker)))

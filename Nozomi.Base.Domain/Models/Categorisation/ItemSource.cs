@@ -8,29 +8,29 @@ namespace Nozomi.Data.Models.Categorisation
     /// The best way to peg currencies to sources.
     /// </summary>
     [DataContract]
-    public class CurrencySource : Entity
+    public class ItemSource : Entity
     {
-        public CurrencySource() {}
+        public ItemSource() {}
 
         /// <summary>
         /// Constructor for Currency-based seeding
         /// </summary>
         /// <param name="sourceId"></param>
-        public CurrencySource(long sourceId)
+        public ItemSource(long sourceId)
         {
             SourceId = sourceId;
         }
 
-        public CurrencySource(long sourceId, long currencyId)
+        public ItemSource(long sourceId, long itemId)
         {
             SourceId = sourceId;
-            CurrencyId = currencyId;
+            ItemId = itemId;
         }
         
         [Key]
         public long Id { get; set; }
         
-        public long CurrencyId { get; set; }
+        public long ItemId { get; set; }
         
         public Item Item { get; set; }
         

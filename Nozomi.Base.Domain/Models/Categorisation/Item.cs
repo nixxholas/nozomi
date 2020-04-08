@@ -72,7 +72,7 @@ namespace Nozomi.Data.Models.Categorisation
         
         public ICollection<ItemProperty> ItemProperties { get; set; }
         
-        public ICollection<CurrencySource> ItemSources { get; set; }
+        public ICollection<ItemSource> ItemSources { get; set; }
         
         public ICollection<Request> Requests { get; set; }
 
