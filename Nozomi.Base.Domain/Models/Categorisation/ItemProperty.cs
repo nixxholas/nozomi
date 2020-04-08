@@ -11,9 +11,8 @@ namespace Nozomi.Data.Models.Categorisation
         
         public Guid Guid { get; set; }
         
-        public long TypeId { get; set; }
-        
-        public ItemPropertyType Type { get; set; }
+        [DataMember]
+        public CurrencyPropertyType Type { get; set; }
         
         [DataMember]
         public string Value { get; set; }
