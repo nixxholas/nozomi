@@ -209,7 +209,7 @@ namespace Nozomi.Service
                     {
                         var btcusdtBinance = new ItemPair
                         {
-                            Type = CurrencyPairType.TRADEABLE,
+                            Type = ItemPairType.TRADEABLE,
                             DefaultComponent = "b",
                             SourceId = binanceSource.Id,
                             MainTicker = "BTC",
@@ -272,7 +272,7 @@ namespace Nozomi.Service
                     {
                         var ethusdtBinance = new ItemPair
                         {
-                            Type = CurrencyPairType.TRADEABLE,
+                            Type = ItemPairType.TRADEABLE,
                             DefaultComponent = "b",
                             SourceId = binanceSource.Id,
                             MainTicker = "ETH",
