@@ -15,7 +15,7 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
             entityTypeBuilder.HasAlternateKey(e => e.Guid);
             entityTypeBuilder.Property(e => e.Guid).ValueGeneratedOnAdd();
 
-            entityTypeBuilder.Property(c => c.Type).IsRequired().HasDefaultValue(CurrencyPropertyType.Generic);
+            // entityTypeBuilder.Property(c => c.Type).IsRequired().HasDefaultValue(ItemPropertyType.Generic);
             entityTypeBuilder.Property(c => c.Value).IsRequired(false);
 
             // entityTypeBuilder.HasOne(cp => cp.Currency).WithMany(c => c.CurrencyProperties)

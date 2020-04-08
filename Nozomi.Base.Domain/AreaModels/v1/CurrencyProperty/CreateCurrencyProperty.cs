@@ -5,7 +5,7 @@ namespace Nozomi.Data.AreaModels.v1.CurrencyProperty
 {
     public class CreateCurrencyProperty
     {
-        public CurrencyPropertyType Type { get; set; }
+        public ItemPropertyType Type { get; set; }
      
         [Required]
         public string Value { get; set; }

@@ -9,7 +9,7 @@ namespace Nozomi.Data.AreaModels.v1.CurrencyProperty
         public long Id { get; set; }
         
         [Required]
-        public CurrencyPropertyType Type { get; set; }
+        public ItemPropertyType Type { get; set; }
         
         [Required]
         public string Value { get; set; }
