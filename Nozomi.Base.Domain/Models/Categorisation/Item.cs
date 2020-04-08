@@ -70,7 +70,7 @@ namespace Nozomi.Data.Models.Categorisation
         
         public ICollection<AnalysedComponent> AnalysedComponents { get; set; }
         
-        public ICollection<ItemProperty> ItemProperties { get; set; }
+        public ICollection<CurrencyProperty> ItemProperties { get; set; }
         
         public ICollection<CurrencySource> ItemSources { get; set; }
         
