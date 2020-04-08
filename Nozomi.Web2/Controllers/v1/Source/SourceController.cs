@@ -73,9 +73,9 @@ namespace Nozomi.Web2.Controllers.v1.Source
 
         [HttpGet("{slug}")]
         [Throttle(Name = "Source/GetCurrencySources", Milliseconds = 1000)]
-        public NozomiResult<ICollection<Data.Models.Currency.Source>> GetCurrencySources(string slug, int page = 0)
+        public NozomiResult<ICollection<Data.Models.Categorisation.Source>> GetCurrencySources(string slug, int page = 0)
         {
-            return new NozomiResult<ICollection<Data.Models.Currency.Source>>(
+            return new NozomiResult<ICollection<Data.Models.Categorisation.Source>>(
                 _sourceEvent.GetCurrencySources(slug, page).ToList());
         }
 

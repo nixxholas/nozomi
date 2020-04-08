@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nozomi.Base.BCL.Extensions;
-using Nozomi.Data.Models.Currency;
+using Nozomi.Data.Models.Categorisation;
 using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Data.ViewModels.AnalysedComponent;
 using Nozomi.Data.ViewModels.AnalysedHistoricItem;

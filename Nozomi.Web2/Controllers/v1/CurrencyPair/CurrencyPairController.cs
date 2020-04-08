@@ -108,9 +108,9 @@ namespace Nozomi.Web2.Controllers.v1.CurrencyPair
         [HttpGet("{abbrv}")]
         [Throttle(Name = "CurrencyPair/Ticker", Milliseconds = 2000)]
         [Obsolete]
-        public NozomiResult<ICollection<Data.Models.Currency.CurrencyPair>> Ticker(string abbrv)
+        public NozomiResult<ICollection<Data.Models.Categorisation.CurrencyPair>> Ticker(string abbrv)
         {
-            return new NozomiResult<ICollection<Data.Models.Currency.CurrencyPair>>(
+            return new NozomiResult<ICollection<Data.Models.Categorisation.CurrencyPair>>(
                 _currencyPairEvent.GetAllByTickerPairAbbreviation(abbrv, true));
         }
     }

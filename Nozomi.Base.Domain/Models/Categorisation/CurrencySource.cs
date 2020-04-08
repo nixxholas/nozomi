@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
 using Nozomi.Base.BCL;
 
-namespace Nozomi.Data.Models.Currency
+namespace Nozomi.Data.Models.Categorisation
 {
     /// <summary>
     /// The best way to peg currencies to sources.

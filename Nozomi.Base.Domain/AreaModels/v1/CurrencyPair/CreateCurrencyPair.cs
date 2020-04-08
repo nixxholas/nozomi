@@ -1,5 +1,5 @@
 using Nozomi.Base.BCL.Helpers.Native.Collections;
-using Nozomi.Data.Models.Currency;
+using Nozomi.Data.Models.Categorisation;
 
 namespace Nozomi.Data.AreaModels.v1.CurrencyPair
 {

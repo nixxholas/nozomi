@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using Nozomi.Data.AreaModels.v1.Currency;
-using Nozomi.Data.Models.Currency;
+using Nozomi.Data.Models.Categorisation;
 using Nozomi.Data.Models.Web;
 using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Data.ViewModels.Currency;

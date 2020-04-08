@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using Nozomi.Data.AreaModels.v1.Requests;
-using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web;
 using Nozomi.Data.ViewModels.Request;
 using Nozomi.Repo.Data;

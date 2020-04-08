@@ -4,7 +4,7 @@ using System.Security.Claims;
 using IdentityModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using Nozomi.Data.Models.Currency;
+using Nozomi.Data.Models.Categorisation;
 using Nozomi.Data.ViewModels.Currency;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Preprocessing.Statics;

@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Nozomi.Data.Models.Currency;
+using Nozomi.Data.Models.Categorisation;
 using Nozomi.Data.ViewModels.SourceType;
 
 namespace Nozomi.Service.Events.Interfaces

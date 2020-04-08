@@ -1,5 +1,5 @@
 using FluentValidation;
-using Nozomi.Data.Models.Currency;
+using Nozomi.Data.Models.Categorisation;
 
 namespace Nozomi.Data.ViewModels.CurrencyPair
 {
