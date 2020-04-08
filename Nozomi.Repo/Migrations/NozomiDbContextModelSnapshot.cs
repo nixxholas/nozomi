@@ -101,7 +101,7 @@ namespace Nozomi.Repo.Migrations
                         .IsUnique()
                         .HasName("Currency_Index_Slug");
 
-                    b.ToTable("Currencies");
+                    b.ToTable("Items");
                 });
 
             modelBuilder.Entity("Nozomi.Data.Models.Currency.CurrencyPair", b =>
@@ -274,7 +274,7 @@ namespace Nozomi.Repo.Migrations
                     b.ToTable("CurrencySources");
                 });
 
-            modelBuilder.Entity("Nozomi.Data.Models.Currency.CurrencyType", b =>
+            modelBuilder.Entity("Nozomi.Data.Models.Currency.ItemType", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -1328,8 +1328,8 @@ namespace Nozomi.Repo.Migrations
 
             modelBuilder.Entity("Nozomi.Data.Models.Currency.Currency", b =>
                 {
-                    b.HasOne("Nozomi.Data.Models.Currency.CurrencyType", "CurrencyType")
-                        .WithMany("Currencies")
+                    b.HasOne("Nozomi.Data.Models.Currency.ItemType", "ItemType")
+                        .WithMany("Items")
                         .HasForeignKey("CurrencyTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1387,7 +1387,7 @@ namespace Nozomi.Repo.Migrations
                         .WithMany("AnalysedComponents")
                         .HasForeignKey("CurrencyPairId");
 
-                    b.HasOne("Nozomi.Data.Models.Currency.CurrencyType", "CurrencyType")
+                    b.HasOne("Nozomi.Data.Models.Currency.ItemType", "ItemType")
                         .WithMany("AnalysedComponents")
                         .HasForeignKey("CurrencyTypeId");
                 });
@@ -1433,7 +1433,7 @@ namespace Nozomi.Repo.Migrations
                         .WithMany("Requests")
                         .HasForeignKey("CurrencyPairId");
 
-                    b.HasOne("Nozomi.Data.Models.Currency.CurrencyType", "CurrencyType")
+                    b.HasOne("Nozomi.Data.Models.Currency.ItemType", "ItemType")
                         .WithMany("Requests")
                         .HasForeignKey("CurrencyTypeId");
                 });

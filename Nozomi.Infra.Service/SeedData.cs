@@ -69,7 +69,7 @@ namespace Nozomi.Service
                 // Currency Types
                 if (!context.CurrencyTypes.Any(ct => ct.TypeShortForm.Equals("CRYPTO")))
                 {
-                    var cryptocurrencyType = new CurrencyType
+                    var cryptocurrencyType = new ItemType
                     {
                         TypeShortForm = "CRYPTO",
                         Name = "Cryptocurrencies"
@@ -79,7 +79,7 @@ namespace Nozomi.Service
                     context.SaveChanges();
                 }
                 
-                // Currencies and its bindings
+                // Items and its bindings
                 if (!context.Currencies.Any(c => c.Slug.Equals("btc")))
                 {
                     var type = context.CurrencyTypes

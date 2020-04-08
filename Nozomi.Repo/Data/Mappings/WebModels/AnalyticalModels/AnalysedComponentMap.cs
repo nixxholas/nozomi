@@ -34,7 +34,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
             //     .WithMany(c => c.AnalysedComponents).HasForeignKey(ac => ac.CurrencyId)
             //     .OnDelete(DeleteBehavior.Restrict)
             //     .IsRequired(false);
-            // entityTypeBuilder.HasOne(ac => ac.CurrencyType)
+            // entityTypeBuilder.HasOne(ac => ac.ItemType)
             //     .WithMany(ct => ct.AnalysedComponents).HasForeignKey(ac => ac.CurrencyTypeId)
             //     .OnDelete(DeleteBehavior.Restrict)
             //     .IsRequired(false);

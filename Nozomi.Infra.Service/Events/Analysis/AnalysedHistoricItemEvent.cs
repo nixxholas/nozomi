@@ -137,7 +137,7 @@ namespace Nozomi.Service.Events.Analysis
                         .ThenInclude(s => s.SourceCurrencies)
                         .ThenInclude(sc => sc.Item)
                         .Include(ahi => ahi.AnalysedComponent)
-                        .ThenInclude(ac => ac.CurrencyType);
+                        .ThenInclude(ac => ac.ItemType);
                 }
 
                 query = query
@@ -176,7 +176,7 @@ namespace Nozomi.Service.Events.Analysis
                         .ThenInclude(s => s.SourceCurrencies)
                         .ThenInclude(sc => sc.Item)
                         .Include(ahi => ahi.AnalysedComponent)
-                        .ThenInclude(ac => ac.CurrencyType)
+                        .ThenInclude(ac => ac.ItemType)
                         .AsQueryable();
 
                 return query

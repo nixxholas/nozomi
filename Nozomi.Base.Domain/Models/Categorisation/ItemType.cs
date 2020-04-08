@@ -9,18 +9,18 @@ using Nozomi.Data.Models.Web.Analytical;
 namespace Nozomi.Data.Models.Categorisation
 {
     [DataContract]
-    public class CurrencyType : Entity
+    public class ItemType : Entity
     {
-        public CurrencyType() {}
+        public ItemType() {}
 
-        public CurrencyType(string typeShortForm, string name)
+        public ItemType(string typeShortForm, string name)
         {
             Guid = Guid.NewGuid();
             Name = name;
             TypeShortForm = typeShortForm;
         }
 
-        public CurrencyType(long id, Guid guid, string name, 
+        public ItemType(long id, Guid guid, string name, 
             string typeShortForm)
         {
             Id = id;
@@ -35,12 +35,12 @@ namespace Nozomi.Data.Models.Categorisation
         [DataMember]
         [MaxLength(12)]
         [Display(Name = "Abbreviation", Prompt = "Enter a short form for the name.",
-            Description = "The abbreviated form of the currency type's name.")]
+            Description = "The abbreviated form of the item type's name.")]
         public string TypeShortForm { get; set; }
 
         [DataMember]
         [Display(Name = "Name", Prompt = "Enter a name.",
-            Description = "Name of the Currency Type.")]
+            Description = "Name of the Item Type.")]
         public string Name { get; set; }
         
         [DataMember]
@@ -48,7 +48,7 @@ namespace Nozomi.Data.Models.Categorisation
         
         public ICollection<AnalysedComponent> AnalysedComponents { get; set; }
 
-        public ICollection<Item> Currencies { get; set; }
+        public ICollection<Item> Items { get; set; }
         
         public ICollection<Request> Requests { get; set; }
 

@@ -6,7 +6,7 @@ namespace Nozomi.Data.AreaModels.v1.Currency
     {
         public long Id { get; set; }
         
-        public CurrencyType CurrencyType { get; set; }
+        public ItemType ItemType { get; set; }
         
         public string LogoPath { get; set; }
         

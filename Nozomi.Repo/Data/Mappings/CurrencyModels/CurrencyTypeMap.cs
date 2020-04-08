@@ -5,9 +5,9 @@ using Nozomi.Data.Models.Categorisation;
 
 namespace Nozomi.Repo.Data.Mappings.CurrencyModels
 {
-    public class CurrencyTypeMap : BaseMap<CurrencyType>
+    public class CurrencyTypeMap : BaseMap<ItemType>
     {
-        public CurrencyTypeMap(EntityTypeBuilder<CurrencyType> entityTypeBuilder) : base(entityTypeBuilder)
+        public CurrencyTypeMap(EntityTypeBuilder<ItemType> entityTypeBuilder) : base(entityTypeBuilder)
         {
             entityTypeBuilder.HasKey(ct => ct.Id).HasName("CurrencyType_PK_Id");
             entityTypeBuilder.Property(ct => ct.Id).ValueGeneratedOnAdd();
@@ -18,13 +18,13 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
             entityTypeBuilder.Property(ct => ct.Name).IsRequired();
             entityTypeBuilder.Property(ct => ct.TypeShortForm).IsRequired();
 
-            // entityTypeBuilder.HasMany(ct => ct.AnalysedComponents).WithOne(ac => ac.CurrencyType)
+            // entityTypeBuilder.HasMany(ct => ct.AnalysedComponents).WithOne(ac => ac.ItemType)
             //     .HasForeignKey(ac => ac.CurrencyTypeId).HasConstraintName("CurrencyType_AnalysedComponents_Constraint")
             //     .IsRequired(false);
-            // entityTypeBuilder.HasMany(ct => ct.Currencies).WithOne(c => c.CurrencyType)
+            // entityTypeBuilder.HasMany(ct => ct.Items).WithOne(c => c.ItemType)
             //     .HasForeignKey(c => c.CurrencyTypeId).HasConstraintName("CurrencyType_Currencies_Constraint");
             // entityTypeBuilder.HasMany(ct => ct.Requests)
-            //     .WithOne(r => r.CurrencyType).HasForeignKey(r => r.CurrencyTypeId)
+            //     .WithOne(r => r.ItemType).HasForeignKey(r => r.CurrencyTypeId)
             //     .HasConstraintName("CurrencyType_Request_Constraint")
             //     .IsRequired(false);
         }

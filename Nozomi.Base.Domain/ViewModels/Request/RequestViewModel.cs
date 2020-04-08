@@ -78,7 +78,7 @@ namespace Nozomi.Data.ViewModels.Request
 
         /// <summary>
         /// This will deduce what type of request this is for
-        /// i.e. CurrencyType, CurrencyPair or Currency.
+        /// i.e. ItemType, CurrencyPair or Currency.
         /// </summary>
         public CreateRequestInputModel.RequestParentType ParentType { get; set; }
 

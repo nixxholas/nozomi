@@ -110,7 +110,7 @@ namespace Nozomi.Infra.Syncing.HostedServices
                             // https://stackoverflow.com/questions/3108888/why-does-c-sharp-have-break-if-its-not-optional
                             goto case AnalysedComponentType.MarketCap;
                         case AnalysedComponentType.MarketCap:
-                            // CurrencyType-based market cap
+                            // ItemType-based market cap
                             if (entity.CurrencyTypeId != null && entity.CurrencyTypeId > 0)
                             {
                                 switch (entity.ComponentType)
@@ -272,12 +272,12 @@ namespace Nozomi.Infra.Syncing.HostedServices
                             // Disable
                             return processAnalysedComponentService.Disable(entity.Id);
                         case AnalysedComponentType.CurrentAveragePrice:
-                            // CurrencyType-based Live Average Price
+                            // ItemType-based Live Average Price
                             if (entity.CurrencyTypeId != null && entity.CurrencyTypeId > 0)
                             {
                                 // This is not good lol
                                 _logger.LogCritical($"[{ServiceName} / ID: {entity.Id}] " +
-                                                    $"Analyse/CurrentAveragePrice: A CurrencyType-" +
+                                                    $"Analyse/CurrentAveragePrice: A ItemType-" +
                                                     $"based component is attempting to compute its CurrentAveragePrice.");
 
                                 // Disable
@@ -285,7 +285,7 @@ namespace Nozomi.Infra.Syncing.HostedServices
                             }
 
                             // Currency-based Live Average Price
-                            // 1. Multiple Currency Pairs with Different Counter Currencies
+                            // 1. Multiple Currency Pairs with Different Counter Items
                             // 2. Just one pair that has the generic counter currency
                             // 3. Just one pair that doesn't have the generic counter currency
                             else if (entity.CurrencyId != null && entity.CurrencyId > 0)
@@ -396,12 +396,12 @@ namespace Nozomi.Infra.Syncing.HostedServices
                         case AnalysedComponentType.HourlyAveragePrice:
                             dataTimespan = TimeSpan.FromHours(1);
 
-                            // CurrencyType-based Hourly Average Price
+                            // ItemType-based Hourly Average Price
                             if (entity.CurrencyTypeId != null && entity.CurrencyTypeId > 0)
                             {
                                 // This is not good lol
                                 _logger.LogCritical($"[{ServiceName} / ID: {entity.Id}] " +
-                                                    $"Analyse/HourlyAveragePrice: A CurrencyType-" +
+                                                    $"Analyse/HourlyAveragePrice: A ItemType-" +
                                                     $"based component is attempting to compute its HourlyAveragePrice.");
 
                                 // Disable
@@ -537,12 +537,12 @@ namespace Nozomi.Infra.Syncing.HostedServices
                         case AnalysedComponentType.DailyAveragePrice:
                             dataTimespan = TimeSpan.FromHours(24);
 
-                            // CurrencyType-based Live Average Price
+                            // ItemType-based Live Average Price
                             if (entity.CurrencyTypeId != null && entity.CurrencyTypeId > 0)
                             {
                                 // This is not good lol
                                 _logger.LogCritical($"[{ServiceName} / ID: {entity.Id}] " +
-                                                    $"Analyse/DailyAveragePrice: A CurrencyType-" +
+                                                    $"Analyse/DailyAveragePrice: A ItemType-" +
                                                     $"based component is attempting to compute its DailyAveragePrice.");
 
                                 // Disable
@@ -689,12 +689,12 @@ namespace Nozomi.Infra.Syncing.HostedServices
                         case AnalysedComponentType.MarketCapDailyPctChange:
                         case AnalysedComponentType.HourlyPricePctChange:
                         case AnalysedComponentType.DailyPricePctChange:
-                            // CurrencyType-based PricePctChange
+                            // ItemType-based PricePctChange
                             if (entity.CurrencyTypeId != null && entity.CurrencyTypeId > 0)
                             {
                                 // This is not good lol
                                 _logger.LogCritical($"[{ServiceName} / ID: {entity.Id}] " +
-                                                    $"Analyse/PricePctChange: A CurrencyType-" +
+                                                    $"Analyse/PricePctChange: A ItemType-" +
                                                     $"based component is attempting to compute its PricePctChange.");
 
                                 // Disable

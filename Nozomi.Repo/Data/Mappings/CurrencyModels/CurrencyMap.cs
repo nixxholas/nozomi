@@ -28,7 +28,7 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
             //     .HasForeignKey(c => c.CurrencyId).OnDelete(DeleteBehavior.Cascade)
             //     .HasConstraintName("Currency_AnalysedComponents_Constraint")
             //     .IsRequired(false);
-            // entityTypeBuilder.HasOne(c => c.CurrencyType).WithMany(ct => ct.Currencies)
+            // entityTypeBuilder.HasOne(c => c.ItemType).WithMany(ct => ct.Items)
             //     .HasForeignKey(c => c.CurrencyTypeId).OnDelete(DeleteBehavior.Cascade)
             //     .HasConstraintName("Currencies_CurrencyType_Constraint");
             // entityTypeBuilder.HasMany(c => c.CurrencySources).WithOne(cs => cs.Currency)

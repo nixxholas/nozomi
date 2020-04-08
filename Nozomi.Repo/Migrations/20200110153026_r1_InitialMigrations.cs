@@ -54,7 +54,7 @@ namespace Nozomi.Repo.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Currencies",
+                name: "Items",
                 columns: table => new
                 {
                     Id = table.Column<long>(nullable: false)
@@ -143,7 +143,7 @@ namespace Nozomi.Repo.Migrations
                     table.ForeignKey(
                         name: "FK_CurrencyProperty_Currencies_CurrencyId",
                         column: x => x.CurrencyId,
-                        principalTable: "Currencies",
+                        principalTable: "Items",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -204,7 +204,7 @@ namespace Nozomi.Repo.Migrations
                     table.ForeignKey(
                         name: "CurrencySource_Currency_Constraint",
                         column: x => x.CurrencyId,
-                        principalTable: "Currencies",
+                        principalTable: "Items",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
@@ -247,7 +247,7 @@ namespace Nozomi.Repo.Migrations
                     table.ForeignKey(
                         name: "Currency_AnalysedComponents_Constraint",
                         column: x => x.CurrencyId,
-                        principalTable: "Currencies",
+                        principalTable: "Items",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -295,7 +295,7 @@ namespace Nozomi.Repo.Migrations
                     table.ForeignKey(
                         name: "Currencies_CurrencyRequests_Constraint",
                         column: x => x.CurrencyId,
-                        principalTable: "Currencies",
+                        principalTable: "Items",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -529,18 +529,18 @@ namespace Nozomi.Repo.Migrations
 
             migrationBuilder.CreateIndex(
                 name: "IX_Currencies_CurrencyTypeId",
-                table: "Currencies",
+                table: "Items",
                 column: "CurrencyTypeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Currencies_Guid",
-                table: "Currencies",
+                table: "Items",
                 column: "Guid",
                 unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "Currency_Index_Slug",
-                table: "Currencies",
+                table: "Items",
                 column: "Slug",
                 unique: true);
 
@@ -703,7 +703,7 @@ namespace Nozomi.Repo.Migrations
                 name: "Requests");
 
             migrationBuilder.DropTable(
-                name: "Currencies");
+                name: "Items");
 
             migrationBuilder.DropTable(
                 name: "CurrencyPairs");

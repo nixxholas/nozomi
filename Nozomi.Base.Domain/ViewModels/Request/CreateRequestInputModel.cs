@@ -36,7 +36,7 @@ namespace Nozomi.Data.ViewModels.Request
 
         /// <summary>
         /// This will deduce what type of request this is for
-        /// i.e. CurrencyType, CurrencyPair or Currency.
+        /// i.e. ItemType, CurrencyPair or Currency.
         /// </summary>
         public RequestParentType ParentType { get; set; }
 
@@ -94,7 +94,7 @@ namespace Nozomi.Data.ViewModels.Request
                 RuleFor(r => r.Delay).GreaterThan(-1);
                 RuleFor(r => r.FailureDelay).GreaterThan(-1);
                 RuleFor(r => r.ParentType).IsInEnum();
-                // // Safetynet for Currencies
+                // // Safetynet for Items
                 // RuleFor(r => r.CurrencySlug).NotNull().NotEmpty()
                 //     // Ignore the check if a currency pair or currency type is selected.
                 //     .Unless(r => 

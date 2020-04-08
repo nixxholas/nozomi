@@ -86,15 +86,15 @@ namespace Nozomi.Service.Events.Analysis
             {
                 return query
                     .Where(ac => ac.DeletedAt == null && ac.CurrencyTypeId != null)
-                    .Include(ac => ac.CurrencyType)
-                    .Where(ac => ac.CurrencyType.TypeShortForm.Equals(currencyTypeAbbrv))
+                    .Include(ac => ac.ItemType)
+                    .Where(ac => ac.ItemType.TypeShortForm.Equals(currencyTypeAbbrv))
                     .Skip(index * itemsPerPage)
                     .Take(itemsPerPage)
                     .Select(ac => new AnalysedComponentViewModel
                     {
                         Guid = ac.Guid,
                         Value = ac.Value,
-                        CurrencyPairGuid = ac.CurrencyType.Guid.ToString(),
+                        CurrencyPairGuid = ac.ItemType.Guid.ToString(),
                         IsEnabled = ac.IsEnabled,
                         Type = ac.ComponentType,
                         Delay = ac.Delay,
@@ -137,9 +137,9 @@ namespace Nozomi.Service.Events.Analysis
                 return _context.AnalysedComponents.AsNoTracking()
                     .Where(ac => ac.DeletedAt == null && ac.IsEnabled
                                  && ac.CurrencyTypeId != null)
-                    .Include(ac => ac.CurrencyType)
+                    .Include(ac => ac.ItemType)
                     .Any(ac =>  ac.DeletedAt == null && ac.IsEnabled 
-                                                     && ac.CurrencyType.TypeShortForm.Equals(currencyTypeShortForm)
+                                                     && ac.ItemType.TypeShortForm.Equals(currencyTypeShortForm)
                                                      && ac.ComponentType.Equals(type));
             
             throw new ArgumentOutOfRangeException("Foreign key out of range for logic.");
@@ -155,7 +155,7 @@ namespace Nozomi.Service.Events.Analysis
                 query
                     .Include(ac => ac.Item)
                     .Include(ac => ac.ItemPair)
-                    .Include(ac => ac.CurrencyType)
+                    .Include(ac => ac.ItemType)
                     .Include(ac => ac.AnalysedHistoricItems);
 
                 return query
@@ -189,7 +189,7 @@ namespace Nozomi.Service.Events.Analysis
             return query
                 .Include(ac => ac.Item)
                 .Include(ac => ac.ItemPair)
-                .Include(ac => ac.CurrencyType)
+                .Include(ac => ac.ItemType)
                 .Select(ac => new UpdateAnalysedComponentViewModel
                 {
                     Guid = guid,
@@ -202,7 +202,7 @@ namespace Nozomi.Service.Events.Analysis
                     IsEnabled = ac.IsEnabled,
                     CurrencySlug = ac.CurrencyId != null ? ac.Item.Slug : null,
                     CurrencyPairGuid = ac.CurrencyPairId != null ? ac.ItemPair.Guid.ToString() : null,
-                    CurrencyTypeShortForm = ac.CurrencyTypeId != null ? ac.CurrencyType.TypeShortForm : null,
+                    CurrencyTypeShortForm = ac.CurrencyTypeId != null ? ac.ItemType.TypeShortForm : null,
                 })
                 .FirstOrDefault();
         }
@@ -222,7 +222,7 @@ namespace Nozomi.Service.Events.Analysis
                     .Include(ac => ac.AnalysedHistoricItems)
                     .Include(ac => ac.Item)
                     .Include(ac => ac.ItemPair)
-                    .Include(ac => ac.CurrencyType)
+                    .Include(ac => ac.ItemType)
                     .Select(ac => new AnalysedComponent(ac, index,
                         NozomiServiceConstants.AnalysedComponentTakeoutLimit));
 
@@ -244,7 +244,7 @@ namespace Nozomi.Service.Events.Analysis
                     .Include(ac => ac.AnalysedHistoricItems)
                     .Include(ac => ac.Item)
                     .Include(ac => ac.ItemPair)
-                    .Include(ac => ac.CurrencyType);
+                    .Include(ac => ac.ItemType);
 
             return query
                 .OrderBy(ac => ac.Id)
@@ -347,8 +347,8 @@ namespace Nozomi.Service.Events.Analysis
                 if (track)
                 {
                     components
-                        .Include(ac => ac.CurrencyType)
-                        .ThenInclude(ct => ct.Currencies)
+                        .Include(ac => ac.ItemType)
+                        .ThenInclude(ct => ct.Items)
                         .ThenInclude(c => c.AnalysedComponents)
                         .Include(ac => ac.AnalysedHistoricItems);
                 }
@@ -476,7 +476,7 @@ namespace Nozomi.Service.Events.Analysis
             return query
                 .Include(ac => ac.Item)
                 .Include(ac => ac.ItemPair)
-                .Include(ac => ac.CurrencyType)
+                .Include(ac => ac.ItemType)
                 .Include(ac => ac.AnalysedHistoricItems)
                 .Select(ac => new AnalysedComponentViewModel
                 {
@@ -490,7 +490,7 @@ namespace Nozomi.Service.Events.Analysis
                     IsEnabled = ac.IsEnabled,
                     CurrencySlug = ac.Item != null ? ac.Item.Slug : string.Empty,
                     CurrencyPairGuid = ac.ItemPair != null ? ac.ItemPair.Guid.ToString() : string.Empty,
-                    CurrencyTypeShortForm = ac.CurrencyType != null ? ac.CurrencyType.TypeShortForm : string.Empty,
+                    CurrencyTypeShortForm = ac.ItemType != null ? ac.ItemType.TypeShortForm : string.Empty,
                     History = ac.AnalysedHistoricItems
                         .Where(ahi => ahi.DeletedAt == null && ahi.IsEnabled)
                         .OrderByDescending(ahi => ahi.HistoricDateTime)
@@ -592,9 +592,9 @@ namespace Nozomi.Service.Events.Analysis
             {
                 return _context.AnalysedComponents.AsNoTracking()
                     .Where(ac => ac.DeletedAt == null && ac.IsEnabled)
-                    .Include(ac => ac.CurrencyType)
+                    .Include(ac => ac.ItemType)
                     .Where(ac => ac.CurrencyTypeId != null 
-                                 && ac.CurrencyType.TypeShortForm == currencyTypeAbbreviation)
+                                 && ac.ItemType.TypeShortForm == currencyTypeAbbreviation)
                     .OrderBy(ac => ac.ModifiedAt)
                     .Include(ac => ac.AnalysedHistoricItems)
                     .Skip(index * NozomiServiceConstants.AnalysedComponentTakeoutLimit)

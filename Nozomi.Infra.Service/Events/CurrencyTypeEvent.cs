@@ -54,7 +54,7 @@ namespace Nozomi.Service.Events
                 });
         }
 
-        public CurrencyType Get(string typeShortForm, bool track = false)
+        public ItemType Get(string typeShortForm, bool track = false)
         {
             if (!string.IsNullOrWhiteSpace(typeShortForm))
             {
@@ -68,7 +68,7 @@ namespace Nozomi.Service.Events
                     {
                         currencyType = currencyType
                             .Include(ct => ct.AnalysedComponents)
-                            .Include(ct => ct.Currencies)
+                            .Include(ct => ct.Items)
                             .Include(ct => ct.Requests);
                     }
 
@@ -79,7 +79,7 @@ namespace Nozomi.Service.Events
             return null;
         }
 
-        public CurrencyType Get(Guid guid, bool track = false)
+        public ItemType Get(Guid guid, bool track = false)
         {
             var currencyType = _context.CurrencyTypes.AsNoTracking()
                 .Where(ct => ct.DeletedAt == null && ct.IsEnabled
@@ -91,7 +91,7 @@ namespace Nozomi.Service.Events
                 {
                     currencyType = currencyType
                         .Include(ct => ct.AnalysedComponents)
-                        .Include(ct => ct.Currencies)
+                        .Include(ct => ct.Items)
                         .Include(ct => ct.Requests);
                 }
 
@@ -101,7 +101,7 @@ namespace Nozomi.Service.Events
             return null;
         }
 
-        public CurrencyType Get(long id, bool track = false)
+        public ItemType Get(long id, bool track = false)
         {
             if (id > 0)
             {
@@ -115,7 +115,7 @@ namespace Nozomi.Service.Events
                     {
                         currencyType = currencyType
                             .Include(ct => ct.AnalysedComponents)
-                            .Include(ct => ct.Currencies)
+                            .Include(ct => ct.Items)
                             .Include(ct => ct.Requests);
                     }
 
@@ -126,7 +126,7 @@ namespace Nozomi.Service.Events
             return null;
         }
 
-        public ICollection<CurrencyType> GetAll(int index = 0, bool track = false)
+        public ICollection<ItemType> GetAll(int index = 0, bool track = false)
         {
             if (index >= 0)
             {
@@ -137,7 +137,7 @@ namespace Nozomi.Service.Events
                 {
                     cTypes = cTypes
                         .Include(ct => ct.AnalysedComponents)
-                        .Include(ct => ct.Currencies)
+                        .Include(ct => ct.Items)
                         .Include(ct => ct.Requests);
                 }
 
@@ -196,7 +196,7 @@ namespace Nozomi.Service.Events
         /// </summary>
         /// <param name="guid">GUID of the currency type in question</param>
         /// <returns>Currency type in question</returns>
-        public CurrencyType Pop(Guid guid)
+        public ItemType Pop(Guid guid)
         {
             return _context.CurrencyTypes.AsTracking()
                 .SingleOrDefault(ct => ct.Guid.Equals(guid));

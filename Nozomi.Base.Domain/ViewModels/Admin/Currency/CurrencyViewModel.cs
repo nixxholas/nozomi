@@ -11,7 +11,7 @@ namespace Nozomi.Data.ViewModels.Admin.Currency
         
         public IEnumerable<Models.Categorisation.Source> CurrencySourcesOptions { get; set; }
         
-        public ICollection<Models.Categorisation.CurrencyType> CurrencyTypes { get; set; }
+        public ICollection<Models.Categorisation.ItemType> CurrencyTypes { get; set; }
         
         public ICollection<Models.Categorisation.ItemPair> CurrencyPairs { get; set; }
     }
