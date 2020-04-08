@@ -13,7 +13,7 @@ namespace Nozomi.Data.Models.Categorisation
     {
         public ItemPair() {}
 
-        public ItemPair(ItemPairType type, string mainTicker, string counterTicker, 
+        public ItemPair(CurrencyPairType type, string mainTicker, string counterTicker, 
             string apiUrl, string defaultComponent, long sourceId, bool isEnabled = false)
         {
             Guid = Guid.NewGuid();
@@ -31,7 +31,7 @@ namespace Nozomi.Data.Models.Categorisation
         
         public Guid Guid { get; set; }
 
-        public ItemPairType Type { get; set; }
+        public CurrencyPairType Type { get; set; }
 
         public string ApiUrl { get; set; }
         

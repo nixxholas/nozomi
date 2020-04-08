@@ -31,7 +31,7 @@ namespace Nozomi.Preprocessing
         public static List<KeyValuePair<string, int>> requestPropertyTypes =
             EnumHelper.GetEnumValuesAndDescriptions<RequestPropertyType>();
         public static List<KeyValuePair<string, int>> currencyPairType =
-            EnumHelper.GetEnumValuesAndDescriptions<ItemPairType>();
+            EnumHelper.GetEnumValuesAndDescriptions<CurrencyPairType>();
         public static List<KeyValuePair<string, int>> websocketCommandType =
             EnumHelper.GetEnumValuesAndDescriptions<CommandType>();
         public static List<KeyValuePair<string, int>> websocketCommandPropertyType =

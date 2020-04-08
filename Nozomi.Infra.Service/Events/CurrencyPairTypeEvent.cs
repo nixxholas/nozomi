@@ -17,10 +17,10 @@ namespace Nozomi.Service.Services.Enumerators
         {
             _currencyPairTypeMap = new List<KeyValuePair<string, int>>();
 
-            foreach (var name in Enum.GetNames(typeof(ItemPairType)))
+            foreach (var name in Enum.GetNames(typeof(CurrencyPairType)))
             {
                 _currencyPairTypeMap.Add(new KeyValuePair<string, int>(name,
-                    (int) Enum.Parse(typeof(ItemPairType), name)));
+                    (int) Enum.Parse(typeof(CurrencyPairType), name)));
             }
         }
 

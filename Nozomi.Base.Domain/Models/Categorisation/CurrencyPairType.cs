@@ -2,7 +2,7 @@
 
 namespace Nozomi.Data.Models.Categorisation
 { 
-    public enum ItemPairType
+    public enum CurrencyPairType
     {
         [Description("None")]
         NONE = -1, // No type for now.

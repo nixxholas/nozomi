@@ -5,7 +5,7 @@ namespace Nozomi.Data.ViewModels.CurrencyPair
 {
     public class CreateCurrencyPairViewModel
     {
-        public ItemPairType Type { get; set; }
+        public CurrencyPairType Type { get; set; }
         
         public string ApiUrl { get; set; }
         

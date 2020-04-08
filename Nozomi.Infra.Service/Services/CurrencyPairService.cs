@@ -119,7 +119,7 @@ namespace Nozomi.Service.Services
             
             var currencyPair = new ItemPair()
             {
-                Type = createCurrencyPair.ItemPairType,
+                Type = createCurrencyPair.CurrencyPairType,
                 ApiUrl = createCurrencyPair.ApiUrl,
                 DefaultComponent = createCurrencyPair.DefaultComponent,
                 SourceId = createCurrencyPair.SourceId,
@@ -163,7 +163,7 @@ namespace Nozomi.Service.Services
             cpToUpd.MainTicker = updateCurrencyPair.MainCurrencyAbbrv;
             cpToUpd.CounterTicker = updateCurrencyPair.CounterCurrencyAbbrv;
             cpToUpd.SourceId = updateCurrencyPair.SourceId;
-            cpToUpd.Type = updateCurrencyPair.ItemPairType;
+            cpToUpd.Type = updateCurrencyPair.CurrencyPairType;
             cpToUpd.ApiUrl = updateCurrencyPair.ApiUrl;
             cpToUpd.DefaultComponent = updateCurrencyPair.DefaultComponent;
             cpToUpd.IsEnabled = updateCurrencyPair.IsEnabled;
