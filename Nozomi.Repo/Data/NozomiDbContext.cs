@@ -59,6 +59,9 @@ namespace Nozomi.Repo.Data
             var currencyPairMap = new CurrencyPairMap(modelBuilder.Entity<CurrencyPair>());
             modelBuilder.Entity<CurrencyPair>().UseXminAsConcurrencyToken();
 
+            var currencySourceMap = new CurrencySourceMap(modelBuilder.Entity<CurrencySource>());
+            modelBuilder.Entity<CurrencySource>().UseXminAsConcurrencyToken();
+
             var currencyTypeMap = new CurrencyTypeMap(modelBuilder.Entity<CurrencyType>());
             modelBuilder.Entity<CurrencyType>().UseXminAsConcurrencyToken();
 
@@ -85,10 +88,6 @@ namespace Nozomi.Repo.Data
 
             var sourceTypeMap = new SourceTypeMap(modelBuilder.Entity<SourceType>());
             modelBuilder.Entity<SourceType>().UseXminAsConcurrencyToken();
-
-            // MTM
-            var currencySourceMap = new CurrencySourceMap(modelBuilder.Entity<CurrencySource>());
-            modelBuilder.Entity<CurrencySource>().UseXminAsConcurrencyToken();
             
             // https://stackoverflow.com/questions/37578359/how-do-i-configure-entity-framework-to-allow-database-generate-uuid-for-postgres
             modelBuilder.HasPostgresExtension("uuid-ossp");
