@@ -17,7 +17,7 @@ namespace Nozomi.Repo.Migrations
             modelBuilder
                 .HasAnnotation("Npgsql:PostgresExtension:uuid-ossp", ",,")
                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn)
-                .HasAnnotation("ProductVersion", "3.1.3")
+                .HasAnnotation("ProductVersion", "3.1.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             modelBuilder.Entity("Nozomi.Data.Models.Currency.Currency", b =>
@@ -55,7 +55,6 @@ namespace Nozomi.Repo.Migrations
                         .HasDefaultValue(0);
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<Guid>("Guid")
@@ -112,11 +111,9 @@ namespace Nozomi.Repo.Migrations
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
                     b.Property<string>("APIUrl")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("CounterTicker")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedAt")
@@ -146,7 +143,6 @@ namespace Nozomi.Repo.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<string>("MainTicker")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateTime>("ModifiedAt")
@@ -213,7 +209,6 @@ namespace Nozomi.Repo.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("Value")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
@@ -336,7 +331,6 @@ namespace Nozomi.Repo.Migrations
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
                     b.Property<string>("APIDocsURL")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Abbreviation")
@@ -704,7 +698,6 @@ namespace Nozomi.Repo.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<string>("Value")
-                        .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasColumnType("text")
                         .HasDefaultValue("");
@@ -1331,6 +1324,7 @@ namespace Nozomi.Repo.Migrations
                     b.HasOne("Nozomi.Data.Models.Currency.CurrencyType", "CurrencyType")
                         .WithMany("Currencies")
                         .HasForeignKey("CurrencyTypeId")
+                        .HasConstraintName("CurrencyType_Currencies_Constraint")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -1340,6 +1334,7 @@ namespace Nozomi.Repo.Migrations
                     b.HasOne("Nozomi.Data.Models.Currency.Source", "Source")
                         .WithMany("CurrencyPairs")
                         .HasForeignKey("SourceId")
+                        .HasConstraintName("Source_CurrencyPairs_Constraint")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -1358,13 +1353,15 @@ namespace Nozomi.Repo.Migrations
                     b.HasOne("Nozomi.Data.Models.Currency.Currency", "Currency")
                         .WithMany("CurrencySources")
                         .HasForeignKey("CurrencyId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasConstraintName("CurrencySource_Currency_Constraint")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Nozomi.Data.Models.Currency.Source", "Source")
                         .WithMany("SourceCurrencies")
                         .HasForeignKey("SourceId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasConstraintName("CurrencySource_Source_Constraint")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 
@@ -1381,15 +1378,20 @@ namespace Nozomi.Repo.Migrations
                 {
                     b.HasOne("Nozomi.Data.Models.Currency.Currency", "Currency")
                         .WithMany("AnalysedComponents")
-                        .HasForeignKey("CurrencyId");
+                        .HasForeignKey("CurrencyId")
+                        .HasConstraintName("Currency_AnalysedComponents_Constraint")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Nozomi.Data.Models.Currency.CurrencyPair", "CurrencyPair")
                         .WithMany("AnalysedComponents")
-                        .HasForeignKey("CurrencyPairId");
+                        .HasForeignKey("CurrencyPairId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Nozomi.Data.Models.Currency.CurrencyType", "CurrencyType")
                         .WithMany("AnalysedComponents")
-                        .HasForeignKey("CurrencyTypeId");
+                        .HasForeignKey("CurrencyTypeId")
+                        .HasConstraintName("CurrencyType_AnalysedComponents_Constraint")
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("Nozomi.Data.Models.Web.Analytical.AnalysedHistoricItem", b =>
@@ -1427,15 +1429,19 @@ namespace Nozomi.Repo.Migrations
                 {
                     b.HasOne("Nozomi.Data.Models.Currency.Currency", "Currency")
                         .WithMany("Requests")
-                        .HasForeignKey("CurrencyId");
+                        .HasForeignKey("CurrencyId")
+                        .HasConstraintName("Currencies_CurrencyRequests_Constraint")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Nozomi.Data.Models.Currency.CurrencyPair", "CurrencyPair")
                         .WithMany("Requests")
-                        .HasForeignKey("CurrencyPairId");
+                        .HasForeignKey("CurrencyPairId")
+                        .HasConstraintName("CurrencyPair_CurrencyPairRequest_Constraint");
 
                     b.HasOne("Nozomi.Data.Models.Currency.CurrencyType", "CurrencyType")
                         .WithMany("Requests")
-                        .HasForeignKey("CurrencyTypeId");
+                        .HasForeignKey("CurrencyTypeId")
+                        .HasConstraintName("CurrencyType_Request_Constraint");
                 });
 
             modelBuilder.Entity("Nozomi.Data.Models.Web.RequestProperty", b =>
