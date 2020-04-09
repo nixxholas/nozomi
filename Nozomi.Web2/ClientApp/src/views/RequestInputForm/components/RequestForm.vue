@@ -105,51 +105,45 @@
         </b-field>
 
         <!-- Request properties for Nozomi -->
-        <h1 class="subtitle pt-5">Properties</h1>
+        <div class="columns is-desktop pt-5">
+            <div class="column is-4-desktop">
+                <h1 class="subtitle">Properties</h1>
+            </div>
+            <!-- TODO: FIX THE RESPONSIVENESS MAN THIS IS HARD SHIT -->
+            <div class="column is-offset-6-desktop">
+                <CreateRequestPropertyModal />
+            </div>
+        </div>
 
         <b-field label-position="inside">
             <template slot="label">
                 <p>
-                    <span>What are request properties</span>
+                    <span>What are request properties actually?</span>
                     <b-tooltip type="is-dark"
                                class="is-valigned"
                                label="Properties are special parameters required by the source (i.e. your identity key)."
-                               multilined
-                    >
+                               multilined>
                         <b-icon size="is-small" icon="question-circle"></b-icon>
                     </b-tooltip>
                 </p>
             </template>
 
-            <b-table
-                    :data="requestForm.properties && requestForm.properties.length > 0"
+            <!-- Request properties table -->
+            <b-table :data="requestForm.properties && requestForm.properties.length > 0"
                     :bordered="true" :narrowed="true" :hoverable="false" :focusable="false" :mobile-cards="true">
 
                 <template slot-scope="props">
-                    <b-table-column field="id" label="ID" width="40" numeric>
-                        {{ props.row.id }}
+                    <b-table-column field="type" label="Type">
+                        {{ props.row.type }}
                     </b-table-column>
 
-                    <b-table-column field="first_name" label="First Name">
-                        {{ props.row.first_name }}
+                    <b-table-column field="key" label="Key">
+                        {{ props.row.key }}
                     </b-table-column>
 
-                    <b-table-column field="last_name" label="Last Name">
-                        {{ props.row.last_name }}
-                    </b-table-column>
-
-                    <b-table-column field="date" label="Date" centered>
+                    <b-table-column field="value" label="Value" centered>
                     <span class="tag is-success">
-                        {{ new Date(props.row.date).toLocaleDateString() }}
-                    </span>
-                    </b-table-column>
-
-                    <b-table-column label="Gender">
-                    <span>
-                        <b-icon pack="fas"
-                                :icon="props.row.gender === 'Male' ? 'mars' : 'venus'">
-                        </b-icon>
-                        {{ props.row.gender }}
+                        {{ props.row.value }}
                     </span>
                     </b-table-column>
                 </template>
@@ -170,7 +164,12 @@
 </template>
 
 <script>
+    import CreateRequestPropertyModal from '../../../components/modals/request-property-modal'
+    
     export default {
+        components: {
+            CreateRequestPropertyModal
+        },
         props: {
             requestMethods: {
                 type: Array,
