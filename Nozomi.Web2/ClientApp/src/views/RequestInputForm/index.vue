@@ -19,6 +19,7 @@
                                                  :request-form="requestFormInput"
                                                  @onCreate="createRequest"
                                                  @onDisable="canProceed = false"
+                                                 @onEnable="canProceed = true"
                                     />
                                 </b-step-item>
 

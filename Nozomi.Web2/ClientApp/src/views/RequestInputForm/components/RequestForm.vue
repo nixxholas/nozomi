@@ -10,22 +10,18 @@
             <b-field label="Protocol" label-position="inside">
                 <b-select placeholder="Select a protocol"
                           v-model="requestForm.requestMethod"
-                          size="is-medium"
-                >
+                          size="is-medium">
                     <option v-for="requestMethod in requestMethods"
                             :key="requestMethod.key"
-                            :value="requestMethod.value"
-                    >
+                            :value="requestMethod.value">
                         {{ requestMethod.key }}
                     </option>
                 </b-select>
             </b-field>
 
             <b-field label="Enter a request URL" label-position="inside" expanded>
-                <b-input v-model="requestForm.url"
-                         size="is-medium"
-                         placeholder="https://jsonplaceholder.typicode.com/users"
-                ></b-input>
+                <b-input v-model="requestForm.url" type="url" size="is-medium"
+                         placeholder="https://jsonplaceholder.typicode.com/users" />
             </b-field>
         </b-field>
 
@@ -207,7 +203,6 @@
             propertyCreated(entity) {
                 if (this.requestForm.properties && this.requestForm.properties.length >= 0) {
                     this.requestForm.properties.push(entity);
-                    console.dir(this.requestForm.properties);
                 }
             },
             removeProperty(entity) {
@@ -218,7 +213,18 @@
                 }
             }
         },
-        
+        watch: {
+            requestForm: {
+                deep: true,
+                
+                handler() {
+                    if (this.requestForm && this.requestForm.url)
+                        this.$emit("onEnable");
+                    else
+                        this.$emit("onDisable");
+                }
+            },
+        }
     }
 </script>
 
