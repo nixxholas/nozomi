@@ -13,16 +13,12 @@
                                      :has-navigation="false"
                             >
 
-                                <b-step-item label="Create Request">
+                                <b-step-item label="Create">
                                     <RequestForm :request-methods="requestMethods"
                                                  :response-types="responseTypes"
                                                  :request-form="requestFormInput"
                                                  @onCreate="createRequest"
                                     />
-                                </b-step-item>
-
-                                <b-step-item label="Create Properties">
-
                                 </b-step-item>
 
                                 <b-step-item label="Identify">
@@ -69,10 +65,11 @@
                     delay: 604800000,
                     failureDelay: 300000,
                     isEnabled: true,
+                    properties: [],
 
                     // Defaults parentType to 'NONE' = -1
                     // as per required in backend
-                    parentType: -1
+                    parentType: -1,
                 }
             }
         },

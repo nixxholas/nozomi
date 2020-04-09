@@ -103,6 +103,66 @@
             >
             </b-input>
         </b-field>
+
+        <!-- Request properties for Nozomi -->
+        <h1 class="subtitle pt-5">Properties</h1>
+
+        <b-field label-position="inside">
+            <template slot="label">
+                <p>
+                    <span>What are request properties</span>
+                    <b-tooltip type="is-dark"
+                               class="is-valigned"
+                               label="Properties are special parameters required by the source (i.e. your identity key)."
+                               multilined
+                    >
+                        <b-icon size="is-small" icon="question-circle"></b-icon>
+                    </b-tooltip>
+                </p>
+            </template>
+
+            <b-table
+                    :data="requestForm.properties && requestForm.properties.length > 0"
+                    :bordered="true" :narrowed="true" :hoverable="false" :focusable="false" :mobile-cards="true">
+
+                <template slot-scope="props">
+                    <b-table-column field="id" label="ID" width="40" numeric>
+                        {{ props.row.id }}
+                    </b-table-column>
+
+                    <b-table-column field="first_name" label="First Name">
+                        {{ props.row.first_name }}
+                    </b-table-column>
+
+                    <b-table-column field="last_name" label="Last Name">
+                        {{ props.row.last_name }}
+                    </b-table-column>
+
+                    <b-table-column field="date" label="Date" centered>
+                    <span class="tag is-success">
+                        {{ new Date(props.row.date).toLocaleDateString() }}
+                    </span>
+                    </b-table-column>
+
+                    <b-table-column label="Gender">
+                    <span>
+                        <b-icon pack="fas"
+                                :icon="props.row.gender === 'Male' ? 'mars' : 'venus'">
+                        </b-icon>
+                        {{ props.row.gender }}
+                    </span>
+                    </b-table-column>
+                </template>
+
+                <template slot="empty">
+                    <section class="section">
+                        <div class="content has-text-grey has-text-centered">
+                            <p>Nothing yet hmm..</p>
+                        </div>
+                    </section>
+                </template>
+            </b-table>
+        </b-field>
         
         <b-button @click="submitForm">Next</b-button>
 
@@ -132,7 +192,8 @@
                     delay: 604800000,
                     failureDelay: 300000,
                     isEnabled: true,
-                    parentType: -1
+                    parentType: -1,
+                    properties: [],
                 }
             }
         },
