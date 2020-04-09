@@ -29,7 +29,7 @@ Vue.component('vue-fontawesome', FontAwesomeIcon);
 
 // Font awesome solid icon configurations
 import { faAngleLeft, faAngleRight, faArrowUp, faAtlas, faBug, faCaretDown, 
-  faCaretUp, faCheck, faCheckCircle, faChevronDown, faCog,
+  faCaretUp, faCheck, faCheckCircle, faChevronDown, faChevronLeft, faChevronRight, faCog,
   faCoins, faColumns, faCreditCard, faDumpster, faEnvelope, faExclamationCircle, 
   faExclamationTriangle,
   faEye, faFingerprint, faFrown, faHome, faInfo, faInfoCircle, faKey, faLandmark, 
@@ -37,7 +37,7 @@ import { faAngleLeft, faAngleRight, faArrowUp, faAtlas, faBug, faCaretDown,
   faSearch, faSignOutAlt,faTicketAlt, faTimes, faTrash, faUniversity, faUser, faQuestionCircle } 
   from '@fortawesome/free-solid-svg-icons';
 library.add(faAngleLeft, faAngleRight, faArrowUp, faAtlas, faBug, faCaretDown,
-    faCaretUp, faCheck, faCheckCircle, faChevronDown, faCog,
+    faCaretUp, faCheck, faCheckCircle, faChevronDown, faChevronLeft, faChevronRight, faCog,
     faCoins, faColumns, faCreditCard, faDumpster, faEnvelope, faExclamationCircle, 
     faExclamationTriangle,
     faEye, faFingerprint, faFrown, faHome, faInfo, faInfoCircle, faKey, faLandmark, 
