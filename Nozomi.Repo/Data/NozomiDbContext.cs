@@ -5,10 +5,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Nozomi.Base.BCL;
+using Nozomi.Data.Models.Category;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web;
 using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Data.Models.Web.Websocket;
+using Nozomi.Repo.Data.Mappings.CategorisationModels;
 using Nozomi.Repo.Data.Mappings.CurrencyModels;
 using Nozomi.Repo.Data.Mappings.WebModels;
 using Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels;
@@ -25,6 +27,11 @@ namespace Nozomi.Repo.Data
         public DbSet<CurrencyPair> CurrencyPairs { get; set; }
         public DbSet<CurrencyType> CurrencyTypes { get; set; }
         public DbSet<CurrencySource> CurrencySources { get; set; }
+        public DbSet<Item> Items { get; set; }
+        public DbSet<ItemPair> ItemPairs { get; set; }
+        public DbSet<ItemProperty> ItemProperties { get; set; }
+        public DbSet<ItemSource> ItemSources { get; set; }
+        public DbSet<ItemType> ItemTypes { get; set; }
         public DbSet<Request> Requests { get; set; }
         public DbSet<Component> Components { get; set; }
         public DbSet<ComponentHistoricItem> ComponentHistoricItems { get; set; }
@@ -61,6 +68,21 @@ namespace Nozomi.Repo.Data
 
             var currencyTypeMap = new CurrencyTypeMap(modelBuilder.Entity<CurrencyType>());
             modelBuilder.Entity<CurrencyType>().UseXminAsConcurrencyToken();
+            
+            var itemMap = new ItemMap(modelBuilder.Entity<Item>());
+            modelBuilder.Entity<Item>().UseXminAsConcurrencyToken();
+            
+            var itemPairMap = new ItemPairMap(modelBuilder.Entity<ItemPair>());
+            modelBuilder.Entity<ItemPair>().UseXminAsConcurrencyToken();
+            
+            var itemPropertyMap = new ItemPropertyMap(modelBuilder.Entity<ItemProperty>());
+            modelBuilder.Entity<ItemProperty>().UseXminAsConcurrencyToken();
+            
+            var itemSourceMap = new ItemSourceMap(modelBuilder.Entity<ItemSource>());
+            modelBuilder.Entity<ItemSource>().UseXminAsConcurrencyToken();
+            
+            var itemTypeMap = new ItemTypeMap(modelBuilder.Entity<ItemType>());
+            modelBuilder.Entity<ItemType>().UseXminAsConcurrencyToken();
 
             var requestMap = new RequestMap(modelBuilder.Entity<Request>());
             modelBuilder.Entity<Request>().UseXminAsConcurrencyToken();
