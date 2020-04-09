@@ -181,6 +181,7 @@
                 else if (!self.guid && self.independentMode) {
                     self.$emit("created", self.form);
                     self.isModalLoading = false;
+                    self.isModalActive = false;
                 }
                 // Update Mode
                 else if (self.guid) {
