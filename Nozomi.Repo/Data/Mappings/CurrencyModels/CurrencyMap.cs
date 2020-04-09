@@ -19,6 +19,7 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
             entityTypeBuilder.Property(c => c.Slug).IsRequired();
 
             entityTypeBuilder.Property(c => c.Abbreviation).IsRequired();
+            entityTypeBuilder.Property(c => c.Description).IsRequired(false);
             entityTypeBuilder.Property(c => c.LogoPath).IsRequired().HasDefaultValue("assets/svg/icons/question.svg");
             entityTypeBuilder.Property(c => c.Denominations).HasDefaultValue(0);
             entityTypeBuilder.Property(c => c.DenominationName).IsRequired(false);
