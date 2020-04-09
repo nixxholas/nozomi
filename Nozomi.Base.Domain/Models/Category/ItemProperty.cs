@@ -10,7 +10,7 @@ namespace Nozomi.Data.Models.Category
         [DataMember]
         public string Value { get; set; }
         
-        public long CurrencyId { get; set; }
+        public Guid ItemGuid { get; set; }
         
         public Item Item { get; set; }
     }

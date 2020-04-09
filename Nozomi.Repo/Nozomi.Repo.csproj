@@ -5,7 +5,4 @@
   <ItemGroup>
     <ProjectReference Include="..\Nozomi.Repo.BCL\Nozomi.Repo.BCL.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Data\Mappings\CategorisationModels" />
-  </ItemGroup>
 </Project>
