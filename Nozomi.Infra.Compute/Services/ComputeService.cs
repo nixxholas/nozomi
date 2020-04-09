@@ -58,5 +58,15 @@ namespace Nozomi.Infra.Compute.Services
             _context.Computes.Update(compute);
             _context.SaveChanges(userId);
         }
+
+        public void Create(Data.Models.Web.Compute compute, string userId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Delete(Guid guid, string userId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
