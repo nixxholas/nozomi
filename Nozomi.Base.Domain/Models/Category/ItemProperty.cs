@@ -7,6 +7,8 @@ namespace Nozomi.Data.Models.Category
     {
         public Guid Guid { get; set; }
         
+        public string Name { get; set; }
+        
         [DataMember]
         public string Value { get; set; }
         
