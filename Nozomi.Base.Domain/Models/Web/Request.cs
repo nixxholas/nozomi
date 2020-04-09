@@ -178,7 +178,7 @@ namespace Nozomi.Data.Models.Web
 
         public ItemPair ItemPair { get; set; }
         
-        public Guid ItemTypeGuid { get; set; }
+        public Guid? ItemTypeGuid { get; set; }
         
         public ItemType ItemType { get; set; }
         public ICollection<Component> RequestComponents { get; set; }
