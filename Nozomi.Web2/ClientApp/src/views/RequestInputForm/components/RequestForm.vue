@@ -167,9 +167,6 @@
                 </template>
             </b-table>
         </b-field>
-
-        <b-button @click="submitForm">Next</b-button>
-
     </section>
 </template>
 
@@ -219,11 +216,9 @@
                 if (index > -1) {
                     this.requestForm.properties.splice(index, 1);
                 }
-            },
-            submitForm() {
-                this.$emit("onCreate");
             }
-        }
+        },
+        
     }
 </script>
 

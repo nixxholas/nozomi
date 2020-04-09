@@ -18,17 +18,41 @@
                                                  :response-types="responseTypes"
                                                  :request-form="requestFormInput"
                                                  @onCreate="createRequest"
+                                                 @onDisable="canProceed = false"
                                     />
                                 </b-step-item>
 
                                 <b-step-item label="Identify">
-
+                                    <ComponentIdentificationForm />
                                 </b-step-item>
 
                                 <b-step-item label="Finish">
 
                                 </b-step-item>
-
+                                
+                                <template
+                                        :v-if="true"
+                                        slot="navigation"
+                                        slot-scope="{previous, next}">
+                                    <div class="buttons">
+                                        <b-button
+                                                outlined
+                                                icon-pack="fas"
+                                                icon-left="chevron-left"
+                                                :disabled="previous.disabled"
+                                                @click.prevent="previous.action">
+                                            Previous
+                                        </b-button>
+                                        <b-button
+                                                outlined
+                                                icon-pack="fas"
+                                                icon-right="chevron-right"
+                                                :disabled="next.disabled || !canProceed"
+                                                @click.prevent="next.action">
+                                            Next
+                                        </b-button>
+                                    </div>
+                                </template>
                             </b-steps>
 
                         </div>
@@ -40,6 +64,7 @@
 </template>
 
 <script>
+    import ComponentIdentificationForm from "./components/ComponentIdentificationForm";
     import RequestTypeService from "../../services/RequestTypeService";
     import ResponseTypeService from "../../services/ResponseTypeService";
     import RequestPropertyTypeService from "../../services/RequestPropertyTypeService";
@@ -48,10 +73,12 @@
 
     export default {
         components: {
+            ComponentIdentificationForm,
             RequestForm,
         },
         data() {
             return {
+                canProceed: false,
                 activeStep: 0,
                 isLoading: false,
                 requestMethods: [],
