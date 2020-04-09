@@ -9,8 +9,6 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
     {
         public CurrencyPropertyMap(EntityTypeBuilder<CurrencyProperty> entityTypeBuilder) : base(entityTypeBuilder)
         {
-            entityTypeBuilder.ToTable("ItemProperties");
-        
             entityTypeBuilder.HasKey(cp => cp.Id).HasName("CurrencyProperty_PK_Id");
             entityTypeBuilder.Property(cp => cp.Id).ValueGeneratedOnAdd();
 

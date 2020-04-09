@@ -9,8 +9,6 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
     {
         public CurrencySourceMap(EntityTypeBuilder<CurrencySource> entityTypeBuilder) : base(entityTypeBuilder)
         {
-            entityTypeBuilder.ToTable("ItemSources");
-        
             entityTypeBuilder.HasKey(cs => cs.Id).HasName("CurrencySource_PK_Id");
             entityTypeBuilder.Property(cs => cs.Id).ValueGeneratedOnAdd();
             
