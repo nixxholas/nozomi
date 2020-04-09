@@ -1,9 +1,10 @@
 using System;
 using System.Runtime.Serialization;
+using Nozomi.Base.BCL;
 
 namespace Nozomi.Data.Models.Category
 {
-    public class ItemProperty
+    public class ItemProperty : Entity
     {
         public Guid Guid { get; set; }
         
