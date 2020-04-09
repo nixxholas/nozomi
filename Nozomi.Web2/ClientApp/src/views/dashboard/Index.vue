@@ -15,26 +15,29 @@
         <b-tabs 
             size="is-medium"
             type="is-boxed"
-            vertical
-            expanded>
+            vertical>
 
             <b-tab-item label="Categorisation Entities">
-                Nunc nec velit nec libero vestibulum eleifend.
-                Curabitur pulvinar congue luctus.
-                Nullam hendrerit iaculis augue vitae ornare.
-                Maecenas vehicula pulvinar tellus, id sodales felis lobortis eget.
+                <p class="title">Source Types</p>
+                <p class="subtitle">
+                    <SourceTypeModal @created="createdNewSourceType" />
+                </p>
+                <SourceTypesTable ref="sourceTypeTable" />
             </b-tab-item>
+            
             <b-tab-item label="Request Entities">
-                Nunc nec velit nec libero vestibulum eleifend.
-                Curabitur pulvinar congue luctus.
-                Nullam hendrerit iaculis augue vitae ornare.
-                Maecenas vehicula pulvinar tellus, id sodales felis lobortis eget.
+                <CreateRequestComponent @created="createdNewRequest" />
+                <RequestsTable ref="reqTable" />
+
+                
             </b-tab-item>
+            
             <b-tab-item label="Compute Entities">
-                Nunc nec velit nec libero vestibulum eleifend.
-                Curabitur pulvinar congue luctus.
-                Nullam hendrerit iaculis augue vitae ornare.
-                Maecenas vehicula pulvinar tellus, id sodales felis lobortis eget.
+                <p class="title">Currency Types</p>
+                <p class="subtitle">
+                    <CurrencyTypeModal />
+                </p>
+                <CurrencyTypesTable />
             </b-tab-item>
             <b-tab-item label="Analytics" disabled>
                 Nunc nec velit nec libero vestibulum eleifend.
@@ -43,54 +46,6 @@
                 Maecenas vehicula pulvinar tellus, id sodales felis lobortis eget.
             </b-tab-item>
         </b-tabs>
-        <div class="tile is-ancestor is-vertical">
-                <div class="tile">
-                    <div class="tile is-parent is-vertical">
-                        
-<!--                        <article class="tile is-child notification is-warning">-->
-<!--                            <p class="title">Favourites</p>-->
-<!--                            <p class="subtitle is-italic">Coding in progress..</p>-->
-<!--                        </article>-->
-                    </div>
-                </div>
-                <div class="tile">
-                    <div class="tile is-parent">
-                        <article class="tile is-child notification is-dark">
-                            <p class="title">Source Types</p>
-                            <p class="subtitle">
-                                <SourceTypeModal @created="createdNewSourceType" />
-                            </p>
-                            <SourceTypesTable ref="sourceTypeTable" />
-                        </article>
-                    </div>
-                    <div class="tile is-parent">
-                        <article class="tile is-child notification is-dark">
-                            <p class="title">Currency Types</p>
-                            <p class="subtitle">
-                                <CurrencyTypeModal />
-                            </p>
-                            <CurrencyTypesTable />
-                        </article>
-                    </div>
-                </div>
-                <div class="tile is-parent">
-                    <article class="tile is-child notification is-dark">
-                        <b-field group-multiline positon="is-left">
-                            <div class="control">
-                                <p class="title">Requests</p>
-                            </div>
-                        </b-field>
-                        <b-field position="is-right">
-                            <div class="control">
-                                <CreateRequestComponent @created="createdNewRequest" />
-                            </div>
-                        </b-field>
-                        <section>
-                            <RequestsTable ref="reqTable" />
-                        </section>
-                    </article>
-                </div>
-        </div>
     </div>
 </template>
 
