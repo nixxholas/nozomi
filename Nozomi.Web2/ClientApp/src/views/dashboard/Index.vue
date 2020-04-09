@@ -2,7 +2,16 @@
     <div class="container is-fluid">
         <h1 class="title">Cabin</h1>
         <h2 class="subtitle">Welcome to your dashboard</h2>
-
+        
+        <b-notification aria-close-label="Close notification">
+            <p class="title">Welcome to <b>Cabin</b>!</p>
+            <p class="subtitle">Nozomi's Cabin is designed to make interacting and processing with APIs
+                simple and easy to do.
+                By the end of our beta, APIs can be interacted by providing the API path, properties
+                within it and the data you
+                want to process and that's it!</p>
+        </b-notification>
+        
         <b-tabs 
             size="is-medium"
             type="is-boxed"
@@ -37,14 +46,7 @@
         <div class="tile is-ancestor is-vertical">
                 <div class="tile">
                     <div class="tile is-parent is-vertical">
-                        <b-notification aria-close-label="Close notification">
-                            <p class="title">Welcome to <b>Cabin</b>!</p>
-                            <p class="subtitle">Nozomi's Cabin is designed to make interacting and processing with APIs
-                                simple and easy to do.
-                                By the end of our beta, APIs can be interacted by providing the API path, properties
-                                within it and the data you
-                                want to process and that's it!</p>
-                        </b-notification>
+                        
 <!--                        <article class="tile is-child notification is-warning">-->
 <!--                            <p class="title">Favourites</p>-->
 <!--                            <p class="subtitle is-italic">Coding in progress..</p>-->
