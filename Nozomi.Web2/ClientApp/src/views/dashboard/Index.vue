@@ -12,7 +12,7 @@
                 want to process and that's it!</p>
         </b-notification>
         
-        <b-tabs size="is-medium" type="is-boxed">
+        <b-tabs type="is-boxed">
             <b-tab-item label="Categorisation Entities">
                 <nav class="level">
                     <div class="level-left">
