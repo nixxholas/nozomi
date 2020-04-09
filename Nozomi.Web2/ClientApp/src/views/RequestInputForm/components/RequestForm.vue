@@ -111,7 +111,7 @@
             </div>
             <!-- TODO: FIX THE RESPONSIVENESS MAN THIS IS HARD SHIT -->
             <div class="column is-offset-6-desktop">
-                <CreateRequestPropertyModal />
+                <CreateRequestPropertyModal :independent-mode="true" @created="propertyCreated"/>
             </div>
         </div>
 
@@ -129,7 +129,7 @@
             </template>
 
             <!-- Request properties table -->
-            <b-table :data="requestForm.properties && requestForm.properties.length > 0"
+            <b-table :data="requestForm.properties ? [] : requestForm.properties"
                     :bordered="true" :narrowed="true" :hoverable="false" :focusable="false" :mobile-cards="true">
 
                 <template slot-scope="props">
@@ -197,6 +197,9 @@
             }
         },
         methods: {
+            propertyCreated(entity) {
+                console.dir(entity);
+            },
             submitForm() {
                 this.$emit("onCreate");
             }

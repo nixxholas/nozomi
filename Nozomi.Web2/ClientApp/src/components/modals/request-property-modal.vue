@@ -179,7 +179,8 @@
                 }
                 // Independent Create Mode
                 else if (!self.guid && self.independentMode) {
-                    self.emit("created", self.form);
+                    self.$emit("created", self.form);
+                    self.isModalLoading = false;
                 }
                 // Update Mode
                 else if (self.guid) {
