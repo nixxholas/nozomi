@@ -43,13 +43,13 @@
                     </b-tooltip>
                 </p>
             </template>
-            
+
             <b-select placeholder="Select a response"
                       v-model="requestForm.responseType"
                       size="is-medium"
                       expanded
             >
-                <option v-for="responseType in responseTypes" 
+                <option v-for="responseType in responseTypes"
                         :key="responseType.key"
                         :value="responseType.value"
                 >
@@ -115,7 +115,7 @@
             </div>
         </div>
 
-        <b-field label-position="inside">
+        <b-field label-position="on-border">
             <template slot="label">
                 <p>
                     <span>What are request properties actually?</span>
@@ -129,8 +129,8 @@
             </template>
 
             <!-- Request properties table -->
-            <b-table :data="requestForm.properties ? [] : requestForm.properties"
-                    :bordered="true" :narrowed="true" :hoverable="false" :focusable="false" :mobile-cards="true">
+            <b-table :data="requestForm.properties" :narrowed="false" :hoverable="false"
+                     :focusable="false" :mobile-cards="true" class="p-5">
 
                 <template slot-scope="props">
                     <b-table-column field="type" label="Type">
@@ -146,6 +146,16 @@
                         {{ props.row.value }}
                     </span>
                     </b-table-column>
+                    
+                    <b-table-column field="actions" label="">
+                        <b-button type="is-danger" @click="removeProperty(props.row)">
+                            <b-icon
+                                    pack="fas"
+                                    icon="trash"
+                                    size="is-small">
+                            </b-icon>
+                        </b-button>
+                    </b-table-column>
                 </template>
 
                 <template slot="empty">
@@ -157,7 +167,7 @@
                 </template>
             </b-table>
         </b-field>
-        
+
         <b-button @click="submitForm">Next</b-button>
 
     </section>
@@ -165,7 +175,7 @@
 
 <script>
     import CreateRequestPropertyModal from '../../../components/modals/request-property-modal'
-    
+
     export default {
         components: {
             CreateRequestPropertyModal
@@ -198,7 +208,17 @@
         },
         methods: {
             propertyCreated(entity) {
-                console.dir(entity);
+                if (this.requestForm.properties && this.requestForm.properties.length >= 0) {
+                    this.requestForm.properties.push(entity);
+                    console.dir(this.requestForm.properties);
+                }
+            },
+            removeProperty(entity) {
+                // https://stackoverflow.com/questions/5767325/how-can-i-remove-a-specific-item-from-an-array
+                const index = this.requestForm.properties.indexOf(entity);
+                if (index > -1) {
+                    this.requestForm.properties.splice(index, 1);
+                }
             },
             submitForm() {
                 this.$emit("onCreate");
