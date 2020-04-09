@@ -24,8 +24,6 @@ namespace Nozomi.Data.Models.Category
             Description = "Name of the Currency Type.")]
         public string Name { get; set; }
         
-        public ICollection<AnalysedComponent> AnalysedComponents { get; set; }
-
         public ICollection<Item> Items { get; set; }
         
         public ICollection<Request> Requests { get; set; }

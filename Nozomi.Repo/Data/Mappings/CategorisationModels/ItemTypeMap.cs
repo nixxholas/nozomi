@@ -17,10 +17,6 @@ namespace Nozomi.Repo.Data.Mappings.CategorisationModels
             entityTypeBuilder.HasAlternateKey(e => e.Slug);
             entityTypeBuilder.Property(e => e.Slug).IsRequired();
 
-            entityTypeBuilder.HasMany(e => e.AnalysedComponents)
-                .WithOne(ac => ac.ItemType)
-                .HasForeignKey(e => e.ItemTypeGuid)
-                .OnDelete(DeleteBehavior.Cascade).IsRequired(false);
             entityTypeBuilder.HasMany(e => e.Items)
                 .WithOne(i => i.ItemType).HasForeignKey(e => e.ItemTypeGuid)
                 .OnDelete(DeleteBehavior.Cascade).IsRequired(false);

@@ -300,11 +300,7 @@ namespace Nozomi.Data.Models.Web.Analytical
         public long? CurrencyTypeId { get; set; }
         
         public CurrencyType CurrencyType { get; set; }
-        
-        public Guid? ItemTypeGuid { get; set; }
-        
-        public ItemType ItemType { get; set; }
-        
+
         public ICollection<AnalysedHistoricItem> AnalysedHistoricItems { get; set; }
     }
 }
