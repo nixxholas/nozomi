@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using Nozomi.Base.BCL;
+using Nozomi.Data.Models.Category;
 
 namespace Nozomi.Data.Models.Currency
 {
@@ -72,9 +73,12 @@ namespace Nozomi.Data.Models.Currency
         public Guid SourceTypeGuid { get; set; }
         
         public SourceType SourceType { get; set; }
-        
         public ICollection<CurrencySource> SourceCurrencies { get; set; }
+        
+        public ICollection<ItemSource> SourceItems { get; set; }
         public ICollection<CurrencyPair> CurrencyPairs { get; set; }
+        
+        public ICollection<ItemPair> ItemPairs { get; set; }
 
         public bool IsValid()
         {

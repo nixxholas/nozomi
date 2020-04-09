@@ -6,6 +6,7 @@ using Nozomi.Base.BCL;
 using Nozomi.Data.AreaModels.v1.RequestComponent;
 using Nozomi.Data.AreaModels.v1.RequestProperty;
 using Nozomi.Data.AreaModels.v1.Requests;
+using Nozomi.Data.Models.Category;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web.Websocket;
 using Nozomi.Data.ViewModels.Component;
@@ -168,7 +169,18 @@ namespace Nozomi.Data.Models.Web
         public long? CurrencyTypeId { get; set; }
         
         public CurrencyType CurrencyType { get; set; }
+        
+        public Guid? ItemGuid { get; set; }
+        
+        public Item Item { get; set; }
+        
+        public Guid? ItemPairGuid { get; set; }
 
+        public ItemPair ItemPair { get; set; }
+        
+        public Guid ItemTypeGuid { get; set; }
+        
+        public ItemType ItemType { get; set; }
         public ICollection<Component> RequestComponents { get; set; }
         public ICollection<RequestProperty> RequestProperties { get; set; }
         
