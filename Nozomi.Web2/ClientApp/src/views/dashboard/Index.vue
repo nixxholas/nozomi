@@ -1,5 +1,39 @@
 <template>
     <div class="container is-fluid">
+        <h1 class="title">Cabin</h1>
+        <h2 class="subtitle">Welcome to your dashboard</h2>
+
+        <b-tabs 
+            size="is-medium"
+            type="is-boxed"
+            vertical
+            expanded>
+
+            <b-tab-item label="Categorisation Entities">
+                Nunc nec velit nec libero vestibulum eleifend.
+                Curabitur pulvinar congue luctus.
+                Nullam hendrerit iaculis augue vitae ornare.
+                Maecenas vehicula pulvinar tellus, id sodales felis lobortis eget.
+            </b-tab-item>
+            <b-tab-item label="Request Entities">
+                Nunc nec velit nec libero vestibulum eleifend.
+                Curabitur pulvinar congue luctus.
+                Nullam hendrerit iaculis augue vitae ornare.
+                Maecenas vehicula pulvinar tellus, id sodales felis lobortis eget.
+            </b-tab-item>
+            <b-tab-item label="Compute Entities">
+                Nunc nec velit nec libero vestibulum eleifend.
+                Curabitur pulvinar congue luctus.
+                Nullam hendrerit iaculis augue vitae ornare.
+                Maecenas vehicula pulvinar tellus, id sodales felis lobortis eget.
+            </b-tab-item>
+            <b-tab-item label="Analytics" disabled>
+                Nunc nec velit nec libero vestibulum eleifend.
+                Curabitur pulvinar congue luctus.
+                Nullam hendrerit iaculis augue vitae ornare.
+                Maecenas vehicula pulvinar tellus, id sodales felis lobortis eget.
+            </b-tab-item>
+        </b-tabs>
         <div class="tile is-ancestor is-vertical">
                 <div class="tile">
                     <div class="tile is-parent is-vertical">
