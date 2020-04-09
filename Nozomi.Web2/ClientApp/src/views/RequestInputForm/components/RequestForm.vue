@@ -218,7 +218,12 @@
                 deep: true,
                 
                 handler() {
-                    if (this.requestForm && this.requestForm.url)
+                    let urlPattern = /(https|http|ws|wss):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
+                    let urlIsValid = urlPattern.test(this.requestForm.url);
+                    
+                    if (this.requestForm && urlIsValid && this.requestForm.requestMethod 
+                        && this.requestForm.responseType && this.requestForm.delay && this.requestForm.delay >= 0
+                        && this.requestForm.failureDelay && this.requestForm.failureDelay >= 0)
                         this.$emit("onEnable");
                     else
                         this.$emit("onDisable");
