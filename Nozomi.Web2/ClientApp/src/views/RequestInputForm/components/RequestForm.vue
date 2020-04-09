@@ -199,6 +199,15 @@
                 }
             }
         },
+        created() {
+            if (this.requestForm && !this.requestForm.requestMethod 
+                && this.requestMethods && this.requestMethods.length > 0)
+                this.requestForm.requestMethod = this.requestMethods[0].value;
+
+            if (this.requestForm && !this.requestForm.responseType
+                && this.responseTypes && this.responseTypes.length > 0)
+                this.requestForm.responseType = this.responseTypes[0];
+        },
         methods: {
             propertyCreated(entity) {
                 if (this.requestForm.properties && this.requestForm.properties.length >= 0) {
@@ -221,7 +230,7 @@
                     let urlPattern = /(https|http|ws|wss):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
                     let urlIsValid = urlPattern.test(this.requestForm.url);
                     
-                    if (this.requestForm && urlIsValid && this.requestForm.requestMethod 
+                    if (this.requestForm && urlIsValid && this.requestForm.requestMethod > -1
                         && this.requestForm.responseType && this.requestForm.delay && this.requestForm.delay >= 0
                         && this.requestForm.failureDelay && this.requestForm.failureDelay >= 0)
                         this.$emit("onEnable");
