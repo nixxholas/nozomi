@@ -95,6 +95,10 @@
             independentMode: {
                 type: Boolean,
                 default: false,
+            },
+            requestPropertyTypesData: {
+                type: Array,
+                default: null
             }
         },
         methods: {
@@ -229,19 +233,24 @@
             let self = this;
 
             // Synchronously call for data
-            RequestPropertyTypeService.all()
-                .then(function (response) {
-                    self.requestPropertyTypes = response.data;
-                })
-                .catch(function (error) {
-                    //console.dir(error);
-                    // handle error
-                    self.authenticateOidc(window.location.href);
-                })
-                .finally(function () {
-                    // always executed
-                    self.requestPropertyTypesIsLoading = false;
-                });
+            if (!self.requestPropertyTypesData && self.requestPropertyTypesData.length <= 0 
+                && !self.requestPropertyTypes) {
+                RequestPropertyTypeService.all()
+                    .then(function (response) {
+                        self.requestPropertyTypes = response.data;
+                    })
+                    .catch(function (error) {
+                        //console.dir(error);
+                        // handle error
+                        self.authenticateOidc(window.location.href);
+                    })
+                    .finally(function () {
+                        // always executed
+                        self.requestPropertyTypesIsLoading = false;
+                    });
+            } else if (self.requestPropertyTypesData && self.requestPropertyTypesData.length > 0) {
+                self.requestPropertyTypes = self.requestPropertyTypesData;
+            }
         },
         created: function() {
             let self = this;
