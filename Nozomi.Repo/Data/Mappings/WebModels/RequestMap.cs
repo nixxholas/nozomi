@@ -27,6 +27,15 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
             // Sometimes, some APIs don't really have a deep declaration requirement
             entityTypeBuilder.Property(r => r.DataPath).IsRequired(false);
 
+            entityTypeBuilder.HasOne(r => r.Item)
+                .WithMany(i => i.Requests).HasForeignKey(r => r.ItemGuid)
+                .OnDelete(DeleteBehavior.Cascade).IsRequired(false);
+            entityTypeBuilder.HasOne(r => r.ItemPair)
+                .WithMany(i => i.Requests).HasForeignKey(r => r.ItemPairGuid)
+                .OnDelete(DeleteBehavior.Cascade).IsRequired(false);
+            entityTypeBuilder.HasOne(r => r.ItemType)
+                .WithMany(i => i.Requests).HasForeignKey(r => r.ItemTypeGuid)
+                .OnDelete(DeleteBehavior.Cascade).IsRequired(false);
             entityTypeBuilder.HasMany(r => r.RequestComponents)
                 .WithOne(rc => rc.Request)
                 .HasForeignKey(rc => rc.RequestId).OnDelete(DeleteBehavior.Cascade)
