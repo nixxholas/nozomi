@@ -12,13 +12,13 @@ namespace Nozomi.Repo.Data.Mappings.CategorisationModels
             entityTypeBuilder.HasKey(e => e.Id);
             entityTypeBuilder.Property(e => e.Id).ValueGeneratedOnAdd();
             
-            entityTypeBuilder.HasIndex(e => new { e.ItemGuid, e.SourceGuid }).IsUnique();
+            entityTypeBuilder.HasIndex(e => new { e.ItemGuid, e.SourceId }).IsUnique();
 
             entityTypeBuilder.HasOne(e => e.Item)
                 .WithMany(i => i.ItemSources).HasForeignKey(e => e.ItemGuid)
                 .OnDelete(DeleteBehavior.Restrict).IsRequired();
             entityTypeBuilder.HasOne(e => e.Source)
-                .WithMany(s => s.SourceItems).HasForeignKey(e => e.SourceGuid)
+                .WithMany(s => s.SourceItems).HasForeignKey(e => e.SourceId)
                 .OnDelete(DeleteBehavior.Restrict).IsRequired();
         }
     }

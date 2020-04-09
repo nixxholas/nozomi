@@ -13,14 +13,14 @@ namespace Nozomi.Data.Models.Category
         /// Constructor for Currency-based seeding
         /// </summary>
         /// <param name="sourceId"></param>
-        public ItemSource(Guid sourceGuid)
+        public ItemSource(long sourceId)
         {
-            SourceGuid = sourceGuid;
+            SourceId = sourceId;
         }
 
-        public ItemSource(Guid sourceGuid, Guid itemGuid)
+        public ItemSource(long sourceId, Guid itemGuid)
         {
-            SourceGuid = sourceGuid;
+            SourceId = sourceId;
             ItemGuid = itemGuid;
         }
         
@@ -31,7 +31,7 @@ namespace Nozomi.Data.Models.Category
         
         public Item Item { get; set; }
         
-        public Guid SourceGuid { get; set; }
+        public long SourceId { get; set; }
         
         public Source Source { get; set; }
     }

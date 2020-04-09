@@ -13,19 +13,19 @@ namespace Nozomi.Data.Models.Category
     {
         public ItemPair() {}
 
-        public ItemPair(string mainTicker, string counterTicker, Guid sourceGuid, bool isEnabled = false)
+        public ItemPair(string mainTicker, string counterTicker, long sourceId, bool isEnabled = false)
         {
             Id = Guid.NewGuid();
             MainTicker = mainTicker;
             CounterTicker = counterTicker;
-            SourceGuid = sourceGuid;
+            SourceId = sourceId;
             IsEnabled = isEnabled;
         }
         
         [Key]
         public Guid Id { get; set; }
 
-        public Guid SourceGuid { get; set; }
+        public long SourceId { get; set; }
         public Source Source { get; set; }
 
         // =========== RELATIONS ============ //

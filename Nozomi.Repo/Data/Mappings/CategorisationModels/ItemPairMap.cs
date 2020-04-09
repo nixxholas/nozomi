@@ -16,7 +16,7 @@ namespace Nozomi.Repo.Data.Mappings.CategorisationModels
             {
                 cp.MainTicker, 
                 cp.CounterTicker,
-                cp.SourceGuid
+                cp.SourceId
             });
 
             entityTypeBuilder.Property(cp => cp.MainTicker)
@@ -27,7 +27,7 @@ namespace Nozomi.Repo.Data.Mappings.CategorisationModels
                     val => val);
 
             entityTypeBuilder.HasOne(e => e.Source)
-                .WithMany(s => s.ItemPairs).HasForeignKey(e => e.SourceGuid)
+                .WithMany(s => s.ItemPairs).HasForeignKey(e => e.SourceId)
                 .OnDelete(DeleteBehavior.Cascade);
             entityTypeBuilder.HasMany(e => e.Requests)
                 .WithOne(e => e.ItemPair).HasForeignKey(e => e.ItemPairGuid)
