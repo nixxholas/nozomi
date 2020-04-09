@@ -88,6 +88,7 @@ namespace Nozomi.WSS
             services.AddControllers()
                 .AddNewtonsoftJson();
 
+            services.AddTransient<IComponentEvent, ComponentEvent>();
             services.AddTransient<ICurrencyEvent, CurrencyEvent>();
             services.AddTransient<ICurrencyPairEvent, CurrencyPairEvent>();
             services.AddTransient<ICurrencyTypeEvent, CurrencyTypeEvent>();
