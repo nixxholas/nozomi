@@ -1,7 +1,7 @@
 <template>
     <div class="container is-fluid">
-        <h1 class="title">Cabin</h1>
-        <h2 class="subtitle">Welcome to your dashboard</h2>
+        <p class="title is-2">Cabin</p>
+        <p class="subtitle is-4">Welcome to your dashboard</p>
         
         <b-notification aria-close-label="Close notification">
             <p class="title">Welcome to <b>Cabin</b>!</p>
@@ -12,38 +12,69 @@
                 want to process and that's it!</p>
         </b-notification>
         
-        <b-tabs 
-            size="is-medium"
-            type="is-boxed"
-            vertical>
-
+        <b-tabs size="is-medium" type="is-boxed">
             <b-tab-item label="Categorisation Entities">
-                <p class="title">Source Types</p>
-                <p class="subtitle">
-                    <SourceTypeModal @created="createdNewSourceType" />
-                </p>
+                <nav class="level">
+                    <div class="level-left">
+                        <div class="level-item">
+                            <div class="content">
+                                <p class="title is-3">Categorisation Entities</p>
+                                <p class="subtitle is-5">Manage</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="level-right">
+                        <div class="level-item">
+                            <SourceTypeModal @created="createdNewSourceType" />
+                        </div>
+                    </div>
+                </nav>
+                
                 <SourceTypesTable ref="sourceTypeTable" />
             </b-tab-item>
             
             <b-tab-item label="Request Entities">
-                <CreateRequestComponent @created="createdNewRequest" />
-                <RequestsTable ref="reqTable" />
-
+                <nav class="level">
+                    <div class="level-left">
+                        <div class="level-item">
+                            <div class="content">
+                                <p class="title is-3">Request Entities</p>
+                                <p class="subtitle is-5">Manage</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="level-right">
+                        <div class="level-item">
+                            <CreateRequestComponent @created="createdNewRequest" />
+                        </div>
+                    </div>
+                </nav>
                 
+                <RequestsTable ref="reqTable" />
             </b-tab-item>
             
             <b-tab-item label="Compute Entities">
-                <p class="title">Currency Types</p>
-                <p class="subtitle">
-                    <CurrencyTypeModal />
-                </p>
+                <nav class="level">
+                    <div class="level-left">
+                        <div class="level-item">
+                            <div class="content">
+                                <p class="title is-3">Compute Entities</p>
+                                <p class="subtitle is-5">Manage</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="level-right">
+                        <div class="level-item">
+                            <CurrencyTypeModal />
+                        </div>
+                    </div>
+                </nav>
+                
                 <CurrencyTypesTable />
             </b-tab-item>
+            
             <b-tab-item label="Analytics" disabled>
-                Nunc nec velit nec libero vestibulum eleifend.
-                Curabitur pulvinar congue luctus.
-                Nullam hendrerit iaculis augue vitae ornare.
-                Maecenas vehicula pulvinar tellus, id sodales felis lobortis eget.
+                <p>Coming Soon!</p>
             </b-tab-item>
         </b-tabs>
     </div>
