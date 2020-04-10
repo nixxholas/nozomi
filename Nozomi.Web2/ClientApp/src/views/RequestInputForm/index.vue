@@ -24,16 +24,8 @@
                                 </b-step-item>
 
                                 <b-step-item label="Identify">
-                                    <ComponentIdentificationForm/>
-                                    <b-loading :is-full-page="false"
-                                               :active.sync="isLoading"
-                                               :can-cancel="false">
-                                        <b-icon
-                                                pack="fas"
-                                                icon="spinner"
-                                                size="is-large">
-                                        </b-icon>
-                                    </b-loading>
+                                    <ComponentIdentificationForm :dispatch-payload="dispatchResult"/>
+                                    <b-loading :is-full-page="false" :active.sync="isLoading" :can-cancel="false"></b-loading>
                                 </b-step-item>
 
                                 <b-step-item label="Finish">
@@ -112,6 +104,11 @@
                     // Defaults parentType to 'NONE' = -1
                     // as per required in backend
                     parentType: -1,
+                },
+                
+                dispatchResult: {
+                    response: null,
+                    payload: null
                 }
             }
         },
@@ -122,8 +119,6 @@
                     let self = this;
                     self.isLoading = true;
 
-                    // console.dir(self.requestFormInput);
-                    // console.dir(JSON.stringify(self.requestFormInput));
                     DispatchService.fetch(self.requestFormInput)
                         .then(function (res) {
                             console.dir(res);
