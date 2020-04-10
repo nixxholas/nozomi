@@ -3,7 +3,7 @@ import store from "@/store";
 
 const baseUrl = '/api/Dispatch/';
 export default {
-    fetch(vm: Object) {
+    fetch(vm: any) {
         return new Promise((resolve, reject) => {
             axios.post(baseUrl  + 'Fetch', vm, {
                 headers: {
