@@ -10,8 +10,7 @@
 
                             <b-steps v-model="activeStep" 
                                      :animated="true"
-                                     :has-navigation="false"
-                            >
+                                     :has-navigation="false">
 
                                 <b-step-item label="Create">
                                     <RequestForm :request-methods="requestMethods"
@@ -40,7 +39,7 @@
                                                 outlined
                                                 icon-pack="fas"
                                                 icon-left="chevron-left"
-                                                :disabled="previous.disabled"
+                                                :disabled="previous.disabled || !canBacktrack"
                                                 @click.prevent="previous.action">
                                             Previous
                                         </b-button>
@@ -79,6 +78,7 @@
         },
         data() {
             return {
+                canBacktrack: false,
                 canProceed: false,
                 activeStep: 0,
                 isLoading: false,
@@ -98,6 +98,14 @@
                     // Defaults parentType to 'NONE' = -1
                     // as per required in backend
                     parentType: -1,
+                }
+            }
+        },
+        
+        watch: {
+            activeStep(newVal, oldVal) {
+                if (newVal === 1 && oldVal === 0) { // When the user is about to obtain the payload
+                    console.dir("DISPATCH!")
                 }
             }
         },
