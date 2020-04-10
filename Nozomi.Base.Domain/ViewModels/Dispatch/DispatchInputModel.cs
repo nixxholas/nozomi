@@ -25,7 +25,7 @@ namespace Nozomi.Data.ViewModels.Dispatch
         /// <summary>
         /// The protocol of the request.
         /// </summary>
-        public RequestType Type { get; set; }
+        public RequestType RequestMethod { get; set; }
         
         /// <summary>
         /// The data structure type of the request's incoming payload
@@ -56,12 +56,12 @@ namespace Nozomi.Data.ViewModels.Dispatch
         {
             public DispatchInputValidator()
             {
-                RuleFor(e => e.Type).IsInEnum();
+                RuleFor(e => e.RequestMethod).IsInEnum();
                 RuleFor(e => e.ResponseType).IsInEnum();
                 RuleFor(e => e.Endpoint).NotNull().NotEmpty();
                 // Must be empty unless its a websocket dispatch
                 RuleFor(e => e.WebsocketCommands).Empty()
-                    .Unless(e => !e.Type.Equals(RequestType.WebSocket));
+                    .Unless(e => !e.RequestMethod.Equals(RequestType.WebSocket));
                 // Hard code some limits for now
                 RuleFor(e => e.SocketKillSwitchDelay)
                     .LessThan(TimeSpan.FromSeconds(20).Ticks);

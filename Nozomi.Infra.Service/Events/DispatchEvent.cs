@@ -36,7 +36,7 @@ namespace Nozomi.Service.Events
         {
             if (dispatchInputModel != null && dispatchInputModel.IsValid())
             {
-                switch (dispatchInputModel.Type)
+                switch (dispatchInputModel.RequestMethod)
                 {
                     case RequestType.HttpGet:
                     case RequestType.HttpPost:
@@ -260,7 +260,7 @@ namespace Nozomi.Service.Events
                                     break;
                                 // Declares the Http POST/PUT Body
                                 case RequestPropertyType.HttpBody:
-                                    if (dispatchInputModel.Type.Equals(RequestType.HttpGet))
+                                    if (dispatchInputModel.RequestMethod.Equals(RequestType.HttpGet))
                                         _logger.LogWarning($"{_eventName} Dispatch: Setting body in a GET " +
                                                            "request..");
 
@@ -285,7 +285,7 @@ namespace Nozomi.Service.Events
 
                         // Pull in the payload
                         HttpResponseMessage payload;
-                        switch (dispatchInputModel.Type)
+                        switch (dispatchInputModel.RequestMethod)
                         {
                             case RequestType.HttpGet:
                                 payload = await httpClient.GetAsync(uri.ToString());

@@ -20,7 +20,7 @@
             </b-field>
 
             <b-field label="Enter a request URL" label-position="inside" expanded>
-                <b-input v-model="requestForm.url" type="url" size="is-medium"
+                <b-input v-model="requestForm.endpoint" type="url" size="is-medium"
                          placeholder="https://jsonplaceholder.typicode.com/users" />
             </b-field>
         </b-field>
@@ -188,7 +188,7 @@
                 type: Object,
                 required: true,
                 default: {
-                    url: null,
+                    endpoint: null,
                     requestMethod: null,
                     responseType: null,
                     delay: 604800000,
@@ -228,7 +228,7 @@
                 
                 handler() {
                     let urlPattern = /(https|http|ws|wss):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
-                    let urlIsValid = urlPattern.test(this.requestForm.url);
+                    let urlIsValid = urlPattern.test(this.requestForm.endpoint);
                     
                     if (this.requestForm && urlIsValid && this.requestForm.requestMethod > -1
                         && this.requestForm.responseType && this.requestForm.delay && this.requestForm.delay >= 0

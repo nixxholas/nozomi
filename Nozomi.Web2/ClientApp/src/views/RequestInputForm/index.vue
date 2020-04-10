@@ -8,7 +8,8 @@
                     <div class="column is-8">
                         <div class="box">
 
-                            <b-steps v-model="activeStep" 
+                            <b-steps v-model="activeStep"
+                                     ref="steps"
                                      :animated="true"
                                      :has-navigation="false">
 
@@ -24,6 +25,15 @@
 
                                 <b-step-item label="Identify">
                                     <ComponentIdentificationForm />
+                                    <b-loading :is-full-page="false" 
+                                               :active.sync="isLoading" 
+                                               :can-cancel="false">
+                                        <b-icon
+                                                pack="fas"
+                                                icon="spinner"
+                                                size="is-large">
+                                        </b-icon>
+                                    </b-loading>
                                 </b-step-item>
 
                                 <b-step-item label="Finish">
@@ -65,6 +75,7 @@
 
 <script>
     import ComponentIdentificationForm from "./components/ComponentIdentificationForm";
+    import DispatchService from "../../services/DispatchService";
     import RequestTypeService from "../../services/RequestTypeService";
     import ResponseTypeService from "../../services/ResponseTypeService";
     import RequestPropertyTypeService from "../../services/RequestPropertyTypeService";
@@ -87,7 +98,7 @@
                 requestPropertyTypes: [],
 
                 requestFormInput: {
-                    url: null,
+                    endpoint: null,
                     requestMethod: null,
                     responseType: null,
                     delay: 604800000,
@@ -105,7 +116,21 @@
         watch: {
             activeStep(newVal, oldVal) {
                 if (newVal === 1 && oldVal === 0) { // When the user is about to obtain the payload
-                    console.dir("DISPATCH!")
+                    let self = this;
+                    self.isLoading = true;
+                    
+                    DispatchService.fetch(self.requestFormInput)
+                    .then(function(res) {
+                        console.dir(res);
+                    })
+                    .catch(function (err) {
+                        console.dir(err);
+                        self.canProceed = false;
+                        self.canBacktrack = true;
+                    })
+                    .finally(() => {
+                        self.isLoading = false;
+                    })
                 }
             }
         },
