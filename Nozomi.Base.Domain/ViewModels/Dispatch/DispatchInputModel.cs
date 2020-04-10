@@ -33,6 +33,21 @@ namespace Nozomi.Data.ViewModels.Dispatch
         public ResponseType ResponseType { get; set; }
         
         /// <summary>
+        /// The delay between each request attempt, not used here.
+        /// </summary>
+        public long Delay { get; set; }
+        
+        /// <summary>
+        /// The delay after a failed request attempt, not used here.
+        /// </summary>
+        public long FailureDelay { get; set; }
+        
+        /// <summary>
+        /// Declares if this request is enabled immediately once created.
+        /// </summary>
+        public bool IsEnabled { get; set; }
+        
+        /// <summary>
         /// The URL of the data source. 
         /// </summary>
         public string Endpoint { get; set; }
