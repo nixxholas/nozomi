@@ -24,9 +24,9 @@
                                 </b-step-item>
 
                                 <b-step-item label="Identify">
-                                    <ComponentIdentificationForm />
-                                    <b-loading :is-full-page="false" 
-                                               :active.sync="isLoading" 
+                                    <ComponentIdentificationForm/>
+                                    <b-loading :is-full-page="false"
+                                               :active.sync="isLoading"
                                                :can-cancel="false">
                                         <b-icon
                                                 pack="fas"
@@ -39,7 +39,7 @@
                                 <b-step-item label="Finish">
 
                                 </b-step-item>
-                                
+
                                 <template
                                         :v-if="true"
                                         slot="navigation"
@@ -99,12 +99,15 @@
 
                 requestFormInput: {
                     endpoint: null,
-                    requestMethod: null,
-                    responseType: null,
+                    requestMethod: 0,
+                    responseType: 1,
                     delay: 604800000,
                     failureDelay: 300000,
                     isEnabled: true,
                     properties: [],
+                    websocketCommands: [],
+                    socketKillSwitchDelay: 0,
+                    socketDataCount: 0,
 
                     // Defaults parentType to 'NONE' = -1
                     // as per required in backend
@@ -112,25 +115,27 @@
                 }
             }
         },
-        
+
         watch: {
             activeStep(newVal, oldVal) {
                 if (newVal === 1 && oldVal === 0) { // When the user is about to obtain the payload
                     let self = this;
                     self.isLoading = true;
-                    
+
+                    // console.dir(self.requestFormInput);
+                    // console.dir(JSON.stringify(self.requestFormInput));
                     DispatchService.fetch(self.requestFormInput)
-                    .then(function(res) {
-                        console.dir(res);
-                    })
-                    .catch(function (err) {
-                        console.dir(err);
-                        self.canProceed = false;
-                        self.canBacktrack = true;
-                    })
-                    .finally(() => {
-                        self.isLoading = false;
-                    })
+                        .then(function (res) {
+                            console.dir(res);
+                        })
+                        .catch(function (err) {
+                            console.dir(err);
+                            self.canProceed = false;
+                            self.canBacktrack = true;
+                        })
+                        .finally(() => {
+                            self.isLoading = false;
+                        });
                 }
             }
         },
@@ -160,7 +165,7 @@
                     this.setDefaultRequestForm();
                 });
         },
-        
+
         methods: {
             setDefaultRequestForm() {
                 if (this.requestMethods.length > 0) {
@@ -171,10 +176,10 @@
                     this.requestFormInput.responseType = this.responseTypes[0].value;
                 }
             },
-            
+
             createRequest() {
                 // TODO: Submit request form here
-                
+
                 this.activeStep++;
             }
         }
