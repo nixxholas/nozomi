@@ -121,10 +121,11 @@
 
                     DispatchService.fetch(self.requestFormInput)
                         .then(function (res) {
-                            console.dir(res);
+                            self.dispatchResult = res.data;
+                            self.canProceed = false;
+                            self.canBacktrack = true;
                         })
                         .catch(function (err) {
-                            console.dir(err);
                             self.canProceed = false;
                             self.canBacktrack = true;
                         })

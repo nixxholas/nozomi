@@ -1,6 +1,6 @@
 <template>
     <section>
-        <b-table v-if="">
+        <b-table v-if="payloadIsValid">
             
         </b-table>
         <b-message type="is-danger" has-icon>
@@ -41,7 +41,8 @@
         },
         computed: {
             payloadIsValid: function() {
-                
+                console.dir(this.dispatchPayload);
+                return this.dispatchPayload !== null && this.dispatchPayload.response !== null && this.dispatchPayload.payload !== null;
             }
         }
     }
