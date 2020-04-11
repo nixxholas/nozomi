@@ -1,16 +1,21 @@
 <template>
     <section>
-        <b-table v-if="payloadIsValid">
-            
-        </b-table>
-        <b-message type="is-danger" has-icon>
-            There was error with the request.
-        </b-message>
+        <!-- TODO: Change ":data" to corresponding response data -->
+        <ComponentIdentificationFormCollapse
+                :data="response.content"
+                :is-collapsed="false"
+                @setSelectedIdentifier="setSelectedIdentifier"
+        />
     </section>
 </template>
 
 <script>
+    import ComponentIdentificationFormCollapse from "./ComponentIdentificationFormCollapse";
+
     export default {
+        components: {
+            ComponentIdentificationFormCollapse
+        },
         props: {
             dispatchPayload: {
                 type: Object,
@@ -39,10 +44,31 @@
                 }
             }
         },
-        computed: {
-            payloadIsValid: function() {
-                console.dir(this.dispatchPayload);
-                return this.dispatchPayload !== null && this.dispatchPayload.response !== null && this.dispatchPayload.payload !== null;
+        data() {
+            return {
+                selectedIdentifiers: []
+            }
+        },
+        methods: {
+            setSelectedIdentifier(checked, identifier) {
+                if (!checked) {
+                    const identifierIndex = this.findIdentifierIndex(identifier);
+                    this.selectedIdentifiers.splice(identifierIndex, 1);
+                } else {
+                    this.selectedIdentifiers.push(identifier);
+                }
+            },
+            findIdentifierIndex(identifier) {
+                const identifiersLength = this.selectedIdentifiers.length;
+
+                for (let counter = 0; counter < identifiersLength; counter++) {
+                    const selectedIdentifer = this.selectedIdentifiers[counter];
+
+                    if (selectedIdentifer === identifier)
+                        return counter;
+                }
+
+                return -1;
             }
         }
     }
