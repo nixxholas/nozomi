@@ -45,7 +45,7 @@ namespace Nozomi.Data.ViewModels.RequestProperty
             public CreateRequestPropertyValidator()
             {
                 RuleFor(e => e.Type).IsInEnum();
-                RuleFor(e => e.RequestGuid).NotEmpty().NotNull();
+                // RuleFor(e => e.RequestGuid).NotEmpty().NotNull();
             }
         }
     }
