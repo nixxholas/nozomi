@@ -2,10 +2,19 @@
     <section>
         <!-- TODO: Change ":data" to corresponding response data -->
         <ComponentIdentificationFormCollapse
-                :data="response.content"
+                :data="[]"
                 :is-collapsed="false"
                 @setSelectedIdentifier="setSelectedIdentifier"
         />
+
+        <br />
+        <b-button @click="previousStep">
+            Previous
+        </b-button>
+        
+        <b-button @click="nextStep">
+            Next
+        </b-button>
     </section>
 </template>
 
@@ -69,6 +78,16 @@
                 }
 
                 return -1;
+            },
+            nextStep() {
+                if (this.selectedIdentifiers.length > 0) {
+                    this.$emit("setIdentifiedSelection", this.selectedIdentifiers);
+                } else {
+                    this.$buefy.dialog.alert("You have yet to select any identifiers");
+                }
+            },
+            previousStep() {
+                this.$emit("setActiveStep", -1);
             }
         }
     }
