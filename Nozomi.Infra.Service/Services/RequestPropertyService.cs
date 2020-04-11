@@ -36,7 +36,7 @@ namespace Nozomi.Service.Services
 
         public Task Create(CreateRequestPropertyInputModel inputModel, string userId)
         {
-            if (inputModel.IsValid())
+            if (inputModel.IsValid(false))
             {
                 var request = _requestEvent.GetByGuid(Guid.Parse(inputModel.RequestGuid), null, true);
                 
