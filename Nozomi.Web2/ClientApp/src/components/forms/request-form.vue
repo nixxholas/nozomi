@@ -147,7 +147,7 @@
 </template>
 
 <script>
-    import RequestFormPropertiesTable from "./RequestFormPropertiesTable";
+    import RequestFormPropertiesTable from "../tables/request-form-properties-table";
 
     export default {
         components: {

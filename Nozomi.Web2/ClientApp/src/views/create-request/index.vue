@@ -52,8 +52,8 @@
     import ResponseTypeService from "../../services/ResponseTypeService";
     import RequestPropertyTypeService from "../../services/RequestPropertyTypeService";
     
-    import RequestForm from "./components/RequestForm";
-    import ComponentIdentificationForm from "./components/ComponentIdentificationForm";
+    import RequestForm from "@/components/forms/request-form";
+    import ComponentIdentificationForm from "@/components/forms/component-identification-form"
 
     export default {
         components: {
@@ -62,7 +62,7 @@
         },
         data() {
             return {
-                activeStep: 1,
+                activeStep: 0,
                 isLoading: false,
                 requestMethods: [],
                 responseTypes: [],

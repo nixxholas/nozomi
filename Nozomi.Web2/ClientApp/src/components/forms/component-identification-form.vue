@@ -19,7 +19,7 @@
 </template>
 
 <script>
-    import ComponentIdentificationFormCollapse from "./ComponentIdentificationFormCollapse";
+    import ComponentIdentificationFormCollapse from "./component-identification-form-collapse";
 
     export default {
         components: {
