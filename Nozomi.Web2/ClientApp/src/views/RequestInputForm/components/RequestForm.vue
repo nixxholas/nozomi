@@ -122,14 +122,14 @@
                 />
             </b-tab-item>
 
-            <b-tab-item label="Body">
+            <b-tab-item label="Body" :visible="requestForm.requestMethod !== 50">
                 <RequestFormPropertiesTable
                         :header-types="bodyPropertyTypes"
                         :form-data="requestForm.properties.body"
                 />
             </b-tab-item>
 
-            <b-tab-item label="Socket">
+            <b-tab-item label="Socket" :visible="requestForm.requestMethod === 50">
                 <RequestFormPropertiesTable
                         :header-types="socketPropertyTypes"
                         :form-data="requestForm.properties.body"
