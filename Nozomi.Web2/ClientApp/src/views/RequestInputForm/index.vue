@@ -22,7 +22,12 @@
                                 </b-step-item>
 
                                 <b-step-item label="Identify">
-                                    <ComponentIdentificationForm :dispatch-payload="dispatchResult"/>
+                                    <ComponentIdentificationForm 
+                                            :dispatch-payload="dispatchResult"
+                                            @setActiveStep="setActiveStep"
+                                            @setIdentifiedSelection="setIdentifiedSelection"
+                                    />
+                                    
                                     <b-loading :is-full-page="false" :active.sync="isLoading"
                                                :can-cancel="false"></b-loading>
                                 </b-step-item>
@@ -57,7 +62,7 @@
         },
         data() {
             return {
-                activeStep: 0,
+                activeStep: 1,
                 isLoading: false,
                 requestMethods: [],
                 responseTypes: [],
@@ -73,7 +78,8 @@
                     properties: {
                         params: [],
                         headers: [],
-                        body: []
+                        body: [],
+                        socket: []
                     },
                     websocketCommands: [],
                     socketKillSwitchDelay: 0,
@@ -87,7 +93,9 @@
                 dispatchResult: {
                     response: null,
                     payload: null
-                }
+                },
+                
+                identifySelectionForm: []
             }
         },
 
@@ -127,6 +135,15 @@
                     this.requestFormInput.responseType = this.responseTypes[0].value;
                 }
             },
+            
+            setActiveStep(step = 0) {
+                if (step < 0) {
+                    this.activeStep--;
+                } else {
+                    this.activeStep++;
+                }
+                
+            },
 
             dispatchRequest(cb) {
                 // Merge properties into 1 array before submit
@@ -147,11 +164,16 @@
                         this.dispatchResult = res.data;
                         cb(true);
                         
-                        this.activeStep++;
+                        this.setActiveStep();
                     })
                     .catch(err => {
                         cb(false);
                     });
+            },
+            
+            setIdentifiedSelection(identifiedSelection) {
+                console.log(identifiedSelection);
+                this.setActiveStep();
             }
         }
     }
