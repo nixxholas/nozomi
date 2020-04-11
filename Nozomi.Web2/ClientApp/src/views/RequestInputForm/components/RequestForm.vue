@@ -212,7 +212,7 @@
             nextStep() {
                 this.isLoading = true;
 
-                if (this.isValidInput) {
+                if (this.isValidInput()) {
                     this.$emit("dispatchRequest", isSuccess => this.isLoading = false);
                 } else {
                     this.isLoading = false;
