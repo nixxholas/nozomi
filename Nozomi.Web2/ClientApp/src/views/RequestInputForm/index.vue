@@ -9,7 +9,6 @@
                         <div class="box">
 
                             <b-steps v-model="activeStep"
-                                     ref="steps"
                                      :animated="true"
                                      :has-navigation="false">
 
@@ -17,44 +16,21 @@
                                     <RequestForm :request-methods="requestMethods"
                                                  :response-types="responseTypes"
                                                  :request-form="requestFormInput"
-                                                 @onCreate="createRequest"
-                                                 @onDisable="canProceed = false"
-                                                 @onEnable="canProceed = true"
+                                                 :request-property-types="requestPropertyTypes"
+                                                 @dispatchRequest="dispatchRequest"
                                     />
                                 </b-step-item>
 
                                 <b-step-item label="Identify">
                                     <ComponentIdentificationForm :dispatch-payload="dispatchResult"/>
-                                    <b-loading :is-full-page="false" :active.sync="isLoading" :can-cancel="false"></b-loading>
+                                    <b-loading :is-full-page="false" :active.sync="isLoading"
+                                               :can-cancel="false"></b-loading>
                                 </b-step-item>
 
                                 <b-step-item label="Finish">
 
                                 </b-step-item>
 
-                                <template
-                                        :v-if="true"
-                                        slot="navigation"
-                                        slot-scope="{previous, next}">
-                                    <div class="buttons">
-                                        <b-button
-                                                outlined
-                                                icon-pack="fas"
-                                                icon-left="chevron-left"
-                                                :disabled="previous.disabled || !canBacktrack"
-                                                @click.prevent="previous.action">
-                                            Previous
-                                        </b-button>
-                                        <b-button
-                                                outlined
-                                                icon-pack="fas"
-                                                icon-right="chevron-right"
-                                                :disabled="next.disabled || !canProceed"
-                                                @click.prevent="next.action">
-                                            Next
-                                        </b-button>
-                                    </div>
-                                </template>
                             </b-steps>
 
                         </div>
@@ -66,13 +42,13 @@
 </template>
 
 <script>
-    import ComponentIdentificationForm from "./components/ComponentIdentificationForm";
     import DispatchService from "../../services/DispatchService";
     import RequestTypeService from "../../services/RequestTypeService";
     import ResponseTypeService from "../../services/ResponseTypeService";
     import RequestPropertyTypeService from "../../services/RequestPropertyTypeService";
-
+    
     import RequestForm from "./components/RequestForm";
+    import ComponentIdentificationForm from "./components/ComponentIdentificationForm";
 
     export default {
         components: {
@@ -81,8 +57,6 @@
         },
         data() {
             return {
-                canBacktrack: false,
-                canProceed: false,
                 activeStep: 0,
                 isLoading: false,
                 requestMethods: [],
@@ -96,7 +70,11 @@
                     delay: 604800000,
                     failureDelay: 300000,
                     isEnabled: true,
-                    properties: [],
+                    properties: {
+                        params: [],
+                        headers: [],
+                        body: []
+                    },
                     websocketCommands: [],
                     socketKillSwitchDelay: 0,
                     socketDataCount: 0,
@@ -105,33 +83,10 @@
                     // as per required in backend
                     parentType: -1,
                 },
-                
+
                 dispatchResult: {
                     response: null,
                     payload: null
-                }
-            }
-        },
-
-        watch: {
-            activeStep(newVal, oldVal) {
-                if (newVal === 1 && oldVal === 0) { // When the user is about to obtain the payload
-                    let self = this;
-                    self.isLoading = true;
-
-                    DispatchService.fetch(self.requestFormInput)
-                        .then(function (res) {
-                            self.dispatchResult = res.data;
-                            self.canProceed = false;
-                            self.canBacktrack = true;
-                        })
-                        .catch(function (err) {
-                            self.canProceed = false;
-                            self.canBacktrack = true;
-                        })
-                        .finally(() => {
-                            self.isLoading = false;
-                        });
                 }
             }
         },
@@ -173,10 +128,30 @@
                 }
             },
 
-            createRequest() {
-                // TODO: Submit request form here
+            dispatchRequest(cb) {
+                // Merge properties into 1 array before submit
+                // Comply with backend props controller
+                let newProperties = [];
+                const formattedForm = { ...this.requestFormInput };
+                
+                for (const propertyKey in formattedForm.properties) {
+                    formattedForm.properties[propertyKey].forEach(row => {
+                        if (row.key.trim().length !== 0 && row.value.trim().length !== 0)
+                            newProperties.push(row);
+                    });
+                }
+                formattedForm.properties = newProperties;
 
-                this.activeStep++;
+                DispatchService.fetch(formattedForm)
+                    .then(res => {
+                        this.dispatchResult = res.data;
+                        cb(true);
+                        
+                        this.activeStep++;
+                    })
+                    .catch(err => {
+                        cb(false);
+                    });
             }
         }
     }
