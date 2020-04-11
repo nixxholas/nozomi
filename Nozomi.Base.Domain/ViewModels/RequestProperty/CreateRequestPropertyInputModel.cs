@@ -34,19 +34,16 @@ namespace Nozomi.Data.ViewModels.RequestProperty
         /// </summary>
         public string RequestGuid { get; set; }
         
-        public bool IsValid(bool ignoreRelations = true)
+        public bool IsValid()
         {
-            var validator = new CreateRequestPropertyValidator(ignoreRelations);
-            return validator.Validate(this).IsValid;
+            return new CreateRequestPropertyValidator().Validate(this).IsValid;
         }
 
         protected class CreateRequestPropertyValidator : AbstractValidator<CreateRequestPropertyInputModel>
         {
-            public CreateRequestPropertyValidator(bool ignoreRelations)
+            public CreateRequestPropertyValidator()
             {
                 RuleFor(e => e.Type).IsInEnum();
-                if (!ignoreRelations)
-                    RuleFor(e => e.RequestGuid).NotEmpty().NotNull();
             }
         }
     }

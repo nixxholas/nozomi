@@ -82,9 +82,6 @@ namespace Nozomi.Data.ViewModels.Dispatch
                 RuleFor(e => e.SocketKillSwitchDelay)
                     .LessThan(TimeSpan.FromSeconds(20).Ticks);
                 RuleFor(e => e.SocketDataCount).LessThan(5);
-                RuleFor(e => e.Properties)
-                    .Must(col => col
-                        .All(e => e.IsValid()));
             }
         }
     }
