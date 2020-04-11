@@ -56,7 +56,7 @@ namespace Nozomi.Data.ViewModels.Dispatch
         /// <summary>
         /// The properties of this request. (i.e. HTTP Headers)
         /// </summary>
-        public ICollection<CreateRequestPropertyInputModel> Properties { get; set; }
+        public ICollection<RequestPropertyInputModel> Properties { get; set; }
         
         /// <summary>
         /// Optional. The commands required to be invoked if this is a websocket dispatch.
