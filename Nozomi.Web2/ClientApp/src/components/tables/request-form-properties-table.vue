@@ -44,19 +44,11 @@
             formData: {
                 type: Array,
                 required: true,
-                default: () => ([]),
-                validator: function (value) {
-                    if (value && value.length > 0) { // If there's already values here, means we're validating an update request
-                        for (let i = 0; i < value.length; i++) {
-                            if (!value[i] || !value[i].key || !value[i].value || !value[i].requestGuid)
-                                return false;
-                        }
-                    } else if (value && value.length === 0) {
-                        return true;
-                    }
-                    
-                    return false;
-                }
+                default: () => ([])
+            },
+            requestGuid: {
+                type: String,
+                default: null
             },
             allowCustomValue: {
                 type: Boolean,
@@ -66,14 +58,19 @@
 
         created() {
             this.addExtraTableRow();
+            
+            if (this.requestGuid && this.formData && this.formData > 0) // If there's already values here, means we're validating an update request
+                for (let i = 0; i < this.formData; i++) {
+                    if (!this.formData[i] || !this.formData[i].key || !this.formData[i].value || !this.formData[i].requestGuid)
+                        alert("Problem with formData!") // TODO: UI ERROR
+                }
         },
 
         methods: {
             addExtraTableRow(rowIndex = -1) {
                 if ((this.formData.length - 1) === rowIndex) {
                     this.formData.push({key: "", value: ""});
-                }
-                else if (rowIndex === -1) {
+                } else if (rowIndex === -1) {
                     // Adds a new row when rowIndex is not specified
                     this.formData.push({key: "", value: ""});
                 }
@@ -82,15 +79,15 @@
             filterPropertyTypes(input) {
                 return this.headerTypes.filter(headerType => headerType.key.toLowerCase().includes(input.toLowerCase()));
             },
-            
+
             getPropertyType(keyInput) {
                 let defaultPropertyType = -1; // Represents invalid property type
-                
+
                 // Defaults to use the only property type
                 if (this.headerTypes.length === 1) {
                     return this.headerTypes[0].value;
                 }
-                
+
                 for (const headerType of this.headerTypes) {
                     if (headerType.key === keyInput)
                         return headerType.value;
@@ -99,7 +96,7 @@
                     if (defaultPropertyType === -1 && headerType.key.toLowerCase().includes("custom"))
                         defaultPropertyType = headerType.value;
                 }
-                
+
                 return defaultPropertyType;
             },
 
@@ -107,7 +104,7 @@
                 const keyInput = this.formData[rowIndex].key;
                 this.formData[rowIndex].type = this.getPropertyType(keyInput);
             },
-            
+
             removeRow(rowIndex) {
                 this.formData.splice(rowIndex, 1);
             }
