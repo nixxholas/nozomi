@@ -1,7 +1,7 @@
 <template>
     <section>
         <!-- Display mapped data -->
-        
+        {{ selectedIdentifiers }}
 
         <!-- Identity selection field -->
         <ComponentIdentificationFormCollapse
