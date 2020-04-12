@@ -9,7 +9,7 @@ namespace Nozomi.Data.ViewModels.Component
     {
         public Guid Guid { get; set; }
 
-        public long ComponentTypeId { get; set; } = 0;
+        public long? ComponentTypeId { get; set; }
 
         public string Identifier { get; set; }
         
@@ -32,7 +32,7 @@ namespace Nozomi.Data.ViewModels.Component
         {
             public UpdateComponentInputValidator()
             {
-                RuleFor(e => e.ComponentTypeId).GreaterThan(-1);
+                // RuleFor(e => e.ComponentTypeId).GreaterThan(-1);
                 RuleFor(e => e.IsDenominated).NotNull();
                 RuleFor(e => e.AnomalyIgnorance).NotNull();
                 RuleFor(e => e.StoreHistoricals).NotNull();
