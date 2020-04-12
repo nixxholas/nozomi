@@ -14,6 +14,7 @@
 
                 <ComponentIdentificationFormCollapse
                         :is-collapsed="false"
+                        :show-buttons="false"
                         :data="data"
                         :appended-query="appendedQuery"
                         :title="identifier"
