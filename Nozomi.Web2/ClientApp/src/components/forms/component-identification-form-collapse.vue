@@ -33,12 +33,13 @@
 
                             <!-- User friendly value -->
                             <div v-if="typeof row[propertyKey] === 'number' || typeof row[propertyKey] === 'string'">
-                                <!-- TODO: Prepare for update using ":value" -->
                                 <b-checkbox
-                                        @input="setSelectedIdentifier($event, { 
-                                        identifier: getIdentifier(propertyKey + '=>' + row[propertyKey]),
-                                        query: getQuery(propertyKey)
-                                    })"
+                                        @input="setSelectedIdentifier({
+                                            data: row, 
+                                            identifier: getIdentifier(propertyKey + '=>' + row[propertyKey]),
+                                            query: getQuery(propertyKey)
+                                        })"
+                                        :disabled="shouldDisableCheckbox(propertyKey, row[propertyKey])"
                                         expanded
                                 >
                                     {{ propertyKey }}: {{ row[propertyKey] }}
@@ -85,12 +86,13 @@
                     >
                         <!-- User friendly value -->
                         <div v-if="typeof data[propertyKey] === 'number' || typeof data[propertyKey] === 'string'">
-                            <!-- TODO: Prepare for update using ":value" -->
                             <b-checkbox
-                                    @input="setSelectedIdentifier($event, { 
+                                    @input="setSelectedIdentifier({
+                                        data: data, 
                                         identifier: getIdentifier(propertyKey + '=>' + data[propertyKey]),
                                         query: getQuery(propertyKey)
                                     })"
+                                    :disabled="shouldDisableCheckbox(propertyKey, data[propertyKey])"
                                     expanded
                             >
                                 {{ propertyKey }}: {{ data[propertyKey] }}
@@ -146,6 +148,11 @@
                     return Array.isArray(value) || typeof value === 'object';
                 }
             },
+            selectedIdentifier: {
+                type: String,
+                required: false,
+                default: ""
+            },
             appendedIdentifier: {
                 type: String,
                 required: false,
@@ -166,7 +173,6 @@
                 require: false,
                 default: false
             }
-            // TODO: Receive selected identifiers from parent for updates
         },
         methods: {
             getIdentifier(identifier) {
@@ -177,14 +183,22 @@
                 return identifier;
             },
             getQuery(query) {
-                if (this.appendedQuery.length > 0) {
+                if (this.appendedQuery.length > 0 && this.selectedIdentifier.length === 0) {
                     return this.appendedQuery.concat("/" + query);
                 }
 
                 return query;
             },
-            setSelectedIdentifier(checked, identifier) {
-                this.$emit("setSelectedIdentifier", checked, identifier);
+            shouldDisableCheckbox(propertyKey, dataValue) {
+                return this.selectedIdentifier ===
+                    this.getIdentifier(propertyKey + "=>" + dataValue);
+            },
+            setSelectedIdentifier({data = {}, identifier = "", query = ""}) {
+                this.$emit("setSelectedIdentifier", {
+                    data,
+                    identifier,
+                    query
+                });
             }
         }
     }
