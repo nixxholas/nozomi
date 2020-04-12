@@ -271,7 +271,8 @@ namespace Nozomi.Service.Services
                 var component = query.FirstOrDefault();
                 if (component != null)
                 {
-                    component.ComponentTypeId = vm.ComponentTypeId;
+                    if (vm.ComponentTypeId != null && vm.ComponentTypeId > 0)
+                        component.ComponentTypeId = (long) vm.ComponentTypeId;
                     component.Identifier = vm.Identifier;
                     component.QueryComponent = vm.QueryComponent;
                     component.IsDenominated = vm.IsDenominated;

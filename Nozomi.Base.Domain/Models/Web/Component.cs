@@ -27,11 +27,12 @@ namespace Nozomi.Data.Models.Web
         }
         
         // Hard creation constructor
-        public Component(long componentTypeId, string identifier, string queryComponent, bool anomalyIgnorance,
+        public Component(long? componentTypeId, string identifier, string queryComponent, bool anomalyIgnorance,
             bool isDenominated, bool storeHistoricals)
         {
             Guid = Guid.NewGuid();
-            ComponentTypeId = componentTypeId;
+            if (componentTypeId != null && componentTypeId > 0)
+                ComponentTypeId = (long) componentTypeId;
             Identifier = identifier;
             QueryComponent = queryComponent;
             AnomalyIgnorance = anomalyIgnorance;
@@ -62,11 +63,12 @@ namespace Nozomi.Data.Models.Web
             RequestId = requestId;
         }
         
-        public Component(long componentTypeId, string identifier, string queryComponent,
+        public Component(long? componentTypeId, string identifier, string queryComponent,
             bool anomalyIgnorance, bool isDenominated, bool storeHistoricals, long requestId)
         {
             Guid = Guid.NewGuid();
-            ComponentTypeId = componentTypeId;
+            if (componentTypeId != null && componentTypeId > 0)
+                ComponentTypeId = (long)componentTypeId;
             Identifier = identifier;
             QueryComponent = queryComponent;
             AnomalyIgnorance = anomalyIgnorance;
