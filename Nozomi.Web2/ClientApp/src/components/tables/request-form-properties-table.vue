@@ -44,7 +44,19 @@
             formData: {
                 type: Array,
                 required: true,
-                default: () => ([])
+                default: () => ([]),
+                validator: function (value) {
+                    if (value && value.length > 0) { // If there's already values here, means we're validating an update request
+                        for (let i = 0; i < value.length; i++) {
+                            if (!value[i] || !value[i].key || !value[i].value || !value[i].requestGuid)
+                                return false;
+                        }
+                    } else if (value && value.length === 0) {
+                        return true;
+                    }
+                    
+                    return false;
+                }
             },
             allowCustomValue: {
                 type: Boolean,
