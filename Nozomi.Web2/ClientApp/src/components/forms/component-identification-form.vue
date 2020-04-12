@@ -1,17 +1,16 @@
 <template>
     <section>
-        <!-- TODO: Change ":data" to corresponding response data -->
         <ComponentIdentificationFormCollapse
-                :data="[]"
+                :data="dispatchPayload.payload ? dispatchPayload.payload : []"
                 :is-collapsed="false"
                 @setSelectedIdentifier="setSelectedIdentifier"
         />
 
-        <br />
+        <br/>
         <b-button @click="previousStep">
             Previous
         </b-button>
-        
+
         <b-button @click="nextStep">
             Next
         </b-button>
