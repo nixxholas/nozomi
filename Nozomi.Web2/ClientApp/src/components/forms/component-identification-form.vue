@@ -98,27 +98,22 @@
         },
         methods: {
             setSelectedIdentifier({data, identifier, query}) {
-                this.isDataSelectionModalOpen = true;
-                this.selectedIdentifier = identifier;
-                this.selectedIdentifierQuery = query;
-                this.selectedIdentifierData = data;
+                if (data && identifier) {
+                    this.isDataSelectionModalOpen = true;
+                    this.selectedIdentifier = identifier;
+                    this.selectedIdentifierQuery = query;
+                    this.selectedIdentifierData = data;
+                } else {
+                    this.selectedIdentifiers.push({query, identifier});
+                    this.displaySuccessDataMapSnackbar();
+                }
             },
 
             completeDataMapping(mappedSelection) {
                 this.selectedIdentifiers.push(mappedSelection);
                 this.isDataSelectionModalOpen = false;
 
-                this.$buefy.snackbar.open({
-                    duration: 5000,
-                    message: "Data mapped, scroll up to review what's added.",
-                    type: "is-success",
-                    position: "is-bottom-right",
-                    actionText: "Review",
-                    queue: false,
-                    onAction: () => {
-                        window.scrollTo(0, 0);
-                    }
-                });
+                this.displaySuccessDataMapSnackbar();
             },
 
             nextStep() {
@@ -130,6 +125,20 @@
             },
             previousStep() {
                 this.$emit("setActiveStep", -1);
+            },
+
+            displaySuccessDataMapSnackbar() {
+                this.$buefy.snackbar.open({
+                    duration: 5000,
+                    message: "Data mapped, scroll up to review what's added.",
+                    type: "is-success",
+                    position: "is-bottom-right",
+                    actionText: "Review",
+                    queue: false,
+                    onAction: () => {
+                        window.scrollTo(0, 0);
+                    }
+                });
             }
         }
     }
