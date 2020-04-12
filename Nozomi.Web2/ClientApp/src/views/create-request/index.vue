@@ -22,12 +22,12 @@
                                 </b-step-item>
 
                                 <b-step-item label="Identify">
-                                    <ComponentIdentificationForm 
+                                    <ComponentIdentificationForm
                                             :dispatch-payload="dispatchResult"
                                             @setActiveStep="setActiveStep"
-                                            @setIdentifiedSelection="setIdentifiedSelection"
+                                            @setIdentifiedSelections="setIdentifiedSelections"
                                     />
-                                    
+
                                     <b-loading :is-full-page="false" :active.sync="isLoading"
                                                :can-cancel="false"></b-loading>
                                 </b-step-item>
@@ -51,7 +51,7 @@
     import RequestTypeService from "../../services/RequestTypeService";
     import ResponseTypeService from "../../services/ResponseTypeService";
     import RequestPropertyTypeService from "../../services/RequestPropertyTypeService";
-    
+
     import RequestForm from "@/components/forms/request-form";
     import ComponentIdentificationForm from "@/components/forms/component-identification-form"
 
@@ -94,8 +94,8 @@
                     response: null,
                     payload: null
                 },
-                
-                identifySelectionForm: []
+
+                identifiedSelections: []
             }
         },
 
@@ -135,22 +135,21 @@
                     this.requestFormInput.responseType = this.responseTypes[0].value;
                 }
             },
-            
+
             setActiveStep(step = 0) {
                 if (step < 0) {
                     this.activeStep--;
                 } else {
                     this.activeStep++;
                 }
-                
             },
 
             dispatchRequest(cb) {
                 // Merge properties into 1 array before submit
                 // Comply with backend props controller
                 let newProperties = [];
-                const formattedForm = { ...this.requestFormInput };
-                
+                const formattedForm = {...this.requestFormInput};
+
                 for (const propertyKey in formattedForm.properties) {
                     formattedForm.properties[propertyKey].forEach(row => {
                         if (row.key.trim().length !== 0 && row.value.trim().length !== 0)
@@ -162,20 +161,20 @@
                 DispatchService.fetch(formattedForm)
                     .then(res => {
                         this.dispatchResult = res.data;
-                        
+
                         // Convert string payload to JS object
                         this.dispatchResult.payload = JSON.parse(JSON.parse(res.data.payload));
                         cb(true);
-                        
+
                         this.setActiveStep();
                     })
                     .catch(err => {
                         cb(false);
                     });
             },
-            
-            setIdentifiedSelection(identifiedSelection) {
-                console.log(identifiedSelection);
+
+            setIdentifiedSelections(identifiedSelections) {
+                this.identifiedSelections = identifiedSelections;
                 this.setActiveStep();
             }
         }
