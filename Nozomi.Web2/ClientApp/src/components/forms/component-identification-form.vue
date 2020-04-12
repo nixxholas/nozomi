@@ -3,6 +3,7 @@
         <!-- Display mapped data -->
         <ComponentIdentificationFormTable
                 :data="selectedIdentifiers"
+                class="mb-4"
         />
 
         <div class="buttons mb-7">
@@ -32,7 +33,7 @@
                 @completeSelection="completeDataMapping"
         />
 
-        <div class="buttons">
+        <div class="buttons mt-7">
             <b-button @click="previousStep">
                 Previous
             </b-button>
