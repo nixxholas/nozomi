@@ -162,6 +162,9 @@
                 DispatchService.fetch(formattedForm)
                     .then(res => {
                         this.dispatchResult = res.data;
+                        
+                        // Convert string payload to JS object
+                        this.dispatchResult.payload = JSON.parse(JSON.parse(res.data.payload));
                         cb(true);
                         
                         this.setActiveStep();
