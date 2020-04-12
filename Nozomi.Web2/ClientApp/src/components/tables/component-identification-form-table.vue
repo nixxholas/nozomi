@@ -5,7 +5,7 @@
 
         <template slot-scope="props">
             <b-table-column label="Identifier">
-                {{ props.row.identifier }}
+                {{ props.row.identifier ? props.row.identifier : "-" }}
             </b-table-column>
 
             <b-table-column label="Value">
