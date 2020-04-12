@@ -1,7 +1,19 @@
 <template>
     <section>
         <!-- Display mapped data -->
-        {{ selectedIdentifiers }}
+        <ComponentIdentificationFormTable
+                :data="selectedIdentifiers"
+        />
+
+        <div class="buttons mb-7">
+            <b-button @click="previousStep">
+                Previous
+            </b-button>
+
+            <b-button @click="nextStep">
+                Next
+            </b-button>
+        </div>
 
         <!-- Identity selection field -->
         <ComponentIdentificationFormCollapse
@@ -20,23 +32,26 @@
                 @completeSelection="completeDataMapping"
         />
 
-        <br/>
-        <b-button @click="previousStep">
-            Previous
-        </b-button>
+        <div class="buttons">
+            <b-button @click="previousStep">
+                Previous
+            </b-button>
 
-        <b-button @click="nextStep">
-            Next
-        </b-button>
+            <b-button @click="nextStep">
+                Next
+            </b-button>
+        </div>
     </section>
 </template>
 
 <script>
     import ComponentIdentificationFormCollapse from "./component-identification-form-collapse";
     import ComponentIdentificationFormModal from "../modals/component-identification-form-modal";
+    import ComponentIdentificationFormTable from "../tables/component-identification-form-table";
 
     export default {
         components: {
+            ComponentIdentificationFormTable,
             ComponentIdentificationFormCollapse,
             ComponentIdentificationFormModal
         },
@@ -91,7 +106,7 @@
             completeDataMapping(mappedSelection) {
                 this.selectedIdentifiers.push(mappedSelection);
                 this.isDataSelectionModalOpen = false;
-                
+
                 this.$buefy.snackbar.open({
                     duration: 5000,
                     message: "Data mapped, scroll up to review what's added.",
@@ -107,7 +122,7 @@
 
             nextStep() {
                 if (this.selectedIdentifiers.length > 0) {
-                    this.$emit("setIdentifiedSelection", this.selectedIdentifiers);
+                    this.$emit("setIdentifiedSelections", this.selectedIdentifiers);
                 } else {
                     this.$buefy.dialog.alert("You have yet to select any identifiers");
                 }
