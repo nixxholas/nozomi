@@ -1,9 +1,23 @@
 <template>
     <section>
+        <!-- Display mapped data -->
+        
+
+        <!-- Identity selection field -->
         <ComponentIdentificationFormCollapse
                 :data="dispatchPayload.payload ? dispatchPayload.payload : []"
                 :is-collapsed="false"
                 @setSelectedIdentifier="setSelectedIdentifier"
+        />
+
+        <!-- Query selection Modal -->
+        <ComponentIdentificationFormModal
+                :is-modal-open="isDataSelectionModalOpen"
+                :data="selectedIdentifierData"
+                :identifier="selectedIdentifier"
+                :appended-query="selectedIdentifierQuery"
+                @closeModal="isDataSelectionModalOpen = false"
+                @completeSelection="completeDataMapping"
         />
 
         <br/>
@@ -19,10 +33,12 @@
 
 <script>
     import ComponentIdentificationFormCollapse from "./component-identification-form-collapse";
+    import ComponentIdentificationFormModal from "../modals/component-identification-form-modal";
 
     export default {
         components: {
-            ComponentIdentificationFormCollapse
+            ComponentIdentificationFormCollapse,
+            ComponentIdentificationFormModal
         },
         props: {
             dispatchPayload: {
@@ -54,30 +70,41 @@
         },
         data() {
             return {
-                selectedIdentifiers: []
+                // Identifiers to display in data mapping table
+                selectedIdentifiers: [],
+
+                // Identifiers used in modal to prepare selection
+                isDataSelectionModalOpen: false,
+                selectedIdentifier: "",
+                selectedIdentifierQuery: "",
+                selectedIdentifierData: {}
             }
         },
         methods: {
-            setSelectedIdentifier(checked, identifier) {
-                if (!checked) {
-                    const identifierIndex = this.findIdentifierIndex(identifier);
-                    this.selectedIdentifiers.splice(identifierIndex, 1);
-                } else {
-                    this.selectedIdentifiers.push(identifier);
-                }
+            setSelectedIdentifier({data, identifier, query}) {
+                this.isDataSelectionModalOpen = true;
+                this.selectedIdentifier = identifier;
+                this.selectedIdentifierQuery = query;
+                this.selectedIdentifierData = data;
             },
-            findIdentifierIndex(identifier) {
-                const identifiersLength = this.selectedIdentifiers.length;
 
-                for (let counter = 0; counter < identifiersLength; counter++) {
-                    const selectedIdentifer = this.selectedIdentifiers[counter];
-
-                    if (selectedIdentifer === identifier)
-                        return counter;
-                }
-
-                return -1;
+            completeDataMapping(mappedSelection) {
+                this.selectedIdentifiers.push(mappedSelection);
+                this.isDataSelectionModalOpen = false;
+                
+                this.$buefy.snackbar.open({
+                    duration: 5000,
+                    message: "Data mapped, scroll up to review what's added.",
+                    type: "is-success",
+                    position: "is-bottom-right",
+                    actionText: "Review",
+                    queue: false,
+                    onAction: () => {
+                        window.scrollTo(0, 0);
+                    }
+                });
             },
+
             nextStep() {
                 if (this.selectedIdentifiers.length > 0) {
                     this.$emit("setIdentifiedSelection", this.selectedIdentifiers);
