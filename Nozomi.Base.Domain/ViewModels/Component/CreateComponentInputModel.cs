@@ -6,7 +6,7 @@ namespace Nozomi.Data.ViewModels.Component
 {
     public class CreateComponentInputModel
     {
-        public long ComponentTypeId { get; set; }
+        public long ComponentTypeId { get; set; } = 0;
 
         public string Identifier { get; set; }
         
@@ -30,7 +30,7 @@ namespace Nozomi.Data.ViewModels.Component
         {
             public CreateComponentValidator()
             {
-                RuleFor(e => e.ComponentTypeId).GreaterThan(0);
+                RuleFor(e => e.ComponentTypeId).GreaterThan(-1);
                 // RuleFor(e => e.Identifier); // No rule for identifier, it's not a requirement
                 // RuleFor(e => e.QueryComponent); // No rule for query component, it's not a requirement
                 RuleFor(e => e.IsDenominated).NotNull();
