@@ -8,6 +8,10 @@
                 <div class="columns is-centered">
                     <div class="column is-8">
                         <div class="box">
+                            <b-button v-if="!finishResult.canProceed"
+                                      icon-left="chevron-left" class="has-text-black mb-4"
+                                      tag="router-link" to="/dashboard"
+                                      type="is-white">Ditch this</b-button>
 
                             <b-steps v-model="activeStep"
                                      :animated="true"
