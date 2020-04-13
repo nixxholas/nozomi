@@ -101,6 +101,11 @@
                 selectedIdentifierData: {}
             }
         },
+        beforeUpdate() {
+            if (this.components && this.components.length > 0) { // If components are loaded
+                this.selectedIdentifiers = this.components;
+            }
+        },
         methods: {
             setSelectedIdentifier({data, identifier, query}) {
                 if (data && identifier) {
@@ -144,13 +149,6 @@
                         window.scrollTo(0, 0);
                     }
                 });
-            }
-        },
-        watch: {
-            components: function (val) {
-                if (val && val.length > 0) { // If components are loaded
-                    this.selectedIdentifiers = val;
-                }
             }
         }
     }

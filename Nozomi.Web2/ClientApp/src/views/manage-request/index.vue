@@ -32,6 +32,7 @@
 
                                 <b-step-item label="Identify">
                                     <ComponentIdentificationForm
+                                            :components="requestFormInput.components"
                                             :dispatch-payload="dispatchResult"
                                             @setActiveStep="setActiveStep"
                                             @setIdentifiedSelections="setIdentifiedSelections"
