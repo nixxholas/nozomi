@@ -79,6 +79,32 @@ namespace Nozomi.Web2.Controllers.v1.Request
 
             return BadRequest("Please login again. Your session may have expired!");
         }
+        
+        [Authorize]
+        [HttpGet("{guid}")]
+        [Throttle(Name = "Request/Create", Milliseconds = 1000)]
+        public IActionResult Get(string guid)
+        {
+            var identity = (ClaimsIdentity) User.Identity;
+
+            // Since we get the sub,
+            if (identity.Claims.Any(c => c.Type.Equals(JwtClaimTypes.Subject)))
+            {
+                var roles = identity.Claims.Where(c => c.Type.Equals(JwtClaimTypes.Role));
+                
+                if (roles.Any(r => NozomiPermissions.AllStaffRoles // If any roles matches a staff role
+                    .Any(e => e.GetDescription().Equals(r.Value))))
+                {
+                    // Return null created by entities as well
+                    return Ok(_requestEvent.ViewAll());
+                }
+                
+                return Ok(_requestEvent.View(guid, identity.Claims
+                    .SingleOrDefault(c => c.Type.Equals(JwtClaimTypes.Subject))?.Value));
+            }
+
+            return BadRequest("Please re-authenticate again");
+        }
 
         [Authorize]
         [HttpGet]
