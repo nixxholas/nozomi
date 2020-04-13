@@ -1,5 +1,6 @@
 <template>
-    <div class="container is-fluid is-desktop">
+    <section class="section">
+    <div class="container is-fluid">
         <p class="title is-2">Cabin</p>
         <p class="subtitle is-4">Welcome to your dashboard</p>
         
@@ -72,6 +73,7 @@
             </b-tab-item>
         </b-tabs>
     </div>
+    </section>
 </template>
 
 <script>
