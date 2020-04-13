@@ -182,6 +182,36 @@ namespace Nozomi.Service.Events
                 .SingleOrDefault(r => r.Id.Equals(id) && r.DeletedAt == null);
         }
 
+        public RequestViewModel View(string guid, string createdBy = null)
+        {
+            if (!Guid.TryParse(guid, out var parsedGuid))
+                throw new KeyNotFoundException("Invalid guid.");
+        
+            var query = _context.Requests.AsNoTracking()
+                .Include(r => r.RequestProperties)
+                .Include(r => r.WebsocketCommands)
+                .ThenInclude(wsc => wsc.WebsocketCommandProperties)
+                .Where(r => r.Guid.Equals(parsedGuid));
+
+            if (!string.IsNullOrEmpty(createdBy))
+                query = query.Where(r => r.CreatedById.Equals(createdBy));
+
+            return query
+                .Select(r => new RequestViewModel(r.Guid, r.RequestType, r.ResponseType, r.DataPath, 
+                    r.Delay, r.FailureDelay, r.IsEnabled, r.CurrencyId > 0 ? r.Currency.Slug : null, 
+                    r.CurrencyPairId > 0 ? r.CurrencyPair.Guid.ToString() : null, 
+                    r.CurrencyTypeId > 0 ? r.CurrencyType.Guid.ToString() : null,
+                    r.RequestComponents.Select(rc => new ComponentViewModel
+                    {
+                        Guid = rc.Guid,
+                        Type = rc.ComponentTypeId,
+                        IsDenominated = rc.IsDenominated
+                    }).ToList(),
+                    r.RequestProperties.Select(rp => new RequestPropertyViewModel(rp.Guid, 
+                        rp.RequestPropertyType, rp.Key, rp.Value)).ToList()))
+                .SingleOrDefault();
+        }
+
         public IQueryable<RequestViewModel> ViewAll(int index = 0, string createdBy = null, bool enabledOnly = true, 
             bool track = false)
         {
