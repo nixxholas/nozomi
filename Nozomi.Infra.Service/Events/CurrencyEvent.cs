@@ -168,6 +168,8 @@ namespace Nozomi.Service.Events
                             {
                                 Type = rc.ComponentTypeId,
                                 Guid = rc.Guid,
+                                Identifier = rc.Identifier,
+                                Query = rc.QueryComponent,
                                 IsDenominated = rc.IsDenominated
                             })
                     });
