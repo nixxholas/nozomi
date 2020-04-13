@@ -141,7 +141,8 @@
                 let self = this;
                 RequestService.get(this.guid)
                 .then(function (res) {
-                    console.dir(res);
+                    if (res && res.data)
+                        self.requestFormInput = res.data;
                 })
                 .catch(function (err) {
                     self.requestFormInput.guid = "";

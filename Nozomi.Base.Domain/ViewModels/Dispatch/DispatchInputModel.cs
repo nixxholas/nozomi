@@ -16,12 +16,12 @@ namespace Nozomi.Data.ViewModels.Dispatch
         /// <summary>
         /// A fixed duration on when the socket should be killed
         /// </summary>
-        public long SocketKillSwitchDelay { get; set; }
+        public long? SocketKillSwitchDelay { get; set; }
         
         /// <summary>
         /// Should you require multiple websocket data ingress,
         /// </summary>
-        public int SocketDataCount { get; set; }
+        public int? SocketDataCount { get; set; }
         
         /// <summary>
         /// The protocol of the request.
@@ -56,12 +56,12 @@ namespace Nozomi.Data.ViewModels.Dispatch
         /// <summary>
         /// The properties of this request. (i.e. HTTP Headers)
         /// </summary>
-        public ICollection<RequestPropertyInputModel> Properties { get; set; }
+        public ICollection<RequestPropertyInputModel>? Properties { get; set; }
         
         /// <summary>
         /// Optional. The commands required to be invoked if this is a websocket dispatch.
         /// </summary>
-        public ICollection<CreateWebsocketCommandInputModel> WebsocketCommands { get; set; }
+        public ICollection<CreateWebsocketCommandInputModel>? WebsocketCommands { get; set; }
 
         public bool IsValid()
         {
