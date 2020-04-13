@@ -151,7 +151,7 @@ namespace Nozomi.Auth
                             new Claim(NozomiJwtClaimTypes.StripeCustomerId, "cus_GiPXYNorAJsVIL"), 
                             new Claim(NozomiJwtClaimTypes.StripeCustomerDefaultPaymentId, "pm_1GAyifBrK0ZsVPPfIAwyWRdB"),
                             new Claim(NozomiJwtClaimTypes.StripeCustomerPaymentMethodId, "pm_1GAyifBrK0ZsVPPfIAwyWRdB"),
-                            new Claim(NozomiJwtClaimTypes.StripeSubscriptionId, "plan_Ggs92fEFrDv1sb")
+                            new Claim(NozomiJwtClaimTypes.StripeSubscriptionId, "sub_H5YXxMBphYvUgd")
                         }).Result;
                         if (!result.Succeeded)
                         {
