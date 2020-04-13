@@ -61,6 +61,8 @@ namespace Nozomi.Service.Events
                     Guid = c.Guid,
                     Type = c.ComponentTypeId,
                     IsDenominated = c.IsDenominated,
+                    Identifier = c.Identifier,
+                    Query = c.QueryComponent,
                     History = c.RcdHistoricItems
                         .Where(rcdhi => rcdhi.DeletedAt == null && rcdhi.IsEnabled)
                         .Select(rcdhi => new ComponentHistoricItemViewModel
@@ -74,6 +76,8 @@ namespace Nozomi.Service.Events
             {
                 Guid = c.Guid,
                 Type = c.ComponentTypeId,
+                Identifier = c.Identifier,
+                Query = c.QueryComponent,
                 IsDenominated = c.IsDenominated
             });
         }
@@ -112,6 +116,8 @@ namespace Nozomi.Service.Events
                 {
                     Guid = rc.Guid,
                     Type = rc.ComponentTypeId,
+                    Identifier = rc.Identifier,
+                    Query = rc.QueryComponent,
                     IsDenominated = rc.IsDenominated,
                     History = rc.RcdHistoricItems
                         .Any(rcdhi => rcdhi.DeletedAt == null && rcdhi.IsEnabled)
@@ -157,6 +163,8 @@ namespace Nozomi.Service.Events
                 {
                     Guid = rc.Guid,
                     Type = rc.ComponentTypeId,
+                    Identifier = rc.Identifier,
+                    Query = rc.QueryComponent,
                     IsDenominated = rc.IsDenominated,
                     History = rc.RcdHistoricItems
                         .Any(rcdhi => rcdhi.DeletedAt == null && rcdhi.IsEnabled)
@@ -192,6 +200,8 @@ namespace Nozomi.Service.Events
                 {
                     Guid = c.Guid,
                     Type = c.ComponentTypeId,
+                    Identifier = c.Identifier,
+                    Query = c.QueryComponent,
                     IsDenominated = c.IsDenominated,
                     History = c.RcdHistoricItems
                         .Where(rcdhi => rcdhi.DeletedAt == null && rcdhi.IsEnabled)
@@ -474,6 +484,8 @@ namespace Nozomi.Service.Events
                     {
                         Guid = parsedGuid,
                         Type = c.ComponentTypeId,
+                        Identifier = c.Identifier,
+                        Query = c.QueryComponent,
                         IsDenominated = c.IsDenominated,
                         Value = c.RcdHistoricItems
                             .Where(rcdhi => rcdhi.DeletedAt == null && rcdhi.IsEnabled)
@@ -517,6 +529,8 @@ namespace Nozomi.Service.Events
                     Guid = e.Guid,
                     Type = e.ComponentTypeId,
                     IsDenominated = e.IsDenominated,
+                    Identifier = e.Identifier,
+                    Query = e.QueryComponent,
                     Value = e.RcdHistoricItems
                         .Where(rcdhi => rcdhi.DeletedAt == null && rcdhi.IsEnabled)
                         .OrderByDescending(rcdhi => rcdhi.HistoricDateTime)

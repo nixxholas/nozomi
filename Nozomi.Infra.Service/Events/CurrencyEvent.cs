@@ -135,6 +135,8 @@ namespace Nozomi.Service.Events
                                 Type = rc.ComponentTypeId,
                                 Guid = rc.Guid,
                                 IsDenominated = rc.IsDenominated,
+                                Identifier = rc.Identifier,
+                                Query = rc.QueryComponent,
                                 History = typesToDeepen.Contains(rc.ComponentType)
                                     ? rc.RcdHistoricItems
                                         .Where(e => e.DeletedAt == null && e.IsEnabled)

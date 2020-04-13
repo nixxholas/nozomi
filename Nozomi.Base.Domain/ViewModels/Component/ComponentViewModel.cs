@@ -17,6 +17,10 @@ namespace Nozomi.Data.ViewModels.Component
         
         public string Value { get; set; }
         
+        public string Identifier { get; set; }
+        
+        public string Query { get; set; }
+        
         public bool IsDenominated { get; set; }
         
         public IEnumerable<ComponentHistoricItemViewModel> History { get; set; }

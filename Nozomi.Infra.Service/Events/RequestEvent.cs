@@ -205,6 +205,8 @@ namespace Nozomi.Service.Events
                     {
                         Guid = rc.Guid,
                         Type = rc.ComponentTypeId,
+                        Identifier = rc.Identifier,
+                        Query = rc.QueryComponent,
                         IsDenominated = rc.IsDenominated
                     }).ToList(),
                     r.RequestProperties.Select(rp => new RequestPropertyViewModel(rp.Guid, 
@@ -245,6 +247,8 @@ namespace Nozomi.Service.Events
                         {
                             Guid = rc.Guid,
                             Type = rc.ComponentTypeId,
+                            Identifier = rc.Identifier,
+                            Query = rc.QueryComponent,
                             IsDenominated = rc.IsDenominated
                         }).ToList(),
                         r.RequestProperties.Select(rp => new RequestPropertyViewModel(rp.Guid, 
