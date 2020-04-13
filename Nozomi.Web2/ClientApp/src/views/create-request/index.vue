@@ -36,6 +36,9 @@
                                 <b-step-item label="Finish">
                                     <b-loading :is-full-page="false" :active.sync="isPushLoading"
                                                :can-cancel="false" />
+                                    
+                                    <b-message v-if="finishResult.message" 
+                                               :type="finishResult.type">{{ finishResult.message }}</b-message>
                                 </b-step-item>
 
                             </b-steps>
@@ -106,6 +109,11 @@
                     response: null,
                     payload: null
                 },
+                
+                finishResult: {
+                    type: "is-danger",
+                    message: null,
+                }
             }
         },
 
@@ -138,6 +146,38 @@
                 });
         },
 
+        watch: {
+            activeStep: function (val) {
+                if (val === 2) { // If we're at finish
+                    this.finishResult.message = null;
+                    
+                    if (this.requestFormInput.requestGuid) {
+                        // TODO: Update API
+                    } else {
+                        this.toVmProperties(this.requestFormInput.properties); // Convert the properties first
+                        console.dir(this.requestFormInput.components);
+                        
+                        let self = this;
+                        RequestService.create(this.requestFormInput)
+                        .then(function (res) {
+                            console.dir(res);
+                            
+                            self.finishResult.type = "is-success";
+                        })
+                        .catch(function (err) {
+                            if (err && err.response && err.response.data) {
+                                self.finishResult.type = "is-danger";
+                                self.finishResult.message = err.response.data;
+                            }
+                        })
+                        .finally(() => {
+                            this.isPushLoading = false;
+                        });
+                    }
+                }
+            }
+        },
+        
         methods: {
             // Converts the UI properties to backend-compatible properties
             toVmProperties(properties) {
@@ -206,30 +246,6 @@
             setIdentifiedSelections(identifiedSelections) {
                 this.requestFormInput.components = identifiedSelections;
                 this.setActiveStep();
-            }
-        },
-        
-        watch: {
-            activeStep: function (val) {
-                if (val === 2) { // If we're at finish
-                    if (this.requestFormInput.requestGuid) {
-                        // TODO: Update API
-                    } else {
-                        this.toVmProperties(this.requestFormInput.properties); // Convert the properties first
-                        console.dir(this.requestFormInput.components);
-                        RequestService.create(this.requestFormInput)
-                        .then(function (res) {
-                            console.dir(res);
-                        })
-                        .catch(function (err) {
-                            console.dir(err);
-                            // TODO: Beautify error
-                        })
-                        .finally(() => {
-                            this.isPushLoading = false;
-                        });
-                    }
-                }
             }
         }
     }
