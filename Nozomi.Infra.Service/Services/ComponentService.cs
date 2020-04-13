@@ -33,7 +33,7 @@ namespace Nozomi.Service.Services
 
         public void Create(CreateComponentInputModel vm, string userId = null)
         {
-            if (vm.IsValid())
+            if (vm.IsValid() && !string.IsNullOrEmpty(vm.RequestId))
             {
                 var requestId = _requestEvent.GetId(vm.RequestId);
                 if (requestId <= 0)

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using FluentValidation;
+using Newtonsoft.Json;
 using Nozomi.Data.Models.Web;
 using Nozomi.Data.ViewModels.Component;
 using Nozomi.Data.ViewModels.RequestProperty;
@@ -39,6 +40,7 @@ namespace Nozomi.Data.ViewModels.Request
         /// This will deduce what type of request this is for
         /// i.e. CurrencyType, CurrencyPair or Currency.
         /// </summary>
+        [JsonProperty(Required = Required.Default)]
         public RequestParentType ParentType { get; set; } = RequestParentType.None; // Force defaults
 
         public enum RequestParentType
@@ -52,17 +54,19 @@ namespace Nozomi.Data.ViewModels.Request
         /// <summary>
         /// The unique slug identifier of the currency linked to this request.
         /// </summary>
-        public string CurrencySlug { get; set; }
+        public string? CurrencySlug { get; set; }
 
         /// <summary>
         /// The unique GUID identifier of the currency pair linked to this request.
         /// </summary>
-        public string CurrencyPairGuid { get; set; }
+        [JsonProperty(Required = Required.Default)]
+        public string? CurrencyPairGuid { get; set; }
 
         /// <summary>
         /// The unique GUID identifier of the Currency Type linked to this request.
         /// </summary>
-        public string CurrencyTypeGuid { get; set; }
+        [JsonProperty(Required = Required.Default)]
+        public string? CurrencyTypeGuid { get; set; }
         
         /// <summary>
         /// The collection of components for this request.

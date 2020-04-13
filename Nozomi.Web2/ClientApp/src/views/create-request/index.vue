@@ -2,7 +2,8 @@
     <div class="hero">
         <div class="hero-body">
             <div class="container">
-                <h1 class="title has-text-centered">Create a request</h1>
+                <h1 class="title has-text-centered" v-if="!requestGuid">Create a request</h1>
+                <h1 class="title has-text-centered" v-if="requestGuid">Update a request</h1>
 
                 <div class="columns is-centered">
                     <div class="column is-8">
@@ -13,7 +14,7 @@
                                      :has-navigation="false">
 
                                 <b-step-item label="Create">
-                                    <RequestForm :request-methods="requestTypes"
+                                    <RequestForm :request-types="requestTypes"
                                                  :response-types="responseTypes"
                                                  :request-form="requestFormInput"
                                                  :request-property-types="requestPropertyTypes"
@@ -33,7 +34,8 @@
                                 </b-step-item>
 
                                 <b-step-item label="Finish">
-                                    {{ requestFormInput.components }}
+                                    <b-loading :is-full-page="false" :active.sync="isPushLoading"
+                                               :can-cancel="false" />
                                 </b-step-item>
 
                             </b-steps>
@@ -54,8 +56,15 @@
 
     import RequestForm from "@/components/forms/request-form";
     import ComponentIdentificationForm from "@/components/forms/component-identification-form"
+    import RequestService from "../../services/RequestService";
 
     export default {
+        props: {
+            requestGuid: {
+                type: String,
+                default: null,
+            },
+        },
         components: {
             ComponentIdentificationForm,
             RequestForm,
@@ -64,6 +73,7 @@
             return {
                 activeStep: 0,
                 isLoading: false,
+                isPushLoading: true,
                 requestTypes: [],
                 responseTypes: [],
                 requestPropertyTypes: [],
@@ -101,6 +111,9 @@
 
         mounted() {
             this.isLoading = true;
+            
+            if (this.requestGuid)
+                this.requestFormInput.requestGuid = this.requestGuid;
 
             Promise.all([
                 RequestTypeService.all(),
@@ -126,6 +139,23 @@
         },
 
         methods: {
+            // Converts the UI properties to backend-compatible properties
+            toVmProperties(properties) {
+                if (properties) { // Is this the UI format?
+                    let compatProperties = [];
+
+                    for (let key in properties) // https://stackoverflow.com/questions/14379274/how-to-iterate-over-a-javascript-object
+                        for (let j = 0; j < properties[key].length; j++) {
+                            if (properties[key][j] && properties[key][j].key.length > 0 
+                                && properties[key][j].value.length > 0)
+                                compatProperties.push(properties[key][j]);
+                        }
+                    
+                    this.requestFormInput.properties = compatProperties;
+                } else 
+                    alert("Bad properties collection"); // TODO: Proper Error Output
+            },
+            
             setDefaultRequestForm() {
                 if (this.requestTypes.length > 0) {
                     this.requestFormInput.requestType = this.requestTypes[0].value;
@@ -176,6 +206,30 @@
             setIdentifiedSelections(identifiedSelections) {
                 this.requestFormInput.components = identifiedSelections;
                 this.setActiveStep();
+            }
+        },
+        
+        watch: {
+            activeStep: function (val) {
+                if (val === 2) { // If we're at finish
+                    if (this.requestFormInput.requestGuid) {
+                        // TODO: Update API
+                    } else {
+                        this.toVmProperties(this.requestFormInput.properties); // Convert the properties first
+                        console.dir(this.requestFormInput.components);
+                        RequestService.create(this.requestFormInput)
+                        .then(function (res) {
+                            console.dir(res);
+                        })
+                        .catch(function (err) {
+                            console.dir(err);
+                            // TODO: Beautify error
+                        })
+                        .finally(() => {
+                            this.isPushLoading = false;
+                        });
+                    }
+                }
             }
         }
     }

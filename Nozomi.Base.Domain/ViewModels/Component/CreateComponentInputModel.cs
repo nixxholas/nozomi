@@ -18,7 +18,7 @@ namespace Nozomi.Data.ViewModels.Component
         
         public bool StoreHistoricals { get; set; }
         
-        public string RequestId { get; set; }
+        public string? RequestId { get; set; }
 
         public bool IsValid()
         {
@@ -36,7 +36,7 @@ namespace Nozomi.Data.ViewModels.Component
                 RuleFor(e => e.IsDenominated).NotNull();
                 RuleFor(e => e.AnomalyIgnorance).NotNull();
                 RuleFor(e => e.StoreHistoricals).NotNull();
-                RuleFor(e => e.RequestId).NotNull().NotEmpty();
+                // RuleFor(e => e.RequestId).NotNull().NotEmpty();
             }
         }
     }

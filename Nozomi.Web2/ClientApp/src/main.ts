@@ -32,7 +32,7 @@ import { faAngleLeft, faAngleRight, faArrowUp, faAtlas, faBug, faCaretDown,
   faCaretUp, faCheck, faCheckCircle, faChevronDown, faChevronLeft, faChevronRight, faCog,
   faCoins, faColumns, faCreditCard, faDumpster, faEnvelope, faExclamationCircle, 
   faExclamationTriangle,
-  faEye, faFingerprint, faFrown, faHome, faInfo, faInfoCircle, faKey, faLandmark, 
+  faEye, faFingerprint, faFrown, faHome, faInfo, faInfoCircle, faKey, faLandmark, faMeteor,
   faMoneyBill, faMoneyBillWave, faSadCry, faSpinner,
   faSearch, faSignOutAlt,faTicketAlt, faTimes, faTrash, faUniversity, faUser, faQuestionCircle } 
   from '@fortawesome/free-solid-svg-icons';
@@ -40,7 +40,7 @@ library.add(faAngleLeft, faAngleRight, faArrowUp, faAtlas, faBug, faCaretDown,
     faCaretUp, faCheck, faCheckCircle, faChevronDown, faChevronLeft, faChevronRight, faCog,
     faCoins, faColumns, faCreditCard, faDumpster, faEnvelope, faExclamationCircle, 
     faExclamationTriangle,
-    faEye, faFingerprint, faFrown, faHome, faInfo, faInfoCircle, faKey, faLandmark, 
+    faEye, faFingerprint, faFrown, faHome, faInfo, faInfoCircle, faKey, faLandmark, faMeteor,
     faMoneyBill, faMoneyBillWave, faSadCry, faSpinner,
     faSearch, faSignOutAlt, faTicketAlt, faTimes, faTrash, faUniversity, faUser, faQuestionCircle);
 
