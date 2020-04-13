@@ -30,7 +30,7 @@ namespace Nozomi.Data.ViewModels.Request
                 // RuleFor(r => r.IsEnabled).NotNull();
                 RuleFor(r => r.RequestType).IsInEnum();
                 RuleFor(r => r.ResponseType).IsInEnum();
-                RuleFor(r => r.DataPath).NotEmpty();
+                RuleFor(r => r.Endpoint).NotEmpty();
                 RuleFor(r => r.Delay).GreaterThan(-1);
                 RuleFor(r => r.FailureDelay).GreaterThan(-1);
                 RuleFor(r => r.ParentType).IsInEnum();

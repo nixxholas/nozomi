@@ -362,7 +362,7 @@ namespace Nozomi.Service.Services.Requests
                         request.IsEnabled = (bool)vm.IsEnabled;
                     request.RequestType = vm.RequestType;
                     request.ResponseType = vm.ResponseType;
-                    request.DataPath = vm.DataPath;
+                    request.DataPath = vm.Endpoint;
                     request.Delay = vm.Delay;
                     request.FailureDelay = vm.FailureDelay;
                     if (vm.Components != null && vm.Components.Any()) { // Safetynet

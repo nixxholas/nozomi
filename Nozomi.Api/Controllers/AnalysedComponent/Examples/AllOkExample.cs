@@ -22,7 +22,7 @@ namespace Nozomi.Api.Controllers.AnalysedComponent.Examples
                     IsEnabled = true,
                     RequestType = RequestType.HttpGet,
                     ResponseType = ResponseType.Json,
-                    DataPath = "https://api.nozomi.one/api/connect/validate",
+                    Endpoint = "https://api.nozomi.one/api/connect/validate",
                     Delay = 10000,
                     FailureDelay = 60000,
                     ParentType = CreateRequestInputModel.RequestParentType.None,

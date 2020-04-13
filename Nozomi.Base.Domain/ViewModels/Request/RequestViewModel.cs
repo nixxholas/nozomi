@@ -11,14 +11,14 @@ namespace Nozomi.Data.ViewModels.Request
     {
         public RequestViewModel() {}
         
-        public RequestViewModel(Guid guid, RequestType requestType, ResponseType responseType, string dataPath,
+        public RequestViewModel(Guid guid, RequestType requestType, ResponseType responseType, string endpoint,
             int delay, long failureDelay, bool isEnabled, string currencySlug, string currencyPairGuid, 
             string currencyTypeGuid)
         {
             Guid = guid;
             RequestType = requestType;
             ResponseType = responseType;
-            DataPath = dataPath;
+            Endpoint = endpoint;
             Delay = delay;
             FailureDelay = failureDelay;
             IsEnabled = isEnabled;
@@ -27,7 +27,7 @@ namespace Nozomi.Data.ViewModels.Request
             CurrencyTypeGuid = currencyTypeGuid;
         }
         
-        public RequestViewModel(Guid guid, RequestType requestType, ResponseType responseType, string dataPath,
+        public RequestViewModel(Guid guid, RequestType requestType, ResponseType responseType, string endpoint,
             int delay, long failureDelay, bool isEnabled, string currencySlug, string currencyPairGuid, 
             string currencyTypeGuid, ICollection<ComponentViewModel> components, 
             ICollection<RequestPropertyViewModel> properties)
@@ -35,7 +35,7 @@ namespace Nozomi.Data.ViewModels.Request
             Guid = guid;
             RequestType = requestType;
             ResponseType = responseType;
-            DataPath = dataPath;
+            Endpoint = endpoint;
             Delay = delay;
             FailureDelay = failureDelay;
             IsEnabled = isEnabled;
@@ -64,7 +64,7 @@ namespace Nozomi.Data.ViewModels.Request
         /// <summary>
         /// The URL to the endpoint
         /// </summary>
-        public string DataPath { get; set; }
+        public string Endpoint { get; set; }
 
         /// <summary>
         /// The delay between each request, in milliseconds.
