@@ -2,7 +2,9 @@
     <div class="hero">
         <div class="hero-body">
             <div class="container">
-                <b-message type="is-warning" has-icon v-if="guid">The update functionality is underway!</b-message>
+                <b-message type="is-warning" has-icon v-if="!guid && !loaded && requestFormInput.guid === ''">
+                    There was a problem attempting to load the request..
+                </b-message>
                 
                 <h1 class="title has-text-centered" v-if="!guid">Create a request</h1>
                 <h1 class="title has-text-centered" v-if="guid">Update a request</h1>
@@ -88,6 +90,7 @@
                 activeStep: 0,
                 isLoading: false,
                 isPushLoading: true,
+                loaded: false,
                 requestTypes: [],
                 responseTypes: [],
                 requestPropertyTypes: [],
@@ -135,7 +138,14 @@
             if (this.guid) {
                 this.requestFormInput.guid = this.guid;
                 
-                // TODO: Load the request
+                let self = this;
+                RequestService.get(this.guid)
+                .then(function (res) {
+                    console.dir(res);
+                })
+                .catch(function (err) {
+                    self.requestFormInput.guid = "";
+                });
             }
 
             Promise.all([
