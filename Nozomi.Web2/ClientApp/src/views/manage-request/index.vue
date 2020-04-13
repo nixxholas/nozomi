@@ -2,9 +2,11 @@
     <div class="hero">
         <div class="hero-body">
             <div class="container">
+                <b-message type="is-warning" has-icon v-if="guid">The update functionality is underway!</b-message>
+                
                 <h1 class="title has-text-centered" v-if="!guid">Create a request</h1>
                 <h1 class="title has-text-centered" v-if="guid">Update a request</h1>
-{{guid}}
+
                 <div class="columns is-centered">
                     <div class="column is-8">
                         <div class="box">
@@ -130,8 +132,11 @@
         mounted() {
             this.isLoading = true;
             
-            if (this.guid)
+            if (this.guid) {
                 this.requestFormInput.guid = this.guid;
+                
+                // TODO: Load the request
+            }
 
             Promise.all([
                 RequestTypeService.all(),
