@@ -96,7 +96,7 @@ namespace Nozomi.Web2.Controllers.v1.Request
                     .Any(e => e.GetDescription().Equals(r.Value))))
                 {
                     // Return null created by entities as well
-                    return Ok(_requestEvent.ViewAll());
+                    return Ok(_requestEvent.View(guid));
                 }
                 
                 return Ok(_requestEvent.View(guid, identity.Claims
