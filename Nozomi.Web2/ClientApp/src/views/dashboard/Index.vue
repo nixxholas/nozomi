@@ -5,7 +5,31 @@
         <p class="subtitle is-4">Welcome to your dashboard</p>
         
         <b-tabs type="is-boxed">
-            <b-tab-item label="Categorisation Entities">
+
+            <b-tab-item label="Request Entities">
+                <nav class="level">
+                    <div class="level-left">
+                        <div class="level-item">
+                            <div class="content">
+                                <p class="title is-3">Request Entities</p>
+                                <p class="subtitle is-5">Manage</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="level-right">
+                        <div class="level-item">
+                            <!--                            <CreateRequestComponent @created="createdNewRequest" />-->
+                            <b-button icon-left="edit"
+                                      tag="router-link" to="/request/create"
+                                      type="is-primary">Create</b-button>
+                        </div>
+                    </div>
+                </nav>
+
+                <RequestsTable ref="reqTable" />
+            </b-tab-item>
+            
+            <b-tab-item label="Categorisation Entities" disabled>
                 <nav class="level">
                     <div class="level-left">
                         <div class="level-item">
@@ -25,30 +49,7 @@
                 <SourceTypesTable ref="sourceTypeTable" />
             </b-tab-item>
             
-            <b-tab-item label="Request Entities">
-                <nav class="level">
-                    <div class="level-left">
-                        <div class="level-item">
-                            <div class="content">
-                                <p class="title is-3">Request Entities</p>
-                                <p class="subtitle is-5">Manage</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="level-right">
-                        <div class="level-item">
-<!--                            <CreateRequestComponent @created="createdNewRequest" />-->
-                            <b-button icon-left="edit"
-                                      tag="router-link" to="/request/create"
-                                      type="is-primary">Create</b-button>
-                        </div>
-                    </div>
-                </nav>
-                
-                <RequestsTable ref="reqTable" />
-            </b-tab-item>
-            
-            <b-tab-item label="Compute Entities">
+            <b-tab-item label="Compute Entities" disabled>
                 <nav class="level">
                     <div class="level-left">
                         <div class="level-item">
