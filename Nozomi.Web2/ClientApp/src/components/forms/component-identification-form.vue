@@ -57,6 +57,11 @@
             ComponentIdentificationFormModal
         },
         props: {
+            components: {
+                type: Array,
+                required: false,
+                default: null
+            },
             dispatchPayload: {
                 type: Object,
                 required: true,
@@ -139,6 +144,13 @@
                         window.scrollTo(0, 0);
                     }
                 });
+            }
+        },
+        watch: {
+            components: function (val) {
+                if (val && val.length > 0) { // If components are loaded
+                    this.selectedIdentifiers = val;
+                }
             }
         }
     }
