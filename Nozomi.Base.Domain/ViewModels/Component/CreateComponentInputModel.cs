@@ -8,9 +8,9 @@ namespace Nozomi.Data.ViewModels.Component
     {
         public long? ComponentTypeId { get; set; }
 
-        public string Identifier { get; set; }
+        public string? Identifier { get; set; }
         
-        public string QueryComponent { get; set; }
+        public string Query { get; set; }
         
         public bool IsDenominated { get; set; }
         

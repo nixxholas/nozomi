@@ -40,7 +40,7 @@ namespace Nozomi.Service.Services
                     throw new ArgumentException("Request not found.");
 
                 var requestComponent = new Component(vm.ComponentTypeId, vm.Identifier,
-                    vm.QueryComponent, vm.AnomalyIgnorance, vm.IsDenominated, vm.StoreHistoricals, requestId);
+                    vm.Query, vm.AnomalyIgnorance, vm.IsDenominated, vm.StoreHistoricals, requestId);
 
                 _context.Components.Add(requestComponent);
                 _context.SaveChanges(userId);
