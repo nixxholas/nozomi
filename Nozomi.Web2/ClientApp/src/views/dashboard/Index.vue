@@ -1,5 +1,5 @@
 <template>
-    <div class="container is-fluid">
+    <div class="container is-fluid is-desktop">
         <p class="title is-2">Cabin</p>
         <p class="subtitle is-4">Welcome to your dashboard</p>
         
@@ -36,7 +36,10 @@
                     </div>
                     <div class="level-right">
                         <div class="level-item">
-                            <CreateRequestComponent @created="createdNewRequest" />
+<!--                            <CreateRequestComponent @created="createdNewRequest" />-->
+                            <b-button icon-left="edit"
+                                      tag="router-link" to="/request/create"
+                                      type="is-primary">Create</b-button>
                         </div>
                     </div>
                 </nav>

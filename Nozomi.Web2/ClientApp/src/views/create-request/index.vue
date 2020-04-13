@@ -168,7 +168,7 @@
                             if (res && res.status && res.status === 200) {
                                 self.finishResult.type = "is-success";
                                 self.finishResult.message = res.data ? res.data : "Request successfully created!";
-                                self.canProceed = true;
+                                self.finishResult.canProceed = true;
                             } else {
                                 self.finishResult.type = "is-warning";
                                 self.finishResult.message = res.data ? res.data : "Something unexpected has occurred.. try again!"; 

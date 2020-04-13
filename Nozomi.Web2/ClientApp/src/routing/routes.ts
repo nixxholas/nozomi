@@ -84,7 +84,7 @@ export const routes = [
   { name: 'dashboard', path: '/dashboard', props: true, component: DashboardHome,
     meta: { icon: 'columns', isPublic: false, onNav: false }
   },
-  { name: 'request-input-form', path: '/Request/Create', props: true, component: CreateRequest,
+  { name: 'create-request', path: '/request/create', props: true, component: CreateRequest,
     meta: { icon: '', isPublic: false, onNav: false }
   },  
   { name: 'settings', path: '/settings', props: true, component: SettingsIndex,
