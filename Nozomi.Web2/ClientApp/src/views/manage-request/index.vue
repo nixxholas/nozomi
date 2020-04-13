@@ -176,13 +176,32 @@
             activeStep: function (val) {
                 if (val === 2) { // If we're at finish
                     this.finishResult.message = null;
-                    
+
+                    this.toVmProperties(this.requestFormInput.properties); // Convert the properties first
+
+                    let self = this;
                     if (this.requestFormInput.guid) {
-                        // TODO: Update API
+                        RequestService.update(this.requestFormInput)
+                        .then(function (res) {
+                            if (res && res.status && res.status === 200) {
+                                self.finishResult.type = "is-success";
+                                self.finishResult.message = res.data ? res.data : "Request successfully updated!";
+                                self.finishResult.canProceed = true;
+                            } else {
+                                self.finishResult.type = "is-warning";
+                                self.finishResult.message = res.data ? res.data : "Something unexpected has occurred.. try again!";
+                            }
+                        })
+                        .catch(function (err) {
+                            if (err && err.response && err.response.data) {
+                                self.finishResult.type = "is-danger";
+                                self.finishResult.message = err.response.data;
+                            }
+                        })
+                        .finally(() => {
+                            this.isPushLoading = false;
+                        })
                     } else {
-                        this.toVmProperties(this.requestFormInput.properties); // Convert the properties first
-                        
-                        let self = this;
                         RequestService.create(this.requestFormInput)
                         .then(function (res) {
                             if (res && res.status && res.status === 200) {
