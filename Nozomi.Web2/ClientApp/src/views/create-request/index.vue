@@ -39,6 +39,11 @@
                                     
                                     <b-message v-if="finishResult.message" 
                                                :type="finishResult.type">{{ finishResult.message }}</b-message>
+                                    
+                                    <b-button v-if="finishResult.canProceed" 
+                                              icon-left="chevron-left"
+                                              tag="router-link" to="/dashboard"
+                                              type="is-primary">Back to Cabin</b-button>
                                 </b-step-item>
 
                             </b-steps>
@@ -113,6 +118,7 @@
                 finishResult: {
                     type: "is-danger",
                     message: null,
+                    canProceed: false
                 }
             }
         },
@@ -155,14 +161,18 @@
                         // TODO: Update API
                     } else {
                         this.toVmProperties(this.requestFormInput.properties); // Convert the properties first
-                        console.dir(this.requestFormInput.components);
                         
                         let self = this;
                         RequestService.create(this.requestFormInput)
                         .then(function (res) {
-                            console.dir(res);
-                            
-                            self.finishResult.type = "is-success";
+                            if (res && res.status && res.status === 200) {
+                                self.finishResult.type = "is-success";
+                                self.finishResult.message = res.data ? res.data : "Request successfully created!";
+                                self.canProceed = true;
+                            } else {
+                                self.finishResult.type = "is-warning";
+                                self.finishResult.message = res.data ? res.data : "Something unexpected has occurred.. try again!"; 
+                            }
                         })
                         .catch(function (err) {
                             if (err && err.response && err.response.data) {
