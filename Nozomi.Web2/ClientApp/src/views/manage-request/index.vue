@@ -2,9 +2,9 @@
     <div class="hero">
         <div class="hero-body">
             <div class="container">
-                <h1 class="title has-text-centered" v-if="!requestGuid">Create a request</h1>
-                <h1 class="title has-text-centered" v-if="requestGuid">Update a request</h1>
-
+                <h1 class="title has-text-centered" v-if="!guid">Create a request</h1>
+                <h1 class="title has-text-centered" v-if="guid">Update a request</h1>
+{{guid}}
                 <div class="columns is-centered">
                     <div class="column is-8">
                         <div class="box">
@@ -72,7 +72,7 @@
 
     export default {
         props: {
-            requestGuid: {
+            guid: {
                 type: String,
                 default: null,
             },
@@ -130,8 +130,8 @@
         mounted() {
             this.isLoading = true;
             
-            if (this.requestGuid)
-                this.requestFormInput.requestGuid = this.requestGuid;
+            if (this.guid)
+                this.requestFormInput.guid = this.guid;
 
             Promise.all([
                 RequestTypeService.all(),
@@ -161,7 +161,7 @@
                 if (val === 2) { // If we're at finish
                     this.finishResult.message = null;
                     
-                    if (this.requestFormInput.requestGuid) {
+                    if (this.requestFormInput.guid) {
                         // TODO: Update API
                     } else {
                         this.toVmProperties(this.requestFormInput.properties); // Convert the properties first

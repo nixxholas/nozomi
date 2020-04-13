@@ -31,6 +31,9 @@
             </b-table-column>
             <b-table-column field="actions" label="">
                 <div class="buttons">
+                    <b-button icon-left="edit"
+                              tag="router-link" :to="'/request/manage/' + props.row.guid"
+                              type="is-primary">Edit</b-button>
                   <RequestModal :request="props.row"/>
                 </div>
             </b-table-column>

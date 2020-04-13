@@ -25,7 +25,7 @@ import OidcCallbackError from '../components/auth/oidc-callback-error';
 // @ts-ignore
 import Pricing from '../views/Pricing';
 // @ts-ignore
-import CreateRequest from '../views/create-request';
+import ManageRequest from '../views/manage-request';
 // @ts-ignore
 import Bugs from '../views/Bugs';
 
@@ -84,9 +84,12 @@ export const routes = [
   { name: 'dashboard', path: '/dashboard', props: true, component: DashboardHome,
     meta: { icon: 'columns', isPublic: false, onNav: false }
   },
-  { name: 'create-request', path: '/request/create', props: true, component: CreateRequest,
+  { name: 'create-request', path: '/request/create', props: true, component: ManageRequest,
     meta: { icon: '', isPublic: false, onNav: false }
-  },  
+  },
+  { name: 'manage-request', path: '/request/manage/:guid', props: true, component: ManageRequest,
+    meta: { icon: '', isPublic: false, onNav: false }
+  },
   { name: 'settings', path: '/settings', props: true, component: SettingsIndex,
     meta: { icon: null, isPublic: false, onNav: false }
   },
