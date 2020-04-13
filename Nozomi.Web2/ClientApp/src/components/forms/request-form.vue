@@ -54,52 +54,6 @@
             </b-select>
         </b-field>
 
-        <!-- Data polling settings for Nozomi -->
-        <!--        <h1 class="subtitle pt-5">Fetch frequency</h1>-->
-
-        <!--        <b-field label-position="inside">-->
-        <!--            <template slot="label">-->
-        <!--                <p>-->
-        <!--                    <span>Frequency (in Milliseconds)</span>-->
-        <!--                    <b-tooltip type="is-dark"-->
-        <!--                               class="is-valigned"-->
-        <!--                               label="Lower frequency will result in having a more up-to-date dataset."-->
-        <!--                               multilined-->
-        <!--                    >-->
-        <!--                        <b-icon size="is-small" icon="question-circle"></b-icon>-->
-        <!--                    </b-tooltip>-->
-        <!--                </p>-->
-        <!--            </template>-->
-
-        <!--            <b-input type="number"-->
-        <!--                     size="is-medium"-->
-        <!--                     v-model="requestForm.delay"-->
-        <!--                     placeholder="604800000 (1 week)"-->
-        <!--            >-->
-        <!--            </b-input>-->
-        <!--        </b-field>-->
-
-        <!--        <b-field label-position="inside">-->
-        <!--            <template slot="label">-->
-        <!--                <p>-->
-        <!--                    <span>Idle time before retry (in Milliseconds)</span>-->
-        <!--                    <b-tooltip type="is-dark"-->
-        <!--                               label="When a fetch fails, it will wait until the idle time expires before fetching again."-->
-        <!--                               class="is-valigned"-->
-        <!--                               multilined-->
-        <!--                    >-->
-        <!--                        <b-icon size="is-small" icon="question-circle"></b-icon>-->
-        <!--                    </b-tooltip>-->
-        <!--                </p>-->
-        <!--            </template>-->
-        <!--            <b-input type="number"-->
-        <!--                     size="is-medium"-->
-        <!--                     v-model="requestForm.failureDelay"-->
-        <!--                     placeholder="300000 (5 minutes)"-->
-        <!--            >-->
-        <!--            </b-input>-->
-        <!--        </b-field>-->
-
         <!-- Request Properties -->
         <div class="columns is-desktop pt-5">
             <div class="column is-4-desktop">
@@ -139,8 +93,7 @@
         </b-tabs>
 
         <b-button @click="nextStep"
-                  :loading.sync="isLoading"
-        >
+                  :loading.sync="isLoading">
             Next
         </b-button>
     </section>
@@ -230,6 +183,36 @@
                     && this.requestForm.responseType;
             }
         },
+        mounted() {
+            if (this.requestForm && this.requestForm.properties) {
+                this.isLoading = true;
+                let props = this.requestForm.properties;
+                
+                if (!props.params && props.length > 0) { // Ensure props is an array and is not an object first
+                    this.requestForm.properties = { // Convert it to an object
+                        params: [],
+                        headers: [],
+                        body: [],
+                        socket: []
+                    };
+                    for (let prop in props) {
+                        if (prop && prop.type) {
+                            if (this.paramPropertyTypes.filter(e => e.value === prop.type).length > 0) {
+                                this.requestForm.properties.params.push(prop);
+                            } else if (this.headerPropertyTypes.filter(e => e.value === prop.type).length > 0) {
+                                this.requestForm.properties.headers.push(prop);
+                            } else if (this.bodyPropertyTypes.filter(e => e.value === prop.type).length > 0) {
+                                this.requestForm.properties.body.push(prop);
+                            }  else if (this.socketPropertyTypes.filter(e => e.value === prop.type).length > 0) {
+                                this.requestForm.properties.socket.push(prop);
+                            }
+                        }
+                    }
+                }
+                
+                this.isLoading = false;
+            }
+        }
     }
 </script>
 
