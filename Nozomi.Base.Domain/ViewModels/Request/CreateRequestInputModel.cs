@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using FluentValidation;
 using Nozomi.Data.Models.Web;
 using Nozomi.Data.ViewModels.Component;
@@ -22,7 +23,7 @@ namespace Nozomi.Data.ViewModels.Request
         /// <summary>
         /// The URL to the endpoint
         /// </summary>
-        public string DataPath { get; set; }
+        public string Endpoint { get; set; }
 
         /// <summary>
         /// The delay between each request, in milliseconds.
@@ -38,7 +39,7 @@ namespace Nozomi.Data.ViewModels.Request
         /// This will deduce what type of request this is for
         /// i.e. CurrencyType, CurrencyPair or Currency.
         /// </summary>
-        public RequestParentType ParentType { get; set; }
+        public RequestParentType ParentType { get; set; } = RequestParentType.None; // Force defaults
 
         public enum RequestParentType
         {
@@ -77,6 +78,12 @@ namespace Nozomi.Data.ViewModels.Request
         /// The collection of websocket commands for this request.
         /// </summary>
         public ICollection<CreateWebsocketCommandInputModel> WebsocketCommands { get; set; }
+        
+        // These properties were for Dispatching, don't touch these.
+        [IgnoreDataMember]
+        public long SocketDataCount { get; set; }
+        [IgnoreDataMember]
+        public long SocketKillSwitchDelay { get; set; }
 
         public bool IsValid()
         {
@@ -90,7 +97,7 @@ namespace Nozomi.Data.ViewModels.Request
             {
                 RuleFor(r => r.RequestType).IsInEnum();
                 RuleFor(r => r.ResponseType).IsInEnum();
-                RuleFor(r => r.DataPath).NotEmpty();
+                RuleFor(r => r.Endpoint).NotEmpty();
                 RuleFor(r => r.Delay).GreaterThan(-1);
                 RuleFor(r => r.FailureDelay).GreaterThan(-1);
                 RuleFor(r => r.ParentType).IsInEnum();

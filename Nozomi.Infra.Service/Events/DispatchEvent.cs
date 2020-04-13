@@ -36,7 +36,7 @@ namespace Nozomi.Service.Events
         {
             if (dispatchInputModel != null && dispatchInputModel.IsValid())
             {
-                switch (dispatchInputModel.RequestMethod)
+                switch (dispatchInputModel.RequestType)
                 {
                     case RequestType.HttpGet:
                     case RequestType.HttpPost:
@@ -262,7 +262,7 @@ namespace Nozomi.Service.Events
                                         break;
                                     // Declares the Http POST/PUT Body
                                     case RequestPropertyType.HttpBody:
-                                        if (dispatchInputModel.RequestMethod.Equals(RequestType.HttpGet))
+                                        if (dispatchInputModel.RequestType.Equals(RequestType.HttpGet))
                                             _logger.LogWarning($"{_eventName} Dispatch: Setting body in a GET " +
                                                                "request..");
 
@@ -287,7 +287,7 @@ namespace Nozomi.Service.Events
 
                             // Pull in the payload
                             HttpResponseMessage payload;
-                            switch (dispatchInputModel.RequestMethod)
+                            switch (dispatchInputModel.RequestType)
                             {
                                 case RequestType.HttpGet:
                                     payload = await httpClient.GetAsync(uri.ToString());
@@ -383,13 +383,16 @@ namespace Nozomi.Service.Events
                             Response = new HttpResponseMessage()
                         };
 
+                        // Initialise timer and datacounter here
+                        var stopWatch = new Stopwatch();
+                        var dataCounter = 0;
+
+                        var concatPayload =
+                            new List<string>(); // Setup the JSON arr which we're going to churn out.
+
                         // Always ensure that the sockets move to receive data until closed
                         do
                         {
-                            // Initialise timer and datacounter here
-                            var stopWatch = new Stopwatch();
-                            var dataCounter = 0;
-
                             // Pre-request processing
                             newSocket.OnOpen += (sender, args) =>
                             {
@@ -409,9 +412,6 @@ namespace Nozomi.Service.Events
                                     }
                                 }
                             };
-
-                            var concatPayload =
-                                new List<string>(); // Setup the JSON arr which we're going to churn out.
 
                             // Incoming processing
                             newSocket.OnMessage += async (sender, args) =>
@@ -464,7 +464,7 @@ namespace Nozomi.Service.Events
                             };
 
                             // Error processing
-                            newSocket.OnError += async (sender, args) =>
+                            newSocket.OnError += (sender, args) =>
                             {
                                 _logger.LogError($"{_eventName} Dispatch/OnError:" +
                                                  $" {args.Message}");

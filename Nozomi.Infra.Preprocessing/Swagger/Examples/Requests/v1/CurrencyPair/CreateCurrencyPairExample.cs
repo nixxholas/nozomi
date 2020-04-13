@@ -32,7 +32,7 @@ namespace Nozomi.Preprocessing.Swagger.Examples.Requests.v1.CurrencyPair
 //                    new CreateCurrencyPairRequest()
 //                    {
 //                        RequestType = RequestType.HttpGet,
-//                        DataPath = "https://api.ethfinex.com/v2/ticker/tETHUSD",
+//                        Endpoint = "https://api.ethfinex.com/v2/ticker/tETHUSD",
 //                        Delay = 3000,
 //                        RequestComponents = new List<CreateCurrencyPairComponent>()
 //                        {

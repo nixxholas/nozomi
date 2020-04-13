@@ -13,7 +13,7 @@
                                      :has-navigation="false">
 
                                 <b-step-item label="Create">
-                                    <RequestForm :request-methods="requestMethods"
+                                    <RequestForm :request-methods="requestTypes"
                                                  :response-types="responseTypes"
                                                  :request-form="requestFormInput"
                                                  :request-property-types="requestPropertyTypes"
@@ -33,7 +33,7 @@
                                 </b-step-item>
 
                                 <b-step-item label="Finish">
-
+                                    {{ requestFormInput.components }}
                                 </b-step-item>
 
                             </b-steps>
@@ -64,13 +64,13 @@
             return {
                 activeStep: 0,
                 isLoading: false,
-                requestMethods: [],
+                requestTypes: [],
                 responseTypes: [],
                 requestPropertyTypes: [],
 
                 requestFormInput: {
                     endpoint: null,
-                    requestMethod: 0,
+                    requestType: 0,
                     responseType: 1,
                     delay: 604800000,
                     failureDelay: 300000,
@@ -85,6 +85,8 @@
                     socketKillSwitchDelay: 0,
                     socketDataCount: 0,
 
+                    components: [], // Identified components
+
                     // Defaults parentType to 'NONE' = -1
                     // as per required in backend
                     parentType: -1,
@@ -94,8 +96,6 @@
                     response: null,
                     payload: null
                 },
-
-                identifiedSelections: []
             }
         },
 
@@ -108,11 +108,11 @@
                 RequestPropertyTypeService.all(),
             ])
                 .then(([
-                           requestMethods,
+                           requestTypes,
                            responseTypes,
                            requestPropertyTypes
                        ]) => {
-                    this.requestMethods = requestMethods.data.value || [];
+                    this.requestTypes = requestTypes.data.value || [];
                     this.responseTypes = responseTypes.data.value || [];
                     this.requestPropertyTypes = requestPropertyTypes.data || [];
                 })
@@ -127,8 +127,8 @@
 
         methods: {
             setDefaultRequestForm() {
-                if (this.requestMethods.length > 0) {
-                    this.requestFormInput.requestMethod = this.requestMethods[0].value;
+                if (this.requestTypes.length > 0) {
+                    this.requestFormInput.requestType = this.requestTypes[0].value;
                 }
 
                 if (this.responseTypes.length > 0) {
@@ -174,7 +174,7 @@
             },
 
             setIdentifiedSelections(identifiedSelections) {
-                this.identifiedSelections = identifiedSelections;
+                this.requestFormInput.components = identifiedSelections;
                 this.setActiveStep();
             }
         }

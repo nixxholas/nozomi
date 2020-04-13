@@ -9,12 +9,12 @@
         <b-field grouped>
             <b-field label="Protocol" label-position="inside">
                 <b-select placeholder="Select a protocol"
-                          v-model="requestForm.requestMethod"
+                          v-model="requestForm.requestType"
                           size="is-medium">
-                    <option v-for="requestMethod in requestMethods"
-                            :key="requestMethod.key"
-                            :value="requestMethod.value">
-                        {{ requestMethod.key }}
+                    <option v-for="requestType in requestTypes"
+                            :key="requestType.key"
+                            :value="requestType.value">
+                        {{ requestType.key }}
                     </option>
                 </b-select>
             </b-field>
@@ -122,14 +122,14 @@
                 />
             </b-tab-item>
 
-            <b-tab-item label="Body" :visible="requestForm.requestMethod !== 50">
+            <b-tab-item label="Body" :visible="requestForm.requestType !== 50">
                 <RequestFormPropertiesTable
                         :header-types="bodyPropertyTypes"
                         :form-data="requestForm.properties.body"
                 />
             </b-tab-item>
 
-            <b-tab-item label="Socket" :visible="requestForm.requestMethod === 50">
+            <b-tab-item label="Socket" :visible="requestForm.requestType === 50">
                 <RequestFormPropertiesTable
                         :header-types="socketPropertyTypes"
                         :form-data="requestForm.properties.body"
@@ -154,7 +154,7 @@
             RequestFormPropertiesTable
         },
         props: {
-            requestMethods: {
+            requestTypes: {
                 type: Array,
                 required: true,
                 default: () => ([])
@@ -174,7 +174,7 @@
                 required: true,
                 default: {
                     endpoint: null,
-                    requestMethod: null,
+                    requestType: null,
                     responseType: null,
                     // delay: 604800000,
                     // failureDelay: 300000,
@@ -226,7 +226,7 @@
                     this.$buefy.dialog.alert("Invalid URL pattern, please try again");
                 }
 
-                return urlIsValid && this.requestForm.requestMethod > -1
+                return urlIsValid && this.requestForm.requestType > -1
                     && this.requestForm.responseType;
             }
         },
