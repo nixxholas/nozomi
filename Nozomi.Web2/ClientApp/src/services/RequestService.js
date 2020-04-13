@@ -2,6 +2,20 @@ import axios from 'axios';
 import store from '../store/index';
 
 export default {
+    get(guid) {
+        return new Promise((resolve, reject) => {
+            axios.get('/api/Request/Get/' + guid, {
+                headers: {
+                    Authorization: "Bearer " + store.state.oidcStore.access_token
+                }
+            }).then(function (response) {
+                resolve(response);
+            }).catch(function (error) {
+                reject(error);
+            });
+        });
+    },
+
     getAllForUser() {
         return new Promise((resolve, reject) => {
             axios.get('/api/Request/GetAll', {
