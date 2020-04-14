@@ -389,10 +389,6 @@ namespace Nozomi.Service.Events
 
                             var concatPayload =
                                 new List<string>(); // Setup the JSON arr which we're going to churn out.
-
-                            // Always ensure that the sockets move to receive data until closed
-                            do
-                            {
                                 // Pre-request processing
                                 socket.OnOpen += (sender, args) =>
                                 {
@@ -400,17 +396,19 @@ namespace Nozomi.Service.Events
                                     if (dispatchInputModel.SocketKillSwitchDelay > 0 && !stopWatch.IsRunning)
                                         stopWatch.Start(); // OnMessage() will handle the closure
 
-                                    foreach (var wsCommand in dispatchInputModel.WebsocketCommands)
-                                    {
-                                        if (wsCommand.Delay.Equals(0))
+                                    if (dispatchInputModel.WebsocketCommands != null 
+                                        && dispatchInputModel.WebsocketCommands.Count > 0)
+                                        foreach (var wsCommand in dispatchInputModel.WebsocketCommands)
                                         {
-                                            // One-time command
+                                            if (wsCommand.Delay.Equals(0))
+                                            {
+                                                // One-time command
+                                            }
+                                            else
+                                            {
+                                                // Run a repeated task
+                                            }
                                         }
-                                        else
-                                        {
-                                            // Run a repeated task
-                                        }
-                                    }
                                 };
 
                                 // Incoming processing
@@ -453,11 +451,17 @@ namespace Nozomi.Service.Events
                                         socket.Close();
                                     }
 
-                                    if (dispatchInputModel.SocketDataCount > 0)
-                                        dataCounter++; // Bump data counter
-
                                     // Update the payload as well
                                     outgoingPayload.Payload = Utf8Json.JsonSerializer.ToJsonString(concatPayload);
+
+                                    if (dispatchInputModel.SocketDataCount > 0)
+                                        dataCounter++; // Bump data counter
+                                    
+                                    // If there ain't a stopwatch and if a data count is inexistent
+                                    if (!stopWatch.IsRunning && (dispatchInputModel.SocketDataCount == null
+                                                                 || dispatchInputModel.SocketDataCount <= 0) &&
+                                        dataCounter == 0)
+                                        socket.Close();
 
                                     await Task.Delay(50,
                                         CancellationToken.None); // Always delay by 1ms in case of spam
@@ -485,6 +489,10 @@ namespace Nozomi.Service.Events
                                 };
 
                                 socket.Connect();
+
+                            // Always ensure that the sockets move to receive data until closed
+                            do
+                            {
                             } while (socket != null && socket.IsAlive);
 
                             return outgoingPayload;
