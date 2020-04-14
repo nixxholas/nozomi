@@ -67,6 +67,8 @@ namespace Nozomi.Service.Events
                         {
                             Guid = c.Guid,
                             Type = c.ComponentTypeId,
+                            Identifier = c.Identifier,
+                            Query = c.QueryComponent,
                             Value = c.RcdHistoricItems
                                     // Always take the first 'page'
                                 .Take(NozomiServiceConstants.RcdHistoricItemTakeoutLimit)

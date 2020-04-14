@@ -2,11 +2,11 @@ import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import Vue from 'vue';
 import Buefy from 'buefy';
-import 'buefy/dist/buefy.css';
 import '@/assets/main.css';
-import 'bulma-extensions/dist/css/bulma-extensions.min.css'
-import 'bulma-extensions/dist/js/bulma-extensions.min.js';
+// import 'bulma-extensions/dist/css/bulma-extensions.min.css'
+// import 'bulma-extensions/dist/js/bulma-extensions.min.js';
 import './plugins/axios';
+import 'buefy/dist/buefy.css';
 // @ts-ignore
 import * as numeral from 'numeral';
 // @ts-ignore
@@ -29,20 +29,20 @@ Vue.component('vue-fontawesome', FontAwesomeIcon);
 
 // Font awesome solid icon configurations
 import { faAngleLeft, faAngleRight, faArrowUp, faAtlas, faBug, faCaretDown, 
-  faCaretUp, faCheck, faCheckCircle, faChevronDown, faCog,
-  faCoins, faColumns, faCreditCard, faDumpster, faEnvelope, faExclamationCircle, 
+  faCaretUp, faCheck, faCheckCircle, faChevronDown, faChevronLeft, faChevronRight, faCog,
+  faCoins, faColumns, faCreditCard, faDumpster, faEdit, faEnvelope, faExclamationCircle, 
   faExclamationTriangle,
-  faEye, faFingerprint, faFrown, faHome, faInfo, faInfoCircle, faKey, faLandmark, 
+  faEye, faFingerprint, faFrown, faHome, faInfo, faInfoCircle, faKey, faLandmark, faMeteor,
   faMoneyBill, faMoneyBillWave, faSadCry, faSpinner,
-  faSearch, faSignOutAlt,faTicketAlt, faTimes, faTrash, faUniversity, faUser } 
+  faSearch, faSignOutAlt,faTicketAlt, faTimes, faTrash, faUniversity, faUser, faQuestionCircle } 
   from '@fortawesome/free-solid-svg-icons';
 library.add(faAngleLeft, faAngleRight, faArrowUp, faAtlas, faBug, faCaretDown,
-    faCaretUp, faCheck, faCheckCircle, faChevronDown, faCog,
-    faCoins, faColumns, faCreditCard, faDumpster, faEnvelope, faExclamationCircle, 
+    faCaretUp, faCheck, faCheckCircle, faChevronDown, faChevronLeft, faChevronRight, faCog,
+    faCoins, faColumns, faCreditCard, faDumpster, faEdit, faEnvelope, faExclamationCircle, 
     faExclamationTriangle,
-    faEye, faFingerprint, faFrown, faHome, faInfo, faInfoCircle, faKey, faLandmark, 
+    faEye, faFingerprint, faFrown, faHome, faInfo, faInfoCircle, faKey, faLandmark, faMeteor,
     faMoneyBill, faMoneyBillWave, faSadCry, faSpinner,
-    faSearch, faSignOutAlt, faTicketAlt, faTimes, faTrash, faUniversity, faUser);
+    faSearch, faSignOutAlt, faTicketAlt, faTimes, faTrash, faUniversity, faUser, faQuestionCircle);
 
 // Font awesome brand icon configurations
 import { faBitcoin, faEthereum, faFontAwesome } from '@fortawesome/free-brands-svg-icons';

@@ -89,6 +89,13 @@
                 default: null,
             },
             requestGuid: String,
+            // Setting this to true enables this modal to go completely independent,
+            // meaning that a bottom line request entity is not required. You only need
+            // 
+            independentMode: {
+                type: Boolean,
+                default: false,
+            }
         },
         methods: {
             ...mapActions('oidcStore', ['authenticateOidc', 'signOutOidc']),
@@ -127,11 +134,11 @@
             push: function () {
                 this.isModalLoading = true;
                 let self = this;
-                console.dir(self.form);
                 
                 if (!self.form.requestGuid)
                     self.form.requestGuid = self.requestGuid;
 
+                // Dependent Create Mode
                 if (!self.guid && self.form.requestGuid) {
                     RequestPropertyService.create(self.form)
                         .then(function (response) {
@@ -169,7 +176,15 @@
                             // always executed
                             self.isModalLoading = false;
                         });
-                } else if (self.guid) {
+                }
+                // Independent Create Mode
+                else if (!self.guid && self.independentMode) {
+                    self.$emit("created", self.form);
+                    self.isModalLoading = false;
+                    self.isModalActive = false;
+                }
+                // Update Mode
+                else if (self.guid) {
                     RequestPropertyService.update(self.form)
                     .then(function (response) {
                         self.isModalActive = false; // Close the modal

@@ -10,6 +10,8 @@ namespace Nozomi.Web2.Controllers.v1.Request
         NozomiResult<JsonResult> All(bool includeNested);
 
         Task<IActionResult> Create(CreateRequestInputModel vm);
+
+        IActionResult Get(string guid);
         
         IActionResult GetAll(int index = 0);
 

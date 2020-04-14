@@ -1,11 +1,11 @@
 import axios from "axios";
 import store from "@/store";
 
-const baseUrl = '/api/RequestPropertyType/';
+const baseUrl = '/api/Dispatch/';
 export default {
-    all() {
+    fetch(vm: Object) {
         return new Promise((resolve, reject) => {
-            axios.get(baseUrl  + 'All', {
+            axios.post(baseUrl  + 'Fetch', vm, {
                 headers: {
                     Authorization: "Bearer " + store.state.oidcStore.access_token
                 }

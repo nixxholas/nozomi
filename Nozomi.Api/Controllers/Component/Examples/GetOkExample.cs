@@ -16,6 +16,8 @@ namespace Nozomi.Api.Controllers.Component.Examples
             {
                 Guid = Guid.NewGuid(),
                 Type = new Random().Next(int.MaxValue),
+                Identifier = "id=>293",
+                Query = "stockCount",
                 IsDenominated = true,
                 History = new List<ComponentHistoricItemViewModel>
                 {

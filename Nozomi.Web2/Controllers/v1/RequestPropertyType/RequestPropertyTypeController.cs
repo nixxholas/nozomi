@@ -21,7 +21,6 @@ namespace Nozomi.Web2.Controllers.v1.RequestPropertyType
 
         [Authorize]
         [HttpGet]
-        [Throttle(Name = "RequestPropertyType/All", Milliseconds = 1000)]
         public IActionResult All()
         {
             return Ok(_requestPropertyTypeEvent.All());

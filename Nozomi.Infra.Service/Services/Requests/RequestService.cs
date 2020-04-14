@@ -67,7 +67,7 @@ namespace Nozomi.Service.Services.Requests
         {
             if (vm.IsValid())
             {
-                var request = new Request(vm.RequestType, vm.ResponseType, vm.DataPath, vm.Delay, vm.FailureDelay,
+                var request = new Request(vm.RequestType, vm.ResponseType, vm.Endpoint, vm.Delay, vm.FailureDelay,
                     vm.Properties, vm.WebsocketCommands, vm.Components);
 
                 switch (vm.ParentType)
@@ -362,7 +362,7 @@ namespace Nozomi.Service.Services.Requests
                         request.IsEnabled = (bool)vm.IsEnabled;
                     request.RequestType = vm.RequestType;
                     request.ResponseType = vm.ResponseType;
-                    request.DataPath = vm.DataPath;
+                    request.DataPath = vm.Endpoint;
                     request.Delay = vm.Delay;
                     request.FailureDelay = vm.FailureDelay;
                     if (vm.Components != null && vm.Components.Any()) { // Safetynet

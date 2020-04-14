@@ -33,14 +33,14 @@ namespace Nozomi.Service.Services
 
         public void Create(CreateComponentInputModel vm, string userId = null)
         {
-            if (vm.IsValid())
+            if (vm.IsValid() && !string.IsNullOrEmpty(vm.RequestId))
             {
                 var requestId = _requestEvent.GetId(vm.RequestId);
                 if (requestId <= 0)
                     throw new ArgumentException("Request not found.");
 
                 var requestComponent = new Component(vm.ComponentTypeId, vm.Identifier,
-                    vm.QueryComponent, vm.AnomalyIgnorance, vm.IsDenominated, vm.StoreHistoricals, requestId);
+                    vm.Query, vm.AnomalyIgnorance, vm.IsDenominated, vm.StoreHistoricals, requestId);
 
                 _context.Components.Add(requestComponent);
                 _context.SaveChanges(userId);
@@ -271,7 +271,8 @@ namespace Nozomi.Service.Services
                 var component = query.FirstOrDefault();
                 if (component != null)
                 {
-                    component.ComponentTypeId = vm.ComponentTypeId;
+                    if (vm.ComponentTypeId != null && vm.ComponentTypeId > 0)
+                        component.ComponentTypeId = (long) vm.ComponentTypeId;
                     component.Identifier = vm.Identifier;
                     component.QueryComponent = vm.QueryComponent;
                     component.IsDenominated = vm.IsDenominated;

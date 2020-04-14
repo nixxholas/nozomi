@@ -1,61 +1,80 @@
 <template>
+    <section class="section">
     <div class="container is-fluid">
-        <div class="tile is-ancestor is-vertical">
-                <div class="tile">
-                    <div class="tile is-parent is-vertical">
-                        <b-notification aria-close-label="Close notification">
-                            <p class="title">Welcome to <b>Cabin</b>!</p>
-                            <p class="subtitle">Nozomi's Cabin is designed to make interacting and processing with APIs
-                                simple and easy to do.
-                                By the end of our beta, APIs can be interacted by providing the API path, properties
-                                within it and the data you
-                                want to process and that's it!</p>
-                        </b-notification>
-<!--                        <article class="tile is-child notification is-warning">-->
-<!--                            <p class="title">Favourites</p>-->
-<!--                            <p class="subtitle is-italic">Coding in progress..</p>-->
-<!--                        </article>-->
-                    </div>
-                </div>
-                <div class="tile">
-                    <div class="tile is-parent">
-                        <article class="tile is-child notification is-dark">
-                            <p class="title">Source Types</p>
-                            <p class="subtitle">
-                                <SourceTypeModal @created="createdNewSourceType" />
-                            </p>
-                            <SourceTypesTable ref="sourceTypeTable" />
-                        </article>
-                    </div>
-                    <div class="tile is-parent">
-                        <article class="tile is-child notification is-dark">
-                            <p class="title">Currency Types</p>
-                            <p class="subtitle">
-                                <CurrencyTypeModal />
-                            </p>
-                            <CurrencyTypesTable />
-                        </article>
-                    </div>
-                </div>
-                <div class="tile is-parent">
-                    <article class="tile is-child notification is-dark">
-                        <b-field group-multiline positon="is-left">
-                            <div class="control">
-                                <p class="title">Requests</p>
+        <p class="title is-2">Cabin</p>
+        <p class="subtitle is-4">Welcome to your dashboard</p>
+        
+        <b-tabs type="is-boxed">
+
+            <b-tab-item label="Request Entities">
+                <nav class="level">
+                    <div class="level-left">
+                        <div class="level-item">
+                            <div class="content">
+                                <p class="title is-3">Request Entities</p>
+                                <p class="subtitle is-5">Manage</p>
                             </div>
-                        </b-field>
-                        <b-field position="is-right">
-                            <div class="control">
-                                <CreateRequestComponent @created="createdNewRequest" />
+                        </div>
+                    </div>
+                    <div class="level-right">
+                        <div class="level-item">
+                            <!--                            <CreateRequestComponent @created="createdNewRequest" />-->
+                            <b-button icon-left="edit"
+                                      tag="router-link" to="/request/create"
+                                      type="is-primary">Create</b-button>
+                        </div>
+                    </div>
+                </nav>
+
+                <RequestsTable ref="reqTable" />
+            </b-tab-item>
+            
+            <b-tab-item label="Categorisation Entities" disabled>
+                <nav class="level">
+                    <div class="level-left">
+                        <div class="level-item">
+                            <div class="content">
+                                <p class="title is-3">Categorisation Entities</p>
+                                <p class="subtitle is-5">Manage</p>
                             </div>
-                        </b-field>
-                        <section>
-                            <RequestsTable ref="reqTable" />
-                        </section>
-                    </article>
-                </div>
-        </div>
+                        </div>
+                    </div>
+                    <div class="level-right">
+                        <div class="level-item">
+                            <SourceTypeModal @created="createdNewSourceType" />
+                        </div>
+                    </div>
+                </nav>
+                
+                <SourceTypesTable ref="sourceTypeTable" />
+            </b-tab-item>
+            
+            <b-tab-item label="Compute Entities" disabled>
+                <nav class="level">
+                    <div class="level-left">
+                        <div class="level-item">
+                            <div class="content">
+                                <p class="title is-3">Compute Entities</p>
+                                <p class="subtitle is-5">Manage</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="level-right">
+                        <div class="level-item">
+                            <CurrencyTypeModal />
+                        </div>
+                    </div>
+                </nav>
+                
+                <CurrencyTypesTable />
+            </b-tab-item>
+            
+            <b-tab-item label="Analytics" disabled>
+                <p>Coming Soon!</p>
+            </b-tab-item>
+        </b-tabs>
     </div>
+    </section>
 </template>
 
 <script>

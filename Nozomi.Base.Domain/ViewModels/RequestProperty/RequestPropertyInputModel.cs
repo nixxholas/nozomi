@@ -3,11 +3,14 @@ using Nozomi.Data.Models.Web;
 
 namespace Nozomi.Data.ViewModels.RequestProperty
 {
-    public class CreateRequestPropertyInputModel
+    /// <summary>
+    /// When you want to interact with request properties without any binding to a request.
+    /// </summary>
+    public class RequestPropertyInputModel
     {
-        public CreateRequestPropertyInputModel() {}
+        public RequestPropertyInputModel() {}
 
-        public CreateRequestPropertyInputModel(RequestPropertyType type, string key, string value)
+        public RequestPropertyInputModel(RequestPropertyType type, string key, string value)
         {
             Type = type;
             Key = key;
@@ -29,22 +32,16 @@ namespace Nozomi.Data.ViewModels.RequestProperty
         /// </summary>
         public string Value { get; set; }
         
-        /// <summary>
-        /// The request this property is binded to.
-        /// </summary>
-        public string RequestGuid { get; set; }
-        
         public bool IsValid()
         {
-            return new CreateRequestPropertyValidator().Validate(this).IsValid;
+            return new RequestPropertyValidator().Validate(this).IsValid;
         }
 
-        private class CreateRequestPropertyValidator : AbstractValidator<CreateRequestPropertyInputModel>
+        private class RequestPropertyValidator : AbstractValidator<RequestPropertyInputModel>
         {
-            public CreateRequestPropertyValidator()
+            public RequestPropertyValidator()
             {
                 RuleFor(e => e.Type).IsInEnum();
-                RuleFor(e => e.RequestGuid).NotNull().NotEmpty();
             }
         }
     }
