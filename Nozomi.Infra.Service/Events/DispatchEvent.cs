@@ -319,11 +319,11 @@ namespace Nozomi.Service.Events
                                 default:
                                     throw new InvalidExpressionException("Invalid request type.");
                             }
-                            
-                            #if DEBUG
+
+#if DEBUG
                             var debugContent = await payload.Content.ReadAsStringAsync();
-                            #endif
-                            
+#endif
+
                             if (!payload.IsSuccessStatusCode)
                                 return new DispatchViewModel
                                 {
@@ -370,124 +370,125 @@ namespace Nozomi.Service.Events
                         }
                     case RequestType.WebSocket:
                         // Initialise the websocket first
-                        var newSocket = new WebSocketCore(dispatchInputModel.Endpoint)
+                        using (var socket = new WebSocketCore(dispatchInputModel.Endpoint)
                         {
                             Compression = CompressionMethod.Deflate,
                             EmitOnPing = true,
                             EnableRedirection = false,
-                        };
-
-                        // Setup the payload
-                        var outgoingPayload = new DispatchViewModel
+                        })
                         {
-                            Response = new HttpResponseMessage()
-                        };
-
-                        // Initialise timer and datacounter here
-                        var stopWatch = new Stopwatch();
-                        var dataCounter = 0;
-
-                        var concatPayload =
-                            new List<string>(); // Setup the JSON arr which we're going to churn out.
-
-                        // Always ensure that the sockets move to receive data until closed
-                        do
-                        {
-                            // Pre-request processing
-                            newSocket.OnOpen += (sender, args) =>
+                            // Setup the payload
+                            var outgoingPayload = new DispatchViewModel
                             {
-                                // Start the timer if there actually is a killswitch timing
-                                if (dispatchInputModel.SocketKillSwitchDelay > 0 && !stopWatch.IsRunning)
-                                    stopWatch.Start(); // OnMessage() will handle the closure
+                                Response = new HttpResponseMessage()
+                            };
 
-                                foreach (var wsCommand in dispatchInputModel.WebsocketCommands)
+                            // Initialise timer and datacounter here
+                            var stopWatch = new Stopwatch();
+                            var dataCounter = 0;
+
+                            var concatPayload =
+                                new List<string>(); // Setup the JSON arr which we're going to churn out.
+
+                            // Always ensure that the sockets move to receive data until closed
+                            do
+                            {
+                                // Pre-request processing
+                                socket.OnOpen += (sender, args) =>
                                 {
-                                    if (wsCommand.Delay.Equals(0))
+                                    // Start the timer if there actually is a killswitch timing
+                                    if (dispatchInputModel.SocketKillSwitchDelay > 0 && !stopWatch.IsRunning)
+                                        stopWatch.Start(); // OnMessage() will handle the closure
+
+                                    foreach (var wsCommand in dispatchInputModel.WebsocketCommands)
                                     {
-                                        // One-time command
+                                        if (wsCommand.Delay.Equals(0))
+                                        {
+                                            // One-time command
+                                        }
+                                        else
+                                        {
+                                            // Run a repeated task
+                                        }
+                                    }
+                                };
+
+                                // Incoming processing
+                                socket.OnMessage += async (sender, args) =>
+                                {
+                                    // If timer hits delay, activate kill switch. Or if the datacounter is beyond the 
+                                    // SocketDataCount
+                                    if (stopWatch.ElapsedMilliseconds >= dispatchInputModel.SocketKillSwitchDelay
+                                        || dataCounter > dispatchInputModel.SocketDataCount)
+                                        socket.Close(); // Close this since we hit the trigger
+
+                                    if (args.IsPing) // Just in case the endpoint is a mother trucker
+                                    {
+                                        socket.Ping();
+                                    }
+                                    else if (!string.IsNullOrEmpty(args.Data)) // Process the incoming data
+                                    {
+                                        switch (dispatchInputModel.ResponseType)
+                                        {
+                                            case ResponseType.Json:
+                                                // Push to the payload collection and move on.
+                                                concatPayload.Add(Utf8Json.JsonSerializer.ToJsonString(args.Data));
+                                                break;
+                                            case ResponseType.XML:
+                                                // Old Newtonsoft code.
+                                                var xmlDoc = new XmlDocument();
+                                                xmlDoc.LoadXml(args.Data);
+                                                concatPayload.Add(Utf8Json.JsonSerializer.ToJsonString(xmlDoc));
+                                                break;
+                                            default:
+                                                throw new InvalidEnumArgumentException($"{_eventName} Dispatch: " +
+                                                                                       $"{dispatchInputModel.Endpoint} invalid" +
+                                                                                       $" response type.");
+                                        }
                                     }
                                     else
                                     {
-                                        // Run a repeated task
+                                        _logger.LogError($"{_eventName} Dispatch/OnMessage: Endpoint " +
+                                                         $"{dispatchInputModel.Endpoint} has an empty payload incoming.");
+                                        socket.Close();
                                     }
-                                }
-                            };
 
-                            // Incoming processing
-                            newSocket.OnMessage += async (sender, args) =>
-                            {
-                                // If timer hits delay, activate kill switch. Or if the datacounter is beyond the 
-                                // SocketDataCount
-                                if (stopWatch.ElapsedMilliseconds >= dispatchInputModel.SocketKillSwitchDelay
-                                    || dataCounter > dispatchInputModel.SocketDataCount)
-                                    newSocket.Close(); // Close this since we hit the trigger
+                                    if (dispatchInputModel.SocketDataCount > 0)
+                                        dataCounter++; // Bump data counter
 
-                                if (args.IsPing) // Just in case the endpoint is a mother trucker
+                                    // Update the payload as well
+                                    outgoingPayload.Payload = Utf8Json.JsonSerializer.ToJsonString(concatPayload);
+
+                                    await Task.Delay(50,
+                                        CancellationToken.None); // Always delay by 1ms in case of spam
+                                };
+
+                                // Error processing
+                                socket.OnError += (sender, args) =>
                                 {
-                                    newSocket.Ping();
-                                }
-                                else if (!string.IsNullOrEmpty(args.Data)) // Process the incoming data
+                                    _logger.LogError($"{_eventName} Dispatch/OnError:" +
+                                                     $" {args.Message}");
+                                    outgoingPayload.Response.StatusCode = HttpStatusCode.ExpectationFailed;
+                                    outgoingPayload.Response.ReasonPhrase = !string.IsNullOrEmpty(args.Message)
+                                        ? args.Message
+                                        : "The socket connection has been facing some unexpected problems that may require " +
+                                          "your intervention to rectify.";
+                                    GC.SuppressFinalize(this);
+                                };
+
+                                socket.OnClose += (sender, args) =>
                                 {
-                                    switch (dispatchInputModel.ResponseType)
-                                    {
-                                        case ResponseType.Json:
-                                            // Push to the payload collection and move on.
-                                            concatPayload.Add(Utf8Json.JsonSerializer.ToJsonString(args.Data));
-                                            break;
-                                        case ResponseType.XML:
-                                            // Old Newtonsoft code.
-                                            var xmlDoc = new XmlDocument();
-                                            xmlDoc.LoadXml(args.Data);
-                                            concatPayload.Add(Utf8Json.JsonSerializer.ToJsonString(xmlDoc));
-                                            break;
-                                        default:
-                                            throw new InvalidEnumArgumentException($"{_eventName} Dispatch: " +
-                                                                                   $"{dispatchInputModel.Endpoint} invalid" +
-                                                                                   $" response type.");
-                                    }
-                                }
-                                else
-                                {
-                                    _logger.LogError($"{_eventName} Dispatch/OnMessage: Endpoint " +
-                                                     $"{dispatchInputModel.Endpoint} has an empty payload incoming.");
-                                    newSocket.Close();
-                                }
+                                    _logger.LogInformation($"{_eventName} Dispatch/onClose: " +
+                                                           $"Closing socket connection for {dispatchInputModel.Endpoint}");
+                                    stopWatch.Stop();
+                                    GC.SuppressFinalize(this);
+                                };
 
-                                if (dispatchInputModel.SocketDataCount > 0)
-                                    dataCounter++; // Bump data counter
+                                socket.Connect();
+                            } while (socket != null && socket.IsAlive);
 
-                                // Update the payload as well
-                                outgoingPayload.Payload = Utf8Json.JsonSerializer.ToJsonString(concatPayload);
-
-                                await Task.Delay(50,
-                                    CancellationToken.None); // Always delay by 1ms in case of spam
-                            };
-
-                            // Error processing
-                            newSocket.OnError += (sender, args) =>
-                            {
-                                _logger.LogError($"{_eventName} Dispatch/OnError:" +
-                                                 $" {args.Message}");
-                                outgoingPayload.Response.StatusCode = HttpStatusCode.ExpectationFailed;
-                                outgoingPayload.Response.ReasonPhrase = !string.IsNullOrEmpty(args.Message)
-                                    ? args.Message
-                                    : "The socket connection has been facing some unexpected problems that may require " +
-                                      "your intervention to rectify.";
-                                GC.SuppressFinalize(this);
-                            };
-
-                            newSocket.OnClose += (sender, args) =>
-                            {
-                                _logger.LogInformation($"{_eventName} Dispatch/onClose: " +
-                                                       $"Closing socket connection for {dispatchInputModel.Endpoint}");
-                                stopWatch.Stop();
-                                GC.SuppressFinalize(this);
-                            };
-
-                            newSocket.Connect();
-                        } while (newSocket != null && newSocket.IsAlive);
-
-                        return outgoingPayload;
+                            return outgoingPayload;
+                        }
                     default:
                         throw new InvalidOperationException("Invalid protocol type.");
                 }
