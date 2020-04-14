@@ -11,7 +11,7 @@ namespace Nozomi.Base.Auth.ViewModels.Account
         
         public string Password { get; set; }
         
-        public IDictionary<string, JsonElement> UserClaims { get; set; }
+        public IDictionary<string, object> UserClaims { get; set; }
 
         public bool IsValid()
         {
