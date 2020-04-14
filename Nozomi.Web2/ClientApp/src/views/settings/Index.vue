@@ -124,7 +124,7 @@
             push: function () {
                 let self = this;
 
-                NozomiAuthService.update(JSON.parse(JSON.stringify(self.model)))
+                NozomiAuthService.update(self.model)
                     .then(function (res) {
                         if (res && res.status === 200) {
                             self.isModalActive = false; // Close the modal
