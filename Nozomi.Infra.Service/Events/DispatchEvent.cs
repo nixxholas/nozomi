@@ -429,8 +429,11 @@ namespace Nozomi.Service.Events
                                         switch (dispatchInputModel.ResponseType)
                                         {
                                             case ResponseType.Json:
+#if DEBUG 
+                                                var jDoc = JsonDocument.Parse(args.Data);
+#endif
                                                 // Push to the payload collection and move on.
-                                                concatPayload.Add(Utf8Json.JsonSerializer.ToJsonString(args.Data));
+                                                concatPayload.Add(args.Data);
                                                 break;
                                             case ResponseType.XML:
                                                 // Old Newtonsoft code.
